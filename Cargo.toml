@@ -1,8 +1,15 @@
 [package]
 name = "goose-eggs"
-version = "0.1.1-dev"
+version = "0.1.2"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
+description = "Useful functions and structs for writing Goose load tests."
+homepage = "https://goose.rs"
+documentation = "https://docs.rs/goose-eggs"
+repository = "https://github.com/tag1consulting/goose-eggs"
+readme = "README.md"
+keywords = ["loadtesting", "performance", "web"]
+license = "Apache-2.0"
 
 [dependencies]
 goose = "0.12"
