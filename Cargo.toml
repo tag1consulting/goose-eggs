@@ -1,6 +1,6 @@
 [package]
 name = "goose-eggs"
-version = "0.1.1-dev"
+version = "0.1.1"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
 
