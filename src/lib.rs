@@ -1,3 +1,5 @@
+//! Goose Eggs contains helpful functions and structures for writing
+//! [`Goose`](https://docs.rs/goose) load tests.
 use goose::goose::GooseResponse;
 use goose::prelude::*;
 
@@ -39,8 +41,8 @@ pub struct Validate<'a> {
 /// This function is case insensitive, if a title of "foo" is specified it will
 /// match "foo" or "Foo" or "FOO".
 ///
-/// It is generally preferred to use [`validate_and_load_static_assets`] which uses
-/// this function.
+/// While you can invoke this function directly, it's generally preferred to invoke
+/// [`validate_and_load_static_assets`] which in turn invokes this function.
 ///
 /// # Example
 /// ```rust
@@ -104,8 +106,8 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 /// This function is case sensitive, if the text "foo" is specified it will only match "foo",
 /// not "Foo" or "FOO".
 ///
-/// It is generally preferred to use [`validate_and_load_static_assets`] which uses
-/// this function.
+/// While you can invoke this function directly, it's generally preferred to invoke
+/// [`validate_and_load_static_assets`] which in turn invokes this function.
 ///
 /// # Example
 /// ```rust
@@ -162,8 +164,8 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 
 /// Extract and load all local static elements from the the provided html.
 ///
-/// It is generally preferred to use [`validate_and_load_static_assets`] which uses
-/// this function.
+/// While you can invoke this function directly, it's generally preferred to invoke
+/// [`validate_and_load_static_assets`] which in turn invokes this function.
 ///
 /// # Example
 /// ```rust
