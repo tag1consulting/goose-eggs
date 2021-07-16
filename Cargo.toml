@@ -1,0 +1,8 @@
+[package]
+name = "goose-eggs"
+version = "0.1.0"
+authors = ["Jeremy Andrews <jeremy@tag1.com>"]
+edition = "2018"
+
+[dependencies]
+goose = "0.12"
