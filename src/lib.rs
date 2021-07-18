@@ -45,13 +45,18 @@ impl<'a> Validate<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::Validate;
+    /// use goose_eggs::{Header, Validate};
     ///
-    /// // let _validate = Validate::new(
-    /// //     404,
-    /// //     "Page Not Found",
-    /// //     Vec["Oops, something went wrong!"],
-    /// // );
+    /// let _validate = Validate::new(
+    ///     // Validate the response status code.
+    ///     Some(404),
+    ///     // Validate the response page title.
+    ///     Some("Page Not Found"),
+    ///     // Validate arbitrary text on the response page.
+    ///     vec!["Oops, something went wrong!"],
+    ///     // Validate that the response was sent via https.
+    ///     vec![&Header::name_value("scheme", "https")],
+    /// );
     /// ```
     pub fn new(
         status: Option<u16>,
@@ -67,312 +72,426 @@ impl<'a> Validate<'a> {
         }
     }
 
+    /// Create a Validate object to validate the response status code.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status(200);
+    /// ```
     pub fn status(status: u16) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![],
-            headers: vec![],
-        }
+        Validate::new(Some(status), None, vec![], vec![])
     }
 
+    /// Create a Validate object to validate the response title.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title("Home page");
+    /// ```
     pub fn title(title: &'a str) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![],
-            headers: vec![],
-        }
+        Validate::new(None, Some(title), vec![], vec![])
     }
 
+    /// Create a Validate object to validate the response status code and title.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title(200, "Home page");
+    /// ```
     pub fn status_title(status: u16, title: &'a str) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts: vec![],
-            headers: vec![],
-        }
+        Validate::new(Some(status), Some(title), vec![], vec![])
     }
 
+    /// Create a Validate object to validate specific text is on the response page.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::text("This text should be on the page.");
+    /// ```
     pub fn text(text: &'a str) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts: vec![text],
-            headers: vec![],
-        }
+        Validate::new(None, None, vec![text], vec![])
     }
 
+    /// Create a Validate object to validate the response has the correct status code and
+    /// contains specific text.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_text(200, "This text should be on the page.");
+    /// ```
     pub fn status_text(status: u16, text: &'a str) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![text],
-            headers: vec![],
-        }
+        Validate::new(Some(status), None, vec![text], vec![])
     }
 
+    /// Create a Validate object to validate the response has the correct title and also
+    /// contains specific text.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_text("Example", "This text should be on the page.");
+    /// ```
     pub fn title_text(title: &'a str, text: &'a str) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![text],
-            headers: vec![],
-        }
+        Validate::new(None, Some(title), vec![text], vec![])
     }
 
+    /// Create a Validate object to validate the response code, that the page has the correct
+    /// title and also contains specific text.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_text(200, "Example", "This text should be on the page.");
+    /// ```
     pub fn status_title_text(status: u16, title: &'a str, text: &'a str) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts: vec![text],
-            headers: vec![],
-        }
+        Validate::new(Some(status), Some(title), vec![text], vec![])
     }
 
+    /// Create a Validate object to validate that the response page contains multiple specific
+    /// texts.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::texts(vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
+    /// ```
     pub fn texts(texts: Vec<&'a str>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts,
-            headers: vec![],
-        }
+        Validate::new(None, None, texts, vec![])
     }
 
+    /// Create a Validate object to validate response status code and that the page contains
+    /// multiple specific texts.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_texts(200, vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
+    /// ```
     pub fn status_texts(status: u16, texts: Vec<&'a str>) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts,
-            headers: vec![],
-        }
+        Validate::new(Some(status), None, texts, vec![])
     }
 
+    /// Create a Validate object to validate the response title and that the page contains
+    /// multiple specific texts.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_texts("Example", vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
+    /// ```
     pub fn title_texts(title: &'a str, texts: Vec<&'a str>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts,
-            headers: vec![],
-        }
+        Validate::new(None, Some(title), texts, vec![])
     }
 
+    /// Create a Validate object to validate the response status code, the page title and that the
+    /// page contains multiple specific texts.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_texts(200, "Example", vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
+    /// ```
     pub fn status_title_texts(status: u16, title: &'a str, texts: Vec<&'a str>) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts,
-            headers: vec![],
-        }
+        Validate::new(Some(status), Some(title), texts, vec![])
     }
 
+    /// Create a Validate object to validate the response included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::header(&Header::name("x-cache"));
+    /// ```
     pub fn header(header: &'a Header<'a>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts: vec![],
-            headers: vec![header],
-        }
+        Validate::new(None, None, vec![], vec![header])
     }
 
+    /// Create a Validate object to validate the response status code and that it included a
+    /// specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_header(200, &Header::name("x-cache"));
+    /// ```
     pub fn status_header(status: u16, header: &'a Header<'a>) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![],
-            headers: vec![header],
-        }
+        Validate::new(Some(status), None, vec![], vec![header])
     }
 
+    /// Create a Validate object to validate the response title and that it included a
+    /// specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_header("example", &Header::name("x-cache"));
+    /// ```
     pub fn title_header(title: &'a str, header: &'a Header<'a>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![],
-            headers: vec![header],
-        }
+        Validate::new(None, Some(title), vec![], vec![header])
     }
 
+    /// Create a Validate object to validate the response status code, title and that it
+    /// included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_header(200, "example", &Header::name("x-cache"));
+    /// ```
     pub fn status_title_header(
         status: u16,
         title: &'a str,
         header: &'a Header<'a>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts: vec![],
-            headers: vec![header],
-        }
+        Validate::new(Some(status), Some(title), vec![], vec![header])
     }
 
+    /// Create a Validate object to validate the response html contains specific text and that it
+    /// included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::text_header("The page has this text", &Header::name("x-cache"));
+    /// ```
     pub fn text_header(text: &'a str, header: &'a Header<'a>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts: vec![text],
-            headers: vec![header],
-        }
+        Validate::new(None, None, vec![text], vec![header])
     }
 
+    /// Create a Validate object to validate the response status code, that the resposne html
+    /// contains specific text and that it included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_text_header(200, "The page has this text", &Header::name("x-cache"));
+    /// ```
     pub fn status_text_header(status: u16, text: &'a str, header: &'a Header<'a>) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![text],
-            headers: vec![header],
-        }
+        Validate::new(Some(status), None, vec![text], vec![header])
     }
 
+    /// Create a Validate object to validate the response html title, that it contains
+    /// specific text and that it included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_text_header("Example", "The page has this text", &Header::name("x-cache"));
+    /// ```
     pub fn title_text_header(
         title: &'a str,
         text: &'a str,
         header: &'a Header<'a>,
     ) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![text],
-            headers: vec![header],
-        }
+        Validate::new(None, Some(title), vec![text], vec![header])
     }
 
+    /// Create a Validate object to validate the response status code, the  html title, that it
+    /// contains specific text and that it included a specific header.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_text_header(200, "Example", "The page has this text", &Header::name("x-cache"));
+    /// ```
     pub fn status_title_text_header(
         status: u16,
         title: &'a str,
         text: &'a str,
         header: &'a Header<'a>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts: vec![text],
-            headers: vec![header],
-        }
+        Validate::new(Some(status), Some(title), vec![text], vec![header])
     }
 
+    /// Create a Validate object to validate that the response included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::headers(vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn headers(headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts: vec![],
-            headers,
-        }
+        Validate::new(None, None, vec![], headers)
     }
 
+    /// Create a Validate object to validate the response status code and that it included multiple
+    /// specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_headers(200, vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn status_headers(status: u16, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![],
-            headers,
-        }
+        Validate::new(Some(status), None, vec![], headers)
     }
 
+    /// Create a Validate object to validate the response html title and that it included multiple
+    /// specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_headers("Example", vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn title_headers(title: &'a str, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![],
-            headers,
-        }
+        Validate::new(None, Some(title), vec![], headers)
     }
 
+    /// Create a Validate object to validate the response status code, the html title and that it
+    /// included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_headers(200, "Example", vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn status_title_headers(
         status: u16,
         title: &'a str,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts: vec![],
-            headers,
-        }
+        Validate::new(Some(status), Some(title), vec![], headers)
     }
 
+    /// Create a Validate object to validate the response html contained specific text and that
+    /// the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::text_headers("This text is on the page", vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn text_headers(text: &'a str, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts: vec![text],
-            headers,
-        }
+        Validate::new(None, None, vec![text], headers)
     }
 
+    /// Create a Validate object to validate the response status code, that the html contained
+    /// specific text and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_text_headers(200, "This text is on the page", vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn status_text_headers(
         status: u16,
         text: &'a str,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts: vec![text],
-            headers,
-        }
+        Validate::new(Some(status), None, vec![text], headers)
     }
 
+    /// Create a Validate object to validate the response html title, that the html contained
+    /// specific text and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_text_headers("Example", "This text is on the page", vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn title_text_headers(
         title: &'a str,
         text: &'a str,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts: vec![text],
-            headers,
-        }
+        Validate::new(None, Some(title), vec![text], headers)
     }
 
+    /// Create a Validate object to validate the response html includes multiple specific texts
+    /// and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::texts_headers(vec!["This text is on the page", r#"<a href="/foo">and so is this</a>"#], vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn texts_headers(texts: Vec<&'a str>, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: None,
-            texts,
-            headers,
-        }
+        Validate::new(None, None, texts, headers)
     }
 
+    /// Create a Validate object to validate the response status code, that html includes
+    /// multiple specific texts and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_texts_headers(200, vec!["This text is on the page", r#"<a href="/foo">and so is this</a>"#], vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn status_texts_headers(
         status: u16,
         texts: Vec<&'a str>,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: None,
-            texts,
-            headers,
-        }
+        Validate::new(Some(status), None, texts, headers)
     }
 
+    /// Create a Validate object to validate the response html title, that html includes
+    /// multiple specific texts and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::title_texts_headers("Example", vec!["This text is on the page", r#"<a href="/foo">and so is this</a>"#], vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn title_texts_headers(
         title: &'a str,
         texts: Vec<&'a str>,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: None,
-            title: Some(title),
-            texts,
-            headers,
-        }
+        Validate::new(None, Some(title), texts, headers)
     }
 
+    /// Create a Validate object to validate the response code, that html includes
+    /// multiple specific texts and that the response also included multiple specific headers.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::status_title_texts_headers(200, "Example", vec!["This text is on the page", r#"<a href="/foo">and so is this</a>"#], vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// ```
     pub fn status_title_texts_headers(
         status: u16,
         title: &'a str,
         texts: Vec<&'a str>,
         headers: Vec<&'a Header<'a>>,
     ) -> Validate<'a> {
-        Validate {
-            status: Some(status),
-            title: Some(title),
-            texts,
-            headers,
-        }
+        Validate::new(Some(status), Some(title), texts, headers)
     }
 }
 
@@ -395,25 +514,43 @@ pub struct Header<'a> {
     value: Option<&'a str>,
 }
 impl<'a> Header<'a> {
+    /// Create a new Header validation struct by specifying all fields.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Header;
+    ///
+    /// let _header = Header::new("foo", Some("bar"));
+    /// ```
     pub fn new(name: &'a str, value: Option<&'a str>) -> Header<'a> {
-        Header{
-            name,
-            value,
-        }
+        Header { name, value }
     }
 
+    /// Create a Header object to validate that a named header is set.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Header;
+    ///
+    /// // Create a Header object to validate that the "foo" header is set in the Response.
+    /// let _header = Header::name("foo");
+    /// ```
     pub fn name(name: &'a str) -> Header<'a> {
-        Header {
-            name,
-            value: None,
-        }
+        Header::new(name, None)
     }
 
+    /// Create a Header object to validate that a named header contains a specific value.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Header;
+    ///
+    /// // Create a Header object to validate that the "foo" header is set and contains "bar"
+    /// // in the Response.
+    /// let _header = Header::name_value("foo", "bar");
+    /// ```
     pub fn name_value(name: &'a str, value: &'a str) -> Header<'a> {
-        Header {
-            name,
-            value: Some(value),
-        }
+        Header::new(name, Some(value))
     }
 }
 
