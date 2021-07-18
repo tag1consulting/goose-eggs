@@ -15,28 +15,365 @@ use regex::Regex;
 /// ```rust
 /// use goose_eggs::Validate;
 ///
-/// fn example() {
-///     let _validate = Validate {
-///         // Don't do any extra validation of the status code.
-///         status: None,
-///         // Be sure the expected title is on the page.
-///         title: Some("my page"),
-///         // Be sure both of the following strings are found on the page.
-///         texts: vec!["foo", r#"<a href="bar">"#],
-///         // Don't do any validation of the headers.
-///         headers: vec![],
-///     };
+/// fn examples() {
+///     // Manually build a Validate strucuture that validates the page title and
+///     // some arbitrary texts in the response html.
+///     let _validate = Validate::new(
+///         None, Some("my page"), vec!["foo", r#"<a href="bar">"#], vec![]
+///     );
+///
+///     // Use `title_texts()` helper to perform the same validation.
+///     let _validate = Validate::title_texts("my page", vec!["foo", r#"<a href="bar">"#]);
+///
+///     // Use `title_text()` helper to perform similar validation, validating only
+///     // one text on the page.
+///     let _validate = Validate::title_text("my page", r#"<a href="foo">"#);
 /// }
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
-    /// If provided, validate the response status code.
-    pub status: Option<u16>,
-    /// If provided, validate the response title.
-    pub title: Option<&'a str>,
-    /// If provided, validate that the provided texts are found on the page.
-    pub texts: Vec<&'a str>,
-    /// If provided, validate that the provided headers were set in the HTTP response.
-    pub headers: Vec<&'a Header<'a>>,
+    /// Optionally validate the response status code.
+    status: Option<u16>,
+    /// Optionally validate the response title.
+    title: Option<&'a str>,
+    /// Optionally validate arbitrary texts in the response html.
+    texts: Vec<&'a str>,
+    /// Optionally validate the response headers.
+    headers: Vec<&'a Header<'a>>,
+}
+impl<'a> Validate<'a> {
+    /// Create a new Validate struct, specifying `status`, `title`, `texts` and `headers`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// // let _validate = Validate::new(
+    /// //     404,
+    /// //     "Page Not Found",
+    /// //     Vec["Oops, something went wrong!"],
+    /// // );
+    /// ```
+    pub fn new(
+        status: Option<u16>,
+        title: Option<&'a str>,
+        texts: Vec<&'a str>,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status,
+            title,
+            texts,
+            headers,
+        }
+    }
+
+    pub fn status(status: u16) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![],
+            headers: vec![],
+        }
+    }
+
+    pub fn title(title: &'a str) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![],
+            headers: vec![],
+        }
+    }
+
+    pub fn status_title(status: u16, title: &'a str) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts: vec![],
+            headers: vec![],
+        }
+    }
+
+    pub fn text(text: &'a str) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts: vec![text],
+            headers: vec![],
+        }
+    }
+
+    pub fn status_text(status: u16, text: &'a str) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![text],
+            headers: vec![],
+        }
+    }
+
+    pub fn title_text(title: &'a str, text: &'a str) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![text],
+            headers: vec![],
+        }
+    }
+
+    pub fn status_title_text(status: u16, title: &'a str, text: &'a str) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts: vec![text],
+            headers: vec![],
+        }
+    }
+
+    pub fn texts(texts: Vec<&'a str>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts,
+            headers: vec![],
+        }
+    }
+
+    pub fn status_texts(status: u16, texts: Vec<&'a str>) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts,
+            headers: vec![],
+        }
+    }
+
+    pub fn title_texts(title: &'a str, texts: Vec<&'a str>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts,
+            headers: vec![],
+        }
+    }
+
+    pub fn status_title_texts(status: u16, title: &'a str, texts: Vec<&'a str>) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts,
+            headers: vec![],
+        }
+    }
+
+    pub fn header(header: &'a Header<'a>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts: vec![],
+            headers: vec![header],
+        }
+    }
+
+    pub fn status_header(status: u16, header: &'a Header<'a>) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![],
+            headers: vec![header],
+        }
+    }
+
+    pub fn title_header(title: &'a str, header: &'a Header<'a>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![],
+            headers: vec![header],
+        }
+    }
+
+    pub fn status_title_header(
+        status: u16,
+        title: &'a str,
+        header: &'a Header<'a>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts: vec![],
+            headers: vec![header],
+        }
+    }
+
+    pub fn text_header(text: &'a str, header: &'a Header<'a>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts: vec![text],
+            headers: vec![header],
+        }
+    }
+
+    pub fn status_text_header(status: u16, text: &'a str, header: &'a Header<'a>) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![text],
+            headers: vec![header],
+        }
+    }
+
+    pub fn title_text_header(
+        title: &'a str,
+        text: &'a str,
+        header: &'a Header<'a>,
+    ) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![text],
+            headers: vec![header],
+        }
+    }
+
+    pub fn status_title_text_header(
+        status: u16,
+        title: &'a str,
+        text: &'a str,
+        header: &'a Header<'a>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts: vec![text],
+            headers: vec![header],
+        }
+    }
+
+    pub fn headers(headers: Vec<&'a Header<'a>>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts: vec![],
+            headers,
+        }
+    }
+
+    pub fn status_headers(status: u16, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![],
+            headers,
+        }
+    }
+
+    pub fn title_headers(title: &'a str, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![],
+            headers,
+        }
+    }
+
+    pub fn status_title_headers(
+        status: u16,
+        title: &'a str,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts: vec![],
+            headers,
+        }
+    }
+
+    pub fn text_headers(text: &'a str, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts: vec![text],
+            headers,
+        }
+    }
+
+    pub fn status_text_headers(
+        status: u16,
+        text: &'a str,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts: vec![text],
+            headers,
+        }
+    }
+
+    pub fn title_text_headers(
+        title: &'a str,
+        text: &'a str,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts: vec![text],
+            headers,
+        }
+    }
+
+    pub fn texts_headers(texts: Vec<&'a str>, headers: Vec<&'a Header<'a>>) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: None,
+            texts,
+            headers,
+        }
+    }
+
+    pub fn status_texts_headers(
+        status: u16,
+        texts: Vec<&'a str>,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: None,
+            texts,
+            headers,
+        }
+    }
+
+    pub fn title_texts_headers(
+        title: &'a str,
+        texts: Vec<&'a str>,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: None,
+            title: Some(title),
+            texts,
+            headers,
+        }
+    }
+
+    pub fn status_title_texts_headers(
+        status: u16,
+        title: &'a str,
+        texts: Vec<&'a str>,
+        headers: Vec<&'a Header<'a>>,
+    ) -> Validate<'a> {
+        Validate {
+            status: Some(status),
+            title: Some(title),
+            texts,
+            headers,
+        }
+    }
 }
 
 /// Used to validate that headers are included in the server response.
@@ -46,20 +383,38 @@ pub struct Validate<'a> {
 /// use goose_eggs::Header;
 ///
 /// fn example() {
-///     let _cookie = Header {
-///         // Validate that the "x-varnish" header is set.
-///         name: "x-varnish",
-///         // Don't further validate the contents of the header.
-///         value: None,
-///     };
+///     // Validate that the "x-varnish" header is set.
+///     let _header = Header::name("x-varnish");
 /// }
 
 #[derive(Clone, Debug)]
 pub struct Header<'a> {
     /// The name of the header to validate, required.
-    pub name: &'a str,
+    name: &'a str,
     /// The value of the header to validate, optional.
-    pub value: Option<&'a str>,
+    value: Option<&'a str>,
+}
+impl<'a> Header<'a> {
+    pub fn new(name: &'a str, value: Option<&'a str>) -> Header<'a> {
+        Header{
+            name,
+            value,
+        }
+    }
+
+    pub fn name(name: &'a str) -> Header<'a> {
+        Header {
+            name,
+            value: None,
+        }
+    }
+
+    pub fn name_value(name: &'a str, value: &'a str) -> Header<'a> {
+        Header {
+            name,
+            value: Some(value),
+        }
+    }
 }
 
 /// Returns a [`bool`] indicating whether or not the title (case insensitive) is
@@ -213,7 +568,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !header_is_set(headers, &Header{ name: "server", value: None }) {
+///             if !header_is_set(headers, &Header::name("server")) {
 ///                 return user.set_failure(
 ///                     &format!("{}: header not found: {}", goose.request.url, "server"),
 ///                     &mut goose.request,
@@ -260,7 +615,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !valid_header_value(headers, &Header{ name: "server", value: Some("nginx") }) {
+///             if !valid_header_value(headers, &Header::name_value("server", "nginx")) {
 ///                 return user.set_failure(
 ///                     &format!("{}: server header value not correct: {}", goose.request.url, "nginx"),
 ///                     &mut goose.request,
@@ -398,16 +753,8 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
 ///     validate_and_load_static_assets(
 ///         user,
 ///         goose,
-///         &Validate {
-///             // Don't do any extra validation of the status code.
-///             status: None,
-///             // Be sure the expected title is on the page.
-///             title: Some("my page"),
-///             // Be sure both of the following strings are found on the page.
-///             texts: vec!["foo", r#"<a href="bar">"#],
-///             // Don't do any validateion of headers.
-///             headers: vec![],
-///         },
+///         // Validate title and other arbitrary text on the response html.
+///         &Validate::title_texts("my page", vec!["foo", r#"<a href="bar">"#]),
 ///     ).await?;
 ///
 ///     Ok(())
