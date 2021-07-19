@@ -1,5 +1,4 @@
-//! Goose Eggs contains helpful functions and structures for writing
-//! [`Goose`](https://docs.rs/goose) load tests.
+//! Goose Eggs are helpful in writing [`Goose`](https://docs.rs/goose) load tests.
 use goose::goose::GooseResponse;
 use goose::prelude::*;
 use log::info;
@@ -585,7 +584,7 @@ impl<'a> Header<'a> {
 ///                     let title = "example";
 ///                     if !valid_title(&html, title) {
 ///                         return user.set_failure(
-///                             &format!("{}: title not found: {}", goose.request.url, title),
+///                             &format!("{}: title not found: {}", goose.request.raw.url, title),
 ///                             &mut goose.request,
 ///                             Some(&headers),
 ///                             Some(&html),
@@ -594,7 +593,7 @@ impl<'a> Header<'a> {
 ///                 }
 ///                 Err(e) => {
 ///                     return user.set_failure(
-///                         &format!("{}: failed to parse page: {}", goose.request.url, e),
+///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
 ///                         Some(&headers),
 ///                         None,
@@ -604,7 +603,7 @@ impl<'a> Header<'a> {
 ///         }
 ///         Err(e) => {
 ///             return user.set_failure(
-///                 &format!("{}: no response from server: {}", goose.request.url, e),
+///                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
 ///                 &mut goose.request,
 ///                 None,
 ///                 None,
@@ -650,7 +649,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///                     let text = r#"<code class="language-console">$ cargo new hello_world --bin"#;
 ///                     if !valid_text(&html, text) {
 ///                         return user.set_failure(
-///                             &format!("{}: text not found: {}", goose.request.url, text),
+///                             &format!("{}: text not found: {}", goose.request.raw.url, text),
 ///                             &mut goose.request,
 ///                             Some(&headers),
 ///                             Some(&html),
@@ -659,7 +658,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///                 }
 ///                 Err(e) => {
 ///                     return user.set_failure(
-///                         &format!("{}: failed to parse page: {}", goose.request.url, e),
+///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
 ///                         Some(&headers),
 ///                         None,
@@ -669,7 +668,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///         }
 ///         Err(e) => {
 ///             return user.set_failure(
-///                 &format!("{}: no response from server: {}", goose.request.url, e),
+///                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
 ///                 &mut goose.request,
 ///                 None,
 ///                 None,
@@ -707,7 +706,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///             let headers = &response.headers().clone();
 ///             if !header_is_set(headers, &Header::name("server")) {
 ///                 return user.set_failure(
-///                     &format!("{}: header not found: {}", goose.request.url, "server"),
+///                     &format!("{}: header not found: {}", goose.request.raw.url, "server"),
 ///                     &mut goose.request,
 ///                     Some(&headers),
 ///                     None,
@@ -716,7 +715,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///         }
 ///         Err(e) => {
 ///             return user.set_failure(
-///                 &format!("{}: no response from server: {}", goose.request.url, e),
+///                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
 ///                 &mut goose.request,
 ///                 None,
 ///                 None,
@@ -754,7 +753,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///             let headers = &response.headers().clone();
 ///             if !valid_header_value(headers, &Header::name_value("server", "nginx")) {
 ///                 return user.set_failure(
-///                     &format!("{}: server header value not correct: {}", goose.request.url, "nginx"),
+///                     &format!("{}: server header value not correct: {}", goose.request.raw.url, "nginx"),
 ///                     &mut goose.request,
 ///                     Some(&headers),
 ///                     None,
@@ -763,7 +762,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///         }
 ///         Err(e) => {
 ///             return user.set_failure(
-///                 &format!("{}: no response from server: {}", goose.request.url, e),
+///                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
 ///                 &mut goose.request,
 ///                 None,
 ///                 None,
@@ -828,7 +827,7 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///                 }
 ///                 Err(e) => {
 ///                     return user.set_failure(
-///                         &format!("{}: failed to parse page: {}", goose.request.url, e),
+///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
 ///                         Some(&headers),
 ///                         None,
@@ -838,7 +837,7 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///         }
 ///         Err(e) => {
 ///             return user.set_failure(
-///                 &format!("{}: no response from server: {}", goose.request.url, e),
+///                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
 ///                 &mut goose.request,
 ///                 None,
 ///                 None,
@@ -915,7 +914,7 @@ pub async fn validate_and_load_static_assets<'a>(
                             return user.set_failure(
                                 &format!(
                                     "{}: response status != {}]: {}",
-                                    goose.request.url, status, response_status
+                                    goose.request.raw.url, status, response_status
                                 ),
                                 &mut goose.request,
                                 Some(&headers),
@@ -927,7 +926,7 @@ pub async fn validate_and_load_static_assets<'a>(
                     if let Some(title) = validate.title {
                         if !valid_title(&html, &title) {
                             return user.set_failure(
-                                &format!("{}: title not found: {}", goose.request.url, title),
+                                &format!("{}: title not found: {}", goose.request.raw.url, title),
                                 &mut goose.request,
                                 Some(&headers),
                                 Some(&html),
@@ -938,7 +937,10 @@ pub async fn validate_and_load_static_assets<'a>(
                     for text in &validate.texts {
                         if !valid_text(&html, text) {
                             return user.set_failure(
-                                &format!("{}: text not found on page: {}", goose.request.url, text),
+                                &format!(
+                                    "{}: text not found on page: {}",
+                                    goose.request.raw.url, text
+                                ),
                                 &mut goose.request,
                                 Some(&headers),
                                 Some(&html),
@@ -951,7 +953,7 @@ pub async fn validate_and_load_static_assets<'a>(
                             return user.set_failure(
                                 &format!(
                                     "{}: header not included in response: {:?}",
-                                    goose.request.url, header
+                                    goose.request.raw.url, header
                                 ),
                                 &mut goose.request,
                                 Some(&headers),
@@ -963,7 +965,7 @@ pub async fn validate_and_load_static_assets<'a>(
                                 return user.set_failure(
                                     &format!(
                                         "{}: header does not contain expected value: {:?}",
-                                        goose.request.url, h
+                                        goose.request.raw.url, h
                                     ),
                                     &mut goose.request,
                                     Some(&headers),
@@ -976,7 +978,7 @@ pub async fn validate_and_load_static_assets<'a>(
                 }
                 Err(e) => {
                     return user.set_failure(
-                        &format!("{}: failed to parse page: {}", goose.request.url, e),
+                        &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
                         &mut goose.request,
                         Some(&headers),
                         None,
@@ -986,7 +988,7 @@ pub async fn validate_and_load_static_assets<'a>(
         }
         Err(e) => {
             return user.set_failure(
-                &format!("{}: no response from server: {}", goose.request.url, e),
+                &format!("{}: no response from server: {}", goose.request.raw.url, e),
                 &mut goose.request,
                 None,
                 None,

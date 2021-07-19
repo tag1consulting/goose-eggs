@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.1.5-dev
+## 0.1.5 July 19, 2021
  - documentation fix, `load_static_elements()` is `async` and requires `.await`
+ - update goose dependency to `0.13`
 
 ## 0.1.4 July 18, 2021
  - add `headers` parameter to `Validate` and `header_is_set()` and `valid_header_value()` helper functions; optionally validate headers from `validate_and_load_static_assets()`
