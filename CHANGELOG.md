@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.1.4-dev
+## 0.1.5-dev
+ - documentation fix, `load_static_elements()` is `async` and requires `.await`
+
+## 0.1.4 July 18, 2021
  - add `headers` parameter to `Validate` and `header_is_set()` and `valid_header_value()` helper functions; optionally validate headers from `validate_and_load_static_assets()`
  - make `Validate` and `Header` fields private, and provide numerous helpers for conveniently setting them
 

@@ -824,7 +824,7 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///             match response.text().await {
 ///                 Ok(html) => {
 ///                     // Load all static elements on page.
-///                     load_static_elements(user, &html);
+///                     load_static_elements(user, &html).await;
 ///                 }
 ///                 Err(e) => {
 ///                     return user.set_failure(
