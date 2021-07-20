@@ -873,9 +873,14 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
     }
 }
 
-/// Validate the HTML response then extract and load all static elements on the page.
+/// Validate the HTML response, extract and load all static elements on the page, and
+/// return the HTML body.
 ///
 /// What is validated is defined with the [`Validate`] structure.
+///
+/// If the page doesn't load, an empty String will be returned. If the page does load
+/// but validation fails, an Error is returned. If the page loads and there are no
+/// errors the body is returned as a String.
 ///
 /// # Example
 /// ```rust
@@ -900,43 +905,92 @@ pub async fn validate_and_load_static_assets<'a>(
     user: &GooseUser,
     mut goose: GooseResponse,
     validate: &'a Validate<'a>,
-) -> GooseTaskResult {
+) -> Result<String, GooseTaskError> {
+    let empty = "".to_string();
     match goose.response {
         Ok(response) => {
-            // Copy the headers so we have them for logging if there are errors.
-            let headers = &response.headers().clone();
+            // Validate status code if defined.
             let response_status = response.status();
+            if let Some(status) = validate.status {
+                if response_status != status {
+                    // Get as much as we can from the response for useful debug logging.
+                    let headers = &response.headers().clone();
+                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                    user.set_failure(
+                        &format!(
+                            "{}: response status != {}]: {}",
+                            goose.request.raw.url, status, response_status
+                        ),
+                        &mut goose.request,
+                        Some(&headers),
+                        Some(&html),
+                    )?;
+                    // Exit as soon as validation fails, to avoid cascades of
+                    // errors whe na page fails to load.
+                    return Ok(html);
+                }
+            }
+
+            // Validate headers if defined.
+            let headers = &response.headers().clone();
+            for header in &validate.headers {
+                if !header_is_set(headers, header) {
+                    // Get as much as we can from the response for useful debug logging.
+                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                    user.set_failure(
+                        &format!(
+                            "{}: header not included in response: {:?}",
+                            goose.request.raw.url, header
+                        ),
+                        &mut goose.request,
+                        Some(&headers),
+                        Some(&html),
+                    )?;
+                    // Exit as soon as validation fails, to avoid cascades of
+                    // errors whe na page fails to load.
+                    return Ok(html);
+                }
+                if let Some(h) = header.value {
+                    if !valid_header_value(headers, header) {
+                        // Get as much as we can from the response for useful debug logging.
+                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                        user.set_failure(
+                            &format!(
+                                "{}: header does not contain expected value: {:?}",
+                                goose.request.raw.url, h
+                            ),
+                            &mut goose.request,
+                            Some(&headers),
+                            Some(&html),
+                        )?;
+                        // Exit as soon as validation fails, to avoid cascades of
+                        // errors whe na page fails to load.
+                        return Ok(html);
+                    }
+                }
+            }
+
+            // Extract the response body to validate and load static elements.
             match response.text().await {
                 Ok(html) => {
-                    // Validate status code if defined.
-                    if let Some(status) = validate.status {
-                        if response_status != status {
-                            return user.set_failure(
-                                &format!(
-                                    "{}: response status != {}]: {}",
-                                    goose.request.raw.url, status, response_status
-                                ),
-                                &mut goose.request,
-                                Some(&headers),
-                                Some(&html),
-                            );
-                        }
-                    }
                     // Validate title if defined.
                     if let Some(title) = validate.title {
                         if !valid_title(&html, &title) {
-                            return user.set_failure(
+                            user.set_failure(
                                 &format!("{}: title not found: {}", goose.request.raw.url, title),
                                 &mut goose.request,
                                 Some(&headers),
                                 Some(&html),
-                            );
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors whe na page fails to load.
+                            return Ok(html);
                         }
                     }
                     // Validate texts in body if defined.
                     for text in &validate.texts {
                         if !valid_text(&html, text) {
-                            return user.set_failure(
+                            user.set_failure(
                                 &format!(
                                     "{}: text not found on page: {}",
                                     goose.request.raw.url, text
@@ -944,57 +998,34 @@ pub async fn validate_and_load_static_assets<'a>(
                                 &mut goose.request,
                                 Some(&headers),
                                 Some(&html),
-                            );
-                        }
-                    }
-                    // Validate headers if defined.
-                    for header in &validate.headers {
-                        if !header_is_set(headers, header) {
-                            return user.set_failure(
-                                &format!(
-                                    "{}: header not included in response: {:?}",
-                                    goose.request.raw.url, header
-                                ),
-                                &mut goose.request,
-                                Some(&headers),
-                                Some(&html),
-                            );
-                        }
-                        if let Some(h) = header.value {
-                            if !valid_header_value(headers, header) {
-                                return user.set_failure(
-                                    &format!(
-                                        "{}: header does not contain expected value: {:?}",
-                                        goose.request.raw.url, h
-                                    ),
-                                    &mut goose.request,
-                                    Some(&headers),
-                                    Some(&html),
-                                );
-                            }
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors whe na page fails to load.
+                            return Ok(html);
                         }
                     }
                     load_static_elements(user, &html).await;
+                    Ok(html)
                 }
                 Err(e) => {
-                    return user.set_failure(
+                    user.set_failure(
                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
                         &mut goose.request,
                         Some(&headers),
                         None,
-                    );
+                    )?;
+                    Ok(empty)
                 }
             }
         }
         Err(e) => {
-            return user.set_failure(
+            user.set_failure(
                 &format!("{}: no response from server: {}", goose.request.raw.url, e),
                 &mut goose.request,
                 None,
                 None,
-            );
+            )?;
+            Ok(empty)
         }
     }
-
-    Ok(())
 }
