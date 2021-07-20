@@ -4,6 +4,7 @@
  - return loaded html as `String` from `validate_and_load_static_assets()`
  - validate response in the order information comes available (status code, headers, title and texts)
  - introduce drupal-specific `get_form()` and `get_form_value()` in new mod drupal
+ - introduce drupal-specific `login()` function and `Login` object to override the default username, password, and url
 
 ## 0.1.5 July 19, 2021
  - documentation fix, `load_static_elements()` is `async` and requires `.await`
