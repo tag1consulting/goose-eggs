@@ -1,3 +1,4 @@
+//! Functionality that's specific to Drupal.
 use regex::Regex;
 
 /// Use a regular expression to get the specific form identified by data-drupal-selector.
