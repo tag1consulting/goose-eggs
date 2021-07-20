@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.6-dev
+## 0.1.6 July 20, 2021
  - return loaded html as `String` from `validate_and_load_static_assets()`
  - validate response in the order information comes available (status code, headers, title and texts)
  - introduce drupal-specific `get_form()` and `get_form_value()` in new mod drupal
