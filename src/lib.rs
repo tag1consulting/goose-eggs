@@ -2,9 +2,10 @@
 use goose::goose::GooseResponse;
 use goose::prelude::*;
 use log::info;
+use regex::Regex;
 use reqwest::header::HeaderMap;
 
-use regex::Regex;
+pub mod drupal;
 
 /// Define one or more items to be validated in a web page response.
 ///
