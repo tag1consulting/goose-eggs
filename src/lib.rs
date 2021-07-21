@@ -554,6 +554,43 @@ impl<'a> Header<'a> {
     }
 }
 
+/// Use a regular expression to get the HTML header from the web page.
+///
+/// # Example
+/// ```rust
+/// use goose_eggs::get_html_header;
+///
+/// // For this example we grab just a subset of a web page, enough to demonstrate. Normally
+/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// let html = r#"
+/// <html lang="en" dir="ltr">
+///   <head>
+///     <meta charset="utf-8" />
+///     <link rel="canonical" href="https://example.com/" />
+///     <link rel="shortlink" href="https://example.com/" />
+///     <meta name="Generator" content="Drupal 9 (https://www.drupal.org)" />
+///     <meta name="MobileOptimized" content="width" />
+///     <meta name="HandheldFriendly" content="true" />
+///     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+///     <title>Example Website</title>
+///   </head>
+/// <body>
+///   This is the web page body.
+/// </body>
+/// </html>
+/// "#;
+///
+/// let html_header = get_html_header(html);
+/// assert!(!html_header.is_none());
+/// ```
+pub fn get_html_header(html: &str) -> Option<String> {
+    let re = Regex::new(r#"<head>(.*?)</head>"#).unwrap();
+    // Strip carriage returns to simplify regex.
+    let line = html.replace("\n", "");
+    // Return the entire html header, a subset of the received html.
+    re.captures(&line).map(|value| value[0].to_string())
+}
+
 /// Returns a [`bool`] indicating whether or not the title (case insensitive) is
 /// found within the html.
 ///
@@ -569,7 +606,7 @@ impl<'a> Header<'a> {
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::valid_title;
+/// use goose_eggs::{get_html_header, valid_title};
 ///
 /// task!(validate_title).set_on_start();
 ///
@@ -582,8 +619,19 @@ impl<'a> Header<'a> {
 ///             let headers = &response.headers().clone();
 ///             match response.text().await {
 ///                 Ok(html) => {
+///                     // First confirm that the provided HTML has a header.
+///                     let header = get_html_header(&html).map_or_else(|| "".to_string(), |h| h.to_string());
+///                     if header.is_empty() {
+///                         return user.set_failure(
+///                             &format!("{}: no html header found", goose.request.raw.url),
+///                             &mut goose.request,
+///                             Some(&headers),
+///                             Some(&html),
+///                         );
+///                     }
+///                     // Finally confirm that the HTML header includes the expected title.
 ///                     let title = "example";
-///                     if !valid_title(&html, title) {
+///                     if !valid_title(&header, title) {
 ///                         return user.set_failure(
 ///                             &format!("{}: title not found: {}", goose.request.raw.url, title),
 ///                             &mut goose.request,
