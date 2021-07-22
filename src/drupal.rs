@@ -518,16 +518,24 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
             headers.as_ref(),
             Some(&html),
         )?;
-        // Return an empty string as log-in failed. Enable the debug log to
-        // determine why.
+        // Return the html that was loaded, even though log-in failed. Enable
+        // the debug_log to determine why log-in failed.
         return Ok(html);
     }
+
+    // By default expect the username to be in the title.
+    let default_title = username;
+    let title = match login {
+        // Allow a different expected title than the Drupal default.
+        Some(l) => l.title.unwrap_or(&default_title),
+        None => &default_title,
+    };
 
     // Check the title to verify that the user is actually logged in.
     let logged_in_page = crate::validate_and_load_static_assets(
         user,
         logged_in_user,
-        &crate::Validate::title(&username),
+        &crate::Validate::title(title),
     )
     .await?;
 
