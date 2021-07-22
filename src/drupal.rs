@@ -277,8 +277,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::password("bar");
-    /// login.unwrap().update_username("foo");
+    /// let login =
+    ///     Login::password("bar")
+    ///         .unwrap()
+    ///         .update_username("foo");
     /// ```
     pub fn update_username(&mut self, username: &'a str) {
         self.username = Some(username);
@@ -295,8 +297,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::username("foo");
-    /// login.unwrap().update_password("bar");
+    /// let login =
+    ///     Login::username("foo")
+    ///         .unwrap()
+    ///         .update_password("bar");
     /// ```
     pub fn update_password(&mut self, password: &'a str) {
         self.password = Some(password);
@@ -313,8 +317,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::username_password("foo", "bar");
-    /// login.unwrap().update_username_password("changed-username", "changed-password");
+    /// let login =
+    ///     Login::username_password("foo", "bar")
+    ///         .unwrap()
+    ///         .update_username_password("changed-username", "changed-password");
     /// ```
     pub fn update_username_password(&mut self, username: &'a str, password: &'a str) {
         self.username = Some(username);
@@ -332,8 +338,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::username("foo");
-    /// login.unwrap().update_url("/custom/user/login");
+    /// let login =
+    ///     Login::username("foo")
+    ///         .unwrap()
+    ///         .update_url("/custom/user/login");
     /// ```
     pub fn update_url(&mut self, url: &'a str) {
         self.url = Some(url);
@@ -350,8 +358,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::username("foo");
-    /// login.unwrap().update_title("Custom Title");
+    /// let login =
+    ///     Login::username("foo")
+    ///         .unwrap()
+    ///         .update_title("Custom Title");
     /// ```
     pub fn update_title(&mut self, title: &'a str) {
         self.title = Some(title);
@@ -369,8 +379,10 @@ impl<'a> Login<'a> {
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let mut login = Login::username_password("foo", "password");
-    /// login.unwrap().update_url_title("/custom/user/login", "Custom Title");
+    /// let login =
+    ///     Login::username_password("foo", "password")
+    ///         .unwrap()
+    ///         .update_url_title("/custom/user/login", "Custom Title");
     /// ```
     pub fn update_url_title(&mut self, url: &'a str, title: &'a str) {
         self.url = Some(url);
