@@ -554,17 +554,104 @@ impl<'a> Header<'a> {
     }
 }
 
-/// Returns a [`bool`] indicating whether or not the title (case insensitive) is
-/// found within the html.
+/// Use a regular expression to get the HTML header from the web page.
 ///
-/// A valid title starts with `<title>foo` where `foo` is the expected title text.
-/// Returns [`true`] if the expected title is found, otherwise returns [`false`].
+/// # Example
+/// ```rust
+/// use goose_eggs::get_html_header;
 ///
-/// This function is case insensitive, if a title of "foo" is specified it will
-/// match "foo" or "Foo" or "FOO".
+/// // For this example we grab just a subset of a web page, enough to demonstrate. Normally
+/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// let html = r#"
+/// <html lang="en" dir="ltr">
+///   <head>
+///     <meta charset="utf-8" />
+///     <link rel="canonical" href="https://example.com/" />
+///     <link rel="shortlink" href="https://example.com/" />
+///     <meta name="Generator" content="Drupal 9 (https://www.drupal.org)" />
+///     <meta name="MobileOptimized" content="width" />
+///     <meta name="HandheldFriendly" content="true" />
+///     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+///     <title>Example Website</title>
+///   </head>
+/// <body>
+///   This is the web page body.
+/// </body>
+/// </html>
+/// "#;
+///
+/// let html_header = get_html_header(html);
+/// assert!(!html_header.is_none());
+/// ```
+pub fn get_html_header(html: &str) -> Option<String> {
+    let re = Regex::new(r#"<head>(.*?)</head>"#).unwrap();
+    // Strip carriage returns to simplify regex.
+    let line = html.replace("\n", "");
+    // Return the entire html header, a subset of the received html.
+    re.captures(&line).map(|value| value[0].to_string())
+}
+
+/// Use a regular expression to get the web page title.
+///
+/// # Example
+/// ```rust
+/// use goose_eggs::{get_html_header, get_title};
+///
+/// // For this example we grab just a subset of a web page, enough to demonstrate. Normally
+/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// let html = r#"
+/// <html lang="en" dir="ltr">
+///   <head>
+///     <meta charset="utf-8" />
+///     <link rel="canonical" href="https://example.com/" />
+///     <link rel="shortlink" href="https://example.com/" />
+///     <meta name="Generator" content="Drupal 9 (https://www.drupal.org)" />
+///     <meta name="MobileOptimized" content="width" />
+///     <meta name="HandheldFriendly" content="true" />
+///     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+///     <title>Example Website</title>
+///   </head>
+/// <body>
+///   This is the web page body.
+/// </body>
+/// </html>
+/// "#;
+///
+/// // Start by extracting the HTML header from the HTML.
+/// let html_header = get_html_header(html).map_or_else(|| "".to_string(), |h| h.to_string());
+/// // Next extract the title from the HTML header.
+/// let title = get_title(&html_header).map_or_else(|| "".to_string(), |t| t.to_string());
+/// assert_eq!(title, "Example Website");
+/// ```
+pub fn get_title(html: &str) -> Option<String> {
+    let re = Regex::new(r#"<title>(.*?)</title>"#).unwrap();
+    // Strip carriage returns to simplify regex.
+    let line = html.replace("\n", "");
+    // Return the entire title, a subset of the received html.
+    re.captures(&line).map(|value| value[1].to_string())
+}
+
+/// Returns a [`bool`] indicating whether or not the title (case insensitive) on the
+/// webpage contains the provided string.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
 /// [`validate_and_load_static_assets`] which in turn invokes this function.
+///
+/// A valid title is found between `<title></title>` tags inside `<head></head>` tags.
+/// For example, if the title is as follows:
+/// ```html
+/// <head>
+///   <title>this is the title</title>
+/// </head>
+/// ```
+///
+/// Then a call to `valid_title("the title")` will return [`true`], whereas a call to
+/// `valid_title("foo")` will return [`false`].
+///
+/// This function is case insensitive, so in the above example calling
+/// `valid_title("The Title")` and `valid_title("THE TITLE")` will both also return
+/// [`true`]. The function only tests if the title includes the specified text, the
+/// title can also include other text and will still be considered valid.
 ///
 /// # Example
 /// ```rust
@@ -582,6 +669,7 @@ impl<'a> Header<'a> {
 ///             let headers = &response.headers().clone();
 ///             match response.text().await {
 ///                 Ok(html) => {
+///                     // Confirm that the HTML header includes the expected title.
 ///                     let title = "example";
 ///                     if !valid_title(&html, title) {
 ///                         return user.set_failure(
@@ -616,8 +704,14 @@ impl<'a> Header<'a> {
 /// }
 /// ```
 pub fn valid_title(html: &str, title: &str) -> bool {
-    html.to_ascii_lowercase()
-        .contains(&("<title>".to_string() + title.to_ascii_lowercase().as_str()))
+    // Extract the HTML header from the provided html.
+    let html_header = get_html_header(html).map_or_else(|| "".to_string(), |h| h);
+    // Next extract the title from the HTML header.
+    let html_title = get_title(&html_header).map_or_else(|| "".to_string(), |t| t);
+    // Finally, confirm that the title contains the expected text.
+    html_title
+        .to_ascii_lowercase()
+        .contains(title.to_ascii_lowercase().as_str())
 }
 
 /// Returns a [`bool`] indicating whether or not an arbitrary str (case sensitive) is found

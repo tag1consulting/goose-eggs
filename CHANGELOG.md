@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7-dev
+ - introduce `get_html_header()` helper, and invoke from `valid_title()`
+ - introduce `get_title()` helper, and invoke from `valid_title()`
+ - update `valid_title()` to verify that the title contains the specified string (whereas before it tested that it started with the specified string)
+
 ## 0.1.6 July 20, 2021
  - return loaded html as `String` from `validate_and_load_static_assets()`
  - validate response in the order information comes available (status code, headers, title and texts)
