@@ -54,7 +54,7 @@ pub fn get_form(html: &str, name: &str) -> Option<String> {
 /// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
 /// let html = r#"
 /// <html lang="en" dir="ltr" class="light-mode">
-///   <form class="user-login-form" data-drupal-selector="user-login-form" action="/user/login" method="post" id="user-login-form" accept-charset="UTF-8">
+///   <form class="user-login-form" data-drupal-selector="user-login-form" action=`/user/login` method="post" id="user-login-form" accept-charset="UTF-8">
 ///     <div class="js-form-item form-item">
 ///       <label for="edit-name" class="js-form-required form-required form-item__label">Username</label>
 ///       <input autocorrect="none" autocapitalize="none" spellcheck="false" autofocus="autofocus" data-drupal-selector="edit-name" aria-describedby="edit-name--description" type="text" id="edit-name" name="name" value="" size="60" maxlength="60" class="form-text required form-item__textfield" required="required" aria-required="true" />
@@ -81,24 +81,22 @@ pub fn get_form_value(form_html: &str, name: &str) -> Option<String> {
 
 /// Set one or more defaults when logging in through the standard drupal user-login-form.
 ///
-/// This object can be passed to [`log_in`] to set a custom default username and/or
-/// password and/or log in url.
+/// This object is passed to [`log_in`] to set a custom default username and/or password
+/// and/or log in url and/or the required title after login.
 ///
 /// # Example
 /// ```rust
 /// use goose_eggs::drupal::Login;
 ///
 /// fn examples() {
-///     // Manually build a Login strucuture with custom username and password.
-///     let _login = Login::new(
-///         Some("foo"), Some("bar"), None,
-///     );
+///     // Manually build a Login structure with custom username and password.
+///     let _login = Login::new(Some("foo"), Some("bar"), None, None);
 ///
 ///     // Call `Login::username_password` to build the same.
-///     let _login = Login::username_password("foo", "bar");
+///     let mut login = Login::username_password("foo", "bar");
 ///
-///     // Also set a custom log-in url.
-///     let _login = Login::username_password_url("foo", "bar", "/custom/login/path");
+///     // Now also change the url and expected title.
+///     login.unwrap().update_url_title("/custom/user/login", "Custom title");
 /// }
 pub struct Login<'a> {
     // Optionally set a default username.
@@ -107,9 +105,15 @@ pub struct Login<'a> {
     password: Option<&'a str>,
     // Optionally set a custom default path (otherwise defaults to `/user/login`).
     url: Option<&'a str>,
+    // Optionally set a custom title to validate.
+    title: Option<&'a str>,
 }
 impl<'a> Login<'a> {
-    /// Create a new Login object, specifying `username`, `password`, and `url`.
+    /// Create a new Login object, specifying `username`, `password`, `url`, and expected
+    /// `title`.
+    ///
+    /// It's generally preferred to use a helper such as [`Login::username_password`] or
+    /// [`Login::url_title`] instead of invoking this function directly.
     ///
     /// # Example
     /// ```rust
@@ -122,25 +126,30 @@ impl<'a> Login<'a> {
     ///     Some("bar"),
     ///     // Set a custom log-in path of "/custom/login/path".
     ///     Some("/custom/login/path"),
+    ///     // Set a custom title to validate after log-in.
+    ///     Some("Custom Title"),
     /// );
     /// ```
     pub fn new(
         username: Option<&'a str>,
         password: Option<&'a str>,
         url: Option<&'a str>,
+        title: Option<&'a str>,
     ) -> Option<Login<'a>> {
         Some(Login {
             username,
             password,
             url,
+            title,
         })
     }
 
-    /// Create a Login object with a default username of "foo".
+    /// Create a Login object setting a custom default username.
     ///
-    /// The password will remain the default of "password". The login url will remain the
-    /// default of "/user/login". The defaults can still be overridden by the USER and PASS
-    /// environment variables.
+    /// The password will remain the default of `password`. The login url will remain the
+    /// default of `/user/login`. After login the title will be validated to confirm it
+    /// include's the username. The username and password defaults can still be overridden
+    /// by the `GOOSE_USER` and `GOOSE_PASS` environment variables.
     ///
     /// # Example
     /// ```rust
@@ -149,14 +158,15 @@ impl<'a> Login<'a> {
     /// let _login = Login::username("foo");
     /// ```
     pub fn username(username: &'a str) -> Option<Login<'a>> {
-        Login::new(Some(username), None, None)
+        Login::new(Some(username), None, None, None)
     }
 
-    /// Create a Login object with a default password of "bar".
+    /// Create a Login object setting a custom default password.
     ///
-    /// The username will remain the default of "username". The login url will remain the
-    /// default of "/user/login". The defaults can still be overridden by the USER and PASS
-    /// environment variables.
+    /// The username will remain the default of `username`. The login url will remain the
+    /// default of `/user/login`. After login the title will be validated to confirm it
+    /// include's the username. The username and password defaults can still be overridden
+    /// by the `GOOSE_USER` and `GOOSE_PASS` environment variables.
     ///
     /// # Example
     /// ```rust
@@ -165,14 +175,14 @@ impl<'a> Login<'a> {
     /// let _login = Login::password("bar");
     /// ```
     pub fn password(password: &'a str) -> Option<Login<'a>> {
-        Login::new(None, Some(password), None)
+        Login::new(None, Some(password), None, None)
     }
 
-    /// Create a Login object with a default username of "foo" and a default password of
-    /// "bar".
+    /// Create a Login object setting a custom default username and password.
     ///
-    /// The login url will remain the default of "/user/login".  The defaults can still be
-    /// overridden by the USER and PASS environment variables.
+    /// The login url will remain the default of `/user/login`. After login the title will
+    /// be validated to confirm it include's the username. The username and password defaults
+    /// can still be overridden by the `GOOSE_USER` and `GOOSE_PASS` environment variables.
     ///
     /// # Example
     /// ```rust
@@ -181,14 +191,22 @@ impl<'a> Login<'a> {
     /// let _login = Login::username_password("foo", "bar");
     /// ```
     pub fn username_password(username: &'a str, password: &'a str) -> Option<Login<'a>> {
-        Login::new(Some(username), Some(password), None)
+        Login::new(Some(username), Some(password), None, None)
     }
 
-    /// Create a Login object with a default url of "/custom/user/login".
+    /// Create a Login object with a custom default login url.
     ///
-    /// The username will remain the default of "username", the password will remain the
-    /// default of "password". The defaults can still be overridden by the USER and PASS
-    /// environment variables.
+    /// The username will remain the default of `username`. The password will remain the
+    /// default of `password`. After login the title will be validated to confirm it
+    /// include's the username. The username and password defaults can still be
+    /// overridden by the `GOOSE_USER` and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let _login = Login::password("bar");
+    /// ```
     ///
     /// # Example
     /// ```rust
@@ -197,74 +215,182 @@ impl<'a> Login<'a> {
     /// let _login = Login::url("/custom/user/login");
     /// ```
     pub fn url(url: &'a str) -> Option<Login<'a>> {
-        Login::new(None, None, Some(url))
+        Login::new(None, None, Some(url), None)
     }
 
-    /// Create a Login object with a default username of "foo" and a default url of
-    /// "/custom/user/login".
+    /// Create a Login object with a custom expected title after login.
     ///
-    /// The password will remain the default of "password". The defaults can still be
-    /// overridden by the USER and PASS environment variables.
+    /// The username will remain the default of `username`. The password will remain the
+    /// default of `password`. The login url will remain the default of `/user/login`.
+    /// The username and password defaults can still be overridden by the `GOOSE_USER` and
+    /// `GOOSE_PASS` environment variables.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let _login = Login::username_url("foo", "/custom/user/login");
+    /// let _login = Login::password("bar");
     /// ```
-    pub fn username_url(username: &'a str, url: &'a str) -> Option<Login<'a>> {
-        Login::new(Some(username), None, Some(url))
-    }
-
-    /// Create a Login object with a default password of "bar" and a default url of
-    /// "/custom/user/login".
-    ///
-    /// The username will remain the default of "username". The defaults can still
-    /// be overridden by the USER and PASS environment variables.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let _login = Login::password_url("bar", "/custom/user/login");
+    /// let _login = Login::title("Custom title");
     /// ```
-    pub fn password_url(password: &'a str, url: &'a str) -> Option<Login<'a>> {
-        Login::new(None, Some(password), Some(url))
+    pub fn title(title: &'a str) -> Option<Login<'a>> {
+        Login::new(None, None, None, Some(title))
     }
 
-    /// Create a Login object with a default username of "foo", a default password
-    /// of "bar" and a default url of "/custom/user/login".
+    /// Create a Login object with custom default url and a custom expected title after
+    /// login.
     ///
-    /// The defaults can still be overridden by the USER and PASS environment
-    /// variables.
+    /// The username will remain the default of `username`. The password will remain the
+    /// default of `password`. The username and password defaults can still be overridden
+    /// by the `GOOSE_USER` and `GOOSE_PASS` environment variables.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::Login;
     ///
-    /// let _login = Login::username_password_url("foo", "bar", "/custom/user/login");
+    /// let _login = Login::password("bar");
     /// ```
-    pub fn username_password_url(
-        username: &'a str,
-        password: &'a str,
-        url: &'a str,
-    ) -> Option<Login<'a>> {
-        Login::new(Some(username), Some(password), Some(url))
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let _login = Login::url_title("/custom/login/path", "Custom title");
+    /// ```
+    pub fn url_title(url: &'a str, title: &'a str) -> Option<Login<'a>> {
+        Login::new(None, None, Some(url), Some(title))
+    }
+
+    /// Update a Login object, changing the default username.
+    ///
+    /// The password, url and title fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::password("bar");
+    /// login.unwrap().update_username("foo");
+    /// ```
+    pub fn update_username(&mut self, username: &'a str) {
+        self.username = Some(username);
+    }
+
+    /// Update a Login object, changing the default password.
+    ///
+    /// The username, url and title fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::username("foo");
+    /// login.unwrap().update_password("bar");
+    /// ```
+    pub fn update_password(&mut self, password: &'a str) {
+        self.password = Some(password);
+    }
+
+    /// Update a Login object, changing the default username and password.
+    ///
+    /// The url and title fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::username_password("foo", "bar");
+    /// login.unwrap().update_username_password("changed-username", "changed-password");
+    /// ```
+    pub fn update_username_password(&mut self, username: &'a str, password: &'a str) {
+        self.username = Some(username);
+        self.password = Some(password);
+    }
+
+    /// Update a Login object, changing the default login url.
+    ///
+    /// The username, password and title fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::username("foo");
+    /// login.unwrap().update_url("/custom/user/login");
+    /// ```
+    pub fn update_url(&mut self, url: &'a str) {
+        self.url = Some(url);
+    }
+
+    /// Update a Login object, changing the expected title after login.
+    ///
+    /// The username and password fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::username("foo");
+    /// login.unwrap().update_title("Custom Title");
+    /// ```
+    pub fn update_title(&mut self, title: &'a str) {
+        self.title = Some(title);
+    }
+
+    /// Update a Login object, changing the default login url and the expected title
+    /// after login.
+    ///
+    /// The username and password fields will not be changed.
+    ///
+    /// The username and password defaults can still be overridden by the `GOOSE_USER`
+    /// and `GOOSE_PASS` environment variables.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let mut login = Login::username_password("foo", "password");
+    /// login.unwrap().update_url_title("/custom/user/login", "Custom Title");
+    /// ```
+    pub fn update_url_title(&mut self, url: &'a str, title: &'a str) {
+        self.url = Some(url);
+        self.title = Some(title);
     }
 }
 
 /// Log into a Drupal website.
 ///
 /// The reference to a GooseUser object is from a Goose task function. The optional
-/// pointer to a [`Login`] object can be created to override the username, password, or
-/// login url.
+/// pointer to a [`Login`] object can be created to override the username, password,
+/// login url, or expected page title after log in.
 ///
 /// If no default username is set in the [`Login`] object, the function will default to
-/// a username of `username` which can be overridden by the `USER` environment variable.
+/// a username of `username` which can be overridden by the `GOOSE_USER` environment variable.
 /// If no default password is set in the [`Login`] object, the function will default to
-/// a password of `password` which can be overridden by the `PASS` environment variable.
+/// a password of `password` which can be overridden by the `GOOSE_PASS` environment variable.
 /// If no default url is set in the [`Login`] object, the function will default to a url
-/// of `/user/login`.
+/// of `/user/login`. If no default title is set in the [`Login`] object, the function
+/// will verify that the title includes the username after login.
 ///
 /// # Example
 /// ```rust
@@ -274,6 +400,7 @@ impl<'a> Login<'a> {
 /// task!(login).set_on_start();
 ///
 /// async fn login(user: &GooseUser) -> GooseTaskResult {
+///     // By default log in with `foo`:`bar`.
 ///     let _html = log_in(&user, Login::username_password("foo", "bar").as_ref()).await?;
 ///
 ///     Ok(())
@@ -281,17 +408,17 @@ impl<'a> Login<'a> {
 ///
 /// ```
 pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<String, GooseTaskError> {
-    // Use the `USER` environment variable if it's set, otherwise use the custom username
+    // Use the `GOOSE_USER` environment variable if it's set, otherwise use the custom username
     // passed in when calling this function, otherwise use `username`.
     let default_password = "username";
-    let username = env::var("USER").unwrap_or_else(|_| match login {
+    let username = env::var("GOOSE_USER").unwrap_or_else(|_| match login {
         Some(l) => l.username.unwrap_or(default_password).to_string(),
         None => default_password.to_string(),
     });
-    // Use the `PASS` environment variable if it's set, otherwise use the custom password
+    // Use the `GOOSE_PASS` environment variable if it's set, otherwise use the custom password
     // passed in when calling this function, otherwise use `password`.
     let default_password = "password";
-    let password = env::var("PASS").unwrap_or_else(|_| match login {
+    let password = env::var("GOOSE_PASS").unwrap_or_else(|_| match login {
         Some(l) => l.password.unwrap_or(default_password).to_string(),
         None => default_password.to_string(),
     });
@@ -372,7 +499,7 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
         };
         user.set_failure(
             &format!(
-                "{}: login failed (check USER and PASS)",
+                "{}: login failed (check `GOOSE_USER` and `GOOSE_PASS`)",
                 logged_in_user.request.final_url
             ),
             &mut logged_in_user.request,

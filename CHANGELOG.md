@@ -4,6 +4,8 @@
  - introduce `get_html_header()` helper, and invoke from `valid_title()`
  - introduce `get_title()` helper, and invoke from `valid_title()`
  - update `valid_title()` to verify that the title contains the specified string (whereas before it tested that it started with the specified string)
+ - change `USER` to `GOOSE_USER` and `PASS` to `GOOSE_PASS` to avoid conflicts with shell defaults
+ - allow override of expected title after user login; rework how `Login` object is built, allowing it to be changed
 
 ## 0.1.6 July 20, 2021
  - return loaded html as `String` from `validate_and_load_static_assets()`
