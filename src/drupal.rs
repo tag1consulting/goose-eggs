@@ -282,8 +282,9 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_username("foo");
     /// ```
-    pub fn update_username(&mut self, username: &'a str) {
+    pub fn update_username(mut self, username: &'a str) -> Self {
         self.username = Some(username);
+        self
     }
 
     /// Update a Login object, changing the default password.
@@ -302,8 +303,9 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_password("bar");
     /// ```
-    pub fn update_password(&mut self, password: &'a str) {
+    pub fn update_password(mut self, password: &'a str) -> Self {
         self.password = Some(password);
+        self
     }
 
     /// Update a Login object, changing the default username and password.
@@ -322,9 +324,10 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_username_password("changed-username", "changed-password");
     /// ```
-    pub fn update_username_password(&mut self, username: &'a str, password: &'a str) {
+    pub fn update_username_password(mut self, username: &'a str, password: &'a str) -> Self {
         self.username = Some(username);
         self.password = Some(password);
+        self
     }
 
     /// Update a Login object, changing the default login url.
@@ -343,8 +346,9 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_url("/custom/user/login");
     /// ```
-    pub fn update_url(&mut self, url: &'a str) {
+    pub fn update_url(mut self, url: &'a str) -> Self {
         self.url = Some(url);
+        self
     }
 
     /// Update a Login object, changing the expected title after login.
@@ -363,8 +367,9 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_title("Custom Title");
     /// ```
-    pub fn update_title(&mut self, title: &'a str) {
+    pub fn update_title(mut self, title: &'a str) -> Self {
         self.title = Some(title);
+        self
     }
 
     /// Update a Login object, changing the default login url and the expected title
@@ -384,9 +389,10 @@ impl<'a> Login<'a> {
     ///         .unwrap()
     ///         .update_url_title("/custom/user/login", "Custom Title");
     /// ```
-    pub fn update_url_title(&mut self, url: &'a str, title: &'a str) {
+    pub fn update_url_title(mut self, url: &'a str, title: &'a str) -> Self {
         self.url = Some(url);
         self.title = Some(title);
+        self
     }
 }
 
