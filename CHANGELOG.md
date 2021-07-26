@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8-dev
+ - validate `get_form` and `get_form_value` succeed or throw warn! level log
+ - lazy match in `get_form` regex to avoid matching multiple forms
+
 ## 0.1.7 July 22, 2021
  - introduce `get_html_header()` helper, and invoke from `valid_title()`
  - introduce `get_title()` helper, and invoke from `valid_title()`

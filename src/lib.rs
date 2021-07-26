@@ -1042,7 +1042,7 @@ pub async fn validate_and_load_static_assets<'a>(
                         Some(&html),
                     )?;
                     // Exit as soon as validation fails, to avoid cascades of
-                    // errors whe na page fails to load.
+                    // errors when a page fails to load.
                     return Ok(html);
                 }
                 if let Some(h) = header.value {
@@ -1059,7 +1059,7 @@ pub async fn validate_and_load_static_assets<'a>(
                             Some(&html),
                         )?;
                         // Exit as soon as validation fails, to avoid cascades of
-                        // errors whe na page fails to load.
+                        // errors when a page fails to load.
                         return Ok(html);
                     }
                 }
@@ -1078,7 +1078,7 @@ pub async fn validate_and_load_static_assets<'a>(
                                 Some(&html),
                             )?;
                             // Exit as soon as validation fails, to avoid cascades of
-                            // errors whe na page fails to load.
+                            // errors when a page fails to load.
                             return Ok(html);
                         }
                     }
@@ -1095,7 +1095,7 @@ pub async fn validate_and_load_static_assets<'a>(
                                 Some(&html),
                             )?;
                             // Exit as soon as validation fails, to avoid cascades of
-                            // errors whe na page fails to load.
+                            // errors when a page fails to load.
                             return Ok(html);
                         }
                     }
