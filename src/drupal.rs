@@ -1,6 +1,7 @@
 //! Functionality that's specific to Drupal.
 
 use goose::prelude::*;
+use log::warn;
 use regex::Regex;
 use std::env;
 
@@ -30,18 +31,25 @@ use std::env;
 /// "#;
 ///
 /// let form = get_form(html, "user-login-form");
-/// assert!(!form.is_none());
+/// assert!(!form.is_empty());
 /// ```
-pub fn get_form(html: &str, name: &str) -> Option<String> {
+pub fn get_form(html: &str, name: &str) -> String {
     let re = Regex::new(&format!(
-        r#"<form.*data-drupal-selector="{}".*>(.*?)</form>"#,
+        // Lazy match to avoid matching multiple forms.
+        r#"<form.*?data-drupal-selector="{}".*?>(.*?)</form>"#,
         name
     ))
     .unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace("\n", "");
     // Return the entire form, a subset of the received html.
-    re.captures(&line).map(|value| value[0].to_string())
+    match re.captures(&line) {
+        Some(capture) => capture[1].to_string(),
+        None => {
+            warn!("form {} not found", name);
+            "".to_string()
+        }
+    }
 }
 
 /// Use regular expression to get the value of a named form element.
@@ -70,13 +78,19 @@ pub fn get_form(html: &str, name: &str) -> Option<String> {
 /// "#;
 ///
 /// let form = get_form(html, "user-login-form");
-/// let form_build_id = get_form_value(&form.unwrap(), "form_build_id");
-/// assert_eq!(&form_build_id.unwrap(), "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
+/// let form_build_id = get_form_value(&form, "form_build_id");
+/// assert_eq!(&form_build_id, "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
 /// ```
-pub fn get_form_value(form_html: &str, name: &str) -> Option<String> {
+pub fn get_form_value(form_html: &str, name: &str) -> String {
     let re = Regex::new(&format!(r#"name="{}" value=['"](.*?)['"]"#, name)).unwrap();
     // Return a specific form value.
-    re.captures(&form_html).map(|value| value[1].to_string())
+    match re.captures(&form_html) {
+        Some(v) => v[1].to_string(),
+        None => {
+            warn!("form element {} not found", name);
+            "none".to_string()
+        }
+    }
 }
 
 /// Set one or more defaults when logging in through the standard drupal user-login-form.
@@ -463,36 +477,32 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
     .await?;
 
     // A web page can have multiple forms, so first get the correct form.
-    let login_form = match get_form(&login_page, "user-login-form") {
-        Some(form) => form,
-        None => {
-            user.set_failure(
-                &format!("{}: no user-login-form on page", login_url),
-                &mut login_request,
-                None,
-                Some(&login_page),
-            )?;
-            // Return an empty string as log-in failed. Enable the debug log to
-            // determine why.
-            return Ok("".to_string());
-        }
-    };
+    let login_form = get_form(&login_page, "user-login-form");
+    if login_form.is_empty() {
+        user.set_failure(
+            &format!("{}: no user-login-form on page", login_url),
+            &mut login_request,
+            None,
+            Some(&login_page),
+        )?;
+        // Return an empty string as log-in failed. Enable the debug log to
+        // determine why.
+        return Ok("".to_string());
+    }
 
     // Now extract the form_build_id in order to POST to the log in form.
-    let form_build_id = match get_form_value(&login_form, "form_build_id") {
-        Some(build_id) => build_id,
-        None => {
-            user.set_failure(
-                &format!("{}: no form_build_id on page", login_url),
-                &mut login_request,
-                None,
-                Some(&login_form),
-            )?;
-            // Return an empty string as log-in failed. Enable the debug log to
-            // determine why.
-            return Ok("".to_string());
-        }
-    };
+    let form_build_id = get_form_value(&login_form, "form_build_id");
+    if form_build_id.is_empty() {
+        user.set_failure(
+            &format!("{}: no form_build_id on page", login_url),
+            &mut login_request,
+            None,
+            Some(&login_form),
+        )?;
+        // Return an empty string as log-in failed. Enable the debug log to
+        // determine why.
+        return Ok("".to_string());
+    }
 
     // Build log in form with username and password from environment.
     let params = [
