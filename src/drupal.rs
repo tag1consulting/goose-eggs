@@ -3,6 +3,7 @@
 use goose::prelude::*;
 use log::warn;
 use regex::Regex;
+use std::collections::HashMap;
 use std::env;
 
 /// Use a regular expression to get the specific form identified by data-drupal-selector.
@@ -70,6 +71,7 @@ pub fn get_form(html: &str, name: &str) -> String {
 ///         Your username.
 ///       </div>
 ///       <input autocomplete="off" data-drupal-selector="form-bhzme2hetuevnwqr5y4pyp8jcau2dfbherwoscwnajm" type="hidden" name="form_build_id" value="form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM" class="form-item__textfield" />
+///       <input data-drupal-selector="edit-form-token" type="hidden" name="form_token" value="5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8" />
 ///       <input data-drupal-selector="edit-user-login-form" type="hidden" name="form_id" value="user_login_form" class="form-item__textfield" />
 ///       <div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><input data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" value="Log in" class="button js-form-submit form-submit form-item__textfield" />
 ///     </div>
@@ -91,6 +93,52 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
             "none".to_string()
         }
     }
+}
+
+/// Loop through an array of named form elements returning their values in a HashMap.
+///
+/// # Example
+/// ```rust
+/// use goose_eggs::drupal::{get_form, get_form_values};
+///
+/// // For this example we grab just a subset of a real Drupal form, enough to demonstrate. Normally
+/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// let html = r#"
+/// <html lang="en" dir="ltr" class="light-mode">
+///   <form class="user-login-form" data-drupal-selector="user-login-form" action=`/user/login` method="post" id="user-login-form" accept-charset="UTF-8">
+///     <div class="js-form-item form-item">
+///       <label for="edit-name" class="js-form-required form-required form-item__label">Username</label>
+///       <input autocorrect="none" autocapitalize="none" spellcheck="false" autofocus="autofocus" data-drupal-selector="edit-name" aria-describedby="edit-name--description" type="text" id="edit-name" name="name" value="" size="60" maxlength="60" class="form-text required form-item__textfield" required="required" aria-required="true" />
+///       <div id="edit-name--description" class="form-item__description">
+///         Your username.
+///       </div>
+///       <input autocomplete="off" data-drupal-selector="form-bhzme2hetuevnwqr5y4pyp8jcau2dfbherwoscwnajm" type="hidden" name="form_build_id" value="form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM" class="form-item__textfield" />
+///       <input data-drupal-selector="edit-form-token" type="hidden" name="form_token" value="5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8" />
+///       <input data-drupal-selector="edit-user-login-form" type="hidden" name="form_id" value="user_login_form" class="form-item__textfield" />
+///       <div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><input data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" value="Log in" class="button js-form-submit form-submit form-item__textfield" />
+///     </div>
+///   </form>
+/// </html>
+/// "#;
+///
+/// let form = get_form(html, "user-login-form");
+/// // Specify the three form elements we're looking for.
+/// let form_values = get_form_values(&form, &["form_token", "form_build_id", "form_id"]);
+/// // Confirm that all three form values were correctly identified.
+/// assert_eq!(form_values.get("form_token").unwrap().as_str(), "5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8");
+/// assert_eq!(form_values.get("form_build_id").unwrap().as_str(), "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
+/// assert_eq!(form_values.get("form_id").unwrap().as_str(), "user_login_form");
+/// ```
+pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str, String> {
+    let mut form_elements = HashMap::new();
+
+    // Extract the form elements needed to submit a form.
+    for &element in elements {
+        let value = get_form_value(&form, element);
+        form_elements.insert(element, value);
+    }
+
+    form_elements
 }
 
 /// Set one or more defaults when logging in through the standard drupal user-login-form.

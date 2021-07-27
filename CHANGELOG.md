@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9-dev
+ - introduce drupal-specific `get_form_values` to efficiently load multiple form values
+
 ## 0.1.8 July 26, 2021
  - validate `get_form` and `get_form_value` succeed or throw warn! level log
  - lazy match in `get_form` regex to avoid matching multiple forms
