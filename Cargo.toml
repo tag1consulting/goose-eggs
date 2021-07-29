@@ -14,5 +14,6 @@ license = "Apache-2.0"
 [dependencies]
 goose = "0.13"
 log = "0.4"
+rand = "0.8"
 regex = "1.5"
 reqwest = "0.11"

@@ -6,6 +6,7 @@ use regex::Regex;
 use reqwest::header::HeaderMap;
 
 pub mod drupal;
+pub mod text;
 
 /// Define one or more items to be validated in a web page response.
 ///
