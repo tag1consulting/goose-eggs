@@ -1,9 +1,9 @@
 [package]
 name = "goose-eggs"
-version = "0.1.9"
+version = "0.1.10-dev"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
-description = "Useful functions and structs for writing Goose load tests."
+description = "Helpful in writing Goose load tests."
 homepage = "https://goose.rs"
 documentation = "https://docs.rs/goose-eggs"
 repository = "https://github.com/tag1consulting/goose-eggs"
