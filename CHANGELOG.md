@@ -5,6 +5,8 @@
  - allow validation of whether or not request redirected; rework how `Validate` object is built, allowing it to be changed
  - introduce mod `text` offering two helper functions, `random_word` and `random_words`
  - introduce drupal-specific `get_bigpipe_form` to extract a form that has been encoded to replace a BigPipe placeholder
+ - introduce drupal-specific `get_encoded_form_value` to extract a value from an encoded form returned by an ajax callback or a BigPipe placeholder
+ - introduce drupal-specific `get_updated_build_id` to update the `build_id` which can happen after certain form actions, such as uploading a file
 
 ## 0.1.8 July 26, 2021
  - validate `get_form` and `get_form_value` succeed or throw warn! level log
