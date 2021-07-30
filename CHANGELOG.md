@@ -4,6 +4,7 @@
  - introduce drupal-specific `get_form_values` to efficiently load multiple form values
  - allow validation of whether or not request redirected; rework how `Validate` object is built, allowing it to be changed
  - introduce mod `text` offering two helper functions, `random_word` and `random_words`
+ - introduce drupal-specific `get_bigpipe_form` to extract a form that has been encoded to replace a BigPipe placeholder
 
 ## 0.1.8 July 26, 2021
  - validate `get_form` and `get_form_value` succeed or throw warn! level log
