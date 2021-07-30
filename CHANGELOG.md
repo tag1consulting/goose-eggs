@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.9-dev
+## 0.1.9 July 30, 2021
  - introduce drupal-specific `get_form_values` to efficiently load multiple form values
  - allow validation of whether or not request redirected; rework how `Validate` object is built, allowing it to be changed
  - introduce mod `text` offering two helper functions, `random_word` and `random_words`
