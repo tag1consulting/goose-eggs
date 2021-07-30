@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.10-dev
+ - escape form element name so regex compiles if name includes characters such as `[]`
+
 ## 0.1.9 July 30, 2021
  - introduce drupal-specific `get_form_values` to efficiently load multiple form values
  - allow validation of whether or not request redirected; rework how `Validate` object is built, allowing it to be changed

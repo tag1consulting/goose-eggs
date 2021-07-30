@@ -86,7 +86,11 @@ pub fn get_form(html: &str, name: &str) -> String {
 /// assert_eq!(&form_build_id, "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
 /// ```
 pub fn get_form_value(form_html: &str, name: &str) -> String {
-    let re = Regex::new(&format!(r#"name="{}" value=['"](.*?)['"]"#, name)).unwrap();
+    let re = Regex::new(&format!(
+        r#"name="{}" value=['"](.*?)['"]"#,
+        regex::escape(name)
+    ))
+    .unwrap();
     // Return a specific form value.
     match re.captures(&form_html) {
         Some(v) => v[1].to_string(),
