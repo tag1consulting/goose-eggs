@@ -181,6 +181,37 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
     get_form_value(&decoded_form, name)
 }
 
+/// Extract an updated build_id from a form.
+///
+/// After certain form actions, such as uploading a file, Drupal can change the `build_id`. Requires the original
+/// `build_id`.
+///
+/// ```rust
+/// use goose_eggs::drupal::get_updated_build_id;
+///
+/// let build_id = "form-jsirb7DiRiBC09VrCJRfj-D1z6kjzX-sMqUgHmM_bCs";
+///
+/// let form_snippet = r#"{"command":"update_build_id","old":"form-jsirb7DiRiBC09VrCJRfj-D1z6kjzX-sMqUgHmM_bCs","new":"form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc"}"#;
+///
+/// let updated_build_id = get_updated_build_id(form_snippet, build_id);
+/// assert_eq!(updated_build_id, "form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc");
+/// ```
+pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
+    let re = Regex::new(&format!(
+        "{}{}{}",
+        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
+    ))
+    .unwrap();
+    // Return a specific form value.
+    match re.captures(&form_html) {
+        Some(v) => v[1].to_string(),
+        None => {
+            warn!("update_build_id not found");
+            "none".to_string()
+        }
+    }
+}
+
 /// Loop through an array of named form elements returning their values in a HashMap.
 ///
 /// # Example
