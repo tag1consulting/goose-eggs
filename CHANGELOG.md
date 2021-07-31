@@ -2,6 +2,7 @@
 
 ## 0.1.10-dev
  - escape form element name so regex compiles if name includes characters such as `[]`
+ - introduce drupal-specific `get_encoded_form_values` to efficiently load multiple encoded form values
 
 ## 0.1.9 July 30, 2021
  - introduce drupal-specific `get_form_values` to efficiently load multiple form values
