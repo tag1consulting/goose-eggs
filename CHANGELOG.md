@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.10-dev
+## 0.1.10 August 2, 2021
  - escape form element name so regex compiles if name includes characters such as `[]`
  - introduce drupal-specific `get_encoded_form_values` to efficiently load multiple encoded form values
  - introduce drupal-specific `search` function, configured with `SearchParams` object controlling the search keys, and optionally setting a custom url and title for the search form page, and a custom submit button for the search form

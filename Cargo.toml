@@ -1,6 +1,6 @@
 [package]
 name = "goose-eggs"
-version = "0.1.10-dev"
+version = "0.1.10"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
 description = "Helpful in writing Goose load tests."
