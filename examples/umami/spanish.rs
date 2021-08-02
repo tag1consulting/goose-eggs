@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 
 /// Load the front page in Spanish and all static assets found on the page.
 pub async fn front_page_es(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/es").await?;
+    let goose = user.get("es").await?;
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
@@ -19,7 +19,7 @@ pub async fn front_page_es(user: &GooseUser) -> GooseTaskResult {
 
 /// Load article listing in Spanish and all static assets found on the page.
 pub async fn recipe_listing_es(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/es/recipes/").await?;
+    let goose = user.get("es/recipes/").await?;
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
@@ -47,7 +47,7 @@ pub async fn recipe_es(user: &GooseUser) -> GooseTaskResult {
 
 /// Load article listing in Spanish and all static assets found on the page.
 pub async fn article_listing_es(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/es/articles/").await?;
+    let goose = user.get("es/articles/").await?;
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
@@ -102,7 +102,7 @@ pub async fn search_es(user: &GooseUser) -> GooseTaskResult {
     let search_phrase = search_words.join(" ");
 
     let search_params = goose_eggs::drupal::SearchParams::keys(&search_phrase)
-        .update_url("/es/search/node")
+        .update_url("es/search/node")
         .update_title("Buscar");
     goose_eggs::drupal::search(user, &search_params).await?;
 

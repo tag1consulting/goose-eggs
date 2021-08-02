@@ -12,6 +12,7 @@ use crate::spanish::*;
 /// Defines the actual load test. Each task set simulates a type of user.
 ///  - Anonymous English user: loads the English version of all pages
 ///  - Anonymous Spanish user: loads the Spanish version of all pages
+///  - Admin user: load pages as logged-in user, including editing a node
 fn main() -> Result<(), GooseError> {
     let _goose_metrics = GooseAttack::initialize()?
         .register_taskset(

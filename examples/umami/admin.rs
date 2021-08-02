@@ -20,7 +20,7 @@ pub async fn log_in(user: &GooseUser) -> GooseTaskResult {
 
     let login = goose_eggs::drupal::Login::username_password(&admin_username, &admin_password)
         .unwrap()
-        .update_url("/en/user/login");
+        .update_url("en/user/login");
     goose_eggs::drupal::log_in(user, login.as_ref()).await?;
 
     Ok(())
@@ -35,13 +35,16 @@ pub async fn edit_article(user: &GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(article.unwrap().title_en),
+        &goose_eggs::Validate::title_text(
+            article.unwrap().title_en,
+            &format!("en/node/{}/edit", article.unwrap().nid),
+        ),
     )
     .await?;
 
     // Next, load the edit link for the chosen article.
     let goose = user
-        .get(&format!("/en/node/{}/edit", article.unwrap().nid))
+        .get(&format!("en/node/{}/edit", article.unwrap().nid))
         .await?;
 
     let edit_page = goose_eggs::validate_and_load_static_assets(
@@ -64,7 +67,7 @@ pub async fn edit_article(user: &GooseUser) -> GooseTaskResult {
         ("op", &"Save (this translation)".to_string()),
     ];
     let request_builder = user
-        .goose_post(&format!("/en/node/{}/edit", article.unwrap().nid))
+        .goose_post(&format!("en/node/{}/edit", article.unwrap().nid))
         .await?;
     let mut saved_article = user.goose_send(request_builder.form(&params), None).await?;
 

@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 
 /// Load the front page in English and all static assets found on the page.
 pub async fn front_page_en(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/").await?;
+    let goose = user.get("").await?;
     goose_eggs::validate_and_load_static_assets(user, goose, &goose_eggs::Validate::title("Home"))
         .await?;
 
@@ -15,7 +15,7 @@ pub async fn front_page_en(user: &GooseUser) -> GooseTaskResult {
 
 /// Load recipe listing in English and all static assets found on the page.
 pub async fn recipe_listing_en(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/en/recipes/").await?;
+    let goose = user.get("en/recipes/").await?;
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
@@ -43,7 +43,7 @@ pub async fn recipe_en(user: &GooseUser) -> GooseTaskResult {
 
 /// Load article listing in English and all static assets found on the page.
 pub async fn article_listing_en(user: &GooseUser) -> GooseTaskResult {
-    let goose = user.get("/en/articles/").await?;
+    let goose = user.get("en/articles/").await?;
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
@@ -98,7 +98,7 @@ pub async fn page_by_nid(user: &GooseUser) -> GooseTaskResult {
     let page = nodes.choose(&mut rand::thread_rng());
     // Load the page by nid instead of by URL.
     let goose = user
-        .get(&("/node/".to_string() + &page.unwrap().nid.to_string()))
+        .get(&("node/".to_string() + &page.unwrap().nid.to_string()))
         .await?;
     goose_eggs::validate_and_load_static_assets(
         user,
@@ -124,7 +124,7 @@ pub async fn search_en(user: &GooseUser) -> GooseTaskResult {
     let search_phrase = search_words.join(" ");
 
     let search_params = goose_eggs::drupal::SearchParams::keys(&search_phrase)
-        .update_url("/en/search/node")
+        .update_url("en/search/node")
         .update_title("Search");
     goose_eggs::drupal::search(user, &search_params).await?;
 
