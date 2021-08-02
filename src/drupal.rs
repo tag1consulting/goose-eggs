@@ -771,3 +771,258 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
 
     Ok(logged_in_page)
 }
+
+/// Set parameters for making and validating a search.
+pub struct SearchParams<'a> {
+    // The word or words to search for.
+    //
+    // Defaults to `""`, an empty string.
+    keys: Option<&'a str>,
+    // Optionally set a custom path to the search form.
+    //
+    // Defaults to `search`.
+    url: Option<&'a str>,
+    // Optionally set a custom `op` name for the search button.
+    //
+    // Defaults to `Search`.
+    submit: Option<&'a str>,
+    // Optionally validate the title of the search form page.
+    //
+    // Defaults to None.
+    title: Option<&'a str>,
+}
+impl<'a> SearchParams<'a> {
+    /// Create a new [`SearchParams`] object, specifying `keys`, `url`, the name of the
+    /// `submit` button, and the `title` of the search page. This object is passed to
+    /// the [`search`] function.
+    ///
+    /// It is recommended to use a helper such as [`SearchParams::keys`] together with
+    /// [`SearchParams::update_url`], [`SearchParams::update_submit`], and/or
+    /// [`SearchParams::update_title`] instead of invoking this function directly.
+    ///
+    ///  # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // Search for "search terms".
+    /// let search = SearchParams::new(Some("search terms"), Some("custom/search/path"), Some("Custom Search"), Some("Custom Search"));
+    /// ```
+    pub fn new(
+        keys: Option<&'a str>,
+        url: Option<&'a str>,
+        submit: Option<&'a str>,
+        title: Option<&'a str>,
+    ) -> SearchParams<'a> {
+        SearchParams {
+            keys,
+            url,
+            submit,
+            title,
+        }
+    }
+
+    /// Create a [`SearchParams`] object setting the string to search for.
+    ///
+    /// This object is passed to the [`search`] function.
+    ///
+    /// The search form url will remain the default of `search`, and can be changed by
+    /// invoking [`SearchParams::update_url`]. The search form submit button will remain
+    /// the default of `Search`, and can be changed by invoking
+    /// [`SearchParams::update_submit`]
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let _login = Login::username("foo");
+    /// ```
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // Search for "search terms".
+    /// let search = SearchParams::keys("search terms");
+    /// ```
+    pub fn keys(keys: &'a str) -> SearchParams<'a> {
+        SearchParams::new(None, Some(keys), None, None)
+    }
+
+    /// Modify a [`SearchParams`] object setting a custom url for the search form.
+    ///
+    /// This object is passed to the [`search`] function.
+    ///
+    /// The [`SearchParams`] object is created by calling [`SearchParams::keys`], then
+    /// it is chained to this function to set a custom url. The search form submit
+    /// button will remain the default of `Search`, or whatever is set by invoking
+    /// [`SearchParams::update_submit`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // Search for "search terms" using a form with a custom path.
+    /// let search = SearchParams::keys("search terms")
+    ///                  .update_url("custom/search/path");
+    /// ```
+    pub fn update_url(mut self, url: &'a str) -> Self {
+        self.url = Some(url);
+        self
+    }
+
+    /// Modify a [`SearchParams`] object setting a custom submit button for the search
+    /// form.
+    ///
+    /// This object is passed to the [`search`] function.
+    ///
+    /// The [`SearchParams`] object is created by calling [`SearchParams::keys`], then
+    /// it is chained to this function to set a custom submit button. The search form
+    /// url will remain the default of `search`, or whatever is set by invoking
+    /// [`SearchParams::update_url`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // Search for "search terms" with a form that has a custom submit botton.
+    /// let search = SearchParams::keys("search terms")
+    ///                  .update_submit("Custom Search");
+    /// ```
+    pub fn update_submit(mut self, submit: &'a str) -> Self {
+        self.submit = Some(submit);
+        self
+    }
+
+    /// Modify a [`SearchParams`] object to validate the title of the search form page.
+    ///
+    /// This object is passed to the [`search`] function.
+    ///
+    /// The [`SearchParams`] object is created by calling [`SearchParams::keys`], then
+    /// it is chained to this function to validate the search form page title.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // Search for "search terms" with a form on a page with title "Search".
+    /// let search = SearchParams::keys("search terms")
+    ///                  .update_title("Search");
+    /// ```
+    pub fn update_title(mut self, title: &'a str) -> Self {
+        if title.is_empty() {
+            self.title = None;
+        } else {
+            self.title = Some(title);
+        }
+        self
+    }
+
+    /// Modify a [`SearchParams`] object changing the string that is searched for.
+    ///
+    /// This object is passed to the [`search`] function.
+    ///
+    /// This function allows a mutable [`SearchParams`] object to be created with a
+    /// custom url and/or submit button and then to be used for multiple different
+    /// searches.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::drupal::SearchParams;
+    ///
+    /// // First search for "search terms" using a form on a custom path.
+    /// let mut search = SearchParams::keys("search terms")
+    ///                  .update_url("custom/search/path");
+    ///
+    /// // Perform a search here ...
+    ///
+    /// // Then search for "different search terms" at the same custom path.
+    /// search.update_keys("different search terms");
+    /// ```
+    pub fn update_keys(mut self, keys: &'a str) -> Self {
+        self.keys = Some(keys);
+        self
+    }
+}
+
+/// Perform a simple Drupal-powered search.
+///
+/// In the following example, [`SearchParams::keys`] is used to configure the keys
+/// being searched for, and [`SearchParams::update_title`] is used to validate that
+/// the page with the search form has a title containing `Search`.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+///
+/// task!(search);
+///
+/// async fn search(user: &GooseUser) -> GooseTaskResult {
+///     // Use the default search form to search for "foo", validating that the
+///     // search page has a title of Search.
+///     let search_params = goose_eggs::drupal::SearchParams::keys("foo").update_title("Search");
+///     // Perform the actual search.
+///     let _search_results = goose_eggs::drupal::search(&user, &search_params).await?;
+///
+///     Ok(())
+/// }
+/// ```
+pub async fn search<'a>(
+    user: &GooseUser,
+    params: &'a SearchParams<'a>,
+) -> Result<String, GooseTaskError> {
+    // Set default url if it isn't set in SearchParams.
+    let url = if let Some(url) = params.url {
+        url
+    } else {
+        "search"
+    };
+
+    // Load the search page.
+    let goose = user.get(url).await?;
+
+    // Optionally validate the title of the page with the search form.
+    let validate = if let Some(title) = params.title {
+        crate::Validate::title(title)
+    } else {
+        crate::Validate::none()
+    };
+    let search_page = crate::validate_and_load_static_assets(user, goose, &validate).await?;
+
+    // Extract the search form from the page.
+    let search_form = get_form(&search_page, "search-form");
+
+    // Extract the form_build_id and the form_id from the search form.
+    let form_values = get_form_values(&search_form, &["form_build_id", "form_id"]);
+
+    // Perform empty search if not set in Search Params.
+    let keys = if let Some(keys) = params.keys {
+        keys
+    } else {
+        ""
+    };
+
+    // By default Drupal names the submit button "Search".
+    let submit = if let Some(submit) = params.submit {
+        submit
+    } else {
+        "Search"
+    };
+
+    // Build search form.
+    let params = [
+        ("form_build_id", form_values.get("form_build_id").unwrap()),
+        ("form_id", form_values.get("form_id").unwrap()),
+        ("keys", &keys.to_string()),
+        ("op", &submit.to_string()),
+    ];
+
+    // Perform the search.
+    let request_builder = user.goose_post(url).await?;
+    let goose = user.goose_send(request_builder.form(&params), None).await?;
+
+    // Validate that a search was performed, and the search keys are in the title.
+    let validate = crate::Validate::title(keys);
+    let search_results = crate::validate_and_load_static_assets(user, goose, &validate).await?;
+
+    // Return the search results.
+    Ok(search_results)
+}
