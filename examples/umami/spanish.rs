@@ -97,7 +97,14 @@ pub async fn anonymous_contact_form_es(user: &GooseUser) -> GooseTaskResult {
 
 // Pick a random word from the title of a random node and perform a search in Spanish.
 pub async fn search_es(user: &GooseUser) -> GooseTaskResult {
-    common::search(user, false).await?;
+    // Build a random three-word phrase taken from Spanish words on the Umami website.
+    let search_words = common::random_words(3, false);
+    let search_phrase = search_words.join(" ");
+
+    let search_params = goose_eggs::drupal::SearchParams::keys(&search_phrase)
+        .update_url("/es/search/node")
+        .update_title("Buscar");
+    goose_eggs::drupal::search(user, &search_params).await?;
 
     Ok(())
 }
