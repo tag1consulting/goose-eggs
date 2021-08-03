@@ -2,6 +2,7 @@
 
 ## 0.1.11-dev
  - remove extra and incorrect cut and paste example for `SearchParams::keys`
+ - match headers `<head>` that include other attributes, such as `<head profile="..">`
 
 ## 0.1.10 August 2, 2021
  - escape form element name so regex compiles if name includes characters such as `[]`

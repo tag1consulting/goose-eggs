@@ -444,7 +444,7 @@ impl<'a> Header<'a> {
 /// assert!(!html_header.is_none());
 /// ```
 pub fn get_html_header(html: &str) -> Option<String> {
-    let re = Regex::new(r#"<head>(.*?)</head>"#).unwrap();
+    let re = Regex::new(r#"<head(.*?)</head>"#).unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace("\n", "");
     // Return the entire html header, a subset of the received html.
