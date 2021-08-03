@@ -832,12 +832,6 @@ impl<'a> SearchParams<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::drupal::Login;
-    ///
-    /// let _login = Login::username("foo");
-    /// ```
-    /// # Example
-    /// ```rust
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Search for "search terms".

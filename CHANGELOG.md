@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.11-dev
+ - remove extra and incorrect cut and paste example for `SearchParams::keys`
+
 ## 0.1.10 August 2, 2021
  - escape form element name so regex compiles if name includes characters such as `[]`
  - introduce drupal-specific `get_encoded_form_values` to efficiently load multiple encoded form values
