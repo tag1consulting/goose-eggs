@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.11-dev
+## 0.1.11 August 4, 2021
  - remove extra and incorrect cut and paste example for `SearchParams::keys`
  - match headers `<head>` that include other attributes, such as `<head profile="..">`
 
