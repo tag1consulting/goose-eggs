@@ -92,7 +92,7 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
     ))
     .unwrap();
     // Return a specific form value.
-    match re.captures(&form_html) {
+    match re.captures(form_html) {
         Some(v) => v[1].to_string(),
         None => {
             warn!("form element {} not found", name);
@@ -207,7 +207,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
     ))
     .unwrap();
     // Return a specific form value.
-    match re.captures(&form_html) {
+    match re.captures(form_html) {
         Some(v) => v[1].to_string(),
         None => {
             warn!("update_build_id not found");
@@ -257,7 +257,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
 
     // Extract the form elements needed to submit a form.
     for &element in elements {
-        let value = get_form_value(&form, element);
+        let value = get_form_value(form, element);
         form_elements.insert(element, value);
     }
 

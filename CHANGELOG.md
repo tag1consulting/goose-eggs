@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.12-dev
+ - clippy cleanups: don't borrow references that are immediately dereferenced by the compiler: https://rust-lang.github.io/rust-clippy/master/index.html#needless_borrow
 
 ## 0.1.11 August 4, 2021
  - remove extra and incorrect cut and paste example for `SearchParams::keys`

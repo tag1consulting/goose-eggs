@@ -535,7 +535,7 @@ pub fn get_title(html: &str) -> Option<String> {
 ///                         return user.set_failure(
 ///                             &format!("{}: title not found: {}", goose.request.raw.url, title),
 ///                             &mut goose.request,
-///                             Some(&headers),
+///                             Some(headers),
 ///                             Some(&html),
 ///                         );
 ///                     }
@@ -544,7 +544,7 @@ pub fn get_title(html: &str) -> Option<String> {
 ///                     return user.set_failure(
 ///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
-///                         Some(&headers),
+///                         Some(headers),
 ///                         None,
 ///                     );
 ///                 }
@@ -606,7 +606,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///                         return user.set_failure(
 ///                             &format!("{}: text not found: {}", goose.request.raw.url, text),
 ///                             &mut goose.request,
-///                             Some(&headers),
+///                             Some(headers),
 ///                             Some(&html),
 ///                         );
 ///                     }
@@ -615,7 +615,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///                     return user.set_failure(
 ///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
-///                         Some(&headers),
+///                         Some(headers),
 ///                         None,
 ///                     );
 ///                 }
@@ -663,7 +663,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///                 return user.set_failure(
 ///                     &format!("{}: header not found: {}", goose.request.raw.url, "server"),
 ///                     &mut goose.request,
-///                     Some(&headers),
+///                     Some(headers),
 ///                     None,
 ///                 );
 ///             }
@@ -710,7 +710,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///                 return user.set_failure(
 ///                     &format!("{}: server header value not correct: {}", goose.request.raw.url, "nginx"),
 ///                     &mut goose.request,
-///                     Some(&headers),
+///                     Some(headers),
 ///                     None,
 ///                 );
 ///             }
@@ -784,7 +784,7 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///                     return user.set_failure(
 ///                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
 ///                         &mut goose.request,
-///                         Some(&headers),
+///                         Some(headers),
 ///                         None,
 ///                     );
 ///                 }
@@ -809,7 +809,7 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
     // @TODO: parse HTML5 srcset= also
     let image = Regex::new(r#"src="(.*?)""#).unwrap();
     let mut urls = Vec::new();
-    for url in image.captures_iter(&html) {
+    for url in image.captures_iter(html) {
         if url[1].starts_with("/sites") || url[1].starts_with("/core") {
             urls.push(url[1].to_string());
         }
@@ -818,7 +818,7 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
     // Use a regular expression to find all href=<foo> in the HTML, where foo
     // is the URL to css assets.
     let css = Regex::new(r#"href="(/sites/default/files/css/.*?)""#).unwrap();
-    for url in css.captures_iter(&html) {
+    for url in css.captures_iter(html) {
         urls.push(url[1].to_string());
     }
 
@@ -876,7 +876,7 @@ pub async fn validate_and_load_static_assets<'a>(
                     } else {
                         format!("{}: redirected unexpectedly", goose.request.raw.url)
                     };
-                    user.set_failure(&error, &mut goose.request, Some(&headers), Some(&html))?;
+                    user.set_failure(&error, &mut goose.request, Some(headers), Some(&html))?;
                     // Exit as soon as validation fails, to avoid cascades of
                     // errors whe na page fails to load.
                     return Ok(html);
@@ -896,7 +896,7 @@ pub async fn validate_and_load_static_assets<'a>(
                             goose.request.raw.url, status, response_status
                         ),
                         &mut goose.request,
-                        Some(&headers),
+                        Some(headers),
                         Some(&html),
                     )?;
                     // Exit as soon as validation fails, to avoid cascades of
@@ -917,7 +917,7 @@ pub async fn validate_and_load_static_assets<'a>(
                             goose.request.raw.url, header
                         ),
                         &mut goose.request,
-                        Some(&headers),
+                        Some(headers),
                         Some(&html),
                     )?;
                     // Exit as soon as validation fails, to avoid cascades of
@@ -934,7 +934,7 @@ pub async fn validate_and_load_static_assets<'a>(
                                 goose.request.raw.url, h
                             ),
                             &mut goose.request,
-                            Some(&headers),
+                            Some(headers),
                             Some(&html),
                         )?;
                         // Exit as soon as validation fails, to avoid cascades of
@@ -949,11 +949,11 @@ pub async fn validate_and_load_static_assets<'a>(
                 Ok(html) => {
                     // Validate title if defined.
                     if let Some(title) = validate.title {
-                        if !valid_title(&html, &title) {
+                        if !valid_title(&html, title) {
                             user.set_failure(
                                 &format!("{}: title not found: {}", goose.request.raw.url, title),
                                 &mut goose.request,
-                                Some(&headers),
+                                Some(headers),
                                 Some(&html),
                             )?;
                             // Exit as soon as validation fails, to avoid cascades of
@@ -970,7 +970,7 @@ pub async fn validate_and_load_static_assets<'a>(
                                     goose.request.raw.url, text
                                 ),
                                 &mut goose.request,
-                                Some(&headers),
+                                Some(headers),
                                 Some(&html),
                             )?;
                             // Exit as soon as validation fails, to avoid cascades of
@@ -985,7 +985,7 @@ pub async fn validate_and_load_static_assets<'a>(
                     user.set_failure(
                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
                         &mut goose.request,
-                        Some(&headers),
+                        Some(headers),
                         None,
                     )?;
                     Ok(empty)
