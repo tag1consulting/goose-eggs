@@ -804,20 +804,21 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 /// }
 /// ```
 pub async fn load_static_elements(user: &GooseUser, html: &str) {
-    // Use a regular expression to find all src=<foo> in the HTML, where foo
-    // is the URL to image and js assets.
+    // Determine the base_url that was used to load this path, used to extract absolute URLs.
+    let base_url = user.base_url.read().await.to_string();
+
+    // Use a case-insensitive regular expression to find all src=<foo> in the html, where
+    // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
-    let image = Regex::new(r#"src="(.*?)""#).unwrap();
+    let image = Regex::new(format!(r#"(?i)src="(({}|/).*?)""#, base_url).as_str()).unwrap();
     let mut urls = Vec::new();
     for url in image.captures_iter(html) {
-        if url[1].starts_with("/sites") || url[1].starts_with("/core") {
-            urls.push(url[1].to_string());
-        }
+        urls.push(url[1].to_string());
     }
 
-    // Use a regular expression to find all href=<foo> in the HTML, where foo
-    // is the URL to css assets.
-    let css = Regex::new(r#"href="(/sites/default/files/css/.*?)""#).unwrap();
+    // Use a case-insensitive regular expression to find all href=<foo> in the html, where
+    // <foo> is the URL to local css assets.
+    let css = Regex::new(format!(r#"(?i)href="(({}|/).*?\.css.*?)""#, base_url).as_str()).unwrap();
     for url in css.captures_iter(html) {
         urls.push(url[1].to_string());
     }
