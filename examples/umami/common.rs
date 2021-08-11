@@ -393,7 +393,7 @@ pub fn random_words(count: usize, english: bool) -> Vec<String> {
         ];
         let content_type = content_types.choose(&mut rand::thread_rng());
         // Then randomly select a node of this content type.
-        let nodes = get_nodes(&content_type.unwrap());
+        let nodes = get_nodes(content_type.unwrap());
         let page = nodes.choose(&mut rand::thread_rng());
         // Randomly select a word from the title to use in our search.
         let title = if english {
@@ -477,7 +477,7 @@ pub async fn anonymous_contact_form(user: &GooseUser, english: bool) -> GooseTas
                     return user.set_failure(
                         &format!("{}: failed to parse page: {}", goose.request.raw.url, e),
                         &mut goose.request,
-                        Some(&headers),
+                        Some(headers),
                         None,
                     );
                 }
