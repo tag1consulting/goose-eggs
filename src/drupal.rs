@@ -682,7 +682,7 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
     let login_page = crate::validate_and_load_static_assets(
         user,
         goose,
-        &crate::Validate::text(r#"<form class="user-login-form""#),
+        &crate::Validate::text(r#"<form class="user-login-form"#),
     )
     .await?;
 
