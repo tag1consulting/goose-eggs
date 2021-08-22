@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.12-dev
+## 0.1.12 August 22, 2021
  - clippy cleanups: don't borrow references that are immediately dereferenced by the compiler: https://rust-lang.github.io/rust-clippy/master/index.html#needless_borrow
  - update `load_static_elements()` to use case-insensitive regex to find local static elements (images, js, and css) both with relative and absolute paths
  - match user-login-form even when it has additional classes
