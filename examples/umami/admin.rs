@@ -6,7 +6,7 @@ use rand::seq::SliceRandom;
 use std::env;
 
 /// Log into the website.
-pub async fn log_in(user: &GooseUser) -> GooseTaskResult {
+pub async fn log_in(user: &mut GooseUser) -> GooseTaskResult {
     // Use ADMIN_USERNAME= to set custom admin username.
     let admin_username = match env::var("ADMIN_USERNAME") {
         Ok(username) => username,
@@ -27,7 +27,7 @@ pub async fn log_in(user: &GooseUser) -> GooseTaskResult {
 }
 
 /// Load and edit a random article.
-pub async fn edit_article(user: &GooseUser) -> GooseTaskResult {
+pub async fn edit_article(user: &mut GooseUser) -> GooseTaskResult {
     // First, load a random article.
     let nodes = common::get_nodes(&common::ContentType::Article);
     let article = nodes.choose(&mut rand::thread_rng());
@@ -66,9 +66,7 @@ pub async fn edit_article(user: &GooseUser) -> GooseTaskResult {
         ("form_id", &form_id),
         ("op", &"Save (this translation)".to_string()),
     ];
-    let request_builder = user
-        .goose_post(&format!("en/node/{}/edit", article.unwrap().nid))
-        .await?;
+    let request_builder = user.goose_post(&format!("en/node/{}/edit", article.unwrap().nid))?;
     let mut saved_article = user.goose_send(request_builder.form(&params), None).await?;
 
     // A successful node save is redirected.
