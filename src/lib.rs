@@ -520,7 +520,7 @@ pub fn get_title(html: &str) -> Option<String> {
 ///
 /// task!(validate_title).set_on_start();
 ///
-/// async fn validate_title(user: &GooseUser) -> GooseTaskResult {
+/// async fn validate_title(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -592,7 +592,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///
 /// task!(validate_text).set_on_start();
 ///
-/// async fn validate_text(user: &GooseUser) -> GooseTaskResult {
+/// async fn validate_text(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -652,7 +652,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///
 /// task!(validate_header).set_on_start();
 ///
-/// async fn validate_header(user: &GooseUser) -> GooseTaskResult {
+/// async fn validate_header(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -699,7 +699,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///
 /// task!(validate_header_value).set_on_start();
 ///
-/// async fn validate_header_value(user: &GooseUser) -> GooseTaskResult {
+/// async fn validate_header_value(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -768,7 +768,7 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///
 /// task!(load_page_and_static_elements).set_on_start();
 ///
-/// async fn load_page_and_static_elements(user: &GooseUser) -> GooseTaskResult {
+/// async fn load_page_and_static_elements(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -803,9 +803,9 @@ pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
 ///     Ok(())
 /// }
 /// ```
-pub async fn load_static_elements(user: &GooseUser, html: &str) {
+pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // Determine the base_url that was used to load this path, used to extract absolute URLs.
-    let base_url = user.base_url.read().await.to_string();
+    let base_url = user.base_url.to_string();
 
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
@@ -845,7 +845,7 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
 ///
 /// task!(load_page).set_on_start();
 ///
-/// async fn load_page(user: &GooseUser) -> GooseTaskResult {
+/// async fn load_page(user: &mut GooseUser) -> GooseTaskResult {
 ///     let mut goose = user.get("/").await?;
 ///     validate_and_load_static_assets(
 ///         user,
@@ -858,7 +858,7 @@ pub async fn load_static_elements(user: &GooseUser, html: &str) {
 /// }
 /// ```
 pub async fn validate_and_load_static_assets<'a>(
-    user: &GooseUser,
+    user: &mut GooseUser,
     mut goose: GooseResponse,
     validate: &'a Validate<'a>,
 ) -> Result<String, GooseTaskError> {

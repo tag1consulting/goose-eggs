@@ -645,15 +645,18 @@ impl<'a> Login<'a> {
 ///
 /// task!(login).set_on_start();
 ///
-/// async fn login(user: &GooseUser) -> GooseTaskResult {
+/// async fn login(user: &mut GooseUser) -> GooseTaskResult {
 ///     // By default log in with `foo`:`bar`.
-///     let _html = log_in(&user, Login::username_password("foo", "bar").as_ref()).await?;
+///     let _html = log_in(user, Login::username_password("foo", "bar").as_ref()).await?;
 ///
 ///     Ok(())
 /// }
 ///
 /// ```
-pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<String, GooseTaskError> {
+pub async fn log_in(
+    user: &mut GooseUser,
+    login: Option<&Login<'_>>,
+) -> Result<String, GooseTaskError> {
     // Use the `GOOSE_USER` environment variable if it's set, otherwise use the custom username
     // passed in when calling this function, otherwise use `username`.
     let default_password = "username";
@@ -722,7 +725,7 @@ pub async fn log_in(user: &GooseUser, login: Option<&Login<'_>>) -> Result<Strin
         ("form_id", &"user_login_form".to_string()),
         ("op", &"Log+in".to_string()),
     ];
-    let request_builder = user.goose_post("/user/login").await?;
+    let request_builder = user.goose_post("/user/login")?;
     let mut logged_in_user = user.goose_send(request_builder.form(&params), None).await?;
 
     // A successful log in is redirected.
@@ -949,18 +952,18 @@ impl<'a> SearchParams<'a> {
 ///
 /// task!(search);
 ///
-/// async fn search(user: &GooseUser) -> GooseTaskResult {
+/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
 ///     // Use the default search form to search for "foo", validating that the
 ///     // search page has a title of Search.
 ///     let search_params = goose_eggs::drupal::SearchParams::keys("foo").update_title("Search");
 ///     // Perform the actual search.
-///     let _search_results = goose_eggs::drupal::search(&user, &search_params).await?;
+///     let _search_results = goose_eggs::drupal::search(user, &search_params).await?;
 ///
 ///     Ok(())
 /// }
 /// ```
 pub async fn search<'a>(
-    user: &GooseUser,
+    user: &mut GooseUser,
     params: &'a SearchParams<'a>,
 ) -> Result<String, GooseTaskError> {
     // Set default url if it isn't set in SearchParams.
@@ -1010,7 +1013,7 @@ pub async fn search<'a>(
     ];
 
     // Perform the search.
-    let request_builder = user.goose_post(url).await?;
+    let request_builder = user.goose_post(url)?;
     let goose = user.goose_send(request_builder.form(&params), None).await?;
 
     // Validate that a search was performed, and the search keys are in the title.

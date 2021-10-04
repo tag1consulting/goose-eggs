@@ -414,7 +414,7 @@ pub fn random_words(count: usize, english: bool) -> Vec<String> {
 
 /// Anonymously load the contact form and POST feedback. The english boolean flag indicates
 /// whether to load the English form or the Spanish form.
-pub async fn anonymous_contact_form(user: &GooseUser, english: bool) -> GooseTaskResult {
+pub async fn anonymous_contact_form(user: &mut GooseUser, english: bool) -> GooseTaskResult {
     let contact_form_url = if english { "en/contact" } else { "es/contact" };
     let goose = user.get(contact_form_url).await?;
     let contact_page = goose_eggs::validate_and_load_static_assets(
@@ -446,7 +446,7 @@ pub async fn anonymous_contact_form(user: &GooseUser, english: bool) -> GooseTas
         ("form_id", &form_id),
         ("op", "Send+message"),
     ];
-    let request_builder = user.goose_post(contact_form_url).await?;
+    let request_builder = user.goose_post(contact_form_url)?;
     let mut goose = user.goose_send(request_builder.form(&params), None).await?;
 
     // Drupal 9 throttles how many times an IP address can submit the contact form, so we

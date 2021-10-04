@@ -1,6 +1,7 @@
 # Changelog
 
-## 0.1.13-dev
+## 0.2.0-dev
+ - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)
 
 ## 0.1.12 August 22, 2021
  - clippy cleanups: don't borrow references that are immediately dereferenced by the compiler: https://rust-lang.github.io/rust-clippy/master/index.html#needless_borrow
