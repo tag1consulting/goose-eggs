@@ -1,4 +1,10 @@
-//! Goose Eggs are helpful in writing [`Goose`](https://docs.rs/goose) load tests.
+//! Goose Eggs are helpful in writing [`Goose`](https://book.goose.rs/) load tests.
+//!
+//! ## Example
+//! The [Umami example](https://github.com/tag1consulting/goose/tree/main/examples/umami)
+//! included with Goose has been [converted to use the Goose Eggs library](https://github.com/tag1consulting/goose-eggs/tree/main/examples/umami)
+//! and serves as a useful example on how to leverage it when writing load tests.
+
 use goose::goose::GooseResponse;
 use goose::prelude::*;
 use log::info;
