@@ -10,4 +10,5 @@ Helpful in writing [`Goose`](https://docs.rs/goose) load tests.
 ## Documentation
 
 - [Goose Eggs](https://docs.rs/goose-eggs)
-- [Umami example](https://github.com/tag1consulting/goose-eggs/tree/main/examples/umami)
+- [Goose Eggs Umami example](https://github.com/tag1consulting/goose-eggs/tree/main/examples/umami)
+- [The Goose book](https://book.goose.rs/)
