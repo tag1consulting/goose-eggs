@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.1-dev
+ - find forms identified with either `id=` or `data-drupal-selector=`
 
 ## 0.2.0 October 5, 2021
  - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)

@@ -39,7 +39,7 @@ use std::env;
 pub fn get_form(html: &str, name: &str) -> String {
     let re = Regex::new(&format!(
         // Lazy match to avoid matching multiple forms.
-        r#"<form.*?data-drupal-selector="{}".*?>(.*?)</form>"#,
+        r#"<form.*?(data-drupal-selector|id)="{}".*?>(.*?)</form>"#,
         name
     ))
     .unwrap();
@@ -47,7 +47,7 @@ pub fn get_form(html: &str, name: &str) -> String {
     let line = html.replace("\n", "");
     // Return the entire form, a subset of the received html.
     match re.captures(&line) {
-        Some(capture) => capture[1].to_string(),
+        Some(capture) => capture[2].to_string(),
         None => {
             warn!("form {} not found", name);
             "".to_string()
