@@ -891,11 +891,11 @@ pub async fn validate_and_load_static_assets<'a>(
             }
 
             // Validate status code if defined.
-            let response_status = response.status();
             if let Some(status) = validate.status {
-                if response_status != status {
+                if response.status() != status {
                     // Get as much as we can from the response for useful debug logging.
                     let headers = &response.headers().clone();
+                    let response_status = &response.status();
                     let html = response.text().await.unwrap_or_else(|_| "".to_string());
                     user.set_failure(
                         &format!(
