@@ -123,9 +123,16 @@ pub async fn search_en(user: &mut GooseUser) -> GooseTaskResult {
     let search_words = common::random_words(3, true);
     let search_phrase = search_words.join(" ");
 
-    let search_params = goose_eggs::drupal::SearchParams::keys(&search_phrase)
-        .update_url("en/search/node")
-        .update_title("Search");
+    // The search page should have "Search" in the title.
+    let validate_search_page = &goose_eggs::Validate::title("Search");
+    // The results page should have the search_phrase in the title.
+    let validate_results_page = &goose_eggs::Validate::title(&search_phrase);
+    let search_params = goose_eggs::drupal::SearchParams::builder()
+        .keys(&*search_phrase)
+        .url("en/search/node")
+        .search_page_validation(validate_search_page)
+        .results_page_validation(validate_results_page)
+        .build();
     goose_eggs::drupal::search(user, &search_params).await?;
 
     Ok(())
