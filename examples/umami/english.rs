@@ -125,7 +125,7 @@ pub async fn search_en(user: &mut GooseUser) -> GooseTaskResult {
 
     // The search page should have "Search" in the title.
     let validate_search_page = &goose_eggs::Validate::title("Search");
-    // The results page should have the search_prhase in the title.
+    // The results page should have the search_phrase in the title.
     let validate_results_page = &goose_eggs::Validate::title(&search_phrase);
     let search_params = goose_eggs::drupal::SearchParams::builder()
         .keys(&*search_phrase)

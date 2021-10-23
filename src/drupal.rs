@@ -775,7 +775,8 @@ pub async fn log_in(
     Ok(logged_in_page)
 }
 
-/// Set parameters for making and validating a search.
+/// Parameters that define how to make and validate a search. For complete documentation,
+/// refer to [`SearchParamsBuilder`].
 #[derive(Clone, Debug)]
 pub struct SearchParams<'a> {
     // The word or words to search for.
@@ -804,27 +805,71 @@ pub struct SearchParams<'a> {
     results_page_validation: Option<&'a crate::Validate<'a>>,
 }
 impl<'a> SearchParams<'a> {
-    ///  # Example
-    /// ```rust
-    /// use goose_eggs::drupal::SearchParams;
-    ///
-    /// // Search for "search terms" on a custom search page.
-    /// let validate_search_page = &goose_eggs::Validate::title("Custom Search");
-    /// let validate_results_page = &goose_eggs::Validate::title("search terms");
-    /// let search = SearchParams::builder()
-    ///     .keys("search terms")
-    ///     .url("custom/search/path")
-    ///     .search_page_validation(&validate_search_page)
-    ///     .submit("Custom Search")
-    ///     .results_page_validation(&validate_results_page)
-    ///     .build();
-    /// ```
+    /// Convenience function to bring [`SearchParamsBuilder`] into scope.
     pub fn builder() -> SearchParamsBuilder<'a> {
         SearchParamsBuilder::new()
     }
 }
 
-/// [`SearchParams`] builder.
+/// Used to build a [`SearchParams`] object, necessary to invoke the [`search`] function.
+///
+/// Performing a search on a Drupal 8+ website is generally as simple as follow:
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::drupal;
+///
+/// task!(search);
+///
+/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
+///     // Define the search parameters.
+///     let search_params = drupal::SearchParams::builder()
+///         // Search for the keys "search terms".
+///         .keys("search terms")
+///         .build();
+///
+///     // Perform the actual search.
+///     let _search_results_html = drupal::search(user, &search_params).await?;
+///
+///     Ok(())
+/// }
+/// ```
+///
+/// The builder can also be used to customize the search parameters, for example:
+///
+/// # Customized Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::drupal;
+///
+/// task!(search);
+///
+/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
+///     // Define the search parameters.
+///     // Verify that the search form page has a title that includes "Custom Search".
+///     let validate_search_page = &goose_eggs::Validate::title("Custom Search");
+///     // Verify that the search results page has a title that includes the search terms.
+///     let validate_results_page = &goose_eggs::Validate::title("search terms");
+///     let search_params = drupal::SearchParams::builder()
+///         // Search for the keys "search terms".
+///         .keys("search terms")
+///         // Use a search form on a custom path.
+///         .url("custom/search/path")
+///         // Perform the search page validation defined above.
+///         .search_page_validation(&validate_search_page)
+///         // Use a submit button named "Custom Search".
+///         .submit("Custom Search")
+///         // Perform the search results validation defined above.
+///         .results_page_validation(&validate_results_page)
+///         .build();
+///
+///     // Perform the actual search.
+///     let _search_results_html = drupal::search(user, &search_params).await?;
+///
+///     Ok(())
+/// }
+/// ```
 pub struct SearchParamsBuilder<'a> {
     keys: &'a str,
     url: &'a str,
@@ -834,28 +879,37 @@ pub struct SearchParamsBuilder<'a> {
     results_page_validation: Option<&'a crate::Validate<'a>>,
 }
 impl<'a> SearchParamsBuilder<'a> {
+    // Internally used when building to set defaults.
     fn new() -> Self {
         Self {
+            // Defaults to empty search keys.
             keys: "",
+            // Defaults to "search".
             url: "search",
+            // Defaults to form values required by Drupal 8 and 9.
             form_values: &["form_build_id", "form_id"],
+            // Defaults to no extra search page validation.
             search_page_validation: None,
+            // Defaults to a search button named "Search".
             submit: "Search",
+            // Defaults to no extra results page validation.
             results_page_validation: None,
         }
     }
 
     /// Used with [`SearchParams::builder`] to set the keys to search for.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to `""`, an empty search string.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::SearchParams;
     ///
-    /// // Search for "search terms".
-    /// let search = SearchParams::builder()
-    ///     .keys("search terms")
+    /// // Use Drupal's default search form to search for "foo bar".
+    /// let search_params = SearchParams::builder()
+    ///     .keys("foo bar")
     ///     .build();
     /// ```
     pub fn keys(mut self, keys: impl Into<&'a str>) -> Self {
@@ -865,14 +919,16 @@ impl<'a> SearchParamsBuilder<'a> {
 
     /// Used with [`SearchParams::builder`] to set the url the search form is on.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to `search`, Drupal's default path for the search form.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::SearchParams;
     ///
-    /// // Use search form on `custom/search/path`.
-    /// let search = SearchParams::builder()
+    /// // Use a search form on custom path `custom/search/path`.
+    /// let search_params = SearchParams::builder()
     ///     .url("custom/search/path")
     ///     .build();
     /// ```
@@ -884,14 +940,17 @@ impl<'a> SearchParamsBuilder<'a> {
     /// Used with [`SearchParams::builder`] to set form_values that are extracted from
     /// the search form and used when POSTing the search.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to form values required by Drupal 8 and 9: `&["form_build_id", "form_id"]`.
+    /// See the example below for how to perform a search on a Drupal 7 website.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Perform a search on a Drupal 7 website.
-    /// let search = SearchParams::builder()
+    /// let search_params = SearchParams::builder()
     ///     // Searching on Drupal 7 also requires `form_token`.
     ///     .form_values(&["form_token", "form_build_id", "form_id"])
     ///     .build();
@@ -901,10 +960,17 @@ impl<'a> SearchParamsBuilder<'a> {
         self
     }
 
-    /// Used with [`SearchParams::builder`] to tell the [`search`] function to validate
-    /// the page title containing the search form.
+    /// Used with [`SearchParams::builder`] to tell the [`search`] function to perform
+    /// extra validation of the page containing the search form.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to `None`, so no extra validation is performed. By default it will still
+    /// validate that the search request returns a valid HTTP response code, and it will
+    /// load all static assets on the page with the search form.
+    ///
+    /// What validation should be performed is defined by passing a reference to a
+    /// [`Validate`](../struct.Validate.html) object.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
@@ -912,7 +978,7 @@ impl<'a> SearchParamsBuilder<'a> {
     ///
     /// // Validate the title of the search page.
     /// let validate_search_page = &goose_eggs::Validate::title("Custom Search");
-    /// let search = SearchParams::builder()
+    /// let search_params = SearchParams::builder()
     ///     .search_page_validation(validate_search_page)
     ///     .build();
     /// ```
@@ -921,17 +987,18 @@ impl<'a> SearchParamsBuilder<'a> {
         self
     }
 
-    /// Used with [`SearchParams::builder`] to set a custom submit `op` of the search
-    /// form.
+    /// Used with [`SearchParams::builder`] to set a custom search form submit `op`.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to Drupal's standard search button name of `Search`.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Perform a search with a custom search button.
-    /// let search = SearchParams::builder()
+    /// let search_params = SearchParams::builder()
     ///     // Searching on Drupal 7 also requires `form_token`.
     ///     .submit("Custom Search")
     ///     .build();
@@ -944,7 +1011,14 @@ impl<'a> SearchParamsBuilder<'a> {
     /// Used with [`SearchParams::builder`] to tell the [`search`] function to validate
     /// the page title containing the search results.
     ///
-    /// This object is passed to the [`search`] function.
+    /// Defaults to `None`, so no extra validation is performed. By default it will still
+    /// validate that the search response returns a valid HTTP response code, and it will
+    /// load all static assets on the returned search results page.
+    ///
+    /// What validation should be performed is defined by passing a reference to a
+    /// [`Validate`](../struct.Validate.html) object.
+    ///
+    /// Once built, the resulting object is passed to the [`search`] function.
     ///
     /// # Example
     /// ```rust
@@ -952,7 +1026,7 @@ impl<'a> SearchParamsBuilder<'a> {
     ///
     /// // Validate that the search terms are in the title of the search results.
     /// let validate_results_page = &goose_eggs::Validate::title("foo");
-    /// let search = SearchParams::builder()
+    /// let search_params = SearchParams::builder()
     ///     .keys("foo")
     ///     .results_page_validation(&validate_results_page)
     ///     .build();
@@ -969,7 +1043,7 @@ impl<'a> SearchParamsBuilder<'a> {
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Use the default search form to search for `example keys`.
-    /// let search = SearchParams::builder()
+    /// let search_params = SearchParams::builder()
     ///     .keys("example keys")
     ///     .build();
     /// ```
@@ -1002,6 +1076,7 @@ impl<'a> SearchParamsBuilder<'a> {
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
+/// use goose_eggs::drupal;
 ///
 /// task!(search);
 ///
@@ -1009,12 +1084,12 @@ impl<'a> SearchParamsBuilder<'a> {
 ///     // Use the default search form to search for "foo", validating that the
 ///     // search page has a title of Search.
 ///     let validate_search_page = &goose_eggs::Validate::title("Search");
-///     let search_params = goose_eggs::drupal::SearchParams::builder()
+///     let search_params = drupal::SearchParams::builder()
 ///         .keys("foo")
 ///         .search_page_validation(validate_search_page)
 ///         .build();
 ///     // Perform the actual search.
-///     let _search_results = goose_eggs::drupal::search(user, &search_params).await?;
+///     let _search_results = drupal::search(user, &search_params).await?;
 ///
 ///     Ok(())
 /// }
