@@ -18,10 +18,12 @@ pub async fn log_in(user: &mut GooseUser) -> GooseTaskResult {
         Err(_) => "P@ssw0rd1234".to_string(),
     };
 
-    let login = goose_eggs::drupal::Login::username_password(&admin_username, &admin_password)
-        .unwrap()
-        .update_url("en/user/login");
-    goose_eggs::drupal::log_in(user, login.as_ref()).await?;
+    let login = goose_eggs::drupal::Login::builder()
+        .username(&*admin_username)
+        .password(&*admin_password)
+        .url("en/user/login")
+        .build();
+    goose_eggs::drupal::log_in(user, &login).await?;
 
     Ok(())
 }
