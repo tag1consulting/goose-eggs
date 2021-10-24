@@ -8,6 +8,7 @@
  - **API change**: introduce `LoginBuilder` to build `Login` objects
     o Replaces `Login::username`, `Login::password`, `Login::username_password`, `Login::url`, `Login::title`, `Login::url_title`, `Login::update_username`, `Login::update_password`, `Login::update_username_password`, `Login::update_url`, `Login::update_title`, `Login::update_url_title`
     o Builder pattern is: `Login::builder().username("username").password("password").url("custom/login/url").build();`
+ - **API change**: introduce `ValidateBuilder` to build `Validate` objects
 
 ## 0.2.0 October 5, 2021
  - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)

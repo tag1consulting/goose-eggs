@@ -458,12 +458,13 @@ impl<'a> LoginBuilder<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::Validate;
-    /// use goose_eggs::drupal::Login;
+    /// use goose_eggs::{drupal, Validate};
     ///
     /// // This validation is done by default.
-    /// let validate = Validate::text(r#"<form class="user-login-form"#);
-    /// let _login = Login::builder()
+    /// let validate = Validate::builder()
+    ///     .text(r#"<form class="user-login-form"#)
+    ///     .build();
+    /// let _login = drupal::Login::builder()
     ///     .log_in_page_validation(&validate)
     ///     .build();
     /// ```
@@ -495,14 +496,15 @@ impl<'a> LoginBuilder<'a> {
     /// ```
     /// # Example
     /// ```rust
-    /// use goose_eggs::Validate;
-    /// use goose_eggs::drupal::Login;
+    /// use goose_eggs::{drupal, Validate};
     ///
     /// let username = "foo";
     ///
     /// // This validation is done by default.
-    /// let validate = Validate::title(username);
-    /// let _login = Login::builder()
+    /// let validate = Validate::builder()
+    ///     .title(username)
+    ///     .build();
+    /// let _login = drupal::Login::builder()
     ///     .username(username)
     ///     .logged_in_page_validation(&validate)
     ///     .build();
@@ -587,7 +589,9 @@ pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, G
     let goose = user.get(login.url).await?;
 
     // By default verify that the standard user-login-form exists on the page.
-    let default_validation = crate::Validate::text(r#"<form class="user-login-form"#);
+    let default_validation = crate::Validate::builder()
+        .text(r#"<form class="user-login-form"#)
+        .build();
     let validate = if let Some(validation) = login.log_in_page_validation {
         validation
     } else {
@@ -665,7 +669,7 @@ pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, G
     }
 
     // By default verify that the username is in the title of the logged in page.
-    let default_validation = crate::Validate::title(login.username);
+    let default_validation = crate::Validate::builder().title(login.username).build();
     let validate = if let Some(validation) = login.logged_in_page_validation {
         validation
     } else {
@@ -745,16 +749,20 @@ impl<'a> SearchParams<'a> {
 /// # Customized Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::drupal;
+/// use goose_eggs::{Validate, drupal};
 ///
 /// task!(search);
 ///
 /// async fn search(user: &mut GooseUser) -> GooseTaskResult {
 ///     // Define the search parameters.
 ///     // Verify that the search form page has a title that includes "Custom Search".
-///     let validate_search_page = &goose_eggs::Validate::title("Custom Search");
+///     let validate_search_page = Validate::builder()
+///         .title("Custom Search")
+///         .build();
 ///     // Verify that the search results page has a title that includes the search terms.
-///     let validate_results_page = &goose_eggs::Validate::title("search terms");
+///     let validate_results_page = Validate::builder()
+///         .title("search terms")
+///         .build();
 ///     let search_params = drupal::SearchParams::builder()
 ///         // Search for the keys "search terms".
 ///         .keys("search terms")
@@ -878,12 +886,15 @@ impl<'a> SearchParamsBuilder<'a> {
     ///
     /// # Example
     /// ```rust
+    /// use goose_eggs::Validate;
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Validate the title of the search page.
-    /// let validate_search_page = &goose_eggs::Validate::title("Custom Search");
+    /// let validate_search_page = Validate::builder()
+    ///     .title("Custom Search")
+    ///     .build();
     /// let search_params = SearchParams::builder()
-    ///     .search_page_validation(validate_search_page)
+    ///     .search_page_validation(&validate_search_page)
     ///     .build();
     /// ```
     pub fn search_page_validation(mut self, validation: &'a crate::Validate) -> Self {
@@ -926,10 +937,13 @@ impl<'a> SearchParamsBuilder<'a> {
     ///
     /// # Example
     /// ```rust
+    /// use goose_eggs::Validate;
     /// use goose_eggs::drupal::SearchParams;
     ///
     /// // Validate that the search terms are in the title of the search results.
-    /// let validate_results_page = &goose_eggs::Validate::title("foo");
+    /// let validate_results_page = Validate::builder()
+    ///     .title("foo")
+    ///     .build();
     /// let search_params = SearchParams::builder()
     ///     .keys("foo")
     ///     .results_page_validation(&validate_results_page)
@@ -987,7 +1001,9 @@ impl<'a> SearchParamsBuilder<'a> {
 /// async fn search(user: &mut GooseUser) -> GooseTaskResult {
 ///     // Use the default search form to search for "foo", validating that the
 ///     // search page has a title of Search.
-///     let validate_search_page = &goose_eggs::Validate::title("Search");
+///     let validate_search_page = &goose_eggs::Validate::builder()
+///         .title("Search")
+///         .build();
 ///     let search_params = drupal::SearchParams::builder()
 ///         .keys("foo")
 ///         .search_page_validation(validate_search_page)

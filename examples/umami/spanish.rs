@@ -10,7 +10,7 @@ pub async fn front_page_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Inicio"),
+        &goose_eggs::Validate::builder().title("Inicio").build(),
     )
     .await?;
 
@@ -23,7 +23,7 @@ pub async fn recipe_listing_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Recetas"),
+        &goose_eggs::Validate::builder().title("Recetas").build(),
     )
     .await?;
 
@@ -38,7 +38,9 @@ pub async fn recipe_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(recipe.unwrap().title_es),
+        &goose_eggs::Validate::builder()
+            .title(recipe.unwrap().title_es)
+            .build(),
     )
     .await?;
 
@@ -51,7 +53,7 @@ pub async fn article_listing_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Artículos"),
+        &goose_eggs::Validate::builder().title("Artículos").build(),
     )
     .await?;
 
@@ -66,7 +68,9 @@ pub async fn article_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(article.unwrap().title_es),
+        &goose_eggs::Validate::builder()
+            .title(article.unwrap().title_es)
+            .build(),
     )
     .await?;
 
@@ -81,7 +85,9 @@ pub async fn basic_page_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(page.unwrap().title_es),
+        &goose_eggs::Validate::builder()
+            .title(page.unwrap().title_es)
+            .build(),
     )
     .await?;
 
@@ -102,9 +108,11 @@ pub async fn search_es(user: &mut GooseUser) -> GooseTaskResult {
     let search_phrase = search_words.join(" ");
 
     // The search page should have "Buscar" in the title.
-    let validate_search_page = &goose_eggs::Validate::title("Buscar");
+    let validate_search_page = &goose_eggs::Validate::builder().title("Buscar").build();
     // The results page should have the search_phrase in the title.
-    let validate_results_page = &goose_eggs::Validate::title(&search_phrase);
+    let validate_results_page = &goose_eggs::Validate::builder()
+        .title(&*search_phrase)
+        .build();
     let search_params = goose_eggs::drupal::SearchParams::builder()
         .keys(&*search_phrase)
         .url("es/search/node")
@@ -124,7 +132,9 @@ pub async fn term_listing_es(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(term.unwrap().title_es),
+        &goose_eggs::Validate::builder()
+            .title(term.unwrap().title_es)
+            .build(),
     )
     .await?;
 

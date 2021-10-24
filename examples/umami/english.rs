@@ -7,8 +7,12 @@ use rand::seq::SliceRandom;
 /// Load the front page in English and all static assets found on the page.
 pub async fn front_page_en(user: &mut GooseUser) -> GooseTaskResult {
     let goose = user.get("").await?;
-    goose_eggs::validate_and_load_static_assets(user, goose, &goose_eggs::Validate::title("Home"))
-        .await?;
+    goose_eggs::validate_and_load_static_assets(
+        user,
+        goose,
+        &goose_eggs::Validate::builder().title("Home").build(),
+    )
+    .await?;
 
     Ok(())
 }
@@ -19,7 +23,7 @@ pub async fn recipe_listing_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Recipes"),
+        &goose_eggs::Validate::builder().title("Recipes").build(),
     )
     .await?;
 
@@ -34,7 +38,9 @@ pub async fn recipe_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(recipe.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(recipe.unwrap().title_en)
+            .build(),
     )
     .await?;
 
@@ -47,7 +53,7 @@ pub async fn article_listing_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Articles"),
+        &goose_eggs::Validate::builder().title("Articles").build(),
     )
     .await?;
 
@@ -62,7 +68,9 @@ pub async fn article_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(article.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(article.unwrap().title_en)
+            .build(),
     )
     .await?;
 
@@ -77,7 +85,9 @@ pub async fn basic_page_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(page.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(page.unwrap().title_en)
+            .build(),
     )
     .await?;
 
@@ -103,7 +113,9 @@ pub async fn page_by_nid(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(page.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(page.unwrap().title_en)
+            .build(),
     )
     .await?;
 
@@ -124,9 +136,11 @@ pub async fn search_en(user: &mut GooseUser) -> GooseTaskResult {
     let search_phrase = search_words.join(" ");
 
     // The search page should have "Search" in the title.
-    let validate_search_page = &goose_eggs::Validate::title("Search");
+    let validate_search_page = &goose_eggs::Validate::builder().title("Search").build();
     // The results page should have the search_phrase in the title.
-    let validate_results_page = &goose_eggs::Validate::title(&search_phrase);
+    let validate_results_page = &goose_eggs::Validate::builder()
+        .title(&*search_phrase)
+        .build();
     let search_params = goose_eggs::drupal::SearchParams::builder()
         .keys(&*search_phrase)
         .url("en/search/node")
@@ -146,7 +160,9 @@ pub async fn term_listing_en(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(term.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(term.unwrap().title_en)
+            .build(),
     )
     .await?;
 
