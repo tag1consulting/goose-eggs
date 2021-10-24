@@ -303,30 +303,17 @@ pub fn get_encoded_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<
     form_elements
 }
 
-/// Set one or more defaults when logging in through the standard drupal user-login-form.
-///
-/// This object is passed to [`log_in`] to set a custom default username and/or password
-/// and/or log in url and/or the required title after login.
-///
-/// # Example
-/// ```rust
-/// use goose_eggs::drupal::Login;
-///
-/// fn examples() {
-///     // Manually build a Login structure with custom username, password and on a custom
-///     // login path.
-///     let _login = Login::builder()
-///         .username("foo")
-///         .password("bar")
-///         .url("custom/user/login")
-///         .build();
-/// }
+/// Parameters that define how to log into a Drupal website and validate
+/// that the user loged in successfully. For complete documentation, refer
+/// to [`LoginBuilder`].
+#[derive(Clone, Debug)]
 pub struct Login<'a> {
     // Optionally set a default username.
     username: &'a str,
     // Optionally set a default password.
     password: &'a str,
-    // Optionally set a custom default path (otherwise defaults to `/user/login`).
+    // Optionally set a custom log in path (otherwise defaults to
+    // `/user/login`).
     url: &'a str,
     // Optionally set a custom title to validate.
     log_in_page_validation: Option<&'a crate::Validate<'a>>,
@@ -340,6 +327,30 @@ impl<'a> Login<'a> {
     }
 }
 
+/// Used to build a [`Login`] object, necessary to invoke the [`log_in`] function.
+///
+/// Sets parameters that define how to log into a Drupal website and validate that
+/// the user loged in successfully.
+///
+/// This object is passed to the [`log_in`] function.
+///
+/// The defined `username` and/or `password` can be dynamically overridden by setting
+/// the `GOOSE_USER` and/or `GOOSE_PASS` environment variables when starting the load
+/// test.
+///
+/// # Example
+/// ```rust
+/// use goose_eggs::drupal::Login;
+///
+/// fn examples() {
+///     // Manually build a Login structure with custom default username and password,
+///     // and a custom log in path.
+///     let _login = Login::builder()
+///         .username("foo")
+///         .password("bar")
+///         .url("custom/user/login")
+///         .build();
+/// }
 pub struct LoginBuilder<'a> {
     // Optionally set a default username.
     username: &'a str,
@@ -433,19 +444,27 @@ impl<'a> LoginBuilder<'a> {
         self
     }
 
-    /// Used with [`Login::builder`] to configure login parameters.
+    /// Used with [`Login::builder`] to tell the [`log_in`] function to perform extra
+    /// validation of the page containing the log in form.
     ///
-    /// Defaults to `None`.
+    /// Defaults to `None`, so no extra validation is performed. By default it will still
+    /// validate that `<form class="user-login-form"` exists on the log in page, and it
+    /// will load all static assets on the page with the log in form.
+    ///
+    /// What validation should be performed is defined by passing a reference to a
+    /// [`Validate`](../struct.Validate.html) object.
     ///
     /// Once built, the resulting object is passed to the [`log_in`] function.
     ///
     /// # Example
     /// ```rust
+    /// use goose_eggs::Validate;
     /// use goose_eggs::drupal::Login;
     ///
-    /// // Login at a custom path.
+    /// // This validation is done by default.
+    /// let validate = Validate::text(r#"<form class="user-login-form"#);
     /// let _login = Login::builder()
-    ///     .password("custom/user/login")
+    ///     .log_in_page_validation(&validate)
     ///     .build();
     /// ```
     pub fn log_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
@@ -453,9 +472,15 @@ impl<'a> LoginBuilder<'a> {
         self
     }
 
-    /// Used with [`Login::builder`] to configure login parameters.
+    /// Used with [`Login::builder`] to tell the [`log_in`] function to perform extra
+    /// validation of the page returned once the user logs in.
     ///
-    /// Defaults to `None`.
+    /// Defaults to `None`, so no extra validation is performed. By default it will still
+    /// validate that the username of the user that logged in is in the title, and will
+    /// load all static assets on the returned page.
+    ///
+    /// What validation should be performed is defined by passing a reference to a
+    /// [`Validate`](../struct.Validate.html) object.
     ///
     /// Once built, the resulting object is passed to the [`log_in`] function.
     ///
@@ -466,6 +491,20 @@ impl<'a> LoginBuilder<'a> {
     /// // Use Drupal's default search form to search for "foo bar".
     /// let search_params = SearchParams::builder()
     ///     .keys("foo bar")
+    ///     .build();
+    /// ```
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    /// use goose_eggs::drupal::Login;
+    ///
+    /// let username = "foo";
+    ///
+    /// // This validation is done by default.
+    /// let validate = Validate::title(username);
+    /// let _login = Login::builder()
+    ///     .username(username)
+    ///     .logged_in_page_validation(&validate)
     ///     .build();
     /// ```
     pub fn logged_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
