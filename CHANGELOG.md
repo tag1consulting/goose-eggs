@@ -2,9 +2,12 @@
 
 ## 0.3.0-dev
  - find forms identified with either `id=` or `data-drupal-selector=`
- - **API changes**: introduce `SearchParamsBuilder` to build `SearchParams` objects
+ - **API change**: introduce `SearchParamsBuilder` to build `SearchParams` objects
     o Replaces `SearchParams::keys`, `SearchParams::update_keys`, `SearchParams::update_url`, `SearchParams::update_submit`, `SearchParams::update_title`
     o Builder pattern is: `SearchParams::builder().keys("foo").url("custom/url").submit("Search").build();`
+ - **API change**: introduce `LoginBuilder` to build `Login` objects
+    o Replaces `Login::username`, `Login::password`, `Login::username_password`, `Login::url`, `Login::title`, `Login::url_title`, `Login::update_username`, `Login::update_password`, `Login::update_username_password`, `Login::update_url`, `Login::update_title`, `Login::update_url_title`
+    o Builder pattern is: `Login::builder().username("username").password("password").url("custom/login/url").build();`
 
 ## 0.2.0 October 5, 2021
  - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)
