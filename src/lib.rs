@@ -27,7 +27,7 @@ pub struct Validate<'a> {
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<&'a str>,
     /// Optionally validate the response headers.
-    headers: Vec<&'a Header<'a>>,
+    headers: Vec<(&'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -98,7 +98,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<&'a str>,
     /// Optionally validate the response headers.
-    headers: Vec<&'a Header<'a>>,
+    headers: Vec<(&'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -120,7 +120,7 @@ impl<'a> ValidateBuilder<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
     ///     .status(200)
@@ -138,7 +138,7 @@ impl<'a> ValidateBuilder<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
     ///     .title("Home page")
@@ -156,7 +156,7 @@ impl<'a> ValidateBuilder<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
     ///     .text("example")
@@ -203,51 +203,73 @@ impl<'a> ValidateBuilder<'a> {
     /// Create a [`Validate`] object to validate that the response includes the specified
     /// header.
     ///
+    /// To validate that a header contains a specific value (instead of just validating
+    /// that it exists), use [`ValidateBuilder::header_value`].
+    ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
-    ///     .header(&Header::name("x-cache"))
+    ///     .header("x-cache")
     ///     .build();
     /// ```
     ///
-    /// It's possible to call this function multiple times to validate multiple headers.
-    /// Alternatively you can call [`ValidateBuilder::headers`].
+    /// It's possible to call this function multiple times to validate that multiple
+    /// headers are set.
     ///
     /// # Multiple Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
-    ///     .header(&Header::name("x-cache"))
-    ///     .header(&Header::name("x-generator"))
+    ///     .header("x-cache")
+    ///     .header("x-generator")
     ///     .build();
     /// ```
-    pub fn header(mut self, header: &'a Header<'a>) -> Self {
-        self.headers.push(header);
+    pub fn header(mut self, header: impl Into<&'a str>) -> Self {
+        self.headers.push((header.into(), ""));
         self
     }
 
-    /// Create a [`Validate`] object to validate that the response page contains the specified
-    /// headers.
+    /// Create a [`Validate`] object to validate that the response includes the specified
+    /// header which contains the specified value.
+    ///
+    /// To validate that a header simply exists without confirming that it contains a
+    /// specific value, use [`ValidateBuilder::header`].
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Validate, Header};
+    /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::builder()
-    ///     .headers(vec![&Header::name("x-cache"), &Header::name("x-generator")])
+    ///     .header_value("x-generator", "Drupal 7")
     ///     .build();
     /// ```
     ///
-    /// Alternatively you can call [`ValidateBuilder::header`].
-    pub fn headers(mut self, headers: Vec<&'a Header<'a>>) -> Self {
-        self.headers = headers;
+    /// It's possible to call this function multiple times, and/or together with
+    /// [`ValidateBuilder::header`] to validate that multiple headers are set and their
+    /// values.
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     // Validate that the "x-cache" header is set.
+    ///     .header("x-cache")
+    ///     // Validate that the "x-generator" header is set and contains "Drupal 7".
+    ///     .header_value("x-generator", "Drupal-7")
+    ///     // Validate that the "x-drupal-cache" header is set and contains "HIT".
+    ///     .header_value("x-drupal-cache", "HIT")
+    ///     .build();
+    /// ```
+    pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
+        self.headers.push((header.into(), value.into()));
         self
     }
 
@@ -297,65 +319,6 @@ impl<'a> ValidateBuilder<'a> {
             headers,
             redirect,
         }
-    }
-}
-
-/// Used to validate that headers are included in the server response.
-///
-/// # Example
-/// ```rust
-/// use goose_eggs::Header;
-///
-/// fn example() {
-///     // Validate that the "x-varnish" header is set.
-///     let _header = Header::name("x-varnish");
-/// }
-
-#[derive(Clone, Debug)]
-pub struct Header<'a> {
-    /// The name of the header to validate, required.
-    name: &'a str,
-    /// The value of the header to validate, optional.
-    value: Option<&'a str>,
-}
-impl<'a> Header<'a> {
-    /// Create a new Header validation struct by specifying all fields.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::Header;
-    ///
-    /// let _header = Header::new("foo", Some("bar"));
-    /// ```
-    pub fn new(name: &'a str, value: Option<&'a str>) -> Header<'a> {
-        Header { name, value }
-    }
-
-    /// Create a Header object to validate that a named header is set.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::Header;
-    ///
-    /// // Create a Header object to validate that the "foo" header is set in the Response.
-    /// let _header = Header::name("foo");
-    /// ```
-    pub fn name(name: &'a str) -> Header<'a> {
-        Header::new(name, None)
-    }
-
-    /// Create a Header object to validate that a named header contains a specific value.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::Header;
-    ///
-    /// // Create a Header object to validate that the "foo" header is set and contains "bar"
-    /// // in the Response.
-    /// let _header = Header::name_value("foo", "bar");
-    /// ```
-    pub fn name_value(name: &'a str, value: &'a str) -> Header<'a> {
-        Header::new(name, Some(value))
     }
 }
 
@@ -593,7 +556,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::{header_is_set, Header};
+/// use goose_eggs::header_is_set;
 ///
 /// task!(validate_header).set_on_start();
 ///
@@ -604,7 +567,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !header_is_set(headers, &Header::name("server")) {
+///             if !header_is_set(headers, "server") {
 ///                 return user.set_failure(
 ///                     &format!("{}: header not found: {}", goose.request.raw.url, "server"),
 ///                     &mut goose.request,
@@ -626,13 +589,16 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///     Ok(())
 /// }
 /// ```
-pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
-    headers.contains_key(header.name)
+pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
+    headers.contains_key(header)
 }
 
 /// Returns a [`bool`] indicating whether or not a header contains an expected value.
 ///
 /// Returns [`true`] if the expected value was found, otherwise returns [`false`].
+///
+/// Expects a [`&str`] [`tuple`] with a length of 2 where the first defines the header
+/// name and the second defines the header value, ie `("name", "value")`.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
 /// [`validate_and_load_static_assets`] which in turn invokes this function.
@@ -640,7 +606,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::{valid_header_value, Header};
+/// use goose_eggs::valid_header_value;
 ///
 /// task!(validate_header_value).set_on_start();
 ///
@@ -651,7 +617,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !valid_header_value(headers, &Header::name_value("server", "nginx")) {
+///             if !valid_header_value(headers, ("server", "nginx")) {
 ///                 return user.set_failure(
 ///                     &format!("{}: server header value not correct: {}", goose.request.raw.url, "nginx"),
 ///                     &mut goose.request,
@@ -673,30 +639,36 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///     Ok(())
 /// }
 /// ```
-pub fn valid_header_value(headers: &HeaderMap, header: &Header) -> bool {
-    if header_is_set(headers, header) {
-        if let Some(value_to_validate) = header.value {
-            let header_value = match headers.get(header.name) {
+pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -> bool {
+    // A header name is required, exit early if it's empty.
+    if header.0.is_empty() {
+        info!("no header specified");
+        return false;
+    }
+
+    if header_is_set(headers, header.0) {
+        if header.1.is_empty() {
+            false
+        } else {
+            let header_value = match headers.get(header.0) {
                 // Extract the value of the header and try to convert to a &str.
                 Some(v) => v.to_str().unwrap_or(""),
                 None => "",
             };
             // Check if the desired value is in the header.
-            if header_value.contains(value_to_validate) {
+            if header_value.contains(header.1) {
                 true
             } else {
                 // Provide some extra debug.
                 info!(
                     r#"header does not contain expected value: "{}: {}""#,
-                    header.name, header_value
+                    header.0, header.1
                 );
                 false
             }
-        } else {
-            false
         }
     } else {
-        info!("header ({}) not set", header.name);
+        info!("header ({}) not set", header.0);
         false
     }
 }
@@ -857,7 +829,7 @@ pub async fn validate_and_load_static_assets<'a>(
             // Validate headers if defined.
             let headers = &response.headers().clone();
             for header in &validate.headers {
-                if !header_is_set(headers, header) {
+                if !header_is_set(headers, header.0) {
                     // Get as much as we can from the response for useful debug logging.
                     let html = response.text().await.unwrap_or_else(|_| "".to_string());
                     user.set_failure(
@@ -873,23 +845,21 @@ pub async fn validate_and_load_static_assets<'a>(
                     // errors when a page fails to load.
                     return Ok(html);
                 }
-                if let Some(h) = header.value {
-                    if !valid_header_value(headers, header) {
-                        // Get as much as we can from the response for useful debug logging.
-                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
-                        user.set_failure(
-                            &format!(
-                                "{}: header does not contain expected value: {:?}",
-                                goose.request.raw.url, h
-                            ),
-                            &mut goose.request,
-                            Some(headers),
-                            Some(&html),
-                        )?;
-                        // Exit as soon as validation fails, to avoid cascades of
-                        // errors when a page fails to load.
-                        return Ok(html);
-                    }
+                if !header.1.is_empty() && !valid_header_value(headers, *header) {
+                    // Get as much as we can from the response for useful debug logging.
+                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                    user.set_failure(
+                        &format!(
+                            "{}: header does not contain expected value: {:?}",
+                            goose.request.raw.url, header.1
+                        ),
+                        &mut goose.request,
+                        Some(headers),
+                        Some(&html),
+                    )?;
+                    // Exit as soon as validation fails, to avoid cascades of
+                    // errors when a page fails to load.
+                    return Ok(html);
                 }
             }
 
