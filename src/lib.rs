@@ -210,7 +210,7 @@ impl<'a> ValidateBuilder<'a> {
     /// use goose_eggs::{Header, Validate};
     ///
     /// let _validate = Validate::builder()
-    ///     .header(&Header::name("x-cache"))
+    ///     .header(&Header::builder().name("x-cache").build())
     ///     .build();
     /// ```
     ///
@@ -222,8 +222,8 @@ impl<'a> ValidateBuilder<'a> {
     /// use goose_eggs::{Header, Validate};
     ///
     /// let _validate = Validate::builder()
-    ///     .header(&Header::name("x-cache"))
-    ///     .header(&Header::name("x-generator"))
+    ///     .header(&Header::builder().name("x-cache").build())
+    ///     .header(&Header::builder().name("x-generator").build())
     ///     .build();
     /// ```
     pub fn header(mut self, header: &'a Header<'a>) -> Self {
@@ -241,7 +241,7 @@ impl<'a> ValidateBuilder<'a> {
     /// use goose_eggs::{Validate, Header};
     ///
     /// let _validate = Validate::builder()
-    ///     .headers(vec![&Header::name("x-cache"), &Header::name("x-generator")])
+    ///     .headers(vec![&Header::builder().name("x-cache").build(), &Header::builder().name("x-generator").build()])
     ///     .build();
     /// ```
     ///
@@ -300,17 +300,14 @@ impl<'a> ValidateBuilder<'a> {
     }
 }
 
-/// Used to validate that headers are included in the server response.
+/// Validate that one or more headers are set, optionally also defining the
+/// header values that must be set.  For complete documentation, refer to
+/// [`HeaderBuilder`].
 ///
-/// # Example
-/// ```rust
-/// use goose_eggs::Header;
-///
-/// fn example() {
-///     // Validate that the "x-varnish" header is set.
-///     let _header = Header::name("x-varnish");
-/// }
-
+/// This structure can be passed to [`header_is_set`] or [`valid_header_value`],
+/// but it's generally recommended to include it in the [`Validate`] structure using
+/// [`ValidateBuilder::header`] or [`ValidateBuilder::headers`] then passed to
+/// [`validate_and_load_static_assets`].
 #[derive(Clone, Debug)]
 pub struct Header<'a> {
     /// The name of the header to validate, required.
@@ -319,43 +316,119 @@ pub struct Header<'a> {
     value: Option<&'a str>,
 }
 impl<'a> Header<'a> {
-    /// Create a new Header validation struct by specifying all fields.
+    /// Convenience function to bring [`HeaderBuilder`] into scope.
+    pub fn builder() -> HeaderBuilder<'a> {
+        HeaderBuilder::new()
+    }
+}
+
+/// Used to build a [`Header`] object to validate that one or more headers are set,
+/// optionally also defining the header values that must be set.
+///
+/// The [`Header`] object can be passed to [`header_is_set`] or [`valid_header_value`],
+/// but it's generally recommended to be included in the [`Validate`] structure using
+/// [`ValidateBuilder::header`] or [`ValidateBuilder::headers`] then passed to
+/// [`validate_and_load_static_assets`].
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::{Header, validate_and_load_static_assets, Validate};
+///
+/// task!(load_page_and_validate_header);
+///
+/// async fn load_page_and_validate_header(user: &mut GooseUser) -> GooseTaskResult {
+///     // Make a GET request.
+///     let mut goose = user.get("example/path").await?;
+///
+///     // Build a [`Header`] object to confirm the "x-cache" header is set.
+///     let header_xcache = Header::builder()
+///         .name("x-cache")
+///         .build();
+///
+///     // Build a [`Header`] object to confirm the "x-generator" header is set and
+///     // includes the text "Drupal 7".
+///     let header_xgenerator = Header::builder()
+///         .name_value("x-generator", "Drupal 7")
+///         .build();
+///
+///     // Build a [`Validate`] object to confirm the response is valid.
+///     let validate = &Validate::builder()
+///         .header(&header_xcache)
+///         .header(&header_xgenerator)
+///         .build();
+///
+///     // Perform the actual validation, using `?` to pass up the error if any
+///     // validation fails.
+///     validate_and_load_static_assets(
+///         user,
+///         goose,
+///         &validate,
+///     ).await?;
+///
+///     Ok(())
+/// }
+pub struct HeaderBuilder<'a> {
+    /// The name of the header to validate, required.
+    name: &'a str,
+    /// The value of the header to validate, optional.
+    value: Option<&'a str>,
+}
+impl<'a> HeaderBuilder<'a> {
+    // Internally used when building to set defaults.
+    fn new() -> Self {
+        Self {
+            name: "",
+            value: None,
+        }
+    }
+
+    /// Verify that a named header is set.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::Header;
     ///
-    /// let _header = Header::new("foo", Some("bar"));
+    /// // Create a Header object to validate that the "foo" header is set in the
+    /// // Response.
+    /// let _header = Header::builder().name("foo").build();
     /// ```
-    pub fn new(name: &'a str, value: Option<&'a str>) -> Header<'a> {
+    pub fn name(mut self, name: impl Into<&'a str>) -> Self {
+        self.name = name.into();
+        self
+    }
+
+    /// Verify that a named header is set and contains a specific value.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Header;
+    ///
+    /// // Create a Header object to validate that the "foo" header is set and that the
+    /// // header value contains "bar".
+    /// let _header = Header::builder().name_value("foo", "bar").build();
+    /// ```
+    pub fn name_value(mut self, name: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
+        self.name = name.into();
+        self.value = Some(value.into());
+        self
+    }
+
+    /// Build the [`Header`] object which is then passed to the
+    /// [`validate_and_load_static_assets`] function.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// // Use the default search form to search for `example keys`.
+    /// let _validate = Validate::builder()
+    ///     .text("example text")
+    ///     .build();
+    /// ```
+    pub fn build(self) -> Header<'a> {
+        let Self { name, value } = self;
         Header { name, value }
-    }
-
-    /// Create a Header object to validate that a named header is set.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::Header;
-    ///
-    /// // Create a Header object to validate that the "foo" header is set in the Response.
-    /// let _header = Header::name("foo");
-    /// ```
-    pub fn name(name: &'a str) -> Header<'a> {
-        Header::new(name, None)
-    }
-
-    /// Create a Header object to validate that a named header contains a specific value.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::Header;
-    ///
-    /// // Create a Header object to validate that the "foo" header is set and contains "bar"
-    /// // in the Response.
-    /// let _header = Header::name_value("foo", "bar");
-    /// ```
-    pub fn name_value(name: &'a str, value: &'a str) -> Header<'a> {
-        Header::new(name, Some(value))
     }
 }
 
@@ -604,7 +677,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !header_is_set(headers, &Header::name("server")) {
+///             if !header_is_set(headers, &Header::builder().name("server").build()) {
 ///                 return user.set_failure(
 ///                     &format!("{}: header not found: {}", goose.request.raw.url, "server"),
 ///                     &mut goose.request,
@@ -651,7 +724,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &Header) -> bool {
 ///         Ok(response) => {
 ///             // Copy the headers so we have them for logging if there are errors.
 ///             let headers = &response.headers().clone();
-///             if !valid_header_value(headers, &Header::name_value("server", "nginx")) {
+///             if !valid_header_value(headers, &Header::builder().name_value("server", "nginx").build()) {
 ///                 return user.set_failure(
 ///                     &format!("{}: server header value not correct: {}", goose.request.raw.url, "nginx"),
 ///                     &mut goose.request,

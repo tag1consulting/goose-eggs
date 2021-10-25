@@ -11,6 +11,8 @@
  - **API change**: introduce `ValidateBuilder` to build `Validate` objects
     o Replaces `Validate::new`, `Validate::status`, `Validate::title`, `Validate::text`, `Validate::texts`, `Validate::title_text`, `Validate::title_texts`, `Validate::header`, `Validate::headers`, `Validate::redirect`, `Validate::update_status`, `Validate::update_title`, `Valudate::update_text`, `Validate::update_texts`, `Validate::update_header`, `Validate::update_header`
     o Builder pattern is: `Validate::builder().status(200).text("foo").redirect(true).build();`
+ - **API change**: introduce `HeaderBuilder` to build `Header` objects
+    o Builder pattern is: `Header::builder().name("x-cache").build();`
 
 ## 0.2.0 October 5, 2021
  - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)
