@@ -420,11 +420,13 @@ pub async fn anonymous_contact_form(user: &mut GooseUser, english: bool) -> Goos
     let contact_page = goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title(if english {
-            "Website feedback"
-        } else {
-            "Comentarios sobre el sitio web"
-        }),
+        &goose_eggs::Validate::builder()
+            .title(if english {
+                "Website feedback"
+            } else {
+                "Comentarios sobre el sitio web"
+            })
+            .build(),
     )
     .await?;
 

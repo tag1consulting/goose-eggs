@@ -37,10 +37,10 @@ pub async fn edit_article(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title_text(
-            article.unwrap().title_en,
-            &format!("en/node/{}/edit", article.unwrap().nid),
-        ),
+        &goose_eggs::Validate::builder()
+            .title(article.unwrap().title_en)
+            .text(&format!("en/node/{}/edit", article.unwrap().nid))
+            .build(),
     )
     .await?;
 
@@ -52,7 +52,9 @@ pub async fn edit_article(user: &mut GooseUser) -> GooseTaskResult {
     let edit_page = goose_eggs::validate_and_load_static_assets(
         user,
         goose,
-        &goose_eggs::Validate::title("Edit Article"),
+        &goose_eggs::Validate::builder()
+            .title("Edit Article")
+            .build(),
     )
     .await?;
 
@@ -85,7 +87,9 @@ pub async fn edit_article(user: &mut GooseUser) -> GooseTaskResult {
     goose_eggs::validate_and_load_static_assets(
         user,
         saved_article,
-        &goose_eggs::Validate::title(article.unwrap().title_en),
+        &goose_eggs::Validate::builder()
+            .title(article.unwrap().title_en)
+            .build(),
     )
     .await?;
 

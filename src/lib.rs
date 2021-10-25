@@ -14,28 +14,10 @@ use reqwest::header::HeaderMap;
 pub mod drupal;
 pub mod text;
 
-/// Define one or more items to be validated in a web page response.
+/// Define one or more items to be validated in a web page response. For complete
+/// documentation, refer to [`ValidateBuilder`].
 ///
 /// This structure is passed to [`validate_and_load_static_assets`].
-///
-/// # Example
-/// ```rust
-/// use goose_eggs::Validate;
-///
-/// fn examples() {
-///     // Manually build a Validate strucuture that validates the page title and
-///     // some arbitrary texts in the response html.
-///     let _validate = Validate::new(
-///         None, Some("my page"), vec!["foo", r#"<a href="bar">"#], vec![], None
-///     );
-///
-///     // Use `title_texts()` helper to perform the same validation.
-///     let _validate = Validate::title_texts("my page", vec!["foo", r#"<a href="bar">"#]);
-///
-///     // Use `title_text()` helper to perform similar validation, validating only
-///     // one text on the page.
-///     let _validate = Validate::title_text("my page", r#"<a href="foo">"#);
-/// }
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
@@ -50,43 +32,12 @@ pub struct Validate<'a> {
     redirect: Option<bool>,
 }
 impl<'a> Validate<'a> {
-    /// Create a new Validate struct, specifying `status`, `title`, `texts`, `headers`,
-    /// and `redirect`.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::new(
-    ///     // Validate the response status code.
-    ///     Some(404),
-    ///     // Validate the response page title.
-    ///     Some("Page Not Found"),
-    ///     // Validate arbitrary text on the response page.
-    ///     vec!["Oops, something went wrong!"],
-    ///     // Validate that the response was sent via https.
-    ///     vec![&Header::name_value("scheme", "https")],
-    ///     // Validate that the page redirects.
-    ///     Some(true),
-    /// );
-    /// ```
-    pub fn new(
-        status: Option<u16>,
-        title: Option<&'a str>,
-        texts: Vec<&'a str>,
-        headers: Vec<&'a Header<'a>>,
-        redirect: Option<bool>,
-    ) -> Validate<'a> {
-        Validate {
-            status,
-            title,
-            texts,
-            headers,
-            redirect,
-        }
+    /// Convenience function to bring [`ValidateBuilder`] into scope.
+    pub fn builder() -> ValidateBuilder<'a> {
+        ValidateBuilder::new()
     }
 
-    /// Create a new Validate struct that validates nothing.
+    /// Create a [`Validate`] object that performs no validation.
     ///
     /// This is useful to load all static assets and return the body of the response.
     ///
@@ -99,10 +50,71 @@ impl<'a> Validate<'a> {
     /// let _validate = Validate::none();
     /// ```
     pub fn none() -> Validate<'a> {
-        Validate::new(None, None, vec![], vec![], None)
+        Validate::builder().build()
+    }
+}
+
+/// Used to build a [`Validate`] object, necessary to invoke the
+/// [`validate_and_load_static_assets`] function.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::{validate_and_load_static_assets, Validate};
+///
+/// task!(load_and_validate_page);
+///
+/// async fn load_and_validate_page(user: &mut GooseUser) -> GooseTaskResult {
+///     // Make a GET request.
+///     let mut goose = user.get("example/path").await?;
+///
+///     // Build a [`Validate`] object to confirm the response is valid.
+///     let validate = &Validate::builder()
+///         // Validate that the page has `Example` in the title.
+///         .title("Example")
+///         // Validate that the page has `foo` in the returned html body.
+///         .text("foo")
+///         // Validate that the page also has `<a href="bar">` in the returned
+///         // html body.
+///         .text(r#"<a href="bar">"#)
+///         .build();
+///
+///     // Perform the actual validation, using `?` to pass up the error if any
+///     // validation fails.
+///     validate_and_load_static_assets(
+///         user,
+///         goose,
+///         &validate,
+///     ).await?;
+///
+///     Ok(())
+/// }
+#[derive(Clone, Debug)]
+pub struct ValidateBuilder<'a> {
+    /// Optionally validate the response status code.
+    status: Option<u16>,
+    /// Optionally validate the response title.
+    title: Option<&'a str>,
+    /// Optionally validate arbitrary texts in the response html.
+    texts: Vec<&'a str>,
+    /// Optionally validate the response headers.
+    headers: Vec<&'a Header<'a>>,
+    /// Optionally validate whether or not the page redirects
+    redirect: Option<bool>,
+}
+impl<'a> ValidateBuilder<'a> {
+    // Internally used when building to set defaults.
+    fn new() -> Self {
+        Self {
+            status: None,
+            title: None,
+            texts: vec![],
+            headers: vec![],
+            redirect: None,
+        }
     }
 
-    /// Create a Validate object to validate the response status code.
+    /// Define the HTTP status expected to be returned when loading the page.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -110,13 +122,17 @@ impl<'a> Validate<'a> {
     /// ```rust
     /// use goose_eggs::{Header, Validate};
     ///
-    /// let _validate = Validate::status(200);
+    /// let _validate = Validate::builder()
+    ///     .status(200)
+    ///     .build();
     /// ```
-    pub fn status(status: u16) -> Validate<'a> {
-        Validate::new(Some(status), None, vec![], vec![], None)
+    pub fn status(mut self, status: u16) -> Self {
+        self.status = Some(status);
+        self
     }
 
-    /// Create a Validate object to validate the response title.
+    /// Create a [`Validate`] object to validate that response title contains the specified
+    /// text.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -124,13 +140,17 @@ impl<'a> Validate<'a> {
     /// ```rust
     /// use goose_eggs::{Header, Validate};
     ///
-    /// let _validate = Validate::title("Home page");
+    /// let _validate = Validate::builder()
+    ///     .title("Home page")
+    ///     .build();
     /// ```
-    pub fn title(title: &'a str) -> Validate<'a> {
-        Validate::new(None, Some(title), vec![], vec![], None)
+    pub fn title(mut self, title: impl Into<&'a str>) -> Self {
+        self.title = Some(title.into());
+        self
     }
 
-    /// Create a Validate object to validate specific text is on the response page.
+    /// Create a [`Validate`] object to validate that the response page contains the specified
+    /// text.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -138,177 +158,50 @@ impl<'a> Validate<'a> {
     /// ```rust
     /// use goose_eggs::{Header, Validate};
     ///
-    /// let _validate = Validate::text("This text should be on the page.");
+    /// let _validate = Validate::builder()
+    ///     .text("example")
+    ///     .build();
     /// ```
-    pub fn text(text: &'a str) -> Validate<'a> {
-        Validate::new(None, None, vec![text], vec![], None)
-    }
-
-    /// Create a Validate object to validate the response has the correct title and also
-    /// contains specific text.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// It's possible to call this function multiple times to validate that multiple texts
+    /// appear on the page. Alternatively you can call [`ValidateBuilder::texts`].
     ///
-    /// # Example
+    /// # Multiple Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::Validate;
     ///
-    /// let _validate = Validate::title_text("Example", "This text should be on the page.");
+    /// let _validate = Validate::builder()
+    ///     .text("example")
+    ///     .text("another")
+    ///     .build();
     /// ```
-    pub fn title_text(title: &'a str, text: &'a str) -> Validate<'a> {
-        Validate::new(None, Some(title), vec![text], vec![], None)
+    pub fn text(mut self, text: &'a str) -> Self {
+        self.texts.push(text);
+        self
     }
 
-    /// Create a Validate object to validate that the response page contains multiple specific
+    /// Create a [`Validate`] object to validate that the response page contains the specified
     /// texts.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::texts(vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
-    /// ```
-    pub fn texts(texts: Vec<&'a str>) -> Validate<'a> {
-        Validate::new(None, None, texts, vec![], None)
-    }
-
-    /// Create a Validate object to validate the response title and that the page contains
-    /// multiple specific texts.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::title_texts("Example", vec!["This text should be on the page.", "And also this", r#"<span>and this</a>"#]);
-    /// ```
-    pub fn title_texts(title: &'a str, texts: Vec<&'a str>) -> Validate<'a> {
-        Validate::new(None, Some(title), texts, vec![], None)
-    }
-
-    /// Create a Validate object to validate the response included a specific header.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::header(&Header::name("x-cache"));
-    /// ```
-    pub fn header(header: &'a Header<'a>) -> Validate<'a> {
-        Validate::new(None, None, vec![], vec![header], None)
-    }
-
-    /// Create a Validate object to validate that the response included multiple specific headers.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::headers(vec![&Header::name("x-cache"), &Header::name("x-generator")]);
-    /// ```
-    pub fn headers(headers: Vec<&'a Header<'a>>) -> Validate<'a> {
-        Validate::new(None, None, vec![], headers, None)
-    }
-
-    /// Create a Validate object to validate whether or not the response redirected.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
     /// use goose_eggs::Validate;
     ///
-    /// // Verify the response redirected.
-    /// let _validate = Validate::redirect(true);
-    ///
-    /// // Verify the response did not redirect.
-    /// let _validate = Validate::redirect(false);
+    /// let _validate = Validate::builder()
+    ///     .texts(vec!["example", "another"])
+    ///     .build();
     /// ```
-    pub fn redirect(redirect: bool) -> Validate<'a> {
-        Validate::new(None, None, vec![], vec![], Some(redirect))
-    }
-
-    /// Update a Validate object, changing the expected status returned when loading the page.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::title("Home page")
-    ///                     .update_status(200);
-    /// ```
-    pub fn update_status(mut self, status: u16) -> Self {
-        self.status = Some(status);
-        self
-    }
-
-    /// Update a Validate object, changing the title expected on the page.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::status(200)
-    ///                     .update_title("Home Page");
-    /// ```
-    pub fn update_title(mut self, title: &'a str) -> Self {
-        self.title = Some(title);
-        self
-    }
-
-    /// Update a Validate object, changing the text validated on the page.
-    ///
-    /// Use [`Validate::update_texts`] if you want to validate multiple texts
-    /// on the page.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::title("Home Page")
-    ///                     .update_text("Welcome to my Home Page");
-    /// ```
-    pub fn update_text(mut self, text: &'a str) -> Self {
-        self.texts = vec![text];
-        self
-    }
-
-    /// Update a Validate object, changing the texts validated on the page.
-    ///
-    /// Use [`Validate::update_text`] if you want to validate only one text
-    /// on the page.
-    ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::{Header, Validate};
-    ///
-    /// let _validate = Validate::title("Home Page")
-    ///                     .update_texts(vec!["Welcome", "Log in"]);
-    /// ```
-    pub fn update_texts(mut self, texts: Vec<&'a str>) -> Self {
+    /// Alternatively you can call [`ValidateBuilder::text`].
+    pub fn texts(mut self, texts: Vec<&'a str>) -> Self {
         self.texts = texts;
         self
     }
 
-    /// Update a Validate object, changing the header expected on the page.
-    ///
-    /// Use [`Validate::update_headers`] if you want to validate multiple headers
-    /// on the page.
+    /// Create a [`Validate`] object to validate that the response includes the specified
+    /// header.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -316,34 +209,49 @@ impl<'a> Validate<'a> {
     /// ```rust
     /// use goose_eggs::{Header, Validate};
     ///
-    /// let _validate = Validate::title("Home Page")
-    ///                     .update_header(&Header::name("x-cache"));
+    /// let _validate = Validate::builder()
+    ///     .header(&Header::name("x-cache"))
+    ///     .build();
     /// ```
-    pub fn update_header(mut self, header: &'a Header<'a>) -> Self {
-        self.headers = vec![header];
+    ///
+    /// It's possible to call this function multiple times to validate multiple headers.
+    /// Alternatively you can call [`ValidateBuilder::headers`].
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::{Header, Validate};
+    ///
+    /// let _validate = Validate::builder()
+    ///     .header(&Header::name("x-cache"))
+    ///     .header(&Header::name("x-generator"))
+    ///     .build();
+    /// ```
+    pub fn header(mut self, header: &'a Header<'a>) -> Self {
+        self.headers.push(header);
         self
     }
 
-    /// Update a Validate object, changing the headers expected on the page.
-    ///
-    /// Use [`Validate::update_header`] if you want to validate only one header
-    /// on the page.
+    /// Create a [`Validate`] object to validate that the response page contains the specified
+    /// headers.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::{Header, Validate};
+    /// use goose_eggs::{Validate, Header};
     ///
-    /// let _validate = Validate::title("Home Page")
-    ///                     .update_headers(vec![&Header::name("x-cache"), &Header::name("x-generator")]);
+    /// let _validate = Validate::builder()
+    ///     .headers(vec![&Header::name("x-cache"), &Header::name("x-generator")])
+    ///     .build();
     /// ```
-    pub fn update_headers(mut self, headers: Vec<&'a Header<'a>>) -> Self {
+    ///
+    /// Alternatively you can call [`ValidateBuilder::header`].
+    pub fn headers(mut self, headers: Vec<&'a Header<'a>>) -> Self {
         self.headers = headers;
         self
     }
 
-    /// Update a Validate object, changing whether or not the page should redirect.
+    /// Create a [`Validate`] object to validate whether or not the response page redirected.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -352,12 +260,43 @@ impl<'a> Validate<'a> {
     /// use goose_eggs::Validate;
     ///
     /// // Verify the response redirected.
-    /// let _validate = Validate::title("Home Page")
-    ///                     .update_redirect(false);
+    /// let _validate = Validate::builder().redirect(true).build();
+    ///
+    /// // Verify the response did not redirect.
+    /// let _validate = Validate::builder().redirect(false).build();
     /// ```
-    pub fn update_redirect(mut self, redirect: bool) -> Self {
-        self.redirect = Some(redirect);
+    pub fn redirect(mut self, redirect: impl Into<bool>) -> Self {
+        self.redirect = Some(redirect.into());
         self
+    }
+
+    /// Build the [`Validate`] object which is then passed to the
+    /// [`validate_and_load_static_assets`] function.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// // Use the default search form to search for `example keys`.
+    /// let _validate = Validate::builder()
+    ///     .text("example text")
+    ///     .build();
+    /// ```
+    pub fn build(self) -> Validate<'a> {
+        let Self {
+            status,
+            title,
+            texts,
+            headers,
+            redirect,
+        } = self;
+        Validate {
+            status,
+            title,
+            texts,
+            headers,
+            redirect,
+        }
     }
 }
 
@@ -840,9 +779,9 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 ///
 /// What is validated is defined with the [`Validate`] structure.
 ///
-/// If the page doesn't load, an empty String will be returned. If the page does load
+/// If the page doesn't load, an empty [`String`] will be returned. If the page does load
 /// but validation fails, an Error is returned. If the page loads and there are no
-/// errors the body is returned as a String.
+/// errors the body is returned as a [`String`].
 ///
 /// # Example
 /// ```rust
@@ -857,7 +796,10 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 ///         user,
 ///         goose,
 ///         // Validate title and other arbitrary text on the response html.
-///         &Validate::title_texts("my page", vec!["foo", r#"<a href="bar">"#]),
+///         &Validate::builder()
+///             .title("my page")
+///             .texts(vec!["foo", r#"<a href="bar">"#])
+///             .build(),
 ///     ).await?;
 ///
 ///     Ok(())
