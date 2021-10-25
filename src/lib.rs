@@ -14,30 +14,10 @@ use reqwest::header::HeaderMap;
 pub mod drupal;
 pub mod text;
 
-/// Define one or more items to be validated in a web page response.
+/// Define one or more items to be validated in a web page response. For complete
+/// documentation, refer to [`ValidateBuilder`].
 ///
 /// This structure is passed to [`validate_and_load_static_assets`].
-///
-/// # Example
-/// ```rust
-/// use goose_eggs::Validate;
-///
-/// fn examples() {
-///     // Build a Validate structure that validates the page title and some arbitrary
-///     // texts in the response html.
-///     let _validate = Validate::builder()
-///         .title("my page")
-///         .text("foo")
-///         .text(r#"<a href="bar">"#)
-///         .build();
-///
-///     // Build the same Validate structure calling `.texts()` once instead of calling
-///     // `.text()` twice.
-///     let _validate = Validate::builder()
-///         .title("my page")
-///         .texts(vec!["foo", r#"<a href="bar">"#])
-///         .build();
-/// }
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
@@ -57,7 +37,7 @@ impl<'a> Validate<'a> {
         ValidateBuilder::new()
     }
 
-    /// Create a Validate object that performs no validation.
+    /// Create a [`Validate`] object that performs no validation.
     ///
     /// This is useful to load all static assets and return the body of the response.
     ///
@@ -74,6 +54,41 @@ impl<'a> Validate<'a> {
     }
 }
 
+/// Used to build a [`Validate`] object, necessary to invoke the
+/// [`validate_and_load_static_assets`] function.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::{validate_and_load_static_assets, Validate};
+///
+/// task!(load_and_validate_page);
+///
+/// async fn load_and_validate_page(user: &mut GooseUser) -> GooseTaskResult {
+///     // Make a GET request.
+///     let mut goose = user.get("example/path").await?;
+///
+///     // Build a [`Validate`] object to confirm the response is valid.
+///     let validate = &Validate::builder()
+///         // Validate that the page has `Example` in the title.
+///         .title("Example")
+///         // Validate that the page has `foo` in the returned html body.
+///         .text("foo")
+///         // Validate that the page also has `<a href="bar">` in the returned
+///         // html body.
+///         .text(r#"<a href="bar">"#)
+///         .build();
+///
+///     // Perform the actual validation, using `?` to pass up the error if any
+///     // validation fails.
+///     validate_and_load_static_assets(
+///         user,
+///         goose,
+///         &validate,
+///     ).await?;
+///
+///     Ok(())
+/// }
 #[derive(Clone, Debug)]
 pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
@@ -108,7 +123,6 @@ impl<'a> ValidateBuilder<'a> {
     /// use goose_eggs::{Header, Validate};
     ///
     /// let _validate = Validate::builder()
-    ///     .title("Home page")
     ///     .status(200)
     ///     .build();
     /// ```
@@ -117,7 +131,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate that response title contains the specified
+    /// Create a [`Validate`] object to validate that response title contains the specified
     /// text.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
@@ -135,7 +149,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate that the response page contains the specified
+    /// Create a [`Validate`] object to validate that the response page contains the specified
     /// text.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
@@ -166,7 +180,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate that the response page contains the specified
+    /// Create a [`Validate`] object to validate that the response page contains the specified
     /// texts.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
@@ -186,7 +200,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate that the response includes the specified
+    /// Create a [`Validate`] object to validate that the response includes the specified
     /// header.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
@@ -200,8 +214,8 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     ///
-    /// It's possible to call this function multiple times to validate that multiple headers
-    /// are defined. Alternatively you can call [`ValidateBuilder::headers`].
+    /// It's possible to call this function multiple times to validate multiple headers.
+    /// Alternatively you can call [`ValidateBuilder::headers`].
     ///
     /// # Multiple Example
     /// ```rust
@@ -217,7 +231,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate that the response page contains the specified
+    /// Create a [`Validate`] object to validate that the response page contains the specified
     /// headers.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
@@ -237,7 +251,7 @@ impl<'a> ValidateBuilder<'a> {
         self
     }
 
-    /// Create a Validate object to validate whether or not the response page redirected.
+    /// Create a [`Validate`] object to validate whether or not the response page redirected.
     ///
     /// This structure is passed to [`validate_and_load_static_assets`].
     ///
@@ -765,9 +779,9 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 ///
 /// What is validated is defined with the [`Validate`] structure.
 ///
-/// If the page doesn't load, an empty String will be returned. If the page does load
+/// If the page doesn't load, an empty [`String`] will be returned. If the page does load
 /// but validation fails, an Error is returned. If the page loads and there are no
-/// errors the body is returned as a String.
+/// errors the body is returned as a [`String`].
 ///
 /// # Example
 /// ```rust

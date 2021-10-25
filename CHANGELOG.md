@@ -9,6 +9,8 @@
     o Replaces `Login::username`, `Login::password`, `Login::username_password`, `Login::url`, `Login::title`, `Login::url_title`, `Login::update_username`, `Login::update_password`, `Login::update_username_password`, `Login::update_url`, `Login::update_title`, `Login::update_url_title`
     o Builder pattern is: `Login::builder().username("username").password("password").url("custom/login/url").build();`
  - **API change**: introduce `ValidateBuilder` to build `Validate` objects
+    o Replaces `Validate::new`, `Validate::status`, `Validate::title`, `Validate::text`, `Validate::texts`, `Validate::title_text`, `Validate::title_texts`, `Validate::header`, `Validate::headers`, `Validate::redirect`, `Validate::update_status`, `Validate::update_title`, `Valudate::update_text`, `Validate::update_texts`, `Validate::update_header`, `Validate::update_header`
+    o Builder pattern is: `Validate::builder().status(200).text("foo").redirect(true).build();`
 
 ## 0.2.0 October 5, 2021
  - **API change**: update goose to [0.14](https://github.com/tag1consulting/goose/releases/tag/0.14.0)
