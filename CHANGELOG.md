@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0-dev
+## 0.3.0 October 26, 2021
  - find forms identified with either `id=` or `data-drupal-selector=`
  - **API change**: introduce `SearchParamsBuilder` to build `SearchParams` objects
     o Replaces `SearchParams::keys`, `SearchParams::update_keys`, `SearchParams::update_url`, `SearchParams::update_submit`, `SearchParams::update_title`
