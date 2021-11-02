@@ -448,8 +448,7 @@ pub async fn anonymous_contact_form(user: &mut GooseUser, english: bool) -> Goos
         ("form_id", &form_id),
         ("op", "Send+message"),
     ];
-    let request_builder = user.goose_post(contact_form_url)?;
-    let mut goose = user.goose_send(request_builder.form(&params), None).await?;
+    let mut goose = user.post_form(contact_form_url, &params).await?;
 
     // Drupal 9 throttles how many times an IP address can submit the contact form, so we
     // need special handling.
