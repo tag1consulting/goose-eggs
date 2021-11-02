@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.1 November 2, 2021
+ - update goose to [0.15](https://github.com/tag1consulting/goose/releases/tag/0.15.0)
+
 ## 0.3.0 October 26, 2021
  - find forms identified with either `id=` or `data-drupal-selector=`
  - **API change**: introduce `SearchParamsBuilder` to build `SearchParams` objects

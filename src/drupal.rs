@@ -637,8 +637,7 @@ pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, G
         ("form_id", &"user_login_form".to_string()),
         ("op", &"Log+in".to_string()),
     ];
-    let request_builder = user.goose_post("/user/login")?;
-    let mut logged_in_user = user.goose_send(request_builder.form(&params), None).await?;
+    let mut logged_in_user = user.post_form("/user/login", &params).await?;
 
     // A successful log in is redirected.
     if !logged_in_user.request.redirected {
@@ -1045,10 +1044,7 @@ pub async fn search<'a>(
     }
 
     // Perform the search.
-    let request_builder = user.goose_post(params.url)?;
-    let goose = user
-        .goose_send(request_builder.form(&search_params), None)
-        .await?;
+    let goose = user.post_form(params.url, &search_params).await?;
 
     // Optionally validate the search results page.
     let validate = if let Some(validation) = params.results_page_validation {
