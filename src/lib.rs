@@ -354,7 +354,7 @@ impl<'a> ValidateBuilder<'a> {
 pub fn get_html_header(html: &str) -> Option<String> {
     let re = Regex::new(r#"<head(.*?)</head>"#).unwrap();
     // Strip carriage returns to simplify regex.
-    let line = html.replace("\n", "");
+    let line = html.replace('\n', "");
     // Return the entire html header, a subset of the received html.
     re.captures(&line).map(|value| value[0].to_string())
 }
@@ -394,7 +394,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
 pub fn get_title(html: &str) -> Option<String> {
     let re = Regex::new(r#"<title>(.*?)</title>"#).unwrap();
     // Strip carriage returns to simplify regex.
-    let line = html.replace("\n", "");
+    let line = html.replace('\n', "");
     // Return the entire title, a subset of the received html.
     re.captures(&line).map(|value| value[1].to_string())
 }

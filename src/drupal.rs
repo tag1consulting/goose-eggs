@@ -44,7 +44,7 @@ pub fn get_form(html: &str, name: &str) -> String {
     ))
     .unwrap();
     // Strip carriage returns to simplify regex.
-    let line = html.replace("\n", "");
+    let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
     match re.captures(&line) {
         Some(capture) => capture[2].to_string(),
@@ -153,7 +153,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
     )
     .unwrap();
     // Strip carriage returns to simplify regex.
-    let line = html.replace("\n", "");
+    let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
     match re.captures(&line) {
         Some(capture) => capture[1].to_string(),

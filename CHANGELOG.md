@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0 May 1, 2022
+ - update goose to [0.16](https://github.com/tag1consulting/goose/releases/tag/0.16.0)
+
 ## 0.3.1 November 2, 2021
  - update goose to [0.15](https://github.com/tag1consulting/goose/releases/tag/0.15.0)
 
