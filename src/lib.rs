@@ -62,9 +62,9 @@ impl<'a> Validate<'a> {
 /// use goose::prelude::*;
 /// use goose_eggs::{validate_and_load_static_assets, Validate};
 ///
-/// task!(load_and_validate_page);
+/// transaction!(load_and_validate_page);
 ///
-/// async fn load_and_validate_page(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn load_and_validate_page(user: &mut GooseUser) -> TransactionResult {
 ///     // Make a GET request.
 ///     let mut goose = user.get("example/path").await?;
 ///
@@ -426,9 +426,9 @@ pub fn get_title(html: &str) -> Option<String> {
 /// use goose::prelude::*;
 /// use goose_eggs::valid_title;
 ///
-/// task!(validate_title).set_on_start();
+/// transaction!(validate_title).set_on_start();
 ///
-/// async fn validate_title(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn validate_title(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -498,9 +498,9 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 /// use goose::prelude::*;
 /// use goose_eggs::valid_text;
 ///
-/// task!(validate_text).set_on_start();
+/// transaction!(validate_text).set_on_start();
 ///
-/// async fn validate_text(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn validate_text(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -558,9 +558,9 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 /// use goose::prelude::*;
 /// use goose_eggs::header_is_set;
 ///
-/// task!(validate_header).set_on_start();
+/// transaction!(validate_header).set_on_start();
 ///
-/// async fn validate_header(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn validate_header(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -608,9 +608,9 @@ pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
 /// use goose::prelude::*;
 /// use goose_eggs::valid_header_value;
 ///
-/// task!(validate_header_value).set_on_start();
+/// transaction!(validate_header_value).set_on_start();
 ///
-/// async fn validate_header_value(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn validate_header_value(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -683,9 +683,9 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
 /// use goose::prelude::*;
 /// use goose_eggs::load_static_elements;
 ///
-/// task!(load_page_and_static_elements).set_on_start();
+/// transaction!(load_page_and_static_elements).set_on_start();
 ///
-/// async fn load_page_and_static_elements(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn load_page_and_static_elements(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///
 ///     match goose.response {
@@ -760,9 +760,9 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 /// use goose::prelude::*;
 /// use goose_eggs::{validate_and_load_static_assets, Validate};
 ///
-/// task!(load_page).set_on_start();
+/// transaction!(load_page).set_on_start();
 ///
-/// async fn load_page(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn load_page(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
 ///     validate_and_load_static_assets(
 ///         user,
@@ -781,7 +781,7 @@ pub async fn validate_and_load_static_assets<'a>(
     user: &mut GooseUser,
     mut goose: GooseResponse,
     validate: &'a Validate<'a>,
-) -> Result<String, GooseTaskError> {
+) -> Result<String, TransactionError> {
     let empty = "".to_string();
     match goose.response {
         Ok(response) => {

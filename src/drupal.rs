@@ -545,7 +545,7 @@ impl<'a> LoginBuilder<'a> {
 
 /// Log into a Drupal website.
 ///
-/// The reference to a GooseUser object is from a Goose task function. The optional
+/// The reference to a GooseUser object is from a transaction function. The optional
 /// pointer to a [`Login`] object can be created to override the username, password,
 /// login url, or expected page title after log in.
 ///
@@ -562,9 +562,9 @@ impl<'a> LoginBuilder<'a> {
 /// use goose::prelude::*;
 /// use goose_eggs::drupal::{log_in, Login};
 ///
-/// task!(login).set_on_start();
+/// transaction!(login).set_on_start();
 ///
-/// async fn login(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn login(user: &mut GooseUser) -> TransactionResult {
 ///     // By default log in with `foo`:`bar`.
 ///     let login = Login::builder()
 ///         .username("foo")
@@ -576,7 +576,7 @@ impl<'a> LoginBuilder<'a> {
 /// }
 ///
 /// ```
-pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, GooseTaskError> {
+pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, TransactionError> {
     // Use the `GOOSE_USER` environment variable if it's set, otherwise use the specified
     // (or default) login username.
     let username = env::var("GOOSE_USER").unwrap_or_else(|_| login.username.to_string());
@@ -727,9 +727,9 @@ impl<'a> SearchParams<'a> {
 /// use goose::prelude::*;
 /// use goose_eggs::drupal;
 ///
-/// task!(search);
+/// transaction!(search);
 ///
-/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn search(user: &mut GooseUser) -> TransactionResult {
 ///     // Define the search parameters.
 ///     let search_params = drupal::SearchParams::builder()
 ///         // Search for the keys "search terms".
@@ -750,9 +750,9 @@ impl<'a> SearchParams<'a> {
 /// use goose::prelude::*;
 /// use goose_eggs::{Validate, drupal};
 ///
-/// task!(search);
+/// transaction!(search);
 ///
-/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn search(user: &mut GooseUser) -> TransactionResult {
 ///     // Define the search parameters.
 ///     // Verify that the search form page has a title that includes "Custom Search".
 ///     let validate_search_page = Validate::builder()
@@ -995,9 +995,9 @@ impl<'a> SearchParamsBuilder<'a> {
 /// use goose::prelude::*;
 /// use goose_eggs::drupal;
 ///
-/// task!(search);
+/// transaction!(search);
 ///
-/// async fn search(user: &mut GooseUser) -> GooseTaskResult {
+/// async fn search(user: &mut GooseUser) -> TransactionResult {
 ///     // Use the default search form to search for "foo", validating that the
 ///     // search page has a title of Search.
 ///     let validate_search_page = &goose_eggs::Validate::builder()
@@ -1016,7 +1016,7 @@ impl<'a> SearchParamsBuilder<'a> {
 pub async fn search<'a>(
     user: &mut GooseUser,
     params: &'a SearchParams<'a>,
-) -> Result<String, GooseTaskError> {
+) -> Result<String, TransactionError> {
     // Load the search page.
     let goose = user.get(params.url).await?;
 
