@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1-dev
+## 0.4.1 June 16, 2022
  - introduce `validate_page` to validate a page without loading static assets, an alternative to `validate_and_load_static_assets`
 
 ## 0.4.0 May 1, 2022
