@@ -17,7 +17,7 @@ pub mod text;
 /// Define one or more items to be validated in a web page response. For complete
 /// documentation, refer to [`ValidateBuilder`].
 ///
-/// This structure is passed to [`validate_and_load_static_assets`].
+/// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
@@ -41,7 +41,7 @@ impl<'a> Validate<'a> {
     ///
     /// This is useful to load all static assets and return the body of the response.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -55,7 +55,7 @@ impl<'a> Validate<'a> {
 }
 
 /// Used to build a [`Validate`] object, necessary to invoke the
-/// [`validate_and_load_static_assets`] function.
+/// [`validate_page`] or [`validate_and_load_static_assets`] functions.
 ///
 /// # Example
 /// ```rust
@@ -116,7 +116,7 @@ impl<'a> ValidateBuilder<'a> {
 
     /// Define the HTTP status expected to be returned when loading the page.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -134,7 +134,7 @@ impl<'a> ValidateBuilder<'a> {
     /// Create a [`Validate`] object to validate that response title contains the specified
     /// text.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -152,7 +152,7 @@ impl<'a> ValidateBuilder<'a> {
     /// Create a [`Validate`] object to validate that the response page contains the specified
     /// text.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -183,7 +183,7 @@ impl<'a> ValidateBuilder<'a> {
     /// Create a [`Validate`] object to validate that the response page contains the specified
     /// texts.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -206,7 +206,7 @@ impl<'a> ValidateBuilder<'a> {
     /// To validate that a header contains a specific value (instead of just validating
     /// that it exists), use [`ValidateBuilder::header_value`].
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -240,7 +240,7 @@ impl<'a> ValidateBuilder<'a> {
     /// To validate that a header simply exists without confirming that it contains a
     /// specific value, use [`ValidateBuilder::header`].
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -275,7 +275,7 @@ impl<'a> ValidateBuilder<'a> {
 
     /// Create a [`Validate`] object to validate whether or not the response page redirected.
     ///
-    /// This structure is passed to [`validate_and_load_static_assets`].
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
     ///
     /// # Example
     /// ```rust
@@ -293,7 +293,7 @@ impl<'a> ValidateBuilder<'a> {
     }
 
     /// Build the [`Validate`] object which is then passed to the
-    /// [`validate_and_load_static_assets`] function.
+    /// [`validate_page`] or [`validate_and_load_static_assets`] functions.
     ///
     /// # Example
     /// ```rust
@@ -329,7 +329,8 @@ impl<'a> ValidateBuilder<'a> {
 /// use goose_eggs::get_html_header;
 ///
 /// // For this example we grab just a subset of a web page, enough to demonstrate. Normally
-/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// // you'd use the entire html snippet returned from [`validate_page`] or
+/// // [`validate_and_load_static_assets`].
 /// let html = r#"
 /// <html lang="en" dir="ltr">
 ///   <head>
@@ -366,7 +367,8 @@ pub fn get_html_header(html: &str) -> Option<String> {
 /// use goose_eggs::{get_html_header, get_title};
 ///
 /// // For this example we grab just a subset of a web page, enough to demonstrate. Normally
-/// // you'd use the entire html snippet returned from [`validate_and_load_static_assets`].
+/// // you'd use the entire html snippet returned from [`validate_page`] or
+/// // [`validate_and_load_static_assets`].
 /// let html = r#"
 /// <html lang="en" dir="ltr">
 ///   <head>
@@ -403,7 +405,7 @@ pub fn get_title(html: &str) -> Option<String> {
 /// webpage contains the provided string.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
-/// [`validate_and_load_static_assets`] which in turn invokes this function.
+/// [`validate_page`] or [`validate_and_load_static_assets`] which in turn invoke this function.
 ///
 /// A valid title is found between `<title></title>` tags inside `<head></head>` tags.
 /// For example, if the title is as follows:
@@ -491,7 +493,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 /// not "Foo" or "FOO".
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
-/// [`validate_and_load_static_assets`] which in turn invokes this function.
+/// [`validate_page`] or [`validate_and_load_static_assets`] which in turn invoke this function.
 ///
 /// # Example
 /// ```rust
@@ -551,7 +553,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 /// Returns [`true`] if the expected header was set, otherwise returns [`false`].
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
-/// [`validate_and_load_static_assets`] which in turn invokes this function.
+/// [`validate_page`] or [`validate_and_load_static_assets`] which in turn invoke this function.
 ///
 /// # Example
 /// ```rust
@@ -601,7 +603,7 @@ pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
 /// name and the second defines the header value, ie `("name", "value")`.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
-/// [`validate_and_load_static_assets`] which in turn invokes this function.
+/// [`validate_page`] or [`validate_and_load_static_assets`] which in turn invoke this function.
 ///
 /// # Example
 /// ```rust
@@ -746,8 +748,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     }
 }
 
-/// Validate the HTML response, extract and load all static elements on the page, and
-/// return the HTML body.
+/// Validate the HTML response and return the HTML body.
 ///
 /// What is validated is defined with the [`Validate`] structure.
 ///
@@ -755,16 +756,19 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 /// but validation fails, an Error is returned. If the page loads and there are no
 /// errors the body is returned as a [`String`].
 ///
+/// This function is invoked by [validate_and_load_static_assets], which then also invokes
+/// [load_static_elements] to better simulate a web browser loading a page.
+///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::{validate_and_load_static_assets, Validate};
+/// use goose_eggs::{validate_page, Validate};
 ///
 /// transaction!(load_page).set_on_start();
 ///
 /// async fn load_page(user: &mut GooseUser) -> TransactionResult {
 ///     let mut goose = user.get("/").await?;
-///     validate_and_load_static_assets(
+///     validate_page(
 ///         user,
 ///         goose,
 ///         // Validate title and other arbitrary text on the response html.
@@ -777,7 +781,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 ///     Ok(())
 /// }
 /// ```
-pub async fn validate_and_load_static_assets<'a>(
+pub async fn validate_page<'a>(
     user: &mut GooseUser,
     mut goose: GooseResponse,
     validate: &'a Validate<'a>,
@@ -897,7 +901,6 @@ pub async fn validate_and_load_static_assets<'a>(
                             return Ok(html);
                         }
                     }
-                    load_static_elements(user, &html).await;
                     Ok(html)
                 }
                 Err(e) => {
@@ -920,5 +923,53 @@ pub async fn validate_and_load_static_assets<'a>(
             )?;
             Ok(empty)
         }
+    }
+}
+
+/// Validate the HTML response, extract and load all static elements on the page, and
+/// return the HTML body.
+///
+/// What is validated is defined with the [`Validate`] structure.
+///
+/// If the page doesn't load, an empty [`String`] will be returned. If the page does load
+/// but validation fails, an Error is returned. If the page loads and there are no
+/// errors the body is returned as a [`String`].
+///
+/// To only validate the page without also loading static elements, use instead
+/// [validate_page].
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::{validate_and_load_static_assets, Validate};
+///
+/// transaction!(load_page).set_on_start();
+///
+/// async fn load_page(user: &mut GooseUser) -> TransactionResult {
+///     let mut goose = user.get("/").await?;
+///     validate_and_load_static_assets(
+///         user,
+///         goose,
+///         // Validate title and other arbitrary text on the response html.
+///         &Validate::builder()
+///             .title("my page")
+///             .texts(vec!["foo", r#"<a href="bar">"#])
+///             .build(),
+///     ).await?;
+///
+///     Ok(())
+/// }
+/// ```
+pub async fn validate_and_load_static_assets<'a>(
+    user: &mut GooseUser,
+    goose: GooseResponse,
+    validate: &'a Validate<'a>,
+) -> Result<String, TransactionError> {
+    match validate_page(user, goose, validate).await {
+        Ok(html) => {
+            load_static_elements(user, &html).await;
+            Ok(html)
+        }
+        Err(e) => Err(e),
     }
 }

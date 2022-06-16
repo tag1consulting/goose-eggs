@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1-dev
+ - introduce `validate_page` to validate a page without loading static assets, an alternative to `validate_and_load_static_assets`
+
 ## 0.4.0 May 1, 2022
  - update goose to [0.16](https://github.com/tag1consulting/goose/releases/tag/0.16.0)
 
