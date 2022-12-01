@@ -12,9 +12,13 @@ keywords = ["loadtesting", "performance", "web"]
 license = "Apache-2.0"
 
 [dependencies]
-goose = "0.16"
+goose = { version = "0.16", default-features = false }
 log = "0.4"
 rand = "0.8"
 regex = "1.5"
-reqwest = "0.11"
+reqwest = { version = "0.11", default-features = false }
 tokio = "1"
+
+[features]
+default = ["goose/default", "reqwest/default-tls"]
+rustls-tls = ["goose/rustls-tls", "reqwest/rustls-tls"]
