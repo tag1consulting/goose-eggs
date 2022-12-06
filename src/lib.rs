@@ -4,6 +4,10 @@
 //! The [Umami example](https://github.com/tag1consulting/goose/tree/main/examples/umami)
 //! included with Goose has been [converted to use the Goose Eggs library](https://github.com/tag1consulting/goose-eggs/tree/main/examples/umami)
 //! and serves as a useful example on how to leverage it when writing load tests.
+//!
+//! ## Feature flags
+//! * `default`: use the native TLS implementation for `goose` and `reqwest`
+//! * `rustls-tls`: use the TLS implemenation provided by `rustls`
 
 use goose::goose::GooseResponse;
 use goose::prelude::*;
