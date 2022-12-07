@@ -1,7 +1,7 @@
 # Changelog
 
-## unreleased
- - add support for building with rustls via the `rustls-tls` feature
+## 0.4.2-dev
+ - add support for building with [rustls](https://docs.rs/rustls) via the `rustls-tls` feature
 
 ## 0.4.1 June 16, 2022
  - introduce `validate_page` to validate a page without loading static assets, an alternative to `validate_and_load_static_assets`
