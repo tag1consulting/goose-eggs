@@ -576,7 +576,10 @@ impl<'a> LoginBuilder<'a> {
 /// }
 ///
 /// ```
-pub async fn log_in(user: &mut GooseUser, login: &Login<'_>) -> Result<String, TransactionError> {
+pub async fn log_in(
+    user: &mut GooseUser,
+    login: &Login<'_>,
+) -> Result<String, Box<TransactionError>> {
     // Use the `GOOSE_USER` environment variable if it's set, otherwise use the specified
     // (or default) login username.
     let username = env::var("GOOSE_USER").unwrap_or_else(|_| login.username.to_string());
@@ -1016,7 +1019,7 @@ impl<'a> SearchParamsBuilder<'a> {
 pub async fn search<'a>(
     user: &mut GooseUser,
     params: &'a SearchParams<'a>,
-) -> Result<String, TransactionError> {
+) -> Result<String, Box<TransactionError>> {
     // Load the search page.
     let goose = user.get(params.url).await?;
 

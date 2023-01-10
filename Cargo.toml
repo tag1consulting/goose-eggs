@@ -1,6 +1,6 @@
 [package]
 name = "goose-eggs"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
 description = "Helpful in writing Goose load tests."
@@ -12,7 +12,7 @@ keywords = ["loadtesting", "performance", "web"]
 license = "Apache-2.0"
 
 [dependencies]
-goose = { version = "0.16", default-features = false }
+goose = { version = "0.17", default-features = false }
 log = "0.4"
 rand = "0.8"
 regex = "1.5"
