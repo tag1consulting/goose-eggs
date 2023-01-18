@@ -1,7 +1,9 @@
 # Changelog
 
-## 0.4.2-dev
+## 0.5.0-dev
  - add support for building with [rustls](https://docs.rs/rustls) via the `rustls-tls` feature
+ - **API change**: update goose to [0.17](https://github.com/tag1consulting/goose/releases/tag/0.17.0)
+ - **API change**: Box `TransactionError` to avoid over-allocating memory on the stack (to match goose 0.17.0)
 
 ## 0.4.1 June 16, 2022
  - introduce `validate_page` to validate a page without loading static assets, an alternative to `validate_and_load_static_assets`

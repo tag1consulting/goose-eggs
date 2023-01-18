@@ -789,7 +789,7 @@ pub async fn validate_page<'a>(
     user: &mut GooseUser,
     mut goose: GooseResponse,
     validate: &'a Validate<'a>,
-) -> Result<String, TransactionError> {
+) -> Result<String, Box<TransactionError>> {
     let empty = "".to_string();
     match goose.response {
         Ok(response) => {
@@ -968,7 +968,7 @@ pub async fn validate_and_load_static_assets<'a>(
     user: &mut GooseUser,
     goose: GooseResponse,
     validate: &'a Validate<'a>,
-) -> Result<String, TransactionError> {
+) -> Result<String, Box<TransactionError>> {
     match validate_page(user, goose, validate).await {
         Ok(html) => {
             load_static_elements(user, &html).await;
