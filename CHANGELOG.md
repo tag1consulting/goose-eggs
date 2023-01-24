@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.5.0-dev January 24, 2023
+## 0.5.1-dev
+
+## 0.5.0 January 24, 2023
  - add support for building with [rustls](https://docs.rs/rustls) via the `rustls-tls` feature
  - **API change**: update goose to [0.17](https://github.com/tag1consulting/goose/releases/tag/0.17.0)
  - **API change**: Box `TransactionError` to avoid over-allocating memory on the stack (to match goose 0.17.0)
