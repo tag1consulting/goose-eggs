@@ -654,7 +654,7 @@ pub async fn log_in(
         ("form_id", &form_id),
         ("op", &"Log+in".to_string()),
     ];
-    let mut logged_in_user = user.post_form("/user/login", &params).await?;
+    let mut logged_in_user = user.post_form(login.url, &params).await?;
 
     // A successful log in is redirected.
     if !logged_in_user.request.redirected {
