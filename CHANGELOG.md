@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.1-dev
+ - in `drupal::log_in`, allow `form_id` other than the default of `user_login_form`
 
 ## 0.5.0 January 24, 2023
  - add support for building with [rustls](https://docs.rs/rustls) via the `rustls-tls` feature

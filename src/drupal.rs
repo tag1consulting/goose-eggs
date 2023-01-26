@@ -632,12 +632,26 @@ pub async fn log_in(
         return Ok("".to_string());
     }
 
+    // Also extract the form_id (defaults to `user_login_form`).
+    let form_id = get_form_value(&login_form, "form_id");
+    if form_id.is_empty() {
+        user.set_failure(
+            &format!("{}: no form_id on page", login.url),
+            &mut login_request,
+            None,
+            Some(&login_form),
+        )?;
+        // Return an empty string as log-in failed. Enable the debug log to
+        // determine why.
+        return Ok("".to_string());
+    }
+
     // Build log in form with username and password from environment.
     let params = [
         ("name", &username),
         ("pass", &password),
         ("form_build_id", &form_build_id),
-        ("form_id", &"user_login_form".to_string()),
+        ("form_id", &form_id),
         ("op", &"Log+in".to_string()),
     ];
     let mut logged_in_user = user.post_form("/user/login", &params).await?;
