@@ -39,8 +39,7 @@ use std::env;
 pub fn get_form(html: &str, name: &str) -> String {
     let re = Regex::new(&format!(
         // Lazy match to avoid matching multiple forms.
-        r#"<form.*?(data-drupal-selector|id)="{}".*?>(.*?)</form>"#,
-        name
+        r#"<form.*?(data-drupal-selector|id)="{name}".*?>(.*?)</form>"#,
     ))
     .unwrap();
     // Strip carriage returns to simplify regex.
@@ -588,9 +587,6 @@ pub async fn log_in(
     // (or default) login password.
     let password = env::var("GOOSE_PASS").unwrap_or_else(|_| login.password.to_string());
 
-    // Load the log in page.
-    let goose = user.get(login.url).await?;
-
     // By default verify that the standard user-login-form exists on the page.
     let default_validation = crate::Validate::builder()
         .text(r#"<form class="user-login-form"#)
@@ -599,6 +595,19 @@ pub async fn log_in(
         validation
     } else {
         &default_validation
+    };
+
+    // Load the log in page.
+    let goose = if validate.status.is_some() {
+        // Build request manually if validating a specific status code.
+        let goose_request = GooseRequest::builder()
+            .path(login.url)
+            .expect_status_code(validate.status.unwrap())
+            .build();
+        user.request(goose_request).await.unwrap()
+    } else {
+        // Otherwise follow default validation rules for status codes.
+        user.get(login.url).await.unwrap()
     };
 
     let mut login_request = goose.request.clone();
@@ -632,15 +641,52 @@ pub async fn log_in(
         return Ok("".to_string());
     }
 
+    // Also extract the form_id (defaults to `user_login_form`).
+    let form_id = get_form_value(&login_form, "form_id");
+    if form_id.is_empty() {
+        user.set_failure(
+            &format!("{}: no form_id on page", login.url),
+            &mut login_request,
+            None,
+            Some(&login_form),
+        )?;
+        // Return an empty string as log-in failed. Enable the debug log to
+        // determine why.
+        return Ok("".to_string());
+    }
+
+    // By default verify that the username is in the title of the logged in page.
+    let default_validation = crate::Validate::builder().title(login.username).build();
+    let validate = if let Some(validation) = login.logged_in_page_validation {
+        validation
+    } else {
+        &default_validation
+    };
+
     // Build log in form with username and password from environment.
     let params = [
         ("name", &username),
         ("pass", &password),
         ("form_build_id", &form_build_id),
-        ("form_id", &"user_login_form".to_string()),
+        ("form_id", &form_id),
         ("op", &"Log+in".to_string()),
     ];
-    let mut logged_in_user = user.post_form("/user/login", &params).await?;
+    // Post the log in form.
+    let mut logged_in_user = if validate.status.is_some() {
+        // Build request manually if validating a specific status code.
+        let url = user.build_url(login.url)?;
+        // A request builder object is necessary to post a form.
+        let reqwest_request_builder = user.client.post(&url);
+        let goose_request = GooseRequest::builder()
+            .path(login.url)
+            .method(GooseMethod::Post)
+            .expect_status_code(validate.status.unwrap())
+            .set_request_builder(reqwest_request_builder.form(&params))
+            .build();
+        user.request(goose_request).await.unwrap()
+    } else {
+        user.post_form(login.url, &params).await?
+    };
 
     // A successful log in is redirected.
     if !logged_in_user.request.redirected {
@@ -669,14 +715,6 @@ pub async fn log_in(
         // the debug_log to determine why log-in failed.
         return Ok(html);
     }
-
-    // By default verify that the username is in the title of the logged in page.
-    let default_validation = crate::Validate::builder().title(login.username).build();
-    let validate = if let Some(validation) = login.logged_in_page_validation {
-        validation
-    } else {
-        &default_validation
-    };
 
     // Check the title to verify that the user is actually logged in.
     let logged_in_page =
