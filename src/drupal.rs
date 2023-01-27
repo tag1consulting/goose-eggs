@@ -39,8 +39,7 @@ use std::env;
 pub fn get_form(html: &str, name: &str) -> String {
     let re = Regex::new(&format!(
         // Lazy match to avoid matching multiple forms.
-        r#"<form.*?(data-drupal-selector|id)="{}".*?>(.*?)</form>"#,
-        name
+        r#"<form.*?(data-drupal-selector|id)="{name}".*?>(.*?)</form>"#,
     ))
     .unwrap();
     // Strip carriage returns to simplify regex.

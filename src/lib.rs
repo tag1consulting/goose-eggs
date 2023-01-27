@@ -733,7 +733,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
-    let src_elements = Regex::new(format!(r#"(?i)src="(({}|/).*?)""#, base_url).as_str()).unwrap();
+    let src_elements = Regex::new(format!(r#"(?i)src="(({base_url}|/).*?)""#).as_str()).unwrap();
     for url in src_elements.captures_iter(html) {
         let is_js = url[1].to_string().contains(".js");
         let resource_type = if is_js { "js" } else { "img" };
@@ -744,7 +744,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
-    let css = Regex::new(format!(r#"(?i)href="(({}|/).*?\.css.*?)""#, base_url).as_str()).unwrap();
+    let css = Regex::new(format!(r#"(?i)href="(({base_url}|/).*?\.css.*?)""#).as_str()).unwrap();
     for url in css.captures_iter(html) {
         let _ = user.get_named(&url[1], "static asset: css").await;
     }
