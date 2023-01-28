@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.1-dev
+## 0.5.1 January 28, 2023
  - in `drupal::log_in`
     o allow `form_id` other than the default of `user_login_form`
     o properly validate status code if configured
