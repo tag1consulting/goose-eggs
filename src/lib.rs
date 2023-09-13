@@ -679,6 +679,43 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
     }
 }
 
+/// Extract all local static elements defined with a `src=` tag from the the provided html.
+///
+/// While you can invoke this function directly, it's generally preferred to invoke
+/// [`validate_and_load_static_assets`] which in turn invokes this function.
+pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+    // Determine the base_url that was used to load this path, used to extract absolute URLs.
+    let base_url = user.base_url.to_string();
+
+    // Use a case-insensitive regular expression to find all src=<foo> in the html, where
+    // <foo> is the URL to local image and js assets.
+    // @TODO: parse HTML5 srcset= also
+    let src_elements = Regex::new(format!(r#"(?i)src="(({base_url}|/).*?)""#).as_str()).unwrap();
+    let mut elements: Vec<String> = Vec::new();
+    for url in src_elements.captures_iter(html) {
+        elements.push(url[1].to_string());
+    }
+    elements
+}
+
+/// Extract all local css elements defined with a `href=` tag from the the provided html.
+///
+/// While you can invoke this function directly, it's generally preferred to invoke
+/// [`validate_and_load_static_assets`] which in turn invokes this function.
+pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+    // Determine the base_url that was used to load this path, used to extract absolute URLs.
+    let base_url = user.base_url.to_string();
+
+    // Use a case-insensitive regular expression to find all href=<foo> in the html, where
+    // <foo> is the URL to local css assets.
+    let css = Regex::new(format!(r#"(?i)href="(({base_url}|/).*?\.css.*?)""#).as_str()).unwrap();
+    let mut elements: Vec<String> = Vec::new();
+    for url in css.captures_iter(html) {
+        elements.push(url[1].to_string());
+    }
+    elements
+}
+
 /// Extract and load all local static elements from the the provided html.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
@@ -727,26 +764,21 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
 /// }
 /// ```
 pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
-    // Determine the base_url that was used to load this path, used to extract absolute URLs.
-    let base_url = user.base_url.to_string();
-
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
-    let src_elements = Regex::new(format!(r#"(?i)src="(({base_url}|/).*?)""#).as_str()).unwrap();
-    for url in src_elements.captures_iter(html) {
-        let is_js = url[1].to_string().contains(".js");
+    for url in get_src_elements(user, html).await {
+        let is_js = url.contains(".js");
         let resource_type = if is_js { "js" } else { "img" };
         let _ = user
-            .get_named(&url[1], &("static asset: ".to_owned() + resource_type))
+            .get_named(&url, &("static asset: ".to_owned() + resource_type))
             .await;
     }
 
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
-    let css = Regex::new(format!(r#"(?i)href="(({base_url}|/).*?\.css.*?)""#).as_str()).unwrap();
-    for url in css.captures_iter(html) {
-        let _ = user.get_named(&url[1], "static asset: css").await;
+    for url in get_css_elements(user, html).await {
+        let _ = user.get_named(&url, "static asset: css").await;
     }
 }
 
@@ -973,5 +1005,80 @@ pub async fn validate_and_load_static_assets<'a>(
             Ok(html)
         }
         Err(e) => Err(e),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use goose::config::GooseConfiguration;
+    use goose::goose::get_base_url;
+    use gumdrop::Options;
+
+    const EMPTY_ARGS: Vec<&str> = vec![];
+    const HOST: &str = "http://example.com";
+
+    #[tokio::test]
+    async fn get_static_elements() {
+        const HTML: &str = r#"<!DOCTYPE html>
+        <html>
+        <body>
+            <!-- 3 valid CSS paths -->
+                <!-- valid local http path including host -->
+                <link href="http://example.com/example.css" rel="stylesheet" />
+                <!-- invalid http path on different subdomain -->
+                <link href="http://other.example.com/example.css" rel="stylesheet" />
+                <!-- invalid http path on different domain -->
+                <link href="http://other.com/example.css" rel="stylesheet" />
+                <!-- invalid http path not ending in css -->
+                <link href="http://example.com/example" rel="stylesheet" />
+                <!-- valid relative path -->
+                <link href="path/to/example.css" rel="stylesheet" />
+                <!-- valid absolute path -->
+                <link href="/path/to/example.css" rel="stylesheet" />
+            
+            <!-- 3 valid image paths -->
+                <!-- valid local http path including host -->
+                <img src="http://example.com/example.jpg" alt="example image" width="10" height="10"> 
+                <!-- invalid http path on different subdomain -->
+                <img src="http://another.example.com/example.jpg" alt="example image" width="10" height="10"> 
+                <!-- invalid http path on different domain -->
+                <img src="http://another.com/example.jpg" alt="example image" width="10" height="10"> 
+                <!-- valid relative path -->
+                <img src="path/to/example.gif" alt="example image" />
+                <!-- valid absolute path -->
+                <img src="/path/to/example." alt="example image" />
+
+            <!-- 3 valid JS paths -->
+                <!-- valid local http path including host -->
+                <script src="http://example.com/example.js"></script> 
+                <!-- invalid http path on different subdomain -->
+                <script src="http://different.example.com/example.js"></script> 
+                <!-- valid relative path -->
+                <script src="path/to/example.js"></script> 
+                <!-- valid absolute path -->
+                <script src="/path/to/example.js"></script> 
+
+        </body>
+        </html>"#;
+
+        let configuration = GooseConfiguration::parse_args_default(&EMPTY_ARGS).unwrap();
+        let base_url = get_base_url(Some(HOST.to_string()), None, None).unwrap();
+        let mut user =
+            GooseUser::new(0, "".to_string(), base_url, &configuration, 0, None).unwrap();
+        let urls = get_css_elements(&mut user, HTML).await;
+        if urls.len() != 3 {
+            eprintln!(
+                "expected matches: {:#?}",
+                vec![
+                    "http://example.com/example.css",
+                    "path/to/example.css",
+                    "/path/to/example.css",
+                ]
+            );
+            eprintln!("actual matches: {:#?}", urls);
+        }
+        assert_eq!(urls.len(), 3);
+        assert_eq!(user.weighted_users_index, usize::max_value());
     }
 }
