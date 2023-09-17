@@ -11,6 +11,7 @@
 
 use goose::goose::GooseResponse;
 use goose::prelude::*;
+use http::Uri;
 use log::info;
 use regex::Regex;
 use reqwest::header::HeaderMap;
@@ -679,21 +680,53 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
     }
 }
 
+/// Helper to confirm the URI is valid and local.
+fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+    match uri.parse::<Uri>() {
+        Ok(parsed_uri) => {
+            if let Some(parsed_host) = parsed_uri.host() {
+                if parsed_host == user.base_url.host_str().unwrap() {
+                    // The URI host matches the base_url.
+                    true
+                } else {
+                    // The URI host does not match the base_url.
+                    false
+                }
+            } else {
+                // The URI is a valid relative path.
+                true
+            }
+        }
+        Err(_) => {
+            let url_leading = format!("/{}", uri);
+            match url_leading.parse::<Uri>() {
+                Ok(_) => {
+                    // The URI is a valid relative path (without a leading slash).
+                    true
+                }
+                Err(_) => {
+                    // The URI is not valid.
+                    false
+                }
+            }
+        }
+    }
+}
+
 /// Extract all local static elements defined with a `src=` tag from the the provided html.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
 /// [`validate_and_load_static_assets`] which in turn invokes this function.
 pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
-    // Determine the base_url that was used to load this path, used to extract absolute URLs.
-    let base_url = user.base_url.to_string();
-
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
-    let src_elements = Regex::new(format!(r#"(?i)src="(({base_url}|/).*?)""#).as_str()).unwrap();
+    let src_elements = Regex::new(r#"(?i)src="(.*?)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
     for url in src_elements.captures_iter(html) {
-        elements.push(url[1].to_string());
+        if valid_local_uri(user, &url[1]) {
+            elements.push(url[1].to_string());
+        }
     }
     elements
 }
@@ -703,15 +736,14 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
 /// While you can invoke this function directly, it's generally preferred to invoke
 /// [`validate_and_load_static_assets`] which in turn invokes this function.
 pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
-    // Determine the base_url that was used to load this path, used to extract absolute URLs.
-    let base_url = user.base_url.to_string();
-
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
-    let css = Regex::new(format!(r#"(?i)href="(({base_url}|/).*?\.css.*?)""#).as_str()).unwrap();
+    let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
     for url in css.captures_iter(html) {
-        elements.push(url[1].to_string());
+        if valid_local_uri(user, &url[1]) {
+            elements.push(url[1].to_string());
+        }
     }
     elements
 }
@@ -1079,6 +1111,22 @@ mod tests {
             eprintln!("actual matches: {:#?}", urls);
         }
         assert_eq!(urls.len(), 3);
-        assert_eq!(user.weighted_users_index, usize::max_value());
+
+        let urls = get_src_elements(&mut user, HTML).await;
+        if urls.len() != 6 {
+            eprintln!(
+                "expected matches: {:#?}",
+                vec![
+                    "http://example.com/example.jpg",
+                    "path/to/example.gif",
+                    "/path/to/example.",
+                    "http://example.com/example.js",
+                    "path/to/example.js",
+                    "/path/to/example.js",
+                ]
+            );
+            eprintln!("actual matches: {:#?}", urls);
+        }
+        assert_eq!(urls.len(), 6);
     }
 }
