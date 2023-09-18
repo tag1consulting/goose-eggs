@@ -1055,9 +1055,11 @@ mod tests {
         const HTML: &str = r#"<!DOCTYPE html>
         <html>
         <body>
-            <!-- 3 valid CSS paths -->
+            <!-- 4 valid CSS paths -->
                 <!-- valid local http path including host -->
                 <link href="http://example.com/example.css" rel="stylesheet" />
+                <!-- valid local http path including host and query parameter -->
+                <link href="http://example.com/example.css?version=abc123" rel="stylesheet" />
                 <!-- invalid http path on different subdomain -->
                 <link href="http://other.example.com/example.css" rel="stylesheet" />
                 <!-- invalid http path on different domain -->
@@ -1069,7 +1071,7 @@ mod tests {
                 <!-- valid absolute path -->
                 <link href="/path/to/example.css" rel="stylesheet" />
             
-            <!-- 3 valid image paths -->
+            <!-- 4 valid image paths -->
                 <!-- valid local http path including host -->
                 <img src="http://example.com/example.jpg" alt="example image" width="10" height="10"> 
                 <!-- invalid http path on different subdomain -->
@@ -1079,7 +1081,9 @@ mod tests {
                 <!-- valid relative path -->
                 <img src="path/to/example.gif" alt="example image" />
                 <!-- valid absolute path -->
-                <img src="/path/to/example." alt="example image" />
+                <img src="/path/to/example.png" alt="example image" />
+                <!-- valid absolute path with query parameter -->
+                <img src="/path/to/example.jpg?itok=Q8u7GC4u" alt="example image" />
 
             <!-- 3 valid JS paths -->
                 <!-- valid local http path including host -->
@@ -1099,27 +1103,29 @@ mod tests {
         let mut user =
             GooseUser::new(0, "".to_string(), base_url, &configuration, 0, None).unwrap();
         let urls = get_css_elements(&mut user, HTML).await;
-        if urls.len() != 3 {
+        if urls.len() != 4 {
             eprintln!(
                 "expected matches: {:#?}",
                 vec![
                     "http://example.com/example.css",
+                    "http://example.com/example.css?version=abc123",
                     "path/to/example.css",
                     "/path/to/example.css",
                 ]
             );
             eprintln!("actual matches: {:#?}", urls);
         }
-        assert_eq!(urls.len(), 3);
+        assert_eq!(urls.len(), 4);
 
         let urls = get_src_elements(&mut user, HTML).await;
-        if urls.len() != 6 {
+        if urls.len() != 7 {
             eprintln!(
                 "expected matches: {:#?}",
                 vec![
                     "http://example.com/example.jpg",
                     "path/to/example.gif",
-                    "/path/to/example.",
+                    "/path/to/example.png",
+                    "/path/to/example.jpg?itok=Q8u7GC4u",
                     "http://example.com/example.js",
                     "path/to/example.js",
                     "/path/to/example.js",
@@ -1127,6 +1133,6 @@ mod tests {
             );
             eprintln!("actual matches: {:#?}", urls);
         }
-        assert_eq!(urls.len(), 6);
+        assert_eq!(urls.len(), 7);
     }
 }
