@@ -28,7 +28,7 @@ pub struct Validate<'a> {
     /// Optionally validate the response status code.
     status: Option<(bool, u16)>,
     /// Optionally validate the response title.
-    title: Option<&'a str>,
+    title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<&'a str>,
     /// Optionally validate the response headers.
@@ -99,7 +99,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
     status: Option<(bool, u16)>,
     /// Optionally validate the response title.
-    title: Option<&'a str>,
+    title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<&'a str>,
     /// Optionally validate the response headers.
@@ -167,7 +167,25 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
-        self.title = Some(title.into());
+        self.title = Some((false, title.into()));
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that response title does not contain the
+    /// specified text.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_title("Home page")
+    ///     .build();
+    /// ```
+    pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
+        self.title = Some((true, title.into()));
         self
     }
 
@@ -973,8 +991,18 @@ pub async fn validate_page<'a>(
             match response.text().await {
                 Ok(html) => {
                     // Validate title if defined.
-                    if let Some(title) = validate.title {
-                        if !valid_title(&html, title) {
+                    if let Some((inverse, title)) = validate.title {
+                        if inverse && valid_title(&html, title) {
+                            user.set_failure(
+                                &format!("{}: title found: {}", goose.request.raw.url, title),
+                                &mut goose.request,
+                                Some(headers),
+                                Some(&html),
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors when a page fails to load.
+                            return Ok(html);
+                        } else if !inverse && !valid_title(&html, title) {
                             user.set_failure(
                                 &format!("{}: title not found: {}", goose.request.raw.url, title),
                                 &mut goose.request,

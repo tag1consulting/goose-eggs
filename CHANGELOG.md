@@ -2,6 +2,7 @@
 
 ## 0.5.2-dev
  - match "http://example.com/example.css", "/path/to/example.css", and "path/to/example.css" formatted paths for all types of static assets
+ - introduce `not_status()`, `not_title()`
 
 ## 0.5.1 January 28, 2023
  - in `drupal::log_in`
