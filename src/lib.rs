@@ -30,7 +30,7 @@ pub struct Validate<'a> {
     /// Optionally validate the response title.
     title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<&'a str>,
+    texts: Vec<(bool, &'a str)>,
     /// Optionally validate the response headers.
     headers: Vec<(&'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
@@ -101,7 +101,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate the response title.
     title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<&'a str>,
+    texts: Vec<(bool, &'a str)>,
     /// Optionally validate the response headers.
     headers: Vec<(&'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
@@ -216,7 +216,40 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn text(mut self, text: &'a str) -> Self {
-        self.texts.push(text);
+        self.texts.push((false, text));
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that the response page does not contain the
+    /// specified text.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_text("example not on page")
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times (and together with `text()`,
+    /// `texts()` and `not_texts()`) to validate that multiple texts do or do not appear
+    /// on the page. Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_text("example not on the page")
+    ///     .not_text("another not on the page")
+    ///     .text("this is on the page")
+    ///     .build();
+    /// ```
+    pub fn not_text(mut self, text: &'a str) -> Self {
+        self.texts.push((true, text));
         self
     }
 
@@ -234,9 +267,63 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     ///
+    /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
+    /// and `not_texts()`) to validate that multiple texts do or do not appear on the page.
+    /// Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .texts(vec!["example", "another"])
+    ///     .not_texts(vec!["foo", "bar"])
+    ///     .texts(vec!["also this", "and this"])
+    ///     .build();
+    /// ```
+    ///
     /// Alternatively you can call [`ValidateBuilder::text`].
     pub fn texts(mut self, texts: Vec<&'a str>) -> Self {
-        self.texts = texts;
+        for text in texts {
+            self = self.text(text);
+        }
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that the response page does not contains the
+    /// specified texts.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_texts(vec!["example", "another"])
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
+    /// and `texts()`) to validate that multiple texts do or do not appear on the page.
+    /// Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_texts(vec!["example", "another"])
+    ///     .texts(vec!["does include foo", "and bar"])
+    ///     .not_texts(vec!["but not this", "or this"])
+    ///     .build();
+    /// ```
+    ///
+    /// Alternatively you can call [`ValidateBuilder::text`].
+    pub fn not_texts(mut self, texts: Vec<&'a str>) -> Self {
+        for text in texts {
+            self = self.not_text(text);
+        }
         self
     }
 
@@ -1015,8 +1102,18 @@ pub async fn validate_page<'a>(
                         }
                     }
                     // Validate texts in body if defined.
-                    for text in &validate.texts {
-                        if !valid_text(&html, text) {
+                    for (inverse, text) in &validate.texts {
+                        if *inverse && valid_text(&html, text) {
+                            user.set_failure(
+                                &format!("{}: text found on page: {}", goose.request.raw.url, text),
+                                &mut goose.request,
+                                Some(headers),
+                                Some(&html),
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors when a page fails to load.
+                            return Ok(html);
+                        } else if !inverse && !valid_text(&html, text) {
                             user.set_failure(
                                 &format!(
                                     "{}: text not found on page: {}",
