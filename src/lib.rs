@@ -26,7 +26,7 @@ pub mod text;
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
-    status: Option<u16>,
+    status: Option<(bool, u16)>,
     /// Optionally validate the response title.
     title: Option<&'a str>,
     /// Optionally validate arbitrary texts in the response html.
@@ -97,7 +97,7 @@ impl<'a> Validate<'a> {
 #[derive(Clone, Debug)]
 pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
-    status: Option<u16>,
+    status: Option<(bool, u16)>,
     /// Optionally validate the response title.
     title: Option<&'a str>,
     /// Optionally validate arbitrary texts in the response html.
@@ -132,7 +132,24 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn status(mut self, status: u16) -> Self {
-        self.status = Some(status);
+        self.status = Some((false, status));
+        self
+    }
+
+    /// Define an HTTP status not expected to be returned when loading the page.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_status(404)
+    ///     .build();
+    /// ```
+    pub fn not_status(mut self, status: u16) -> Self {
+        self.status = Some((true, status));
         self
     }
 
@@ -875,8 +892,27 @@ pub async fn validate_page<'a>(
             }
 
             // Validate status code if defined.
-            if let Some(status) = validate.status {
-                if response.status() != status {
+            if let Some((inverse, status)) = validate.status {
+                // If inverse is true, error if response.status == status
+                if inverse && response.status() == status {
+                    // Get as much as we can from the response for useful debug logging.
+                    let headers = &response.headers().clone();
+                    let response_status = response.status();
+                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                    user.set_failure(
+                        &format!(
+                            "{}: response status == {}]: {}",
+                            goose.request.raw.url, status, response_status
+                        ),
+                        &mut goose.request,
+                        Some(headers),
+                        Some(&html),
+                    )?;
+                    // Exit as soon as validation fails, to avoid cascades of
+                    // errors whe na page fails to load.
+                    return Ok(html);
+                // If inverse is false, error if response.status != status
+                } else if !inverse && response.status() != status {
                     // Get as much as we can from the response for useful debug logging.
                     let headers = &response.headers().clone();
                     let response_status = response.status();

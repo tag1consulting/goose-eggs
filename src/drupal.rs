@@ -602,7 +602,7 @@ pub async fn log_in(
         // Build request manually if validating a specific status code.
         let goose_request = GooseRequest::builder()
             .path(login.url)
-            .expect_status_code(validate.status.unwrap())
+            .expect_status_code(validate.status.unwrap().1)
             .build();
         user.request(goose_request).await.unwrap()
     } else {
@@ -680,7 +680,7 @@ pub async fn log_in(
         let goose_request = GooseRequest::builder()
             .path(login.url)
             .method(GooseMethod::Post)
-            .expect_status_code(validate.status.unwrap())
+            .expect_status_code(validate.status.unwrap().1)
             .set_request_builder(reqwest_request_builder.form(&params))
             .build();
         user.request(goose_request).await.unwrap()
