@@ -26,3 +26,4 @@ rustls-tls = ["goose/rustls-tls", "reqwest/rustls-tls"]
 
 [dev-dependencies]
 gumdrop = "0.8"
+httpmock = "0.6"
