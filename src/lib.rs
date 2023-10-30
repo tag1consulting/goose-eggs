@@ -19,6 +19,15 @@ use reqwest::header::HeaderMap;
 pub mod drupal;
 pub mod text;
 
+/// Validate that a status code is equal or not equal to a specified value.
+#[derive(Clone, Debug)]
+pub struct ValidateStatus {
+    // Whether to validate that the status code is equal or not equal to the specified valie.
+    equals: bool,
+    // Status code to validate
+    status_code: u16,
+}
+
 /// Define one or more items to be validated in a web page response. For complete
 /// documentation, refer to [`ValidateBuilder`].
 ///
@@ -26,7 +35,7 @@ pub mod text;
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
-    status: Option<(bool, u16)>,
+    status: Option<ValidateStatus>,
     /// Optionally validate the response title.
     title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
@@ -97,7 +106,7 @@ impl<'a> Validate<'a> {
 #[derive(Clone, Debug)]
 pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
-    status: Option<(bool, u16)>,
+    status: Option<ValidateStatus>,
     /// Optionally validate the response title.
     title: Option<(bool, &'a str)>,
     /// Optionally validate arbitrary texts in the response html.
@@ -131,8 +140,11 @@ impl<'a> ValidateBuilder<'a> {
     ///     .status(200)
     ///     .build();
     /// ```
-    pub fn status(mut self, status: u16) -> Self {
-        self.status = Some((false, status));
+    pub fn status(mut self, status_code: u16) -> Self {
+        self.status = Some(ValidateStatus {
+            equals: true,
+            status_code,
+        });
         self
     }
 
@@ -148,8 +160,11 @@ impl<'a> ValidateBuilder<'a> {
     ///     .not_status(404)
     ///     .build();
     /// ```
-    pub fn not_status(mut self, status: u16) -> Self {
-        self.status = Some((true, status));
+    pub fn not_status(mut self, status_code: u16) -> Self {
+        self.status = Some(ValidateStatus {
+            equals: false,
+            status_code,
+        });
         self
     }
 
@@ -1076,9 +1091,9 @@ pub async fn validate_page<'a>(
             }
 
             // Validate status code if defined.
-            if let Some((inverse, status)) = validate.status {
-                // If inverse is true, error if response.status == status
-                if inverse && response.status() == status {
+            if let Some(validate_status) = validate.status.as_ref() {
+                // If equals is false, error if response.status == status
+                if !validate_status.equals && response.status() == validate_status.status_code {
                     // Get as much as we can from the response for useful debug logging.
                     let headers = &response.headers().clone();
                     let response_status = response.status();
@@ -1086,7 +1101,7 @@ pub async fn validate_page<'a>(
                     user.set_failure(
                         &format!(
                             "{}: response status == {}]: {}",
-                            goose.request.raw.url, status, response_status
+                            goose.request.raw.url, validate_status.status_code, response_status
                         ),
                         &mut goose.request,
                         Some(headers),
@@ -1095,8 +1110,9 @@ pub async fn validate_page<'a>(
                     // Exit as soon as validation fails, to avoid cascades of
                     // errors whe na page fails to load.
                     return Ok(html);
-                // If inverse is false, error if response.status != status
-                } else if !inverse && response.status() != status {
+                // If equals is true, error if response.status != status
+                } else if validate_status.equals && response.status() != validate_status.status_code
+                {
                     // Get as much as we can from the response for useful debug logging.
                     let headers = &response.headers().clone();
                     let response_status = response.status();
@@ -1104,7 +1120,7 @@ pub async fn validate_page<'a>(
                     user.set_failure(
                         &format!(
                             "{}: response status != {}]: {}",
-                            goose.request.raw.url, status, response_status
+                            goose.request.raw.url, validate_status.status_code, response_status
                         ),
                         &mut goose.request,
                         Some(headers),
