@@ -19,13 +19,22 @@ use reqwest::header::HeaderMap;
 pub mod drupal;
 pub mod text;
 
-/// Validate that a status code is equal or not equal to a specified value.
+/// Validate that the status code is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
 pub struct ValidateStatus {
     // Whether to validate that the status code is equal or not equal to the specified valie.
     equals: bool,
     // Status code to validate
     status_code: u16,
+}
+
+/// Validate that the page title is equal or not equal to a specified value.
+#[derive(Clone, Debug)]
+pub struct ValidateTitle<'a> {
+    // Whether to validate that the status code is equal or not equal to the specified valie.
+    equals: bool,
+    // Status code to validate
+    title: &'a str,
 }
 
 /// Define one or more items to be validated in a web page response. For complete
@@ -37,7 +46,7 @@ pub struct Validate<'a> {
     /// Optionally validate the response status code.
     status: Option<ValidateStatus>,
     /// Optionally validate the response title.
-    title: Option<(bool, &'a str)>,
+    title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<(bool, &'a str)>,
     /// Optionally validate the response headers.
@@ -108,7 +117,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
     status: Option<ValidateStatus>,
     /// Optionally validate the response title.
-    title: Option<(bool, &'a str)>,
+    title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<(bool, &'a str)>,
     /// Optionally validate the response headers.
@@ -182,7 +191,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
-        self.title = Some((false, title.into()));
+        self.title = Some(ValidateTitle {
+            equals: true,
+            title: title.into(),
+        });
         self
     }
 
@@ -200,7 +212,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
-        self.title = Some((true, title.into()));
+        self.title = Some(ValidateTitle {
+            equals: false,
+            title: title.into(),
+        });
         self
     }
 
@@ -1208,10 +1223,13 @@ pub async fn validate_page<'a>(
             match response.text().await {
                 Ok(html) => {
                     // Validate title if defined.
-                    if let Some((inverse, title)) = validate.title {
-                        if inverse && valid_title(&html, title) {
+                    if let Some(validate_title) = validate.title.as_ref() {
+                        if !validate_title.equals && valid_title(&html, validate_title.title) {
                             user.set_failure(
-                                &format!("{}: title found: {}", goose.request.raw.url, title),
+                                &format!(
+                                    "{}: title found: {}",
+                                    goose.request.raw.url, validate_title.title
+                                ),
                                 &mut goose.request,
                                 Some(headers),
                                 Some(&html),
@@ -1219,9 +1237,13 @@ pub async fn validate_page<'a>(
                             // Exit as soon as validation fails, to avoid cascades of
                             // errors when a page fails to load.
                             return Ok(html);
-                        } else if !inverse && !valid_title(&html, title) {
+                        } else if validate_title.equals && !valid_title(&html, validate_title.title)
+                        {
                             user.set_failure(
-                                &format!("{}: title not found: {}", goose.request.raw.url, title),
+                                &format!(
+                                    "{}: title not found: {}",
+                                    goose.request.raw.url, validate_title.title
+                                ),
                                 &mut goose.request,
                                 Some(headers),
                                 Some(&html),
