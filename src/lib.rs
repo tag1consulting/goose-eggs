@@ -22,7 +22,7 @@ pub mod text;
 /// Validate that the status code is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
 pub struct ValidateStatus {
-    // Whether to validate that the status code is equal or not equal to the specified valie.
+    // Whether to validate that the status code is equal or not equal to the specified value.
     equals: bool,
     // Status code to validate
     status_code: u16,
@@ -31,10 +31,19 @@ pub struct ValidateStatus {
 /// Validate that the page title is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
 pub struct ValidateTitle<'a> {
-    // Whether to validate that the status code is equal or not equal to the specified valie.
-    equals: bool,
-    // Status code to validate
+    // Whether to validate that the title contains or does not contain the specified value.
+    exists: bool,
+    // Title text to validate
     title: &'a str,
+}
+
+/// Validate that text on the page is equal or not equal to a specified value.
+#[derive(Clone, Debug)]
+pub struct ValidateText<'a> {
+    // Whether to validate that the page contains or does not contain the specified value.
+    exists: bool,
+    // Text to validate
+    text: &'a str,
 }
 
 /// Define one or more items to be validated in a web page response. For complete
@@ -48,7 +57,7 @@ pub struct Validate<'a> {
     /// Optionally validate the response title.
     title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<(bool, &'a str)>,
+    texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
     headers: Vec<(bool, &'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
@@ -119,7 +128,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate the response title.
     title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<(bool, &'a str)>,
+    texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
     headers: Vec<(bool, &'a str, &'a str)>,
     /// Optionally validate whether or not the page redirects
@@ -192,7 +201,7 @@ impl<'a> ValidateBuilder<'a> {
     /// ```
     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
         self.title = Some(ValidateTitle {
-            equals: true,
+            exists: true,
             title: title.into(),
         });
         self
@@ -213,7 +222,7 @@ impl<'a> ValidateBuilder<'a> {
     /// ```
     pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
         self.title = Some(ValidateTitle {
-            equals: false,
+            exists: false,
             title: title.into(),
         });
         self
@@ -246,7 +255,7 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn text(mut self, text: &'a str) -> Self {
-        self.texts.push((false, text));
+        self.texts.push(ValidateText { exists: true, text });
         self
     }
 
@@ -279,7 +288,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn not_text(mut self, text: &'a str) -> Self {
-        self.texts.push((true, text));
+        self.texts.push(ValidateText {
+            exists: false,
+            text,
+        });
         self
     }
 
@@ -1224,7 +1236,8 @@ pub async fn validate_page<'a>(
                 Ok(html) => {
                     // Validate title if defined.
                     if let Some(validate_title) = validate.title.as_ref() {
-                        if !validate_title.equals && valid_title(&html, validate_title.title) {
+                        // Be sure the title doesn't contain the specified text.
+                        if !validate_title.exists && valid_title(&html, validate_title.title) {
                             user.set_failure(
                                 &format!(
                                     "{}: title found: {}",
@@ -1237,7 +1250,8 @@ pub async fn validate_page<'a>(
                             // Exit as soon as validation fails, to avoid cascades of
                             // errors when a page fails to load.
                             return Ok(html);
-                        } else if validate_title.equals && !valid_title(&html, validate_title.title)
+                        // Be sure the title contains the specified text.
+                        } else if validate_title.exists && !valid_title(&html, validate_title.title)
                         {
                             user.set_failure(
                                 &format!(
@@ -1254,10 +1268,13 @@ pub async fn validate_page<'a>(
                         }
                     }
                     // Validate texts in body if defined.
-                    for (inverse, text) in &validate.texts {
-                        if *inverse && valid_text(&html, text) {
+                    for validate_text in &validate.texts {
+                        if !validate_text.exists && valid_text(&html, validate_text.text) {
                             user.set_failure(
-                                &format!("{}: text found on page: {}", goose.request.raw.url, text),
+                                &format!(
+                                    "{}: text found on page: {}",
+                                    goose.request.raw.url, validate_text.text
+                                ),
                                 &mut goose.request,
                                 Some(headers),
                                 Some(&html),
@@ -1265,11 +1282,11 @@ pub async fn validate_page<'a>(
                             // Exit as soon as validation fails, to avoid cascades of
                             // errors when a page fails to load.
                             return Ok(html);
-                        } else if !inverse && !valid_text(&html, text) {
+                        } else if validate_text.exists && !valid_text(&html, validate_text.text) {
                             user.set_failure(
                                 &format!(
                                     "{}: text not found on page: {}",
-                                    goose.request.raw.url, text
+                                    goose.request.raw.url, validate_text.text
                                 ),
                                 &mut goose.request,
                                 Some(headers),
