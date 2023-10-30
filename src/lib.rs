@@ -37,13 +37,24 @@ pub struct ValidateTitle<'a> {
     title: &'a str,
 }
 
-/// Validate that text on the page is equal or not equal to a specified value.
+/// Validate that the specified text exists or does not exist on the page.
 #[derive(Clone, Debug)]
 pub struct ValidateText<'a> {
-    // Whether to validate that the page contains or does not contain the specified value.
+    // Whether to validate that the page contains or does not contain the specified text.
     exists: bool,
     // Text to validate
     text: &'a str,
+}
+
+/// Validate that the specified header exists or does not exist, optionally containing a specified value.
+#[derive(Clone, Debug)]
+pub struct ValidateHeader<'a> {
+    // Whether to validate that the page contains or does not contain the specified header.
+    exists: bool,
+    // Header to validate
+    header: &'a str,
+    // Header value to validate
+    value: &'a str,
 }
 
 /// Define one or more items to be validated in a web page response. For complete
@@ -59,7 +70,7 @@ pub struct Validate<'a> {
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
-    headers: Vec<(bool, &'a str, &'a str)>,
+    headers: Vec<ValidateHeader<'a>>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -130,7 +141,7 @@ pub struct ValidateBuilder<'a> {
     /// Optionally validate arbitrary texts in the response html.
     texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
-    headers: Vec<(bool, &'a str, &'a str)>,
+    headers: Vec<ValidateHeader<'a>>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -400,7 +411,11 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn header(mut self, header: impl Into<&'a str>) -> Self {
-        self.headers.push((false, header.into(), ""));
+        self.headers.push(ValidateHeader {
+            exists: true,
+            header: header.into(),
+            value: "",
+        });
         self
     }
 
@@ -435,7 +450,11 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn not_header(mut self, header: impl Into<&'a str>) -> Self {
-        self.headers.push((true, header.into(), ""));
+        self.headers.push(ValidateHeader {
+            exists: false,
+            header: header.into(),
+            value: "",
+        });
         self
     }
 
@@ -474,7 +493,11 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
-        self.headers.push((false, header.into(), value.into()));
+        self.headers.push(ValidateHeader {
+            exists: true,
+            header: header.into(),
+            value: value.into(),
+        });
         self
     }
 
@@ -517,7 +540,11 @@ impl<'a> ValidateBuilder<'a> {
         header: impl Into<&'a str>,
         value: impl Into<&'a str>,
     ) -> Self {
-        self.headers.push((true, header.into(), value.into()));
+        self.headers.push(ValidateHeader {
+            exists: false,
+            header: header.into(),
+            value: value.into(),
+        });
         self
     }
 
@@ -1161,15 +1188,15 @@ pub async fn validate_page<'a>(
 
             // Validate headers if defined.
             let headers = &response.headers().clone();
-            for (inverse, header, value) in &validate.headers {
-                if *inverse {
-                    if header_is_set(headers, header) {
+            for validate_header in &validate.headers {
+                if !validate_header.exists {
+                    if header_is_set(headers, validate_header.header) {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
                             &format!(
                                 "{}: header included in response: {:?}",
-                                goose.request.raw.url, header
+                                goose.request.raw.url, validate_header.header
                             ),
                             &mut goose.request,
                             Some(headers),
@@ -1179,13 +1206,18 @@ pub async fn validate_page<'a>(
                         // errors when a page fails to load.
                         return Ok(html);
                     }
-                    if !value.is_empty() && valid_header_value(headers, (*header, *value)) {
+                    if !validate_header.value.is_empty()
+                        && valid_header_value(
+                            headers,
+                            (validate_header.header, validate_header.value),
+                        )
+                    {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
                             &format!(
                                 "{}: header contains unexpected value: {:?}",
-                                goose.request.raw.url, value
+                                goose.request.raw.url, validate_header.value
                             ),
                             &mut goose.request,
                             Some(headers),
@@ -1196,13 +1228,13 @@ pub async fn validate_page<'a>(
                         return Ok(html);
                     }
                 } else {
-                    if !header_is_set(headers, header) {
+                    if !header_is_set(headers, validate_header.header) {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
                             &format!(
                                 "{}: header not included in response: {:?}",
-                                goose.request.raw.url, header
+                                goose.request.raw.url, validate_header.header
                             ),
                             &mut goose.request,
                             Some(headers),
@@ -1212,13 +1244,18 @@ pub async fn validate_page<'a>(
                         // errors when a page fails to load.
                         return Ok(html);
                     }
-                    if !value.is_empty() && !valid_header_value(headers, (*header, *value)) {
+                    if !validate_header.value.is_empty()
+                        && !valid_header_value(
+                            headers,
+                            (validate_header.header, validate_header.value),
+                        )
+                    {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
                             &format!(
                                 "{}: header does not contain expected value: {:?}",
-                                goose.request.raw.url, value
+                                goose.request.raw.url, validate_header.value
                             ),
                             &mut goose.request,
                             Some(headers),
