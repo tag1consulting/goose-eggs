@@ -21,7 +21,7 @@ pub mod text;
 
 /// Validate that the status code is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
-pub struct ValidateStatus {
+struct ValidateStatus {
     // Whether to validate that the status code is equal or not equal to the specified value.
     equals: bool,
     // Status code to validate
@@ -30,7 +30,7 @@ pub struct ValidateStatus {
 
 /// Validate that the page title is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
-pub struct ValidateTitle<'a> {
+struct ValidateTitle<'a> {
     // Whether to validate that the title contains or does not contain the specified value.
     exists: bool,
     // Title text to validate
@@ -39,7 +39,7 @@ pub struct ValidateTitle<'a> {
 
 /// Validate that the specified text exists or does not exist on the page.
 #[derive(Clone, Debug)]
-pub struct ValidateText<'a> {
+struct ValidateText<'a> {
     // Whether to validate that the page contains or does not contain the specified text.
     exists: bool,
     // Text to validate
@@ -48,7 +48,7 @@ pub struct ValidateText<'a> {
 
 /// Validate that the specified header exists or does not exist, optionally containing a specified value.
 #[derive(Clone, Debug)]
-pub struct ValidateHeader<'a> {
+struct ValidateHeader<'a> {
     // Whether to validate that the page contains or does not contain the specified header.
     exists: bool,
     // Header to validate
