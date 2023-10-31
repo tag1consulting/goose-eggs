@@ -19,6 +19,44 @@ use reqwest::header::HeaderMap;
 pub mod drupal;
 pub mod text;
 
+/// Validate that the status code is equal or not equal to a specified value.
+#[derive(Clone, Debug)]
+struct ValidateStatus {
+    // Whether to validate that the status code is equal or not equal to the specified value.
+    equals: bool,
+    // Status code to validate
+    status_code: u16,
+}
+
+/// Validate that the page title is equal or not equal to a specified value.
+#[derive(Clone, Debug)]
+struct ValidateTitle<'a> {
+    // Whether to validate that the title contains or does not contain the specified value.
+    exists: bool,
+    // Title text to validate
+    title: &'a str,
+}
+
+/// Validate that the specified text exists or does not exist on the page.
+#[derive(Clone, Debug)]
+struct ValidateText<'a> {
+    // Whether to validate that the page contains or does not contain the specified text.
+    exists: bool,
+    // Text to validate
+    text: &'a str,
+}
+
+/// Validate that the specified header exists or does not exist, optionally containing a specified value.
+#[derive(Clone, Debug)]
+struct ValidateHeader<'a> {
+    // Whether to validate that the page contains or does not contain the specified header.
+    exists: bool,
+    // Header to validate
+    header: &'a str,
+    // Header value to validate
+    value: &'a str,
+}
+
 /// Define one or more items to be validated in a web page response. For complete
 /// documentation, refer to [`ValidateBuilder`].
 ///
@@ -26,13 +64,13 @@ pub mod text;
 #[derive(Clone, Debug)]
 pub struct Validate<'a> {
     /// Optionally validate the response status code.
-    status: Option<u16>,
+    status: Option<ValidateStatus>,
     /// Optionally validate the response title.
-    title: Option<&'a str>,
+    title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<&'a str>,
+    texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
-    headers: Vec<(&'a str, &'a str)>,
+    headers: Vec<ValidateHeader<'a>>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -97,13 +135,13 @@ impl<'a> Validate<'a> {
 #[derive(Clone, Debug)]
 pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
-    status: Option<u16>,
+    status: Option<ValidateStatus>,
     /// Optionally validate the response title.
-    title: Option<&'a str>,
+    title: Option<ValidateTitle<'a>>,
     /// Optionally validate arbitrary texts in the response html.
-    texts: Vec<&'a str>,
+    texts: Vec<ValidateText<'a>>,
     /// Optionally validate the response headers.
-    headers: Vec<(&'a str, &'a str)>,
+    headers: Vec<ValidateHeader<'a>>,
     /// Optionally validate whether or not the page redirects
     redirect: Option<bool>,
 }
@@ -131,8 +169,31 @@ impl<'a> ValidateBuilder<'a> {
     ///     .status(200)
     ///     .build();
     /// ```
-    pub fn status(mut self, status: u16) -> Self {
-        self.status = Some(status);
+    pub fn status(mut self, status_code: u16) -> Self {
+        self.status = Some(ValidateStatus {
+            equals: true,
+            status_code,
+        });
+        self
+    }
+
+    /// Define an HTTP status not expected to be returned when loading the page.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_status(404)
+    ///     .build();
+    /// ```
+    pub fn not_status(mut self, status_code: u16) -> Self {
+        self.status = Some(ValidateStatus {
+            equals: false,
+            status_code,
+        });
         self
     }
 
@@ -150,7 +211,31 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
-        self.title = Some(title.into());
+        self.title = Some(ValidateTitle {
+            exists: true,
+            title: title.into(),
+        });
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that response title does not contain the
+    /// specified text.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_title("Home page")
+    ///     .build();
+    /// ```
+    pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
+        self.title = Some(ValidateTitle {
+            exists: false,
+            title: title.into(),
+        });
         self
     }
 
@@ -181,7 +266,43 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn text(mut self, text: &'a str) -> Self {
-        self.texts.push(text);
+        self.texts.push(ValidateText { exists: true, text });
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that the response page does not contain the
+    /// specified text.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_text("example not on page")
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times (and together with `text()`,
+    /// `texts()` and `not_texts()`) to validate that multiple texts do or do not appear
+    /// on the page. Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_text("example not on the page")
+    ///     .not_text("another not on the page")
+    ///     .text("this is on the page")
+    ///     .build();
+    /// ```
+    pub fn not_text(mut self, text: &'a str) -> Self {
+        self.texts.push(ValidateText {
+            exists: false,
+            text,
+        });
         self
     }
 
@@ -199,9 +320,63 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     ///
+    /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
+    /// and `not_texts()`) to validate that multiple texts do or do not appear on the page.
+    /// Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .texts(vec!["example", "another"])
+    ///     .not_texts(vec!["foo", "bar"])
+    ///     .texts(vec!["also this", "and this"])
+    ///     .build();
+    /// ```
+    ///
     /// Alternatively you can call [`ValidateBuilder::text`].
     pub fn texts(mut self, texts: Vec<&'a str>) -> Self {
-        self.texts = texts;
+        for text in texts {
+            self = self.text(text);
+        }
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that the response page does not contains the
+    /// specified texts.
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_texts(vec!["example", "another"])
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
+    /// and `texts()`) to validate that multiple texts do or do not appear on the page.
+    /// Alternatively you can call [`ValidateBuilder::texts`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_texts(vec!["example", "another"])
+    ///     .texts(vec!["does include foo", "and bar"])
+    ///     .not_texts(vec!["but not this", "or this"])
+    ///     .build();
+    /// ```
+    ///
+    /// Alternatively you can call [`ValidateBuilder::text`].
+    pub fn not_texts(mut self, texts: Vec<&'a str>) -> Self {
+        for text in texts {
+            self = self.not_text(text);
+        }
         self
     }
 
@@ -222,8 +397,9 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     ///
-    /// It's possible to call this function multiple times to validate that multiple
-    /// headers are set.
+    /// It's possible to call this function multiple times, and/or together with
+    /// [`ValidateBuilder::not_header`], [`ValidateBuilder::header_value`] and
+    /// [`ValidateBuilder::not_header_value`].
     ///
     /// # Multiple Example
     /// ```rust
@@ -235,7 +411,50 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn header(mut self, header: impl Into<&'a str>) -> Self {
-        self.headers.push((header.into(), ""));
+        self.headers.push(ValidateHeader {
+            exists: true,
+            header: header.into(),
+            value: "",
+        });
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that the response does not include the
+    /// specified header.
+    ///
+    /// To validate that a header does not contain a specific value (instead of just validating
+    /// that it does not exist), use [`ValidateBuilder::not_header_value`].
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_header("x-cache")
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times, and/or together with
+    /// [`ValidateBuilder::header`], [`ValidateBuilder::header_value`] and
+    /// [`ValidateBuilder::not_header_value`].
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_header("x-cache")
+    ///     .header("x-generator")
+    ///     .build();
+    /// ```
+    pub fn not_header(mut self, header: impl Into<&'a str>) -> Self {
+        self.headers.push(ValidateHeader {
+            exists: false,
+            header: header.into(),
+            value: "",
+        });
         self
     }
 
@@ -257,8 +476,8 @@ impl<'a> ValidateBuilder<'a> {
     /// ```
     ///
     /// It's possible to call this function multiple times, and/or together with
-    /// [`ValidateBuilder::header`] to validate that multiple headers are set and their
-    /// values.
+    /// [`ValidateBuilder::header`], [`ValidateBuilder::not_header`] and
+    /// [`ValidateBuilder::not_header_value`].
     ///
     /// # Multiple Example
     /// ```rust
@@ -274,7 +493,58 @@ impl<'a> ValidateBuilder<'a> {
     ///     .build();
     /// ```
     pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
-        self.headers.push((header.into(), value.into()));
+        self.headers.push(ValidateHeader {
+            exists: true,
+            header: header.into(),
+            value: value.into(),
+        });
+        self
+    }
+
+    /// Create a [`Validate`] object to validate that given header does not contain the specified
+    /// value.
+    ///
+    /// To validate that a header simply doesn't exist without confirming that it doesn't contain
+    /// a specific value, use [`ValidateBuilder::not_header`].
+    ///
+    /// This structure is passed to [`validate_page`] or [`validate_and_load_static_assets`].
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     .not_header_value("x-generator", "Drupal 7")
+    ///     .build();
+    /// ```
+    ///
+    /// It's possible to call this function multiple times, and/or together with
+    /// [`ValidateBuilder::header_value`], [`ValidateBuilder::not_header`] and
+    /// [`ValidateBuilder::header`].
+    ///
+    /// # Multiple Example
+    /// ```rust
+    /// use goose_eggs::Validate;
+    ///
+    /// let _validate = Validate::builder()
+    ///     // Validate that the "x-cache" header is set.
+    ///     .header("x-cache")
+    ///     // Validate that the "x-generator" header if set does not contain "Drupal 7".
+    ///     .not_header_value("x-generator", "Drupal-7")
+    ///     // Validate that the "x-drupal-cache" header is set to "HIT".
+    ///     .header_value("x-drupal-cache", "HIT")
+    ///     .build();
+    /// ```
+    pub fn not_header_value(
+        mut self,
+        header: impl Into<&'a str>,
+        value: impl Into<&'a str>,
+    ) -> Self {
+        self.headers.push(ValidateHeader {
+            exists: false,
+            header: header.into(),
+            value: value.into(),
+        });
         self
     }
 
@@ -875,8 +1145,28 @@ pub async fn validate_page<'a>(
             }
 
             // Validate status code if defined.
-            if let Some(status) = validate.status {
-                if response.status() != status {
+            if let Some(validate_status) = validate.status.as_ref() {
+                // If equals is false, error if response.status == status
+                if !validate_status.equals && response.status() == validate_status.status_code {
+                    // Get as much as we can from the response for useful debug logging.
+                    let headers = &response.headers().clone();
+                    let response_status = response.status();
+                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                    user.set_failure(
+                        &format!(
+                            "{}: response status == {}]: {}",
+                            goose.request.raw.url, validate_status.status_code, response_status
+                        ),
+                        &mut goose.request,
+                        Some(headers),
+                        Some(&html),
+                    )?;
+                    // Exit as soon as validation fails, to avoid cascades of
+                    // errors whe na page fails to load.
+                    return Ok(html);
+                // If equals is true, error if response.status != status
+                } else if validate_status.equals && response.status() != validate_status.status_code
+                {
                     // Get as much as we can from the response for useful debug logging.
                     let headers = &response.headers().clone();
                     let response_status = response.status();
@@ -884,7 +1174,7 @@ pub async fn validate_page<'a>(
                     user.set_failure(
                         &format!(
                             "{}: response status != {}]: {}",
-                            goose.request.raw.url, status, response_status
+                            goose.request.raw.url, validate_status.status_code, response_status
                         ),
                         &mut goose.request,
                         Some(headers),
@@ -898,38 +1188,83 @@ pub async fn validate_page<'a>(
 
             // Validate headers if defined.
             let headers = &response.headers().clone();
-            for header in &validate.headers {
-                if !header_is_set(headers, header.0) {
-                    // Get as much as we can from the response for useful debug logging.
-                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
-                    user.set_failure(
-                        &format!(
-                            "{}: header not included in response: {:?}",
-                            goose.request.raw.url, header
-                        ),
-                        &mut goose.request,
-                        Some(headers),
-                        Some(&html),
-                    )?;
-                    // Exit as soon as validation fails, to avoid cascades of
-                    // errors when a page fails to load.
-                    return Ok(html);
-                }
-                if !header.1.is_empty() && !valid_header_value(headers, *header) {
-                    // Get as much as we can from the response for useful debug logging.
-                    let html = response.text().await.unwrap_or_else(|_| "".to_string());
-                    user.set_failure(
-                        &format!(
-                            "{}: header does not contain expected value: {:?}",
-                            goose.request.raw.url, header.1
-                        ),
-                        &mut goose.request,
-                        Some(headers),
-                        Some(&html),
-                    )?;
-                    // Exit as soon as validation fails, to avoid cascades of
-                    // errors when a page fails to load.
-                    return Ok(html);
+            for validate_header in &validate.headers {
+                if !validate_header.exists {
+                    if header_is_set(headers, validate_header.header) {
+                        // Get as much as we can from the response for useful debug logging.
+                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                        user.set_failure(
+                            &format!(
+                                "{}: header included in response: {:?}",
+                                goose.request.raw.url, validate_header.header
+                            ),
+                            &mut goose.request,
+                            Some(headers),
+                            Some(&html),
+                        )?;
+                        // Exit as soon as validation fails, to avoid cascades of
+                        // errors when a page fails to load.
+                        return Ok(html);
+                    }
+                    if !validate_header.value.is_empty()
+                        && valid_header_value(
+                            headers,
+                            (validate_header.header, validate_header.value),
+                        )
+                    {
+                        // Get as much as we can from the response for useful debug logging.
+                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                        user.set_failure(
+                            &format!(
+                                "{}: header contains unexpected value: {:?}",
+                                goose.request.raw.url, validate_header.value
+                            ),
+                            &mut goose.request,
+                            Some(headers),
+                            Some(&html),
+                        )?;
+                        // Exit as soon as validation fails, to avoid cascades of
+                        // errors when a page fails to load.
+                        return Ok(html);
+                    }
+                } else {
+                    if !header_is_set(headers, validate_header.header) {
+                        // Get as much as we can from the response for useful debug logging.
+                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                        user.set_failure(
+                            &format!(
+                                "{}: header not included in response: {:?}",
+                                goose.request.raw.url, validate_header.header
+                            ),
+                            &mut goose.request,
+                            Some(headers),
+                            Some(&html),
+                        )?;
+                        // Exit as soon as validation fails, to avoid cascades of
+                        // errors when a page fails to load.
+                        return Ok(html);
+                    }
+                    if !validate_header.value.is_empty()
+                        && !valid_header_value(
+                            headers,
+                            (validate_header.header, validate_header.value),
+                        )
+                    {
+                        // Get as much as we can from the response for useful debug logging.
+                        let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                        user.set_failure(
+                            &format!(
+                                "{}: header does not contain expected value: {:?}",
+                                goose.request.raw.url, validate_header.value
+                            ),
+                            &mut goose.request,
+                            Some(headers),
+                            Some(&html),
+                        )?;
+                        // Exit as soon as validation fails, to avoid cascades of
+                        // errors when a page fails to load.
+                        return Ok(html);
+                    }
                 }
             }
 
@@ -937,10 +1272,29 @@ pub async fn validate_page<'a>(
             match response.text().await {
                 Ok(html) => {
                     // Validate title if defined.
-                    if let Some(title) = validate.title {
-                        if !valid_title(&html, title) {
+                    if let Some(validate_title) = validate.title.as_ref() {
+                        // Be sure the title doesn't contain the specified text.
+                        if !validate_title.exists && valid_title(&html, validate_title.title) {
                             user.set_failure(
-                                &format!("{}: title not found: {}", goose.request.raw.url, title),
+                                &format!(
+                                    "{}: title found: {}",
+                                    goose.request.raw.url, validate_title.title
+                                ),
+                                &mut goose.request,
+                                Some(headers),
+                                Some(&html),
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors when a page fails to load.
+                            return Ok(html);
+                        // Be sure the title contains the specified text.
+                        } else if validate_title.exists && !valid_title(&html, validate_title.title)
+                        {
+                            user.set_failure(
+                                &format!(
+                                    "{}: title not found: {}",
+                                    goose.request.raw.url, validate_title.title
+                                ),
                                 &mut goose.request,
                                 Some(headers),
                                 Some(&html),
@@ -951,12 +1305,25 @@ pub async fn validate_page<'a>(
                         }
                     }
                     // Validate texts in body if defined.
-                    for text in &validate.texts {
-                        if !valid_text(&html, text) {
+                    for validate_text in &validate.texts {
+                        if !validate_text.exists && valid_text(&html, validate_text.text) {
+                            user.set_failure(
+                                &format!(
+                                    "{}: text found on page: {}",
+                                    goose.request.raw.url, validate_text.text
+                                ),
+                                &mut goose.request,
+                                Some(headers),
+                                Some(&html),
+                            )?;
+                            // Exit as soon as validation fails, to avoid cascades of
+                            // errors when a page fails to load.
+                            return Ok(html);
+                        } else if validate_text.exists && !valid_text(&html, validate_text.text) {
                             user.set_failure(
                                 &format!(
                                     "{}: text not found on page: {}",
-                                    goose.request.raw.url, text
+                                    goose.request.raw.url, validate_text.text
                                 ),
                                 &mut goose.request,
                                 Some(headers),

@@ -598,11 +598,11 @@ pub async fn log_in(
     };
 
     // Load the log in page.
-    let goose = if validate.status.is_some() {
+    let goose = if let Some(validate_status) = validate.status.as_ref() {
         // Build request manually if validating a specific status code.
         let goose_request = GooseRequest::builder()
             .path(login.url)
-            .expect_status_code(validate.status.unwrap())
+            .expect_status_code(validate_status.status_code)
             .build();
         user.request(goose_request).await.unwrap()
     } else {
@@ -672,7 +672,7 @@ pub async fn log_in(
         ("op", &"Log+in".to_string()),
     ];
     // Post the log in form.
-    let mut logged_in_user = if validate.status.is_some() {
+    let mut logged_in_user = if let Some(validate_status) = validate.status.as_ref() {
         // Build request manually if validating a specific status code.
         let url = user.build_url(login.url)?;
         // A request builder object is necessary to post a form.
@@ -680,7 +680,7 @@ pub async fn log_in(
         let goose_request = GooseRequest::builder()
             .path(login.url)
             .method(GooseMethod::Post)
-            .expect_status_code(validate.status.unwrap())
+            .expect_status_code(validate_status.status_code)
             .set_request_builder(reqwest_request_builder.form(&params))
             .build();
         user.request(goose_request).await.unwrap()
