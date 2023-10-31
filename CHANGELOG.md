@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.5.3-dev
+
 ## 0.5.2 October 31, 2023
  - match "http://example.com/example.css", "/path/to/example.css", and "path/to/example.css" formatted paths for all types of static assets
  - introduce `not_status()`, `not_title()`, `not_text()`, `not_texts()`, `not_header()`, and `not_header_value()`
