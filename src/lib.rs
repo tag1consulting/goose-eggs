@@ -993,7 +993,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // @TODO: parse HTML5 srcset= also
     let src_elements = Regex::new(r#"(?i)src="(.*?)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
-    for url in src_elements.captures_iter(html) {
+    for url in src_elements.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
         if valid_local_uri(user, &url[1]) {
             elements.push(url[1].to_string());
         }
@@ -1010,7 +1010,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // <foo> is the URL to local css assets.
     let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
-    for url in css.captures_iter(html) {
+    for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
         if valid_local_uri(user, &url[1]) {
             elements.push(url[1].to_string());
         }
