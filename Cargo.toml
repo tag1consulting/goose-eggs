@@ -13,6 +13,7 @@ license = "Apache-2.0"
 
 [dependencies]
 goose = { version = "0.17", default-features = false }
+html-escape = "0.2"
 http = "0.2"
 log = "0.4"
 rand = "0.8"
