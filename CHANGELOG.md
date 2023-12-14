@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.5.3-dev
+ - decode HTML before detecting and loading static assets
 
 ## 0.5.2 October 31, 2023
  - match "http://example.com/example.css", "/path/to/example.css", and "path/to/example.css" formatted paths for all types of static assets
