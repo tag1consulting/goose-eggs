@@ -1,6 +1,6 @@
 [package]
 name = "goose-eggs"
-version = "0.5.3-dev"
+version = "0.6.0"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
 description = "Helpful in writing Goose load tests."
@@ -12,13 +12,13 @@ keywords = ["loadtesting", "performance", "web"]
 license = "Apache-2.0"
 
 [dependencies]
-goose = { version = "0.17", default-features = false }
+goose = { version = "0.18", default-features = false }
 html-escape = "0.2"
-http = "0.2"
+http = "1.1"
 log = "0.4"
-rand = "0.8"
+rand = "0.9"
 regex = "1.5"
-reqwest = { version = "0.11", default-features = false }
+reqwest = { version = "0.12", default-features = false }
 tokio = { version = "1", features = [ "macros" ] }
 
 [features]
@@ -27,4 +27,4 @@ rustls-tls = ["goose/rustls-tls", "reqwest/rustls-tls"]
 
 [dev-dependencies]
 gumdrop = "0.8"
-httpmock = "0.6"
+httpmock = "0.7"

@@ -1,7 +1,7 @@
 //! Functionality for efficiently generating random text.
 
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+use rand::distr::Alphanumeric;
+use rand::{rng, Rng};
 
 /// Generate a random "word" of the specified length of random
 /// alphanumeric characters.
@@ -15,7 +15,7 @@ use rand::{thread_rng, Rng};
 /// assert_eq!(word.len(), 10);
 /// ```
 pub fn random_word(length: usize) -> String {
-    thread_rng()
+    rng()
         .sample_iter(&Alphanumeric)
         .take(length)
         .map(char::from)
@@ -36,8 +36,8 @@ pub fn random_word(length: usize) -> String {
 pub fn random_words(number: usize) -> String {
     let mut words: Vec<String> = Vec::new();
     for _ in 1..number {
-        let mut rng = thread_rng();
-        words.push(random_word(rng.gen_range(3..12)));
+        let mut rng = rng();
+        words.push(random_word(rng.random_range(3..12)));
     }
     words.join(" ")
 }
