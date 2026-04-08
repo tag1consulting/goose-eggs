@@ -750,9 +750,9 @@ pub fn get_title(html: &str) -> Option<String> {
 /// ```
 pub fn valid_title(html: &str, title: &str) -> bool {
     // Extract the HTML header from the provided html.
-    let html_header = get_html_header(html).map_or_else(|| "".to_string(), |h| h);
+    let html_header = get_html_header(html).unwrap_or_default();
     // Next extract the title from the HTML header.
-    let html_title = get_title(&html_header).map_or_else(|| "".to_string(), |t| t);
+    let html_title = get_title(&html_header).unwrap_or_default();
     // Finally, confirm that the title contains the expected text.
     html_title
         .to_ascii_lowercase()
