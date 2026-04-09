@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>tag1consulting/renovate-config"
-  ]
+  "extends": ["local>tag1consulting/renovate-config"],
+  "rust": {
+    "enabled": true
+  }
 }
