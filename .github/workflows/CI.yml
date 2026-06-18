@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: ⚡ Cache
       uses: Swatinem/rust-cache@v2.9.1
@@ -44,7 +44,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: ⚡ Cache
       uses: Swatinem/rust-cache@v2.9.1
