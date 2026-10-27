@@ -1,12 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..6f32934 100644
+index 635f7df..fe1fa06 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -29,7 +29,6 @@ pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
+@@ -29,7 +29,7 @@ pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
      let capture = re.captures(tag)?;
      let value = capture
          .get(1)
 -        .or_else(|| capture.get(2))
++        .or_else(|| capture.get(3))
          .or_else(|| capture.get(3))
          .map_or("", |m| m.as_str());
      Some(html_escape::decode_html_entities(value).to_string())

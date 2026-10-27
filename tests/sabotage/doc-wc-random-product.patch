@@ -1,5 +1,5 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..abe6780 100644
+index 8b1c271..1cce909 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
 @@ -510,7 +510,7 @@ fn parse_product(item: &serde_json::Value) -> Option<Product> {
@@ -7,7 +7,7 @@ index 8b1c271..abe6780 100644
  /// ```
  pub fn random_product(products: &[Product]) -> Option<&Product> {
 -    let buyable: Vec<&Product> = products.iter().filter(|p| p.can_add_to_cart()).collect();
-+    let buyable: Vec<&Product> = products.iter().collect();
++    let buyable: Vec<&Product> = products.iter().filter(|p| !p.can_add_to_cart()).collect();
      buyable.choose(&mut rand::rng()).copied()
  }
  
