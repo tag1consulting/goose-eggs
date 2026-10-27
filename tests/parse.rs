@@ -1,4 +1,3 @@
-use gumdrop::Options;
 use httpmock::{Method::GET, MockServer};
 
 use goose::config::GooseConfiguration;
@@ -45,7 +44,7 @@ async fn test_html_decoding() {
     let mut configuration = GooseConfiguration::parse_args_default(&config).unwrap();
     configuration.co_mitigation = Some(Disabled);
     let base_url = get_base_url(Some(server.base_url()), None, None).unwrap();
-    let mut user = GooseUser::new(0, "".to_string(), base_url, &configuration, 0, None).unwrap();
+    let mut user = GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap();
 
     load_static_elements(&mut user, html).await;
     assert_eq!(mock_endpoint1.hits(), 1);

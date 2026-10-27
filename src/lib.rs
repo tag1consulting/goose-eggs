@@ -6,15 +6,16 @@
 //! and serves as a useful example on how to leverage it when writing load tests.
 //!
 //! ## Feature flags
-//! * `default`: use the native TLS implementation for `goose` and `reqwest`
-//! * `rustls-tls`: use the TLS implemenation provided by `rustls`
+//! * `default`: enable `goose`'s default features, which turn on cookie support
+//! * `rustls-tls`: forward to `goose`'s `rustls-tls` feature (load test requests
+//!   use `rustls` in every build of Goose 0.19)
 
 use goose::goose::GooseResponse;
 use goose::prelude::*;
+use http::HeaderMap;
 use http::Uri;
 use log::info;
 use regex::Regex;
-use reqwest::header::HeaderMap;
 
 pub mod drupal;
 pub mod text;
@@ -1412,7 +1413,6 @@ mod tests {
     use super::*;
     use goose::config::GooseConfiguration;
     use goose::goose::get_base_url;
-    use gumdrop::Options;
 
     const EMPTY_ARGS: Vec<&str> = vec![];
     const HOST: &str = "http://example.com";
@@ -1467,8 +1467,7 @@ mod tests {
 
         let configuration = GooseConfiguration::parse_args_default(&EMPTY_ARGS).unwrap();
         let base_url = get_base_url(Some(HOST.to_string()), None, None).unwrap();
-        let mut user =
-            GooseUser::new(0, "".to_string(), base_url, &configuration, 0, None).unwrap();
+        let mut user = GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap();
         let urls = get_css_elements(&mut user, HTML).await;
         if urls.len() != 4 {
             eprintln!(

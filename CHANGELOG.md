@@ -1,6 +1,17 @@
 # Changelog
 
-## 0.5.3-dev
+## 0.7.0-dev
+ - **API change**: update goose to 0.19 (currently Goose `main`, 0.19.0-dev, pinned by git revision until 0.19.0 is released)
+ - **API change**: the `default` feature enables Goose's default features, which are now cookie support, and no longer selects a TLS backend; `default-features = false` turns off cookies, where it turned off TLS
+ - **API change**: the `rustls-tls` feature forwards to `goose/rustls-tls` only; Goose 0.19 sends load test requests with rustls in every build
+ - drop the direct `reqwest` dependency; `header_is_set()` and `valid_header_value()` take `http::HeaderMap`, the same type `reqwest::header::HeaderMap` named
+ - drop the `gumdrop` dev dependency, as Goose now parses its options with `clap`
+ - tests use `--increase-rate`, which replaced `--hatch-rate` in Goose 0.19
+ - CI uses `dtolnay/rust-toolchain` and plain `cargo` in place of the archived `actions-rs` actions, and also tests the `rustls-tls` feature
+
+## 0.6.0 February 28, 2025
+ - **API change**: update goose to [0.18](https://github.com/tag1consulting/goose/releases/tag/0.18.0)
+ - update http to 1.1, reqwest to 0.12, rand to 0.9 and httpmock to 0.7
  - decode HTML before detecting and loading static assets
 
 ## 0.5.2 October 31, 2023

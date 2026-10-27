@@ -20,23 +20,17 @@ jobs:
 
     - name: ⚡ Cache
       uses: Swatinem/rust-cache@v2.9.2
-    
+
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
-    
+        components: rustfmt, clippy
+
     - name: 🔎 Verify code formatting
-      uses: actions-rs/cargo@v1
-      with:
-        command: fmt 
-        args: -- --check
-    
+      run: cargo fmt -- --check
+
     - name: 🔎 Verify code style
-      uses: actions-rs/cargo@v1
-      with:
-        command: clippy 
-        args: --all-targets --all-features -- -D warnings
+      run: cargo clippy --all-targets --all-features -- -D warnings
 
   build:
     name: build and run tests
@@ -48,26 +42,18 @@ jobs:
 
     - name: ⚡ Cache
       uses: Swatinem/rust-cache@v2.9.2
-    
+
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    
+      uses: dtolnay/rust-toolchain@stable
+
     - name: 🔨 Build
-      uses: actions-rs/cargo@v1
-      with:
-        command: build 
-        args: --verbose --all-features
-    
+      run: cargo build --verbose --all-features
+
     - name: 📖 Docs
-      uses: actions-rs/cargo@v1
-      with:
-        command: rustdoc 
-        args: --lib --examples
-    
+      run: cargo rustdoc --lib --examples
+
     - name: 🔎 Test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test 
-        args: --verbose --all-features
+      run: cargo test --verbose --all-features
+
+    - name: 🔎 Test with rustls-tls
+      run: cargo test --verbose --no-default-features --features rustls-tls
