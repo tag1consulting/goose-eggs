@@ -55,7 +55,7 @@ pub fn get_nodes(content_type: &ContentType) -> Vec<Node<'_>> {
                 },
                 Node {
                     nid: 14,
-                    url_en: "en/articles/the-umami-guide-to-our-favourite-mushrooms",
+                    url_en: "en/articles/the-umami-guide-to-our-favorite-mushrooms",
                     url_es: "es/articles/guia-umami-de-nuestras-setas-preferidas",
                     title_en: "The Umami guide to our favorite mushrooms",
                     title_es: "Guía Umami de nuestras setas preferidas",
