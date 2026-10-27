@@ -1,4 +1,3 @@
-use gumdrop::Options;
 use httpmock::{Method::GET, MockServer};
 
 use goose::config::GooseConfiguration;
@@ -47,7 +46,7 @@ fn build_configuration(server: &MockServer) -> GooseConfiguration {
     let configuration = vec![
         "--users",
         "1",
-        "--hatch-rate",
+        "--increase-rate",
         "4",
         "--iterations",
         "1",
