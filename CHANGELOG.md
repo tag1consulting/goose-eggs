@@ -8,6 +8,19 @@
  - drop the `gumdrop` dev dependency, as Goose now parses its options with `clap`
  - tests use `--increase-rate`, which replaced `--hatch-rate` in Goose 0.19
  - CI uses `dtolnay/rust-toolchain` and plain `cargo` in place of the archived `actions-rs` actions, and also tests the `rustls-tls` feature
+ - fix `random_words(n)` returning n - 1 words, and words of 3 to 11 characters where 3 to 12 are documented
+ - fix protocol relative asset urls on other hosts (`//cdn.example.com/a.js`) being treated as local and loaded
+ - fix `not_header_value` failing whenever the header is set, so its value check never ran
+ - fix `log_in` posting `op=Log+in` instead of the button's `Log in`
+ - fix `LoginBuilder`'s default password, documented as `password` but set to `search`
+ - fix `log_in` posting the form when the page has no `form_build_id` or `form_id`
+ - fix `log_in` checking the configured username in the logged in page title when `GOOSE_USER` overrides it
+ - fix three wrong doc examples: `LoginBuilder` (never ran), `LoginBuilder::url` (set the password) and `LoginBuilder::build` (built a `SearchParams`)
+ - every public item tested: table driven unit tests, one Goose run per integration test file against `httpmock`, Drupal tests replaying pages captured from a Drupal 11 Umami site (`scripts/capture-fixtures.sh`), and every doc example checking its result
+ - every test proven by a deliberate break: `tests/sabotage/LEDGER.tsv` and `scripts/sabotage.sh`, run by the `sabotage` CI job
+ - `coverage` CI job: `cargo llvm-cov` with a 95% line floor, `lcov.info` uploaded as an artifact
+ - `umami` CI job: the Umami example against a Drupal 11 Umami site in Docker (`scripts/umami-site.sh`, `scripts/umami.sh`), failing on any request or transaction error
+ - umami example: the mushroom article path, the admin's edit link when BigPipe streams it, and the contact form's real `op`
 
 ## 0.6.0 February 28, 2025
  - **API change**: update goose to [0.18](https://github.com/tag1consulting/goose/releases/tag/0.18.0)
