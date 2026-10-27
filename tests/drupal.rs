@@ -475,7 +475,7 @@ async fn drupal_flows() {
             LOG_IN_PAGE_STATUS,
             &["pagestatus/login"],
             // The status is checked by Goose, so its error is the one recorded.
-            Expect::Fail("200 OK"),
+            Expect::Fail("200 OK: pagestatus/login"),
         ),
         (
             LOG_IN_LOGGED_IN_PAGE,

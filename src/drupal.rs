@@ -1176,18 +1176,30 @@ mod tests {
     const LOGIN_PAGE: &str = include_str!("../tests/fixtures/drupal/user-login.html");
     const SEARCH_PAGE: &str = include_str!("../tests/fixtures/drupal/search.html");
 
-    // A BigPipe replacement holding two encoded forms, as Drupal embeds them.
-    const BIGPIPE: &str = concat!(
-        r#"<script type="application/vnd.drupal-ajax">"#,
-        r#"[{"command":"insert","data":"<form data-drupal-selector="comment-form">"#,
-        r#"<input name="form_build_id" value="form-first" \/>"#,
-        r#"<input name="form_id" value="comment_form" \/><\/form>"}]"#,
-        "\n</script>\n",
-        r#"<script type="application/vnd.drupal-ajax">"#,
-        r#"[{"command":"insert","data":"<form data-drupal-selector="other-form">"#,
-        r#"<input name="form_build_id" value="form-second" \/><\/form>"}]"#,
-        "\n</script>",
-    );
+    // A BigPipe replacement holding two forms, encoded as Drupal embeds them: the
+    // form markup sits in a JSON string with its quotes and angle brackets
+    // written as unicode escapes.
+    fn bigpipe() -> String {
+        let encode = |form: &str| {
+            form.replace('"', r"\u0022")
+                .replace('<', r"\u003C")
+                .replace('>', r"\u003E")
+        };
+        let replacement = |form: &str| {
+            format!(
+                "<script type=\"application/vnd.drupal-ajax\">[{{\"command\":\"insert\",\"data\":\"{}\"}}]\n</script>\n",
+                encode(form)
+            )
+        };
+        replacement(concat!(
+            r#"<form data-drupal-selector="comment-form">"#,
+            r#"<input name="form_build_id" value="form-first" />"#,
+            r#"<input name="form_id" value="comment_form" /></form>"#,
+        )) + &replacement(concat!(
+            r#"<form data-drupal-selector="other-form">"#,
+            r#"<input name="form_build_id" value="form-second" /></form>"#,
+        ))
+    }
 
     #[test]
     fn get_form_cases() {
@@ -1282,18 +1294,19 @@ mod tests {
 
     #[test]
     fn get_bigpipe_form_cases() {
+        let html = bigpipe();
         // (case, html, form name, text the form must contain, text it must not)
         let cases = [
             (
                 "first form",
-                BIGPIPE,
+                &html,
                 "comment-form",
                 "form-first",
                 "form-second",
             ),
             (
                 "second form",
-                BIGPIPE,
+                &html,
                 "other-form",
                 "form-second",
                 "form-first",
@@ -1315,7 +1328,7 @@ mod tests {
             );
         }
         assert_eq!(
-            get_bigpipe_form(BIGPIPE, "missing-form"),
+            get_bigpipe_form(&bigpipe(), "missing-form"),
             "",
             "get_bigpipe_form case missing"
         );
@@ -1328,7 +1341,7 @@ mod tests {
 
     #[test]
     fn get_encoded_form_value_cases() {
-        let form = get_bigpipe_form(BIGPIPE, "comment-form");
+        let form = get_bigpipe_form(&bigpipe(), "comment-form");
         // (case, element name, expected value)
         let cases = [
             ("form_build_id", "form_build_id", "form-first"),
@@ -1398,7 +1411,7 @@ mod tests {
 
     #[test]
     fn get_encoded_form_values_cases() {
-        let form = get_bigpipe_form(BIGPIPE, "comment-form");
+        let form = get_bigpipe_form(&bigpipe(), "comment-form");
         let values = get_encoded_form_values(&form, &["form_build_id", "form_id", "form_token"]);
         assert_eq!(values.len(), 3, "get_encoded_form_values case count");
         // (case, element name, expected value)

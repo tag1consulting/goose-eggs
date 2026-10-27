@@ -1911,9 +1911,10 @@ mod tests {
             ),
             (
                 "not css",
-                r#"<a href="/page">page</a><link href="/feed.xml">"#,
+                r#"<link href="/feed.xml" rel="alternate">"#,
                 vec![],
             ),
+            ("page link", r#"<a href="/page">page</a>"#, vec![]),
             (
                 "not css then css attribute",
                 r#"<a href="/page" data-theme="dark.css">page</a>"#,
