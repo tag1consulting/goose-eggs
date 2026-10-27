@@ -669,7 +669,7 @@ pub async fn log_in(
         ("pass", &password),
         ("form_build_id", &form_build_id),
         ("form_id", &form_id),
-        ("op", &"Log+in".to_string()),
+        ("op", &"Log in".to_string()),
     ];
     // Post the log in form.
     let mut logged_in_user = if let Some(validate_status) = validate.status.as_ref() {
