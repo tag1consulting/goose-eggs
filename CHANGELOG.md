@@ -8,13 +8,13 @@
  - drop the `gumdrop` dev dependency, as Goose now parses its options with `clap`
  - tests use `--increase-rate`, which replaced `--hatch-rate` in Goose 0.19
  - CI uses `dtolnay/rust-toolchain` and plain `cargo` in place of the archived `actions-rs` actions, and also tests the `rustls-tls` feature
- - fix `random_words(n)` returning n - 1 words, and words of 3 to 11 characters where 3 to 12 are documented
- - fix protocol relative asset urls on other hosts (`//cdn.example.com/a.js`) being treated as local and loaded
+ - **API change**: `random_words(n)` returns n words (was n - 1) of 3 to 12 characters
+ - **API change**: protocol relative asset urls on other hosts (`//cdn.example.com/a.js`) are no longer loaded
  - fix `not_header_value` failing whenever the header is set, so its value check never ran
  - fix `log_in` posting `op=Log+in` instead of the button's `Log in`
- - fix `LoginBuilder`'s default password, documented as `password` but set to `search`
+ - **API change**: `LoginBuilder` defaults to password `password` (was `search`)
  - fix `log_in` posting the form when the page has no `form_build_id` or `form_id`
- - fix `log_in` checking the configured username in the logged in page title when `GOOSE_USER` overrides it
+ - **API change**: with `GOOSE_USER` set, `log_in` checks that user's name in the logged in page title (was the configured username)
  - fix three wrong doc examples: `LoginBuilder` (never ran), `LoginBuilder::url` (set the password) and `LoginBuilder::build` (built a `SearchParams`)
  - every public item tested: table driven unit tests, one Goose run per integration test file against `httpmock`, Drupal tests replaying pages captured from a Drupal 11 Umami site (`scripts/capture-fixtures.sh`), and every doc example checking its result
  - every test proven by a deliberate break: `tests/sabotage/LEDGER.tsv` and `scripts/sabotage.sh`, run by the `sabotage` CI job
