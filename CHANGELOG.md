@@ -21,6 +21,10 @@
  - `coverage` CI job: `cargo llvm-cov` with a 95% line floor, `lcov.info` uploaded as an artifact
  - `umami` CI job: the Umami example against a Drupal 11 Umami site in Docker (`scripts/umami-site.sh`, `scripts/umami.sh`), failing on any request or transaction error
  - umami example: the mushroom article path, the admin's edit link when BigPipe streams it, and the contact form's real `op`
+ - add `goose_eggs::wordpress`: log in and out, search, comments, REST post create and update with the REST nonce, and content discovery from the core sitemap or the REST API
+ - add `goose_eggs::woocommerce`: shop, product and search pages, Store API product discovery, a `StoreApiCart` that keeps each user's nonce through cart and checkout, the classic shortcode cart and checkout, and My Account
+ - add the `woocommerce` example: browsing shoppers, buyers and returning customers against any WooCommerce shop, run by the `woocommerce` CI job (`scripts/woocommerce.sh`)
+ - add WordPress and WooCommerce demo sites in Docker (`examples/wordpress-sites`), with the `wordpress` CI job running the wordpress helpers against the theme test data site (`scripts/wordpress.sh`)
 
 ## 0.6.0 February 28, 2025
  - **API change**: update goose to [0.18](https://github.com/tag1consulting/goose/releases/tag/0.18.0)
