@@ -656,8 +656,9 @@ pub async fn log_in(
         return Ok("".to_string());
     }
 
-    // By default verify that the username is in the title of the logged in page.
-    let default_validation = crate::Validate::builder().title(login.username).build();
+    // By default verify that the username that logged in is in the title of the
+    // logged in page.
+    let default_validation = crate::Validate::builder().title(username.as_str()).build();
     let validate = if let Some(validation) = login.logged_in_page_validation {
         validation
     } else {
