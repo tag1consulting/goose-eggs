@@ -953,6 +953,13 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
 
 /// Helper to confirm the URI is valid and local.
 fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+    // A protocol relative URI (`//host/path`) names a host: give it a scheme so
+    // the host is parsed and compared, instead of reading it as a local path.
+    let uri = if uri.starts_with("//") {
+        format!("http:{}", uri)
+    } else {
+        uri.to_string()
+    };
     match uri.parse::<Uri>() {
         Ok(parsed_uri) => {
             if let Some(parsed_host) = parsed_uri.host() {
