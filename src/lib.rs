@@ -19,6 +19,7 @@ use regex::Regex;
 
 pub mod drupal;
 pub mod text;
+pub mod woocommerce;
 pub mod wordpress;
 
 /// Validate that the status code is equal or not equal to a specified value.
