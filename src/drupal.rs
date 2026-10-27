@@ -1100,3 +1100,253 @@ pub async fn search<'a>(
     // Return the search results.
     Ok(search_results)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Pages captured from a Drupal 11 Umami site by scripts/capture-fixtures.sh.
+    const LOGIN_PAGE: &str = include_str!("../tests/fixtures/drupal/user-login.html");
+    const SEARCH_PAGE: &str = include_str!("../tests/fixtures/drupal/search.html");
+
+    // A BigPipe replacement holding two encoded forms, as Drupal embeds them.
+    const BIGPIPE: &str = concat!(
+        r#"<script type="application/vnd.drupal-ajax">"#,
+        r#"[{"command":"insert","data":"<form data-drupal-selector="comment-form">"#,
+        r#"<input name="form_build_id" value="form-first" \/>"#,
+        r#"<input name="form_id" value="comment_form" \/><\/form>"}]"#,
+        "\n</script>\n",
+        r#"<script type="application/vnd.drupal-ajax">"#,
+        r#"[{"command":"insert","data":"<form data-drupal-selector="other-form">"#,
+        r#"<input name="form_build_id" value="form-second" \/><\/form>"}]"#,
+        "\n</script>",
+    );
+
+    #[test]
+    fn get_form_cases() {
+        // (case, html, form name, expected form)
+        let cases = [
+            (
+                "by id",
+                r#"<form id="a" method="post"><input name="x"></form>"#,
+                "a",
+                r#"<input name="x">"#,
+            ),
+            (
+                "by data-drupal-selector",
+                r#"<form data-drupal-selector="b" id="b--2"><p>B</p></form>"#,
+                "b",
+                "<p>B</p>",
+            ),
+            (
+                "second of two",
+                r#"<form id="a">A</form><form id="b">B</form>"#,
+                "b",
+                "B",
+            ),
+            (
+                "longer name first",
+                r#"<form id="a-extra">X</form><form id="a">Y</form>"#,
+                "a",
+                "Y",
+            ),
+            (
+                "multiline",
+                "<form id=\"a\">\n<p>\nA\n</p>\n</form>",
+                "a",
+                "<p>A</p>",
+            ),
+            ("missing", r#"<form id="a">A</form>"#, "b", ""),
+        ];
+        for (case, html, name, expected) in cases {
+            assert_eq!(get_form(html, name), expected, "get_form case {}", case);
+        }
+
+        // On a real Drupal page the log in form comes after the search block form.
+        let form = get_form(LOGIN_PAGE, "user-login-form");
+        assert!(
+            form.contains(r#"name="pass""#) && form.contains(r#"value="user_login_form""#),
+            "get_form case drupal login page: login form not returned: {}",
+            form
+        );
+        assert!(
+            !form.contains("search-block-form") && !form.contains("</form>"),
+            "get_form case drupal login page: more than the login form returned: {}",
+            form
+        );
+    }
+
+    #[test]
+    fn get_form_value_cases() {
+        let form = concat!(
+            r#"<input type="hidden" name="form_build_id" value="form-abc" />"#,
+            r#"<input type="hidden" name="form_id" value='single_quoted' />"#,
+            r#"<input type="text" name="subject[0][value]" value="bracketed" />"#,
+            r#"<input type="text" name="empty" value="" />"#,
+            r#"<input type="text" name="form_id_extra" value="not this" />"#,
+            r#"<input type="text" name="twice" value="first" />"#,
+            r#"<input type="text" name="twice" value="second" />"#,
+        );
+        // (case, element name, expected value)
+        let cases = [
+            ("double quoted", "form_build_id", "form-abc"),
+            ("single quoted", "form_id", "single_quoted"),
+            ("regex characters in name", "subject[0][value]", "bracketed"),
+            ("empty value", "empty", ""),
+            ("first of two", "twice", "first"),
+            ("missing", "form_token", "none"),
+        ];
+        for (case, name, expected) in cases {
+            assert_eq!(
+                get_form_value(form, name),
+                expected,
+                "get_form_value case {}",
+                case
+            );
+        }
+
+        let search_form = get_form(SEARCH_PAGE, "search-form");
+        assert_eq!(
+            get_form_value(&search_form, "form_id"),
+            "search_form",
+            "get_form_value case drupal search page"
+        );
+    }
+
+    #[test]
+    fn get_bigpipe_form_cases() {
+        // (case, html, form name, text the form must contain, text it must not)
+        let cases = [
+            (
+                "first form",
+                BIGPIPE,
+                "comment-form",
+                "form-first",
+                "form-second",
+            ),
+            (
+                "second form",
+                BIGPIPE,
+                "other-form",
+                "form-second",
+                "form-first",
+            ),
+        ];
+        for (case, html, name, contains, excludes) in cases {
+            let form = get_bigpipe_form(html, name);
+            assert!(
+                form.contains(contains) && !form.contains(excludes),
+                "get_bigpipe_form case {}: wrong form returned: {}",
+                case,
+                form
+            );
+            assert!(
+                !form.contains("}]"),
+                "get_bigpipe_form case {}: ran past the replacement: {}",
+                case,
+                form
+            );
+        }
+        assert_eq!(
+            get_bigpipe_form(BIGPIPE, "missing-form"),
+            "",
+            "get_bigpipe_form case missing"
+        );
+        assert_eq!(
+            get_bigpipe_form(LOGIN_PAGE, "user-login-form"),
+            "",
+            "get_bigpipe_form case plain form is not a bigpipe form"
+        );
+    }
+
+    #[test]
+    fn get_encoded_form_value_cases() {
+        let form = get_bigpipe_form(BIGPIPE, "comment-form");
+        // (case, element name, expected value)
+        let cases = [
+            ("form_build_id", "form_build_id", "form-first"),
+            ("form_id", "form_id", "comment_form"),
+            ("missing", "form_token", "none"),
+        ];
+        for (case, name, expected) in cases {
+            assert_eq!(
+                get_encoded_form_value(&form, name),
+                expected,
+                "get_encoded_form_value case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn get_updated_build_id_cases() {
+        let response = concat!(
+            r#"[{"command":"settings"},"#,
+            r#"{"command":"update_build_id","old":"form-old","new":"form-new"},"#,
+            r#"{"command":"update_build_id","old":"form-other","new":"form-other-new"}]"#,
+        );
+        // (case, old build id, expected new build id)
+        let cases = [
+            ("first", "form-old", "form-new"),
+            ("second", "form-other", "form-other-new"),
+            ("unknown old id", "form-unknown", "none"),
+        ];
+        for (case, old, expected) in cases {
+            assert_eq!(
+                get_updated_build_id(response, old),
+                expected,
+                "get_updated_build_id case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn get_form_values_cases() {
+        let form = get_form(LOGIN_PAGE, "user-login-form");
+        let values = get_form_values(&form, &["form_id", "name", "form_token", "form_build_id"]);
+        assert_eq!(values.len(), 4, "get_form_values case count");
+        // (case, element name, expected value)
+        let cases = [
+            ("form_id", "form_id", "user_login_form"),
+            ("empty value", "name", ""),
+            ("missing", "form_token", "none"),
+        ];
+        for (case, name, expected) in cases {
+            assert_eq!(
+                values.get(name).map(String::as_str),
+                Some(expected),
+                "get_form_values case {}",
+                case
+            );
+        }
+        assert!(
+            values
+                .get("form_build_id")
+                .is_some_and(|id| id.starts_with("form-")),
+            "get_form_values case drupal build id: {:?}",
+            values.get("form_build_id")
+        );
+    }
+
+    #[test]
+    fn get_encoded_form_values_cases() {
+        let form = get_bigpipe_form(BIGPIPE, "comment-form");
+        let values = get_encoded_form_values(&form, &["form_build_id", "form_id", "form_token"]);
+        assert_eq!(values.len(), 3, "get_encoded_form_values case count");
+        // (case, element name, expected value)
+        let cases = [
+            ("form_build_id", "form_build_id", "form-first"),
+            ("form_id", "form_id", "comment_form"),
+            ("missing", "form_token", "none"),
+        ];
+        for (case, name, expected) in cases {
+            assert_eq!(
+                values.get(name).map(String::as_str),
+                Some(expected),
+                "get_encoded_form_values case {}",
+                case
+            );
+        }
+    }
+}

@@ -1512,4 +1512,316 @@ mod tests {
         }
         assert_eq!(urls.len(), 7);
     }
+
+    // A user whose base url is HOST, for the helpers that need one.
+    fn test_user() -> GooseUser {
+        let configuration = GooseConfiguration::parse_args_default(&EMPTY_ARGS).unwrap();
+        let base_url = get_base_url(Some(HOST.to_string()), None, None).unwrap();
+        GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap()
+    }
+
+    #[test]
+    fn get_html_header_cases() {
+        // (case, html, expected header)
+        let cases = [
+            (
+                "normal",
+                "<html><head><title>T</title></head><body>B</body></html>",
+                Some("<head><title>T</title></head>"),
+            ),
+            (
+                "attributes",
+                r#"<html><head lang="en"><title>T</title></head></html>"#,
+                Some(r#"<head lang="en"><title>T</title></head>"#),
+            ),
+            (
+                "multiline",
+                "<html>\n<head>\n<title>T</title>\n</head>\n</html>",
+                Some("<head><title>T</title></head>"),
+            ),
+            (
+                "first of two",
+                "<head>one</head><head>two</head>",
+                Some("<head>one</head>"),
+            ),
+            ("missing", "<html><body>no head</body></html>", None),
+            ("unclosed", "<html><head><title>T</title>", None),
+            ("empty", "", None),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_html_header(html).as_deref(),
+                expected,
+                "get_html_header case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn get_title_cases() {
+        // (case, html, expected title)
+        let cases = [
+            ("normal", "<head><title>Home</title></head>", Some("Home")),
+            ("empty title", "<head><title></title></head>", Some("")),
+            (
+                "multiline",
+                "<head><title>\nHome\n</title></head>",
+                Some("Home"),
+            ),
+            (
+                "entities kept",
+                "<title>Let&#039;s eat</title>",
+                Some("Let&#039;s eat"),
+            ),
+            (
+                "first of two",
+                "<title>one</title><title>two</title>",
+                Some("one"),
+            ),
+            ("missing", "<head></head>", None),
+            ("unclosed", "<title>Home", None),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_title(html).as_deref(),
+                expected,
+                "get_title case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_title_cases() {
+        let html = "<html><head><title>This is the Title</title></head><body><title>Body</title></body></html>";
+        // (case, html, title to find, expected)
+        let cases = [
+            ("exact", html, "This is the Title", true),
+            ("substring", html, "the Title", true),
+            ("upper case", html, "THE TITLE", true),
+            ("lower case", html, "this is", true),
+            ("absent", html, "foo", false),
+            ("title in body only", html, "Body", false),
+            (
+                "no head",
+                "<body><title>Title</title></body>",
+                "Title",
+                false,
+            ),
+            ("no title", "<head></head>", "Title", false),
+        ];
+        for (case, html, title, expected) in cases {
+            assert_eq!(
+                valid_title(html, title),
+                expected,
+                "valid_title case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_text_cases() {
+        let html = r#"<p>Foo bar</p><a href="baz">"#;
+        // (case, text to find, expected)
+        let cases = [
+            ("present", "Foo bar", true),
+            ("markup", r#"<a href="baz">"#, true),
+            ("wrong case", "foo bar", false),
+            ("absent", "qux", false),
+        ];
+        for (case, text, expected) in cases {
+            assert_eq!(valid_text(html, text), expected, "valid_text case {}", case);
+        }
+    }
+
+    fn headers() -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        headers.insert("x-cache", "HIT".parse().unwrap());
+        headers.insert(
+            "x-generator",
+            "Drupal 11 (https://www.drupal.org)".parse().unwrap(),
+        );
+        headers.insert("x-binary", http::HeaderValue::from_bytes(b"\xff").unwrap());
+        headers
+    }
+
+    #[test]
+    fn header_is_set_cases() {
+        let headers = headers();
+        // (case, header name, expected)
+        let cases = [
+            ("present", "x-cache", true),
+            ("any case", "X-Cache", true),
+            ("absent", "x-missing", false),
+        ];
+        for (case, header, expected) in cases {
+            assert_eq!(
+                header_is_set(&headers, header),
+                expected,
+                "header_is_set case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_header_value_cases() {
+        let headers = headers();
+        // (case, (header name, value), expected)
+        let cases = [
+            ("exact", ("x-cache", "HIT"), true),
+            ("substring", ("x-generator", "Drupal 11"), true),
+            ("any case name", ("X-Generator", "Drupal"), true),
+            ("value case matters", ("x-cache", "hit"), false),
+            ("wrong value", ("x-cache", "MISS"), false),
+            ("absent header", ("x-missing", "HIT"), false),
+            ("empty value", ("x-cache", ""), false),
+            ("empty name", ("", "HIT"), false),
+            ("value not text", ("x-binary", "x"), false),
+        ];
+        for (case, header, expected) in cases {
+            assert_eq!(
+                valid_header_value(&headers, header),
+                expected,
+                "valid_header_value case {}",
+                case
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn get_src_elements_cases() {
+        let mut user = test_user();
+        // (case, html, expected elements)
+        let cases: Vec<(&str, &str, Vec<&str>)> = vec![
+            (
+                "absolute local",
+                r#"<img src="http://example.com/a.png">"#,
+                vec!["http://example.com/a.png"],
+            ),
+            ("relative", r#"<img src="a/b.png">"#, vec!["a/b.png"]),
+            (
+                "root relative",
+                r#"<script src="/a.js"></script>"#,
+                vec!["/a.js"],
+            ),
+            (
+                "query string",
+                r#"<img src="/a.jpg?itok=Q8u7GC4u">"#,
+                vec!["/a.jpg?itok=Q8u7GC4u"],
+            ),
+            (
+                "encoded entities",
+                r#"<script src="/a.js?x=1&amp;y=2"></script>"#,
+                vec!["/a.js?x=1&y=2"],
+            ),
+            (
+                "upper case attribute",
+                r#"<IMG SRC="/a.png">"#,
+                vec!["/a.png"],
+            ),
+            (
+                "other domain",
+                r#"<img src="http://other.com/a.png">"#,
+                vec![],
+            ),
+            (
+                "other subdomain",
+                r#"<img src="http://cdn.example.com/a.png">"#,
+                vec![],
+            ),
+            (
+                "protocol relative local",
+                r#"<script src="//example.com/a.js"></script>"#,
+                vec!["//example.com/a.js"],
+            ),
+            (
+                "protocol relative other domain",
+                r#"<script src="//other.com/a.js"></script>"#,
+                vec![],
+            ),
+            (
+                "in order",
+                r#"<img src="/1.png"><script src="/2.js"></script><img src="/3.gif">"#,
+                vec!["/1.png", "/2.js", "/3.gif"],
+            ),
+            ("none", "<p>no assets</p>", vec![]),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_src_elements(&mut user, html).await,
+                expected,
+                "get_src_elements case {}",
+                case
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn get_css_elements_cases() {
+        let mut user = test_user();
+        // (case, html, expected elements)
+        let cases: Vec<(&str, &str, Vec<&str>)> = vec![
+            (
+                "absolute local",
+                r#"<link href="http://example.com/a.css" rel="stylesheet">"#,
+                vec!["http://example.com/a.css"],
+            ),
+            (
+                "relative",
+                r#"<link href="a/b.css" rel="stylesheet">"#,
+                vec!["a/b.css"],
+            ),
+            (
+                "query string",
+                r#"<link href="/a.css?v=1" rel="stylesheet">"#,
+                vec!["/a.css?v=1"],
+            ),
+            (
+                "encoded entities",
+                r#"<link href="/a.css?x=1&amp;y=2" rel="stylesheet">"#,
+                vec!["/a.css?x=1&y=2"],
+            ),
+            (
+                "upper case attribute",
+                r#"<LINK HREF="/a.css" rel="stylesheet">"#,
+                vec!["/a.css"],
+            ),
+            (
+                "not css",
+                r#"<a href="/page">page</a><link href="/feed.xml">"#,
+                vec![],
+            ),
+            (
+                "not css then css attribute",
+                r#"<a href="/page" data-theme="dark.css">page</a>"#,
+                vec![],
+            ),
+            (
+                "other domain",
+                r#"<link href="http://other.com/a.css" rel="stylesheet">"#,
+                vec![],
+            ),
+            (
+                "protocol relative other domain",
+                r#"<link href="//other.com/a.css" rel="stylesheet">"#,
+                vec![],
+            ),
+            (
+                "in order",
+                r#"<link href="/1.css"><link href="/2.css">"#,
+                vec!["/1.css", "/2.css"],
+            ),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_css_elements(&mut user, html).await,
+                expected,
+                "get_css_elements case {}",
+                case
+            );
+        }
+    }
 }
