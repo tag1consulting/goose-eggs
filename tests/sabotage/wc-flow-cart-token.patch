@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..0a459ec 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -695,7 +695,7 @@ impl StoreApiCart {
+         if let Some(nonce) = self.nonce.as_deref() {
+             headers.push(("Nonce", nonce));
+         }
+-        if self.use_cart_token {
++        if false && self.use_cart_token {
+             if let Some(token) = self.cart_token.as_deref() {
+                 headers.push(("Cart-Token", token));
+             }

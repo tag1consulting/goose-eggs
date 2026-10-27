@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..11defa7 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -280,7 +280,7 @@ pub async fn shop_page(
+     let default_validation = crate::Validate::builder()
+         .text("post-type-archive-product")
+         .build();
+-    let goose = user.get(shop.shop).await?;
++    let goose = user.get(shop.cart).await?;
+     load_page(user, goose, Some(validate.unwrap_or(&default_validation))).await
+ }
+ 

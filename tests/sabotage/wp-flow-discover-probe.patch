@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..bb4ab72 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2210,6 +2210,7 @@ pub async fn discover(
+     let cap = discover.max_per_kind;
+ 
+     // The sitemap index, read without a metric so its absence is no error.
++    let _ = user.get(discover.sitemap).await?;
+     let url = user.build_url(discover.sitemap)?;
+     let index = match user.client.get(&url).send().await {
+         Ok(response) if response.status().is_success() => response

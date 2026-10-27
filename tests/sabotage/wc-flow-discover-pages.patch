@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..eaf6bf7 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -465,7 +465,7 @@ pub async fn discover_products(
+         let pages = header_value(&headers, "X-WP-TotalPages")
+             .and_then(|p| p.parse::<usize>().ok())
+             .unwrap_or(1);
+-        if listed.is_empty() || page >= pages {
++        if listed.is_empty() || page >= 1 {
+             break;
+         }
+         page += 1;

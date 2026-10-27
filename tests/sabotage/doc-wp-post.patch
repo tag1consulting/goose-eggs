@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..62ab457 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1683,7 +1683,7 @@ async fn save_post(
+     name: &str,
+     post: &Post<'_>,
+ ) -> Result<serde_json::Value, Box<TransactionError>> {
+-    let body = serde_json::Value::Object(post.fields.clone());
++    let body = serde_json::json!({});
+     let goose = send_json(
+         user,
+         GooseMethod::Post,

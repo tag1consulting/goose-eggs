@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..bc4294a 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1869,7 +1869,7 @@ impl SiteContent {
+     /// assert_eq!(content.categories(), ["/category/news/"]);
+     /// ```
+     pub fn categories(&self) -> &[String] {
+-        self.urls("category")
++        self.urls("categories")
+     }
+ 
+     /// Tag archives.

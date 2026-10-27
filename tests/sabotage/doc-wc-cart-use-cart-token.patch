@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..110773a 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -623,7 +623,7 @@ impl StoreApiCart {
+     /// # support::cart_add("StoreApiCart::use_cart_token", &server, &mut cart);
+     /// ```
+     pub fn use_cart_token(mut self, use_cart_token: bool) -> StoreApiCart {
+-        self.use_cart_token = use_cart_token;
++        let _ = use_cart_token;
+         self
+     }
+ 

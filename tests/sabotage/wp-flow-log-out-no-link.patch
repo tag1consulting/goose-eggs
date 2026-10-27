@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..8b6fa03 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -817,7 +817,7 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
+     let goose = user.get(page).await?;
+     let mut request = goose.request.clone();
+     let html = load_page(user, goose, None).await?;
+-    let url = match get_log_out_url(&html) {
++    let url = match get_log_out_url(&html).or(Some("wp-login.php?action=logout".to_string())) {
+         Some(url) => url,
+         None => {
+             return fail(

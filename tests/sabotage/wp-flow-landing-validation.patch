@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..7329b12 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -763,7 +763,7 @@ pub async fn log_in(
+     // A failed log in is not redirected, and shows WordPress's error box.
+     let mut request = goose.request.clone();
+     let html = if goose.request.redirected {
+-        load_page(user, goose, login.logged_in_page_validation).await?
++        load_page(user, goose, None).await?
+     } else {
+         read_response(goose).await.1
+     };

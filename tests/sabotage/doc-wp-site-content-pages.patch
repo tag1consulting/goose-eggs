@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..be8885e 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1856,7 +1856,7 @@ impl SiteContent {
+     /// assert_eq!(content.pages(), ["/about/"]);
+     /// ```
+     pub fn pages(&self) -> &[String] {
+-        self.urls("page")
++        self.urls("post")
+     }
+ 
+     /// Category archives.

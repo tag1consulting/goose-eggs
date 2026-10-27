@@ -1,0 +1,14 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..d2ce0ab 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1380,8 +1380,7 @@ pub async fn my_account_log_in(
+     // the logged in My Account: its navigation, without the log in form.
+     let mut request = goose.request.clone();
+     let (headers, html) = read_response(goose).await;
+-    if html.contains("woocommerce-MyAccount-navigation") && !html.contains("woocommerce-form-login")
+-    {
++    if true {
+         crate::load_static_elements(user, &html).await;
+         return Ok(html);
+     }

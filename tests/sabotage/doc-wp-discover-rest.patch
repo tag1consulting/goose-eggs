@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..a8790fa 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2085,7 +2085,7 @@ impl<'a> DiscoverBuilder<'a> {
+     /// # assert!(!content.posts().is_empty(), "doc example DiscoverBuilder::rest: posts");
+     /// ```
+     pub fn rest(mut self, rest: &'a str) -> Self {
+-        self.rest = rest;
++        let _ = rest;
+         self
+     }
+ 

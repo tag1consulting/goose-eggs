@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..2ff59ee 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1817,7 +1817,8 @@ impl SiteContent {
+     /// assert!(content.urls("product").is_empty());
+     /// ```
+     pub fn urls(&self, kind: &str) -> &[String] {
+-        self.urls.get(kind).map_or(&[], Vec::as_slice)
++        let _ = kind;
++        self.urls.get("x").map_or(&[], Vec::as_slice)
+     }
+ 
+     /// The kinds of content found, in name order.

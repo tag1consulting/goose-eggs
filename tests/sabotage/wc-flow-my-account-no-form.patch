@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..b6d0385 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1354,7 +1354,7 @@ pub async fn my_account_log_in(
+     let page = load_page(user, goose, None).await?;
+     let form = get_form_by_class(&page, "woocommerce-form-login");
+     let mut params = form_controls(&form);
+-    if !params
++    if false && !params
+         .iter()
+         .any(|(name, _)| name == "woocommerce-login-nonce")
+     {

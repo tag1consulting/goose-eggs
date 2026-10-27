@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..8cc5462 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1277,7 +1277,7 @@ pub async fn classic_checkout(
+     let page = load_page(user, goose, None).await?;
+     let form = get_form(&page, "checkout");
+     let mut params = form_controls(&form);
+-    if !params
++    if false && !params
+         .iter()
+         .any(|(name, _)| name == "woocommerce-process-checkout-nonce")
+     {

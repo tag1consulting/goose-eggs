@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..1eeb6d1 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1165,7 +1165,7 @@ impl<'a> CommentBuilder<'a> {
+             author: "Goose",
+             email: "goose@example.com",
+             // Defaults to WordPress's comment handler.
+-            url: "wp-comments-post.php",
++            url: "comments",
+             // Defaults to the form's own comment_parent, a top level comment.
+             parent: None,
+             // Defaults to no extra validation.

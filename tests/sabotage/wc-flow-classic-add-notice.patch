@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..e0c6846 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1129,7 +1129,7 @@ async fn expect_success_notice(
+ ) -> Result<String, Box<TransactionError>> {
+     let mut request = goose.request.clone();
+     let html = load_page(user, goose, None).await?;
+-    if has_success_notice(&html) && error_notice(&html).is_none() {
++    if error_notice(&html).is_none() {
+         return Ok(html);
+     }
+     let reason = error_notice(&html).unwrap_or_else(|| "no success notice".to_string());

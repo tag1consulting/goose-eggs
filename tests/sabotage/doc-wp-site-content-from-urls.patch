@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..b5a2691 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1912,7 +1912,7 @@ impl SiteContent {
+     /// ```
+     pub fn from_urls(urls: &[(&str, &str)]) -> SiteContent {
+         let mut content = SiteContent::default();
+-        for (kind, url) in urls {
++        for (kind, url) in urls.iter().rev() {
+             content.add(kind, url.to_string());
+         }
+         content

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..0077eda 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -176,7 +176,7 @@ impl<'a> ShopBuilder<'a> {
+     /// # support::my_account_log_in("ShopBuilder::my_account", &server, &_shop, "customer", "password");
+     /// ```
+     pub fn my_account(mut self, my_account: &'a str) -> Self {
+-        self.my_account = my_account;
++        let _ = my_account;
+         self
+     }
+ 

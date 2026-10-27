@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..97a0415 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1636,7 +1636,7 @@ impl<'a> PostBuilder<'a> {
+     /// # support::create_post("PostBuilder::field", &server, &_post);
+     /// ```
+     pub fn field(mut self, name: &str, value: serde_json::Value) -> Self {
+-        self.fields.insert(name.to_string(), value);
++        let _ = (name, value);
+         self
+     }
+ 

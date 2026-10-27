@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..cd20b6f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1959,7 +1959,7 @@ fn sitemap_kind(url: &str) -> Option<String> {
+     Some(
+         match capture.get(1) {
+             Some(kind) => kind.as_str(),
+-            None => "user",
++            None => "users",
+         }
+         .to_string(),
+     )

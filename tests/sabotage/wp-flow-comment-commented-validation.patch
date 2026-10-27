@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..8aef3b5 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1478,7 +1478,7 @@ pub async fn post_comment(
+     }
+     let goose = user.post_form(comment.url, &params).await?;
+     if goose.request.success && goose.request.redirected {
+-        return load_page(user, goose, comment.commented_page_validation).await;
++        return load_page(user, goose, None).await;
+     }
+     // Refused: a duplicate (409), a flood (429), comments closed (403), or a
+     // 200 error page for an empty comment. WordPress's page says which.

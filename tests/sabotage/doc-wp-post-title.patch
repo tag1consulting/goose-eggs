@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..b94ce08 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1585,7 +1585,7 @@ impl<'a> PostBuilder<'a> {
+     /// # support::create_post("PostBuilder::title", &server, &_post);
+     /// ```
+     pub fn title(self, title: &str) -> Self {
+-        self.field("title", serde_json::Value::from(title))
++        self.field("name", serde_json::Value::from(title))
+     }
+ 
+     /// The post's content, as block markup or HTML.

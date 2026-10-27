@@ -1,0 +1,30 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..195823a 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -728,20 +728,11 @@ pub async fn log_in(
+     // Load the log in form; this also sets WordPress's test cookie.
+     let default_validation = crate::Validate::builder().text(r#"id="loginform""#).build();
+     let validate = login.log_in_page_validation.unwrap_or(&default_validation);
+-    let goose = user.get(login.url).await?;
+-    let mut login_request = goose.request.clone();
+-    let login_page = load_page(user, goose, Some(validate)).await?;
+-
+-    let form = get_form(&login_page, "loginform");
+-    if form.is_empty() {
+-        return fail(
+-            user,
+-            &format!("{}: no loginform on page", login.url),
+-            &mut login_request,
+-            None,
+-            Some(&login_page),
+-        );
+-    }
++    // Post straight away, without loading the form and its test cookie.
++    let _ = validate;
++    let login_page =
++        r#"<form id="loginform"><input type="hidden" name="redirect_to" value="/wp-admin/"></form>"#;
++    let form = get_form(login_page, "loginform");
+     let redirect_to = if login.redirect_to.is_empty() {
+         get_form_value(&form, "redirect_to").unwrap_or_default()
+     } else {

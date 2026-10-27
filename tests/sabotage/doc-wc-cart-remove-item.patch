@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..3d0ad81 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -866,7 +866,7 @@ impl StoreApiCart {
+         key: &str,
+     ) -> Result<serde_json::Value, Box<TransactionError>> {
+         let body = serde_json::json!({ "key": key });
+-        self.send(user, GooseMethod::Post, "cart/remove-item", Some(&body))
++        self.send(user, GooseMethod::Post, "cart/remove", Some(&body))
+             .await
+             .map(|(_, json)| json)
+     }

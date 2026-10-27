@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..ec00b2c 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1072,7 +1072,8 @@ pub async fn search(
+     if let Some(post_type) = params.post_type {
+         path.push_str(&format!("&post_type={}", query_encode(post_type)));
+     }
+-    let goose = get_named(user, &path, "search").await?;
++    let _ = path;
++    let goose = get_named(user, params.url, "search").await?;
+     load_page(user, goose, params.results_page_validation).await
+ }
+ 

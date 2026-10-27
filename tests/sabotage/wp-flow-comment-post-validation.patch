@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..fc9d24e 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1432,7 +1432,7 @@ pub async fn post_comment(
+ ) -> Result<String, Box<TransactionError>> {
+     let goose = get_named(user, comment.post_url, "comment form page").await?;
+     let mut request = goose.request.clone();
+-    let page = load_page(user, goose, comment.post_page_validation).await?;
++    let page = load_page(user, goose, None).await?;
+     let form = get_form(&page, "commentform");
+     let post_id = get_form_value(&form, "comment_post_ID");
+     let post_id = match post_id {

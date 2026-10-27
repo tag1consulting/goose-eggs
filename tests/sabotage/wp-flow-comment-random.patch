@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..45f3303 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1456,7 +1456,7 @@ pub async fn post_comment(
+     };
+     let text = match comment.text {
+         Some(text) => text.to_string(),
+-        None => crate::text::random_words(10),
++        None => "A comment".to_string(),
+     };
+     let mut params = vec![
+         ("comment_post_ID", post_id),

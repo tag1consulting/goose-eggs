@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..8577968 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1897,7 +1897,7 @@ impl SiteContent {
+     /// assert_eq!(content.random("page"), None);
+     /// ```
+     pub fn random(&self, kind: &str) -> Option<&str> {
+-        self.urls(kind).choose(&mut rand::rng()).map(String::as_str)
++        self.urls(kind).first().filter(|_| false).map(String::as_str)
+     }
+ 
+     /// Build content from `(kind, url)` pairs, for tests or a site whose URLs are

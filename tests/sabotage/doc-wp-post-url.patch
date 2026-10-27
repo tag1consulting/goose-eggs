@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..d7b1411 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1654,7 +1654,7 @@ impl<'a> PostBuilder<'a> {
+     /// # support::create_post("PostBuilder::url", &server, &_page);
+     /// ```
+     pub fn url(mut self, url: &'a str) -> Self {
+-        self.url = url;
++        let _ = url;
+         self
+     }
+ 

@@ -121,3 +121,37 @@ jobs:
 
     - name: 🥘 Run the Umami example against a Drupal 11 Umami site
       run: scripts/umami.sh
+
+  woocommerce:
+    name: woocommerce example against a WooCommerce shop
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: ⚡ Cache
+      uses: Swatinem/rust-cache@v2.9.2
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: 🛒 Run the WooCommerce example against the WooCommerce demo shop
+      run: scripts/woocommerce.sh
+
+  wordpress:
+    name: wordpress helpers against the theme test data site
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: ⚡ Cache
+      uses: Swatinem/rust-cache@v2.9.2
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: 📰 Run the wordpress integration test against the theme test data site
+      run: scripts/wordpress.sh

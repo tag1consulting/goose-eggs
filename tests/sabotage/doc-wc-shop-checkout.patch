@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..b844439 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -158,7 +158,7 @@ impl<'a> ShopBuilder<'a> {
+     /// # support::classic_checkout("ShopBuilder::checkout", &server, &_shop);
+     /// ```
+     pub fn checkout(mut self, checkout: &'a str) -> Self {
+-        self.checkout = checkout;
++        let _ = checkout;
+         self
+     }
+ 

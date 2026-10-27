@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..eface22 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -481,7 +481,7 @@ fn parse_product(item: &serde_json::Value) -> Option<Product> {
+     Some(Product {
+         id: item.get("id")?.as_u64()?,
+         name: text("name").unwrap_or_default(),
+-        url: site_path(&text("permalink")?),
++        url: text("permalink")?,
+         kind: text("type").unwrap_or_default(),
+         purchasable: flag("is_purchasable"),
+         in_stock: flag("is_in_stock"),

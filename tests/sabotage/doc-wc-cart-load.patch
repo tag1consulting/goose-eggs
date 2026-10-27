@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..bb534d8 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -754,7 +754,7 @@ impl StoreApiCart {
+         &mut self,
+         user: &mut GooseUser,
+     ) -> Result<serde_json::Value, Box<TransactionError>> {
+-        self.send(user, GooseMethod::Get, "cart", None)
++        self.send(user, GooseMethod::Get, "carts", None)
+             .await
+             .map(|(_, json)| json)
+     }

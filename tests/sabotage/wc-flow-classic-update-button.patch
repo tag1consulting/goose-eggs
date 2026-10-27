@@ -1,0 +1,12 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..91eacb6 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1234,7 +1234,6 @@ pub async fn classic_update_cart(
+             Some(&page),
+         );
+     }
+-    params.push(("update_cart".to_string(), "Update cart".to_string()));
+     let goose = user.post_form(shop.cart, &params).await?;
+     expect_success_notice(user, goose, "cart not updated").await
+ }

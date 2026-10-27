@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..bd4130a 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1253,7 +1253,7 @@ impl<'a> CommentBuilder<'a> {
+     /// # support::post_comment("CommentBuilder::email", &server, &_comment);
+     /// ```
+     pub fn email(mut self, email: impl Into<&'a str>) -> Self {
+-        self.email = email.into();
++        let _ = email;
+         self
+     }
+ 

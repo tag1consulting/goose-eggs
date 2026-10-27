@@ -1,0 +1,14 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..0ca7029 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -281,7 +281,8 @@ pub async fn shop_page(
+         .text("post-type-archive-product")
+         .build();
+     let goose = user.get(shop.shop).await?;
+-    load_page(user, goose, Some(validate.unwrap_or(&default_validation))).await
++    let _ = validate;
++    load_page(user, goose, Some(&default_validation)).await
+ }
+ 
+ /// Load a product's page, by its path (a [`Product::url`]).

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..8468601 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1116,7 +1116,7 @@ fn error_notice(html: &str) -> Option<String> {
+ 
+ // Whether a page shows a success notice, classic or block themed.
+ fn has_success_notice(html: &str) -> bool {
+-    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#)
++    Regex::new(r#"class="[^"]*(?:is-success)[^"]*""#)
+         .unwrap()
+         .is_match(html)
+ }

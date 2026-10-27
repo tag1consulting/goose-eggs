@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..b045aa2 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -913,7 +913,7 @@ impl StoreApiCart {
+         );
+         let mut shipping = address.clone();
+         if let Some(shipping) = shipping.as_object_mut() {
+-            shipping.remove("email");
++            shipping.remove("phone");
+         }
+         let body = serde_json::json!({
+             "billing_address": address,

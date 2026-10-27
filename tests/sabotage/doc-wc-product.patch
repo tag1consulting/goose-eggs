@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..016b56f 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -410,7 +410,7 @@ impl Product {
+     /// assert!(!product.can_add_to_cart());
+     /// ```
+     pub fn can_add_to_cart(&self) -> bool {
+-        self.purchasable && self.in_stock && !self.has_options
++        !self.purchasable
+     }
+ }
+ 

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..5d1e560 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1042,7 +1042,7 @@ impl<'a> CheckoutBuilder<'a> {
+                 ("email", "goose@example.com"),
+                 ("phone", "5555550100"),
+             ],
+-            payment_method: "cod",
++            payment_method: "cheque",
+         }
+     }
+ 

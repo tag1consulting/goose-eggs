@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..61aa18e 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1061,7 +1061,7 @@ impl<'a> CheckoutBuilder<'a> {
+     /// ```
+     pub fn billing(mut self, field: &'a str, value: &'a str) -> Self {
+         match self.billing.iter_mut().find(|(name, _)| *name == field) {
+-            Some(entry) => entry.1 = value,
++            Some(_) => {}
+             None => self.billing.push((field, value)),
+         }
+         self

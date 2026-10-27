@@ -1,0 +1,14 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..09d2347 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -692,9 +692,6 @@ impl StoreApiCart {
+         }
+         let path = format!("{}{}", self.store_api, route);
+         let mut headers = Vec::new();
+-        if let Some(nonce) = self.nonce.as_deref() {
+-            headers.push(("Nonce", nonce));
+-        }
+         if self.use_cart_token {
+             if let Some(token) = self.cart_token.as_deref() {
+                 headers.push(("Cart-Token", token));

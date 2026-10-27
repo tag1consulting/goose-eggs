@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..779dd1b 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -654,7 +654,7 @@ impl<'a> LoginBuilder<'a> {
+     /// # support::log_in_fails("LoginBuilder::logged_in_page_validation", &server, &login, "title not found");
+     /// ```
+     pub fn logged_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
+-        self.logged_in_page_validation = Some(validation);
++        let _ = validation;
+         self
+     }
+ 

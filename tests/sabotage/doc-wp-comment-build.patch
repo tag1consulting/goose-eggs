@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..6fb83b3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1374,7 +1374,7 @@ impl<'a> CommentBuilder<'a> {
+         Comment {
+             post_url,
+             text,
+-            author,
++            author: "Nobody",
+             email,
+             url,
+             parent,

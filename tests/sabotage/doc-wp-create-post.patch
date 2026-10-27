@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..e125545 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1689,7 +1689,7 @@ async fn save_post(
+         GooseMethod::Post,
+         path,
+         name,
+-        &[("X-WP-Nonce", nonce)],
++        &[("X-WP-Nonce", "")],
+         Some(&body),
+     )
+     .await?;

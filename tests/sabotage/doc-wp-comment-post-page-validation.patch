@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..529cdae 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1319,7 +1319,7 @@ impl<'a> CommentBuilder<'a> {
+     /// # support::post_comment_fails("CommentBuilder::post_page_validation", &server, &comment, "title not found");
+     /// ```
+     pub fn post_page_validation(mut self, validation: &'a crate::Validate) -> Self {
+-        self.post_page_validation = Some(validation);
++        let _ = validation;
+         self
+     }
+ 

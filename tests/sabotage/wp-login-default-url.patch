@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..8b3127c 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -524,7 +524,7 @@ impl<'a> LoginBuilder<'a> {
+             // Defaults to a password of "password".
+             password: "password",
+             // Defaults to WordPress's log in form.
+-            url: "wp-login.php",
++            url: "wp-login",
+             // Defaults to the form's own redirect_to, the dashboard.
+             redirect_to: "",
+             // Defaults to no extra validation.

@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..c435c9e 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1073,7 +1073,7 @@ pub async fn search(
+         path.push_str(&format!("&post_type={}", query_encode(post_type)));
+     }
+     let goose = get_named(user, &path, "search").await?;
+-    load_page(user, goose, params.results_page_validation).await
++    load_page(user, goose, None).await
+ }
+ 
+ /// Parameters that define how to post a comment. For complete documentation,

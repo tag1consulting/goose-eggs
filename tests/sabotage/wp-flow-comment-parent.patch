@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..a92441c 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1451,7 +1451,7 @@ pub async fn post_comment(
+         }
+     };
+     let parent = match comment.parent {
+-        Some(parent) => parent.to_string(),
++        Some(_) => "0".to_string(),
+         None => get_form_value(&form, "comment_parent").unwrap_or_else(|| "0".to_string()),
+     };
+     let text = match comment.text {

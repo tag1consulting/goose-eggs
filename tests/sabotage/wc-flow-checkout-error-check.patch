@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..ea274d8 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -926,7 +926,7 @@ impl StoreApiCart {
+         let status = order["payment_result"]["payment_status"]
+             .as_str()
+             .unwrap_or("none");
+-        if order["order_id"].as_u64().is_none() || !matches!(status, "success" | "pending") {
++        if order["order_id"].as_u64().is_none() {
+             return fail(
+                 user,
+                 &format!(
