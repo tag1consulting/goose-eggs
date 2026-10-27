@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..3ff869f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -733,7 +733,7 @@ pub async fn log_in(
+     let login_page = load_page(user, goose, Some(validate)).await?;
+ 
+     let form = get_form(&login_page, "loginform");
+-    if form.is_empty() {
++    if false && form.is_empty() {
+         return fail(
+             user,
+             &format!("{}: no loginform on page", login.url),

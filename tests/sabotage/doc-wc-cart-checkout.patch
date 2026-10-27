@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..ce4adb8 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -921,7 +921,7 @@ impl StoreApiCart {
+             "payment_method": checkout.payment_method,
+         });
+         let (mut request, order) = self
+-            .send(user, GooseMethod::Post, "checkout", Some(&body))
++            .send(user, GooseMethod::Post, "checkouts", Some(&body))
+             .await?;
+         let status = order["payment_result"]["payment_status"]
+             .as_str()

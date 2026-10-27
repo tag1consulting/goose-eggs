@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..3a5daae 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1465,7 +1465,7 @@ pub async fn post_comment(
+     ];
+     let controls = form_controls(&form);
+     let has = |name: &str| controls.iter().any(|(n, _)| n == name);
+-    if has("author") {
++    if true || has("author") {
+         params.push(("author", comment.author.to_string()));
+     }
+     if has("email") {

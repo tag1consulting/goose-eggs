@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..9f9d3d7 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2230,7 +2230,6 @@ pub async fn discover(
+                 continue;
+             }
+             let goose = user.get(&site_path(&sitemap)).await?;
+-            request_ok(&goose)?;
+             let (_, xml) = read_response(goose).await;
+             for url in sitemap_locations(&xml) {
+                 if content.urls(&kind).len() >= cap {

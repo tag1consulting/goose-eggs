@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..d75bf44 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -217,6 +217,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
+                 .iter()
+                 .find(|(name, _)| name == element)
+                 .map(|(_, value)| (element, value.clone()))
++                .or(Some((element, String::new())))
+         })
+         .collect()
+ }

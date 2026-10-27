@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..2f4d16b 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2106,7 +2106,7 @@ impl<'a> DiscoverBuilder<'a> {
+     /// # assert_eq!(content.kinds().collect::<Vec<_>>(), ["post"], "doc example DiscoverBuilder::rest_kinds: kinds");
+     /// ```
+     pub fn rest_kinds(mut self, rest_kinds: &'a [(&'a str, &'a str)]) -> Self {
+-        self.rest_kinds = rest_kinds;
++        let _ = rest_kinds;
+         self
+     }
+ 

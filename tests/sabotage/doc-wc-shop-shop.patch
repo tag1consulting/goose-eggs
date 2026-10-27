@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..36abf67 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -122,7 +122,7 @@ impl<'a> ShopBuilder<'a> {
+     /// # support::shop_page("ShopBuilder::shop", &server, &_shop);
+     /// ```
+     pub fn shop(mut self, shop: &'a str) -> Self {
+-        self.shop = shop;
++        let _ = shop;
+         self
+     }
+ 

@@ -1,0 +1,16 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..bb14bd1 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1301,7 +1301,10 @@ pub async fn classic_checkout(
+     let goose = user.post_form("?wc-ajax=checkout", &params).await?;
+     let mut request = goose.request.clone();
+     let (headers, result) = json_response(user, goose).await?;
+-    match (result["result"].as_str(), result["redirect"].as_str()) {
++    match (
++        Some("success"),
++        result["redirect"].as_str().or(Some("/checkout/order-received/1/")),
++    ) {
+         (Some("success"), Some(redirect)) => {
+             let goose = get_named(user, redirect, "order received").await?;
+             request_ok(&goose)?;

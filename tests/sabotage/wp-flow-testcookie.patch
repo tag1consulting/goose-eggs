@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..5a55ca9 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -755,7 +755,6 @@ pub async fn log_in(
+             get_form_value(&form, "wp-submit").unwrap_or_else(|| "Log In".to_string()),
+         ),
+         ("redirect_to", redirect_to),
+-        ("testcookie", "1".to_string()),
+     ];
+     let goose = user.post_form(login.url, &params).await?;
+     request_ok(&goose)?;

@@ -29,6 +29,19 @@ ITEMS=(
     get_form_values get_encoded_form_values Login LoginBuilder log_in SearchParams
     SearchParamsBuilder search
     random_word random_words
+    wordpress::get_form wordpress::get_form_value wordpress::get_form_values
+    wordpress::get_nonce wordpress::get_rest_nonce wordpress::get_log_out_url
+    wordpress::Login wordpress::LoginBuilder wordpress::log_in wordpress::log_out
+    wordpress::SearchParams wordpress::SearchParamsBuilder wordpress::search
+    wordpress::Comment wordpress::CommentBuilder wordpress::post_comment
+    wordpress::Post wordpress::PostBuilder wordpress::create_post wordpress::update_post
+    wordpress::SiteContent wordpress::Discover wordpress::DiscoverBuilder wordpress::discover
+    woocommerce::Shop woocommerce::ShopBuilder woocommerce::shop_page
+    woocommerce::product_page woocommerce::product_search woocommerce::Product
+    woocommerce::discover_products woocommerce::random_product woocommerce::CartItem
+    woocommerce::StoreApiCart woocommerce::Checkout woocommerce::CheckoutBuilder
+    woocommerce::classic_add_to_cart woocommerce::classic_update_cart
+    woocommerce::classic_checkout woocommerce::my_account_log_in woocommerce::my_account_orders
 )
 
 cd "$(git rev-parse --show-toplevel)"

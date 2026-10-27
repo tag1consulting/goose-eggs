@@ -1,0 +1,14 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..97da63c 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1425,7 +1425,8 @@ pub async fn my_account_orders(
+         .text("woocommerce-MyAccount-navigation")
+         .build();
+     let goose = user.get(shop.orders).await?;
+-    load_page(user, goose, Some(&account)).await
++    let _ = account;
++    load_page(user, goose, None).await
+ }
+ 
+ #[cfg(test)]

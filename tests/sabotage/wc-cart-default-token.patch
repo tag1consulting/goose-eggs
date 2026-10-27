@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..4d0ca3a 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -602,7 +602,7 @@ impl StoreApiCart {
+             store_api: shop.store_api.to_string(),
+             nonce: None,
+             cart_token: None,
+-            use_cart_token: false,
++            use_cart_token: true,
+             items: Vec::new(),
+         }
+     }

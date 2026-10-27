@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..392f00b 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -767,7 +767,7 @@ pub async fn log_in(
+     } else {
+         read_response(goose).await.1
+     };
+-    if !request.redirected || html.contains(r#"id="login_error""#) {
++    if html.contains(r#"id="login_error""#) {
+         let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
+             .unwrap()
+             .captures(&html)

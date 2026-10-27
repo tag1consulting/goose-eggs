@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..c80ee2f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1953,7 +1953,7 @@ fn sitemap_locations(xml: &str) -> Vec<String> {
+ // or wp-sitemap-users-<n>.xml.
+ fn sitemap_kind(url: &str) -> Option<String> {
+     let re =
+-        Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
++        Regex::new(r"wp-sitemap-(?:taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
+             .unwrap();
+     let capture = re.captures(url)?;
+     Some(

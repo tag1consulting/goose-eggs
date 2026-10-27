@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..fef2746 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2034,7 +2034,7 @@ impl<'a> DiscoverBuilder<'a> {
+     fn new() -> Self {
+         Self {
+             // Defaults to the core sitemap, WordPress 5.5 and later.
+-            sitemap: "wp-sitemap.xml",
++            sitemap: "sitemap.xml",
+             // Defaults to the core REST API.
+             rest: "wp-json/wp/v2/",
+             // Defaults to the core content the sitemap also lists.

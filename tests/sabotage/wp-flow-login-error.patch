@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..ac0edb3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -770,7 +770,7 @@ pub async fn log_in(
+     if !request.redirected || html.contains(r#"id="login_error""#) {
+         let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
+             .unwrap()
+-            .captures(&html)
++            .captures("")
+             .map(|c| plain_text(&c[1]))
+             .unwrap_or_else(|| "not redirected".to_string());
+         return fail(

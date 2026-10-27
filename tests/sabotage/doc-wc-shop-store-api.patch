@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..c88adf8 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -212,7 +212,7 @@ impl<'a> ShopBuilder<'a> {
+     /// # support::discover_products("ShopBuilder::store_api", &server, &_shop);
+     /// ```
+     pub fn store_api(mut self, store_api: &'a str) -> Self {
+-        self.store_api = store_api;
++        let _ = store_api;
+         self
+     }
+ 

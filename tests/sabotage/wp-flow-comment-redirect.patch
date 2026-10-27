@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..8b242c2 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1477,7 +1477,7 @@ pub async fn post_comment(
+         params.push(("_wp_unfiltered_html_comment", nonce));
+     }
+     let goose = user.post_form(comment.url, &params).await?;
+-    if goose.request.success && goose.request.redirected {
++    if goose.request.success {
+         return load_page(user, goose, comment.commented_page_validation).await;
+     }
+     // Refused: a duplicate (409), a flood (429), comments closed (403), or a

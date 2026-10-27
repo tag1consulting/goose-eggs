@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..e444dbf 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1567,7 +1567,7 @@ impl<'a> PostBuilder<'a> {
+     fn new() -> Self {
+         Self {
+             // Defaults to the core posts route.
+-            url: "wp-json/wp/v2/posts",
++            url: "wp-json/wp/v2/post",
+             // Defaults to sending no fields.
+             fields: serde_json::Map::new(),
+         }

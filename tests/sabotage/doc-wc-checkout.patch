@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..7897a95 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1001,7 +1001,7 @@ impl<'a> Checkout<'a> {
+     /// assert_eq!(checkout.payment_method(), "cheque");
+     /// ```
+     pub fn payment_method(&self) -> &'a str {
+-        self.payment_method
++        "none"
+     }
+ }
+ 

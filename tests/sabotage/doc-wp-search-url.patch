@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..a9f4d21 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -963,7 +963,7 @@ impl<'a> SearchParamsBuilder<'a> {
+     /// # support::search("SearchParamsBuilder::url", &server, &_params);
+     /// ```
+     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
+-        self.url = url.into();
++        let _ = url;
+         self
+     }
+ 

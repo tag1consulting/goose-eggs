@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..08a0d45 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -829,7 +829,8 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
+             )
+         }
+     };
+-    let goose = get_named(user, &url, "wp-login.php?action=logout").await?;
++    let _ = url;
++    let goose = get_named(user, page, "wp-login.php?action=logout").await?;
+     request_ok(&goose)?;
+     if goose.request.final_url.contains("loggedout=true") {
+         return load_page(user, goose, None).await;

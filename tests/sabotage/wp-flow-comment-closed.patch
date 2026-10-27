@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..a23dafa 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1436,7 +1436,8 @@ pub async fn post_comment(
+     let form = get_form(&page, "commentform");
+     let post_id = get_form_value(&form, "comment_post_ID");
+     let post_id = match post_id {
+-        Some(id) if !form.is_empty() => id,
++        Some(id) => id,
++        None if !form.is_empty() || true => "0".to_string(),
+         _ => {
+             return fail(
+                 user,

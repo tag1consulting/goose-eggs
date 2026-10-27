@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..6e8d70f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1882,7 +1882,7 @@ impl SiteContent {
+     /// assert_eq!(content.tags(), ["/tag/rust/"]);
+     /// ```
+     pub fn tags(&self) -> &[String] {
+-        self.urls("post_tag")
++        self.urls("tag")
+     }
+ 
+     /// A URL of one kind, picked at random; `None` when the site has none.

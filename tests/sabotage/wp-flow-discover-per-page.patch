@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..ad13c16 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2250,7 +2250,7 @@ pub async fn discover(
+         while content.urls(kind).len() < cap {
+             let path = format!(
+                 "{}{}?per_page={}&page={}&_fields=link",
+-                discover.rest, route, per_page, page
++                discover.rest, route, (cap - content.urls(kind).len()).min(per_page), page
+             );
+             let name = format!("{}{}", discover.rest, route);
+             let goose = get_named(user, &path, &name).await?;

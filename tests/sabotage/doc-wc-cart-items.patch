@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..69e3c71 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -716,7 +716,7 @@ impl StoreApiCart {
+                     Some(CartItem {
+                         key: item.get("key")?.as_str()?.to_string(),
+                         id: item.get("id")?.as_u64()?,
+-                        quantity: item.get("quantity")?.as_u64()?,
++                        quantity: item.get("id")?.as_u64()?,
+                     })
+                 })
+                 .collect();

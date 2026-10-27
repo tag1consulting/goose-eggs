@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..299a83e 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1108,7 +1108,7 @@ impl<'a> CheckoutBuilder<'a> {
+ // or block (`is-error`) themed.
+ fn error_notice(html: &str) -> Option<String> {
+     let re = Regex::new(
+-        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
++        r#"(?s)class="[^"]*(?:is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
+     )
+     .unwrap();
+     re.captures(html).map(|c| plain_text(&c[1]))

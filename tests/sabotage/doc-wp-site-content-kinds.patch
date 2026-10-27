@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..fba95d2 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1830,7 +1830,7 @@ impl SiteContent {
+     /// assert_eq!(content.kinds().collect::<Vec<_>>(), ["page", "post"]);
+     /// ```
+     pub fn kinds(&self) -> impl Iterator<Item = &str> {
+-        self.urls.keys().map(String::as_str)
++        self.urls.keys().rev().map(String::as_str)
+     }
+ 
+     /// Posts.

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..6e43fed 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -918,7 +918,7 @@ impl StoreApiCart {
+         let body = serde_json::json!({
+             "billing_address": address,
+             "shipping_address": shipping,
+-            "payment_method": checkout.payment_method,
++            "payment_method": "cod",
+         });
+         let (mut request, order) = self
+             .send(user, GooseMethod::Post, "checkout", Some(&body))

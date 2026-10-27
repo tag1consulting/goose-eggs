@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..0232163 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1602,7 +1602,7 @@ impl<'a> PostBuilder<'a> {
+     /// # support::create_post("PostBuilder::content", &server, &_post);
+     /// ```
+     pub fn content(self, content: &str) -> Self {
+-        self.field("content", serde_json::Value::from(content))
++        self.field("body", serde_json::Value::from(content))
+     }
+ 
+     /// The post's status: `draft`, `publish`, `pending`, `private` or `future`.

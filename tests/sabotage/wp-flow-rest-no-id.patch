@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..4af0701 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1695,7 +1695,7 @@ async fn save_post(
+     .await?;
+     let mut request = goose.request.clone();
+     let (headers, json) = json_response(user, goose).await?;
+-    if json.get("id").and_then(|id| id.as_u64()).is_none() {
++    if false {
+         return fail(
+             user,
+             &format!("{}: response has no post id", path),

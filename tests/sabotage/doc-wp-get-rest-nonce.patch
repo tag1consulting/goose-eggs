@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..7b9ac68 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -261,7 +261,7 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
+ /// ```
+ pub fn get_rest_nonce(html: &str) -> Option<String> {
+     let patterns = [
+-        r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
++        r#"createNonce\(\s*["']([^"']+)["']\s*\)"#,
+         r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
+     ];
+     for pattern in patterns {

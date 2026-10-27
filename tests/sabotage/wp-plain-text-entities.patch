@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..02913de 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -42,8 +42,7 @@ pub(crate) fn plain_text(html: &str) -> String {
+     let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
+     let text = hidden.replace_all(html, " ");
+     let text = tags.replace_all(&text, " ");
+-    html_escape::decode_html_entities(&text)
+-        .split_whitespace()
++    text.split_whitespace()
+         .collect::<Vec<_>>()
+         .join(" ")
+ }

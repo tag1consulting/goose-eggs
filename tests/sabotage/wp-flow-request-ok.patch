@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..2a54f31 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -331,7 +331,6 @@ pub(crate) async fn load_page(
+     goose: GooseResponse,
+     validate: Option<&crate::Validate<'_>>,
+ ) -> Result<String, Box<TransactionError>> {
+-    request_ok(&goose)?;
+     let none = crate::Validate::none();
+     crate::validate_and_load_static_assets(user, goose, validate.unwrap_or(&none)).await
+ }

@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..2f9a7ef 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -727,7 +727,7 @@ pub async fn log_in(
+ ) -> Result<String, Box<TransactionError>> {
+     // Load the log in form; this also sets WordPress's test cookie.
+     let default_validation = crate::Validate::builder().text(r#"id="loginform""#).build();
+-    let validate = login.log_in_page_validation.unwrap_or(&default_validation);
++    let validate = &default_validation;
+     let goose = user.get(login.url).await?;
+     let mut login_request = goose.request.clone();
+     let login_page = load_page(user, goose, Some(validate)).await?;

@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..6a9b764 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -742,7 +742,7 @@ pub async fn log_in(
+             Some(&login_page),
+         );
+     }
+-    let redirect_to = if login.redirect_to.is_empty() {
++    let redirect_to = if true || login.redirect_to.is_empty() {
+         get_form_value(&form, "redirect_to").unwrap_or_default()
+     } else {
+         user.build_url(login.redirect_to)?

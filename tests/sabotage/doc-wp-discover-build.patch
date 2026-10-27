@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..32733b5 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2153,7 +2153,7 @@ impl<'a> DiscoverBuilder<'a> {
+             sitemap,
+             rest,
+             rest_kinds,
+-            max_per_kind,
++            max_per_kind: 0,
+         }
+     }
+ }

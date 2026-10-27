@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..95c7c07 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1079,7 +1079,7 @@ impl<'a> CheckoutBuilder<'a> {
+     /// assert_eq!(checkout.payment_method(), "bacs");
+     /// ```
+     pub fn payment_method(mut self, payment_method: &'a str) -> Self {
+-        self.payment_method = payment_method;
++        let _ = payment_method;
+         self
+     }
+ 

@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..82a1bac 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -72,7 +72,6 @@ pub(crate) fn plain_text(html: &str) -> String {
+ pub fn get_form(html: &str, name: &str) -> String {
+     find_form(html, name, |tag| {
+         attribute(tag, "id").as_deref() == Some(name)
+-            || attribute(tag, "name").as_deref() == Some(name)
+     })
+ }
+ 

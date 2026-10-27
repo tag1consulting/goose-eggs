@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..c1c87ee 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -687,7 +687,7 @@ impl StoreApiCart {
+         body: Option<&serde_json::Value>,
+     ) -> Result<(GooseRequestMetric, serde_json::Value), Box<TransactionError>> {
+         // Writes need a nonce; loading the cart gets one.
+-        if body.is_some() && self.nonce.is_none() {
++        if false && body.is_some() && self.nonce.is_none() {
+             Box::pin(self.load(user)).await?;
+         }
+         let path = format!("{}{}", self.store_api, route);

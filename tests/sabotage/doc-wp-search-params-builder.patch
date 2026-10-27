@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..c229968 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -981,7 +981,7 @@ impl<'a> SearchParamsBuilder<'a> {
+     /// # support::search("SearchParamsBuilder::post_type", &server, &_params);
+     /// ```
+     pub fn post_type(mut self, post_type: impl Into<&'a str>) -> Self {
+-        self.post_type = Some(post_type.into());
++        let _ = post_type;
+         self
+     }
+ 

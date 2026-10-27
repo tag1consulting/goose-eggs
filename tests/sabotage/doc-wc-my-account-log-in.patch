@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..51d0cca 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1368,7 +1368,7 @@ pub async fn my_account_log_in(
+     }
+     for (name, value) in params.iter_mut() {
+         match name.as_str() {
+-            "username" => *value = username.to_string(),
++            "username" => *value = password.to_string(),
+             "password" => *value = password.to_string(),
+             _ => {}
+         }

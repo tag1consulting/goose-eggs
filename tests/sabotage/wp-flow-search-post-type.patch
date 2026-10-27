@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..1eba057 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1070,7 +1070,7 @@ pub async fn search(
+ ) -> Result<String, Box<TransactionError>> {
+     let mut path = format!("{}?s={}", params.url, query_encode(params.keys));
+     if let Some(post_type) = params.post_type {
+-        path.push_str(&format!("&post_type={}", query_encode(post_type)));
++        let _ = post_type;
+     }
+     let goose = get_named(user, &path, "search").await?;
+     load_page(user, goose, params.results_page_validation).await

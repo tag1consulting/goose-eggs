@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..5167f23 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -680,7 +680,7 @@ impl<'a> LoginBuilder<'a> {
+         } = self;
+         Login {
+             username,
+-            password,
++            password: username,
+             url,
+             redirect_to,
+             log_in_page_validation,

@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..f25e4b6 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1619,7 +1619,7 @@ impl<'a> PostBuilder<'a> {
+     /// # support::create_post("PostBuilder::status", &server, &_post);
+     /// ```
+     pub fn status(self, status: &str) -> Self {
+-        self.field("status", serde_json::Value::from(status))
++        self.field("state", serde_json::Value::from(status))
+     }
+ 
+     /// Any other field the REST API accepts, such as `excerpt`, `categories` or `meta`.

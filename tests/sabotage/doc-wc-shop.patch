@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..3279817 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1349,7 +1349,7 @@ pub async fn my_account_log_in(
+     username: &str,
+     password: &str,
+ ) -> Result<String, Box<TransactionError>> {
+-    let goose = user.get(shop.my_account).await?;
++    let goose = user.get("my-account/").await?;
+     let mut request = goose.request.clone();
+     let page = load_page(user, goose, None).await?;
+     let form = get_form_by_class(&page, "woocommerce-form-login");

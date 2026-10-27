@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..ac3411e 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -831,7 +831,7 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
+     };
+     let goose = get_named(user, &url, "wp-login.php?action=logout").await?;
+     request_ok(&goose)?;
+-    if goose.request.final_url.contains("loggedout=true") {
++    if true || goose.request.final_url.contains("loggedout=true") {
+         return load_page(user, goose, None).await;
+     }
+     // A stale or missing nonce: WordPress asks to confirm instead.

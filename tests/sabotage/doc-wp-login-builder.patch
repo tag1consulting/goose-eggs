@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..a893f76 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -587,7 +587,7 @@ impl<'a> LoginBuilder<'a> {
+     /// # support::log_in("LoginBuilder::url", &server, &_login);
+     /// ```
+     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
+-        self.url = url.into();
++        let _ = url;
+         self
+     }
+ 

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..fe53dd5 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1037,7 +1037,7 @@ impl<'a> CheckoutBuilder<'a> {
+                 ("address_1", "1 Main Street"),
+                 ("city", "San Francisco"),
+                 ("state", "CA"),
+-                ("postcode", "94105"),
++                ("postcode", "00000"),
+                 ("country", "US"),
+                 ("email", "goose@example.com"),
+                 ("phone", "5555550100"),

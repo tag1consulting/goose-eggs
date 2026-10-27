@@ -1,0 +1,15 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..702b5df 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1097,8 +1097,9 @@ impl<'a> CheckoutBuilder<'a> {
+             billing,
+             payment_method,
+         } = self;
++        let _ = billing;
+         Checkout {
+-            billing,
++            billing: Vec::new(),
+             payment_method,
+         }
+     }

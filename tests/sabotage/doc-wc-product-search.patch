@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..a8908ef 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -347,7 +347,7 @@ pub async fn product_search(
+     keys: &str,
+     validate: Option<&crate::Validate<'_>>,
+ ) -> Result<String, Box<TransactionError>> {
+-    let path = format!("?s={}&post_type=product", query_encode(keys));
++    let path = format!("?s={}&post_type=post", query_encode(keys));
+     let goose = get_named(user, &path, "product search").await?;
+     load_page(user, goose, validate).await
+ }

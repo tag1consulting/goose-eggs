@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..1b02c12 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1843,7 +1843,7 @@ impl SiteContent {
+     /// assert_eq!(content.posts(), ["/hello-world/"]);
+     /// ```
+     pub fn posts(&self) -> &[String] {
+-        self.urls("post")
++        self.urls("page")
+     }
+ 
+     /// Pages.

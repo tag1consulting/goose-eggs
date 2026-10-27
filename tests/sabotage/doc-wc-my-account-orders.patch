@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..25b2216 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1424,7 +1424,7 @@ pub async fn my_account_orders(
+     let account = crate::Validate::builder()
+         .text("woocommerce-MyAccount-navigation")
+         .build();
+-    let goose = user.get(shop.orders).await?;
++    let goose = user.get(shop.my_account).await?;
+     load_page(user, goose, Some(&account)).await
+ }
+ 

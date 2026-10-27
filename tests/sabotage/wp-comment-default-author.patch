@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..9bf4e43 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1162,7 +1162,7 @@ impl<'a> CommentBuilder<'a> {
+             // Defaults to ten random words.
+             text: None,
+             // Defaults to a recognizable commenter.
+-            author: "Goose",
++            author: "goose",
+             email: "goose@example.com",
+             // Defaults to WordPress's comment handler.
+             url: "wp-comments-post.php",

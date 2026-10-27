@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 8b1c271..29b804d 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1294,7 +1294,7 @@ pub async fn classic_checkout(
+         None => params.push((name, value.to_string())),
+     };
+     for (field, value) in &checkout.billing {
+-        set(format!("billing_{}", field), value);
++        set(field.to_string(), value);
+     }
+     set("payment_method".to_string(), checkout.payment_method);
+ 

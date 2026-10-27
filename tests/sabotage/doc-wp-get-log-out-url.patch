@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 635f7df..4b325d3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -290,7 +290,7 @@ pub fn get_log_out_url(html: &str) -> Option<String> {
+     let re =
+         Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
+     match re.captures(html) {
+-        Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
++        Some(capture) => Some(capture[1].to_string()),
+         None => {
+             warn!("log out link not found");
+             None
