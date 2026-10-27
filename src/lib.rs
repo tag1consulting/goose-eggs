@@ -1198,7 +1198,11 @@ pub async fn validate_page<'a>(
             let headers = &response.headers().clone();
             for validate_header in &validate.headers {
                 if !validate_header.exists {
-                    if header_is_set(headers, validate_header.header) {
+                    // `not_header` refuses the header; `not_header_value` refuses
+                    // only the value, so the header itself may be set.
+                    if validate_header.value.is_empty()
+                        && header_is_set(headers, validate_header.header)
+                    {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
