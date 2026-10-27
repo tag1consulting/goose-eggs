@@ -31,13 +31,13 @@ pub fn random_word(length: usize) -> String {
 ///
 /// // Generate a random "sentence" comprised of 5 alphanumeric "words".
 /// let sentence = random_words(5);
-/// assert!(sentence.len() >= 3*5 && sentence.len() <= 12*5);
+/// assert_eq!(sentence.split(' ').count(), 5);
 /// ```
 pub fn random_words(number: usize) -> String {
     let mut words: Vec<String> = Vec::new();
-    for _ in 1..number {
+    for _ in 0..number {
         let mut rng = rng();
-        words.push(random_word(rng.random_range(3..12)));
+        words.push(random_word(rng.random_range(3..=12)));
     }
     words.join(" ")
 }
