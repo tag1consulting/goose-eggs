@@ -444,7 +444,7 @@ pub async fn anonymous_contact_form(user: &mut GooseUser, english: bool) -> Tran
         ("message[0][value]", message.as_str()),
         ("form_build_id", &form_build_id),
         ("form_id", &form_id),
-        ("op", "Send+message"),
+        ("op", "Send message"),
     ];
     let mut goose = user.post_form(contact_form_url, &params).await?;
 
