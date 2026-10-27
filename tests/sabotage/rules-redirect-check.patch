@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..6f9ddd3 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1248,7 +1248,7 @@ pub async fn validate_page<'a>(
+         Ok(response) => {
+             // Validate whether or not the request redirected.
+             if let Some(redirect) = validate.redirect {
+-                if goose.request.redirected != redirect {
++                if goose.request.redirected == redirect {
+                     // Get as much as we can from the response for useful debug logging.
+                     let headers = &response.headers().clone();
+                     let html = response.text().await.unwrap_or_else(|_| "".to_string());

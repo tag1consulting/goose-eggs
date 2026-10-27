@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..d203eab 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -450,7 +450,7 @@ impl<'a> LoginBuilder<'a> {
+     /// # support::log_in("url", &server, &_login);
+     /// ```
+     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
+-        self.url = url.into();
++        self.url = { let _: &str = url.into(); "user/login" };
+         self
+     }
+ 

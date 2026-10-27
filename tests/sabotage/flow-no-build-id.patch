@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..34668ba 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -658,7 +658,7 @@ pub async fn log_in(
+     // Now extract the form_build_id in order to POST to the log in form
+     // (`get_form_value` returns "none" when it is missing).
+     let form_build_id = get_form_value(&login_form, "form_build_id");
+-    if form_build_id.is_empty() || form_build_id == "none" {
++    if form_build_id.is_empty() {
+         user.set_failure(
+             &format!("{}: no form_build_id on page", login.url),
+             &mut login_request,

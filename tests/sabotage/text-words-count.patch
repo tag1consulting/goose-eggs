@@ -1,0 +1,13 @@
+diff --git a/src/text.rs b/src/text.rs
+index 958edb6..c3b6702 100644
+--- a/src/text.rs
++++ b/src/text.rs
+@@ -35,7 +35,7 @@ pub fn random_word(length: usize) -> String {
+ /// ```
+ pub fn random_words(number: usize) -> String {
+     let mut words: Vec<String> = Vec::new();
+-    for _ in 0..number {
++    for _ in 1..number {
+         let mut rng = rng();
+         words.push(random_word(rng.random_range(3..=12)));
+     }

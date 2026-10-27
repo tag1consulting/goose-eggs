@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..80cf7f8 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -509,7 +509,7 @@ impl<'a> ValidateBuilder<'a> {
+     /// ```
+     pub fn not_header(mut self, header: impl Into<&'a str>) -> Self {
+         self.headers.push(ValidateHeader {
+-            exists: false,
++            exists: true,
+             header: header.into(),
+             value: "",
+         });

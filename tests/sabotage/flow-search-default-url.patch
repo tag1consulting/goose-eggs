@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..1eddd16 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -879,7 +879,7 @@ impl<'a> SearchParamsBuilder<'a> {
+             // Defaults to empty search keys.
+             keys: "",
+             // Defaults to "search".
+-            url: "search",
++            url: "search/node",
+             // Defaults to form values required by Drupal 8 and 9.
+             form_values: &["form_build_id", "form_id"],
+             // Defaults to no extra search page validation.

@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..af01a30 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1140,7 +1140,7 @@ pub async fn search<'a>(
+     let search_page = crate::validate_and_load_static_assets(user, goose, validate).await?;
+ 
+     // Extract the search form from the page.
+-    let search_form = get_form(&search_page, "search-form");
++    let search_form = get_form(&search_page, "search-block-form");
+ 
+     // Extract values from the search form.
+     let form_values = get_form_values(&search_form, params.form_values);

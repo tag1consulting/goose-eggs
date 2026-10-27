@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..6b281e0 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -97,7 +97,7 @@ impl<'a> Validate<'a> {
+     /// # assert_eq!(support::check(&_validate, &page).as_deref(), Ok("any page"), "doc example none");
+     /// ```
+     pub fn none() -> Validate<'a> {
+-        Validate::builder().build()
++        Validate::builder().title("never").build()
+     }
+ }
+ 

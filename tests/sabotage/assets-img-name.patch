@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..d74cf57 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1185,7 +1185,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+     // @TODO: parse HTML5 srcset= also
+     for url in get_src_elements(user, html).await {
+         let is_js = url.contains(".js");
+-        let resource_type = if is_js { "js" } else { "img" };
++        let resource_type = if is_js { "js" } else { "image" };
+         let _ = user
+             .get_named(&url, &("static asset: ".to_owned() + resource_type))
+             .await;

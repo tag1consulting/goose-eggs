@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..36efa01 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -959,7 +959,7 @@ impl<'a> SearchParamsBuilder<'a> {
+     /// # support::search("form_values", &server, &search_params);
+     /// ```
+     pub fn form_values(mut self, form_values: &'a [&'a str]) -> Self {
+-        self.form_values = form_values;
++        self.form_values = { let _ = form_values; &["form_build_id", "form_id"] };
+         self
+     }
+ 

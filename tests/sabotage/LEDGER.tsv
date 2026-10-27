@@ -1,0 +1,216 @@
+# patch	target	test	expected message	covers
+lib-header-greedy.patch	lib	tests::get_html_header_cases	get_html_header case first of two	get_html_header
+lib-header-newlines.patch	lib	tests::get_html_header_cases	get_html_header case multiline	get_html_header
+lib-header-inner.patch	lib	tests::get_html_header_cases	get_html_header case normal	get_html_header
+lib-title-greedy.patch	lib	tests::get_title_cases	get_title case first of two	get_title
+lib-title-newlines.patch	lib	tests::get_title_cases	get_title case multiline	get_title
+lib-title-tags.patch	lib	tests::get_title_cases	get_title case normal	get_title
+lib-valid-title-whole-page.patch	lib	tests::valid_title_cases	valid_title case no head	valid_title
+lib-valid-title-case.patch	lib	tests::valid_title_cases	valid_title case exact	valid_title
+lib-valid-text-case.patch	lib	tests::valid_text_cases	valid_text case wrong case	valid_text
+lib-header-set-case.patch	lib	tests::header_is_set_cases	header_is_set case any case	header_is_set
+lib-header-value-empty.patch	lib	tests::valid_header_value_cases	valid_header_value case empty value	valid_header_value
+lib-header-value-binary.patch	lib	tests::valid_header_value_cases	valid_header_value case value not text	valid_header_value
+lib-header-value-exact.patch	lib	tests::valid_header_value_cases	valid_header_value case substring	valid_header_value
+lib-src-protocol-relative.patch	lib	tests::get_src_elements_cases	get_src_elements case protocol relative other domain	get_src_elements
+lib-src-subdomain.patch	lib	tests::get_src_elements_cases	get_src_elements case other subdomain	get_src_elements
+lib-src-root-relative.patch	lib	tests::get_src_elements_cases	get_src_elements case root relative	get_src_elements
+lib-src-relative.patch	lib	tests::get_src_elements_cases	get_src_elements case relative	get_src_elements
+lib-src-case.patch	lib	tests::get_src_elements_cases	get_src_elements case upper case attribute	get_src_elements
+lib-src-entities.patch	lib	tests::get_src_elements_cases	get_src_elements case encoded entities	get_src_elements
+lib-src-order.patch	lib	tests::get_src_elements_cases	get_src_elements case in order	get_src_elements
+lib-css-case.patch	lib	tests::get_css_elements_cases	get_css_elements case upper case attribute	get_css_elements
+lib-css-extension.patch	lib	tests::get_css_elements_cases	get_css_elements case not css	get_css_elements
+lib-css-entities.patch	lib	tests::get_css_elements_cases	get_css_elements case encoded entities	get_css_elements
+lib-css-order.patch	lib	tests::get_css_elements_cases	get_css_elements case in order	get_css_elements
+lib-css-host.patch	lib	tests::get_css_elements_cases	get_css_elements case absolute local	get_css_elements
+lib-static-src-any-host.patch	lib	tests::get_static_elements	right: 7	get_src_elements
+lib-static-css-any-host.patch	lib	tests::get_static_elements	right: 4	get_css_elements
+text-word-length.patch	lib	text::tests::random_word_cases	random_word case empty	random_word
+text-word-seeded.patch	lib	text::tests::random_word_cases	random_word case repeat	random_word
+text-words-count.patch	lib	text::tests::random_words_cases	random_words case one	random_words
+text-words-length.patch	lib	text::tests::random_words_cases	not 3 to 12 characters	random_words
+text-words-join.patch	lib	text::tests::random_words_cases	random_words case five	random_words
+drupal-form-name-prefix.patch	lib	drupal::tests::get_form_cases	get_form case longer name first	get_form
+drupal-form-newlines.patch	lib	drupal::tests::get_form_cases	get_form case multiline	get_form
+drupal-form-capture.patch	lib	drupal::tests::get_form_cases	get_form case by id	get_form
+drupal-form-selector.patch	lib	drupal::tests::get_form_cases	get_form case by data-drupal-selector	get_form
+drupal-value-quotes.patch	lib	drupal::tests::get_form_value_cases	get_form_value case single quoted	get_form_value
+drupal-value-escape.patch	lib	drupal::tests::get_form_value_cases	get_form_value case regex characters in name	get_form_value
+drupal-value-missing.patch	lib	drupal::tests::get_form_value_cases	get_form_value case missing	get_form_value
+drupal-value-empty.patch	lib	drupal::tests::get_form_value_cases	get_form_value case empty value	get_form_value
+drupal-bigpipe-greedy.patch	lib	drupal::tests::get_bigpipe_form_cases	get_bigpipe_form case first form	get_bigpipe_form
+drupal-bigpipe-capture.patch	lib	drupal::tests::get_bigpipe_form_cases	ran past the replacement	get_bigpipe_form
+drupal-bigpipe-missing.patch	lib	drupal::tests::get_bigpipe_form_cases	get_bigpipe_form case missing	get_bigpipe_form
+drupal-encoded-value-quote.patch	lib	drupal::tests::get_encoded_form_value_cases	get_encoded_form_value case form_build_id	get_encoded_form_value
+drupal-encoded-values-quote.patch	lib	drupal::tests::get_encoded_form_values_cases	get_encoded_form_values case form_build_id	get_encoded_form_values
+drupal-build-id-greedy.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case first	get_updated_build_id
+drupal-build-id-missing.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case unknown old id	get_updated_build_id
+drupal-build-id-any-old.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case second	get_updated_build_id
+drupal-values-one-name.patch	lib	drupal::tests::get_form_values_cases	get_form_values case empty value	get_form_values
+drupal-values-skip.patch	lib	drupal::tests::get_form_values_cases	get_form_values case count	get_form_values
+drupal-encoded-values-one-name.patch	lib	drupal::tests::get_encoded_form_values_cases	get_encoded_form_values case form_build_id	get_encoded_form_values
+drupal-encoded-values-skip.patch	lib	drupal::tests::get_encoded_form_values_cases	get_encoded_form_values case count	get_encoded_form_values
+rules-status-equals.patch	validate_rules	validate_rules	behaviour status passes	status,ValidateBuilder,validate_page
+rules-status-check.patch	validate_rules	validate_rules	behaviour status fails	status,validate_page
+rules-not-status-equals.patch	validate_rules	validate_rules	behaviour not_status passes	not_status,validate_page
+rules-not-status-check.patch	validate_rules	validate_rules	behaviour not_status fails	not_status,validate_page
+rules-title-exists.patch	validate_rules	validate_rules	behaviour title passes in any case	title,validate_page
+rules-not-title-exists.patch	validate_rules	validate_rules	behaviour not_title passes	not_title,validate_page
+rules-title-check.patch	validate_rules	validate_rules	behaviour title fails	title,validate_page,valid_title
+rules-not-title-check.patch	validate_rules	validate_rules	behaviour not_title fails	not_title,validate_page,valid_title
+rules-title-any-case.patch	validate_rules	validate_rules	behaviour title passes in any case	title,valid_title
+rules-text-exists.patch	validate_rules	validate_rules	behaviour text passes	text,validate_page
+rules-not-text-exists.patch	validate_rules	validate_rules	behaviour not_text passes	not_text,validate_page
+rules-text-check.patch	validate_rules	validate_rules	behaviour text fails	text,validate_page,valid_text
+rules-not-text-check.patch	validate_rules	validate_rules	behaviour not_text fails	not_text,validate_page,valid_text
+rules-text-case.patch	validate_rules	validate_rules	behaviour text is case sensitive	text,valid_text
+rules-texts-first-only.patch	validate_rules	validate_rules	behaviour texts fails on its last text	texts
+rules-not-texts-first-only.patch	validate_rules	validate_rules	behaviour not_texts fails on its last text	not_texts
+rules-texts-negated.patch	validate_rules	validate_rules	behaviour texts passes	texts
+rules-not-texts-negated.patch	validate_rules	validate_rules	behaviour not_texts passes	not_texts
+rules-header-exists.patch	validate_rules	validate_rules	behaviour header passes	header,validate_page
+rules-not-header-exists.patch	validate_rules	validate_rules	behaviour not_header passes	not_header,validate_page
+rules-header-value-exists.patch	validate_rules	validate_rules	behaviour header_value passes	header_value,validate_page
+rules-not-header-value-exists.patch	validate_rules	validate_rules	behaviour not_header_value passes on another value	not_header_value,validate_page
+rules-header-value-dropped.patch	validate_rules	validate_rules	behaviour header_value fails on the value	header_value
+rules-not-header-value-dropped.patch	validate_rules	validate_rules	behaviour not_header_value fails	not_header_value
+rules-header-presence.patch	validate_rules	validate_rules	behaviour header fails	header,validate_page,header_is_set
+rules-header-value-missing-header.patch	validate_rules	validate_rules	behaviour header_value fails on a missing header	header_value,validate_page
+rules-header-value-check.patch	validate_rules	validate_rules	behaviour header_value fails on the value	header_value,validate_page,valid_header_value
+rules-not-header-presence.patch	validate_rules	validate_rules	behaviour not_header fails	not_header,validate_page
+rules-not-header-value-check.patch	validate_rules	validate_rules	behaviour not_header_value fails	not_header_value,validate_page
+rules-not-header-value-missing-header.patch	validate_rules	validate_rules	behaviour not_header_value passes on a missing header	not_header_value,validate_page,valid_header_value
+rules-redirect-builder.patch	validate_rules	validate_rules	behaviour no redirect passes	redirect
+rules-redirect-check.patch	validate_rules	validate_rules	behaviour redirect passes	redirect,validate_page
+rules-redirect-message.patch	validate_rules	validate_rules	behaviour redirect fails	redirect,validate_page
+rules-build-status.patch	validate_rules	validate_rules	behaviour status fails	build,Validate
+rules-build-title.patch	validate_rules	validate_rules	behaviour title fails	build,Validate
+rules-build-texts.patch	validate_rules	validate_rules	behaviour text fails	build,Validate
+rules-build-headers.patch	validate_rules	validate_rules	behaviour header fails	build,Validate
+rules-build-redirect.patch	validate_rules	validate_rules	behaviour redirect fails	build,Validate
+rules-none-validates.patch	validate_rules	validate_rules	behaviour none returns the body	none,Validate
+rules-page-body.patch	validate_rules	validate_rules	behaviour none returns the body	validate_page
+rules-last-title.patch	validate_rules	validate_rules	behaviour the last title rule wins	title
+rules-combined-texts.patch	validate_rules	validate_rules	behaviour one failing rule among passing rules fails	validate_page
+rules-combined-headers.patch	validate_rules	validate_rules	behaviour every rule passes together	validate_page
+assets-js-name.patch	static_assets	static_assets	static asset request name GET static asset: js	load_static_elements
+assets-css-name.patch	static_assets	static_assets	static asset request name GET static asset: css	load_static_elements
+assets-img-name.patch	static_assets	static_assets	static asset request name GET static asset: img	load_static_elements
+assets-src-skipped.patch	static_assets	static_assets	behaviour load_static_elements loads every local asset: asset root.js requested 0 times	load_static_elements,get_src_elements
+assets-css-skipped.patch	static_assets	static_assets	behaviour load_static_elements loads every local asset: asset abs.css requested 0 times	load_static_elements,get_css_elements
+assets-entities.patch	static_assets	static_assets	behaviour load_static_elements loads every local asset: asset root.js requested 0 times	load_static_elements,get_src_elements
+assets-other-host.patch	static_assets	static_assets	behaviour load_static_elements loads every local asset: other host requested	load_static_elements,get_src_elements
+assets-page-link.patch	static_assets	static_assets	behaviour load_static_elements loads every local asset: page link requested	load_static_elements,get_css_elements
+assets-validate-and-load.patch	static_assets	static_assets	behaviour validate_and_load_static_assets loads assets after a pass: asset	validate_and_load_static_assets
+assets-validate-and-load-failure.patch	static_assets	static_assets	behaviour validate_and_load_static_assets loads no assets after a failure	validate_and_load_static_assets
+assets-validate-page-loads.patch	static_assets	static_assets	behaviour validate_page loads no assets: asset	validate_page
+assets-no-response.patch	static_assets	static_assets	behaviour validate_page fails without a response	validate_page
+parse-entities.patch	parse	test_html_decoding	right: 1	load_static_elements
+validate-valid-markup-text.patch	validate	test_valid	assertion failed: goose_metrics.errors.is_empty()	validate_and_load_static_assets,valid_text
+validate-invalid-status.patch	validate	test_invalid_status	assertion failed: goose_metrics.errors.len() == 1	status,validate_and_load_static_assets
+validate-invalid-header.patch	validate	test_invalid_header	assertion failed: goose_metrics.errors.len() == 1	header_value,not_header,validate_and_load_static_assets
+validate-invalid-header-value.patch	validate	test_invalid_header_value	assertion failed: goose_metrics.errors.len() == 1	header_value,valid_header_value
+flow-op.patch	drupal	drupal_flows	behaviour log_in posts the form and validates the logged in page	log_in
+flow-path.patch	drupal	drupal_flows	behaviour log_in at a custom path	log_in
+flow-form-id.patch	drupal	drupal_flows	behaviour log_in posts a custom form_id	log_in
+flow-name.patch	drupal	drupal_flows	behaviour log_in posts the form and validates the logged in page	log_in
+flow-default-username.patch	drupal	drupal_flows	behaviour log_in defaults to username and password at user/login	LoginBuilder,Login
+flow-default-password.patch	drupal	drupal_flows	behaviour log_in defaults to username and password at user/login	LoginBuilder,Login
+flow-default-url.patch	drupal	drupal_flows	behaviour log_in defaults to username and password at user/login	LoginBuilder,Login
+flow-status-form.patch	drupal	drupal_flows	behaviour log_in with status validation on both pages	log_in
+flow-page-status.patch	drupal	drupal_flows	behaviour log_in fails the log in page status	log_in
+flow-page-validation.patch	drupal	drupal_flows	behaviour log_in fails the log in page status	log_in
+flow-landing-validation.patch	drupal	drupal_flows	behaviour log_in fails the logged in page validation	log_in
+flow-title.patch	drupal	drupal_flows	behaviour log_in fails when the logged in title lacks the username	log_in
+flow-wrong-password.patch	drupal	drupal_flows	behaviour log_in fails on a wrong password	log_in
+flow-no-form.patch	drupal	drupal_flows	behaviour log_in fails without a log in form	log_in
+flow-no-build-id.patch	drupal	drupal_flows	behaviour log_in fails without a form_build_id	log_in
+flow-no-form-id.patch	drupal	drupal_flows	behaviour log_in fails without a form_id	log_in
+flow-builder-username.patch	drupal	drupal_flows	behaviour log_in posts the form and validates the logged in page	LoginBuilder
+flow-builder-password.patch	drupal	drupal_flows	behaviour log_in posts the form and validates the logged in page	LoginBuilder
+flow-builder-url.patch	drupal	drupal_flows	behaviour log_in at a custom path	LoginBuilder
+flow-builder-page-validation.patch	drupal	drupal_flows	behaviour log_in fails the log in page status	LoginBuilder
+flow-builder-landing-validation.patch	drupal	drupal_flows	behaviour log_in fails the logged in page validation	LoginBuilder
+flow-login-build-url.patch	drupal	drupal_flows	behaviour log_in at a custom path	LoginBuilder,Login
+flow-search-keys.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	search
+flow-search-values.patch	drupal	drupal_flows	behaviour search posts extra form values	search
+flow-search-default-url.patch	drupal	drupal_flows	behaviour search defaults to Search at search	SearchParamsBuilder,SearchParams
+flow-search-default-submit.patch	drupal	drupal_flows	behaviour search defaults to Search at search	SearchParamsBuilder,SearchParams
+flow-search-default-values.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	SearchParamsBuilder,SearchParams
+flow-search-submit.patch	drupal	drupal_flows	behaviour search posts a custom submit	search
+flow-search-page-validation.patch	drupal	drupal_flows	behaviour search fails the search page validation	search
+flow-search-results-validation.patch	drupal	drupal_flows	behaviour search fails the results page validation	search
+flow-search-form.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	search,get_form
+flow-builder-keys.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	SearchParamsBuilder
+flow-builder-search-url.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	SearchParamsBuilder
+flow-builder-form-values.patch	drupal	drupal_flows	behaviour search posts extra form values	SearchParamsBuilder
+flow-builder-submit.patch	drupal	drupal_flows	behaviour search posts a custom submit	SearchParamsBuilder
+flow-builder-search-page-validation.patch	drupal	drupal_flows	behaviour search fails the search page validation	SearchParamsBuilder
+flow-builder-results-validation.patch	drupal	drupal_flows	behaviour search fails the results page validation	SearchParamsBuilder
+flow-search-build-url.patch	drupal	drupal_flows	behaviour search posts the form and validates both pages	SearchParamsBuilder,SearchParams
+flow-ajax-build-id.patch	drupal	get_updated_build_id_on_drupal_ajax_response	get_updated_build_id case drupal ajax response	get_updated_build_id
+env-user.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
+env-pass.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
+env-title.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
+doc-none.patch	doc	src/lib.rs - Validate<'a>::none (line 91)	doc example none	none,Validate
+doc-validate-builder.patch	doc	src/lib.rs - ValidateBuilder (line 108)	doc example ValidateBuilder	ValidateBuilder,text,validate_and_load_static_assets
+doc-build.patch	doc	src/lib.rs - ValidateBuilder<'a>::build (line 652)	doc example build	build
+doc-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 436)	doc example header:	header
+doc-header-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 452)	doc example header, twice	header
+doc-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 528)	doc example header_value:	header_value
+doc-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 545)	doc example header_value, with header	header_value
+doc-not-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 482)	doc example not_header:	not_header
+doc-not-header-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 498)	doc example not_header, with header	not_header
+doc-not-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 579)	doc example not_header_value:	not_header_value
+doc-not-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 596)	doc example not_header_value, with header	not_header_value
+doc-not-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_status (line 198)	doc example not_status	not_status
+doc-not-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 305)	doc example not_text:	not_text
+doc-not-text-with-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 320)	doc example not_text, with text	not_text
+doc-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 390)	doc example not_texts:	not_texts
+doc-not-texts-with-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 405)	doc example not_texts, with texts	not_texts
+doc-not-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_title (line 246)	doc example not_title	not_title
+doc-redirect.patch	doc	src/lib.rs - ValidateBuilder<'a>::redirect (line 630)	doc example redirect(true)	redirect
+doc-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::status (line 175)	doc example status	status
+doc-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 270)	doc example text:	text
+doc-text-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 284)	doc example text, twice	text
+doc-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 347)	doc example texts:	texts
+doc-texts-with-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 362)	doc example texts, with not_texts	texts,not_texts
+doc-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::title (line 222)	doc example title	title
+doc-get-html-header.patch	doc	src/lib.rs - get_html_header (line 683)	assertion failed: !html_header.is_none()	get_html_header
+doc-get-title.patch	doc	src/lib.rs - get_title (line 721)	right: "Example Website"	get_title
+doc-header-is-set.patch	doc	src/lib.rs - header_is_set (line 924)	doc example header_is_set	header_is_set
+doc-load-static-elements.patch	doc	src/lib.rs - load_static_elements (line 1134)	doc example load_static_elements: static asset requests	load_static_elements
+doc-valid-header-value.patch	doc	src/lib.rs - valid_header_value (line 979)	doc example valid_header_value	valid_header_value
+doc-valid-text.patch	doc	src/lib.rs - valid_text (line 859)	doc example valid_text	valid_text
+doc-valid-title.patch	doc	src/lib.rs - valid_title (line 782)	doc example valid_title	valid_title
+doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (line 1500)	doc example validate_and_load_static_assets: static asset requests	validate_and_load_static_assets
+doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1213)	doc example validate_page: static asset requests	validate_page
+doc-get-bigpipe-form.patch	doc	src/drupal.rs - drupal::get_bigpipe_form (line 113)	assertion failed: !form.is_empty()	get_bigpipe_form
+doc-get-encoded-form-value.patch	doc	src/drupal.rs - drupal::get_encoded_form_value (line 171)	form-R8d9JOp8eKObiNR_vFlOzSD6erWoR5-dHQx8s2toZLY	get_encoded_form_value
+doc-get-encoded-form-values.patch	doc	src/drupal.rs - drupal::get_encoded_form_values (line 274)	4OCYabXYY116z0_ixUaxzbYlVxEgchgThmF9O3uJqbI	get_encoded_form_values
+doc-get-form.patch	doc	src/drupal.rs - drupal::get_form (line 14)	assertion failed: !form.is_empty()	get_form
+doc-get-form-value.patch	doc	src/drupal.rs - drupal::get_form_value (line 60)	form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM	get_form_value
+doc-get-form-values.patch	doc	src/drupal.rs - drupal::get_form_values (line 223)	5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8	get_form_values
+doc-get-updated-build-id.patch	doc	src/drupal.rs - drupal::get_updated_build_id (line 192)	form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc	get_updated_build_id
+doc-log-in.patch	doc	src/drupal.rs - drupal::log_in (line 583)	doc example log_in	log_in
+doc-login-builder.patch	doc	src/drupal.rs - drupal::LoginBuilder (line 341)	doc example LoginBuilder	LoginBuilder,Login
+doc-login-build.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::build (line 539)	doc example LoginBuilder::build	LoginBuilder,Login
+doc-log-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::log_in_page_validation (line 470)	doc example log_in_page_validation	LoginBuilder,log_in
+doc-logged-in-search.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 502)	doc example logged_in_page_validation, search	SearchParamsBuilder,search
+doc-logged-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 514)	doc example logged_in_page_validation:	LoginBuilder,log_in
+doc-password.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::password (line 418)	doc example password	LoginBuilder
+doc-login-url.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::url (line 441)	doc example url	LoginBuilder,log_in
+doc-username.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::username (line 393)	doc example username	LoginBuilder
+doc-search-params-builder.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 797)	doc example SearchParamsBuilder:	SearchParamsBuilder,search
+doc-search-params-builder-customized.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 826)	doc example SearchParamsBuilder, customized	SearchParamsBuilder
+doc-search-params-build.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::build (line 1060)	doc example SearchParamsBuilder::build	SearchParamsBuilder,SearchParams
+doc-form-values.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::form_values (line 949)	doc example form_values	SearchParamsBuilder
+doc-keys.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::keys (line 901)	doc example keys	SearchParamsBuilder
+doc-results-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::results_page_validation (line 1036)	doc example results_page_validation	SearchParamsBuilder,search
+doc-search-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::search_page_validation (line 979)	doc example search_page_validation	SearchParamsBuilder,search
+doc-submit.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::submit (line 1006)	doc example submit	SearchParamsBuilder,search
+doc-search-url.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::url (line 924)	doc example url	SearchParamsBuilder
+doc-search.patch	doc	src/drupal.rs - drupal::search (line 1098)	doc example search	search
+doc-random-word.patch	doc	src/text.rs - text::random_word (line 10)	right: 10	random_word
+doc-random-words.patch	doc	src/text.rs - text::random_words (line 29)	right: 5	random_words

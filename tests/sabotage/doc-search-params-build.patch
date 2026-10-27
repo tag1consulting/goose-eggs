@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..a8e3e79 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1078,7 +1078,7 @@ impl<'a> SearchParamsBuilder<'a> {
+             results_page_validation,
+         } = self;
+         SearchParams {
+-            keys,
++            keys: "",
+             url,
+             form_values,
+             search_page_validation,

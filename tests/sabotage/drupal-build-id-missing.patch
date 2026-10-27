@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..801f1e9 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -210,7 +210,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
+         Some(v) => v[1].to_string(),
+         None => {
+             warn!("update_build_id not found");
+-            "none".to_string()
++            "".to_string()
+         }
+     }
+ }

@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..97fd837 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1535,7 +1535,7 @@ pub async fn validate_and_load_static_assets<'a>(
+             load_static_elements(user, &html).await;
+             Ok(html)
+         }
+-        Err(e) => Err(e),
++        Err(_) => Ok(String::new()),
+     }
+ }
+ 

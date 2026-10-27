@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..7a039f4 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1459,7 +1459,7 @@ pub async fn validate_page<'a>(
+                             return Ok(html);
+                         }
+                     }
+-                    Ok(html)
++                    { load_static_elements(user, &html).await; Ok(html) }
+                 }
+                 Err(e) => {
+                     user.set_failure(

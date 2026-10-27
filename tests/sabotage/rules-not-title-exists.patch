@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..c4cdcff 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -255,7 +255,7 @@ impl<'a> ValidateBuilder<'a> {
+     /// ```
+     pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
+         self.title = Some(ValidateTitle {
+-            exists: false,
++            exists: true,
+             title: title.into(),
+         });
+         self

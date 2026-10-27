@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..6215fdc 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1431,7 +1431,7 @@ pub async fn validate_page<'a>(
+                     }
+                     // Validate texts in body if defined.
+                     for validate_text in &validate.texts {
+-                        if !validate_text.exists && valid_text(&html, validate_text.text) {
++                        if !validate_text.exists && false && valid_text(&html, validate_text.text) {
+                             user.set_failure(
+                                 &format!(
+                                     "{}: text found on page: {}",

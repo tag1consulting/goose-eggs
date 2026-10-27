@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..eb08e10 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -630,7 +630,7 @@ pub async fn log_in(
+         // Build request manually if validating a specific status code.
+         let goose_request = GooseRequest::builder()
+             .path(login.url)
+-            .expect_status_code(validate_status.status_code)
++            .expect_status_code(200)
+             .build();
+         user.request(goose_request).await.unwrap()
+     } else {

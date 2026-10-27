@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..97d2eb7 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -910,7 +910,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
+ /// # assert!(result.is_ok(), "doc example valid_text: {}", support::failure(&result));
+ /// ```
+ pub fn valid_text(html: &str, text: &str) -> bool {
+-    html.contains(text)
++    html.contains(text) && !text.contains('$')
+ }
+ 
+ /// Returns a [`bool`] indicating whether or not a header was set in the server Response.

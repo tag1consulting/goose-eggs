@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..68034cf 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1313,7 +1313,7 @@ pub async fn validate_page<'a>(
+                 if !validate_header.exists {
+                     // `not_header` refuses the header; `not_header_value` refuses
+                     // only the value, so the header itself may be set.
+-                    if validate_header.value.is_empty()
++                    if !validate_header.value.is_empty()
+                         && header_is_set(headers, validate_header.header)
+                     {
+                         // Get as much as we can from the response for useful debug logging.

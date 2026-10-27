@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..b9cccbb 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -672,7 +672,7 @@ pub async fn log_in(
+ 
+     // Also extract the form_id (defaults to `user_login_form`).
+     let form_id = get_form_value(&login_form, "form_id");
+-    if form_id.is_empty() || form_id == "none" {
++    if form_id.is_empty() {
+         user.set_failure(
+             &format!("{}: no form_id on page", login.url),
+             &mut login_request,

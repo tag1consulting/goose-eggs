@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..9742df9 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -158,7 +158,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
+         Some(capture) => capture[1].to_string(),
+         None => {
+             warn!("bigpipe form {} not found", name);
+-            "".to_string()
++            "none".to_string()
+         }
+     }
+ }

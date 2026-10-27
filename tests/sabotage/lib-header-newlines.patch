@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..0005d36 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -710,7 +710,7 @@ impl<'a> ValidateBuilder<'a> {
+ pub fn get_html_header(html: &str) -> Option<String> {
+     let re = Regex::new(r#"<head(.*?)</head>"#).unwrap();
+     // Strip carriage returns to simplify regex.
+-    let line = html.replace('\n', "");
++    let line = html.replace('\r', "");
+     // Return the entire html header, a subset of the received html.
+     re.captures(&line).map(|value| value[0].to_string())
+ }

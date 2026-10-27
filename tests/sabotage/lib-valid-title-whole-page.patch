@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..42fc670 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -835,7 +835,7 @@ pub fn get_title(html: &str) -> Option<String> {
+ /// ```
+ pub fn valid_title(html: &str, title: &str) -> bool {
+     // Extract the HTML header from the provided html.
+-    let html_header = get_html_header(html).unwrap_or_default();
++    let html_header = html.to_string();
+     // Next extract the title from the HTML header.
+     let html_title = get_title(&html_header).unwrap_or_default();
+     // Finally, confirm that the title contains the expected text.

@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..c818816 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -613,7 +613,7 @@ pub async fn log_in(
+ 
+     // Use the `GOOSE_PASS` environment variable if it's set, otherwise use the specified
+     // (or default) login password.
+-    let password = env::var("GOOSE_PASS").unwrap_or_else(|_| login.password.to_string());
++    let password = env::var("GOOSE_PASSWORD").unwrap_or_else(|_| login.password.to_string());
+ 
+     // By default verify that the standard user-login-form exists on the page.
+     let default_validation = crate::Validate::builder()

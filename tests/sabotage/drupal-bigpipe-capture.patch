@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..abb5cb9 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -155,7 +155,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
+     let line = html.replace('\n', "");
+     // Return the entire form, a subset of the received html.
+     match re.captures(&line) {
+-        Some(capture) => capture[1].to_string(),
++        Some(capture) => capture[0].to_string(),
+         None => {
+             warn!("bigpipe form {} not found", name);
+             "".to_string()

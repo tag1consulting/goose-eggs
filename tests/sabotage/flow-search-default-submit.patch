@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..a7a885f 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -885,7 +885,7 @@ impl<'a> SearchParamsBuilder<'a> {
+             // Defaults to no extra search page validation.
+             search_page_validation: None,
+             // Defaults to a search button named "Search".
+-            submit: "Search",
++            submit: "Go",
+             // Defaults to no extra results page validation.
+             results_page_validation: None,
+         }

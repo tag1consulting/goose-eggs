@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..2494142 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -619,7 +619,7 @@ pub async fn log_in(
+     let default_validation = crate::Validate::builder()
+         .text(r#"<form class="user-login-form"#)
+         .build();
+-    let validate = if let Some(validation) = login.log_in_page_validation {
++    let validate = if let Some(validation) = None::<&crate::Validate> {
+         validation
+     } else {
+         &default_validation

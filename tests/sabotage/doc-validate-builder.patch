@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..ee552d8 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -292,7 +292,7 @@ impl<'a> ValidateBuilder<'a> {
+     /// # support::proves("text, twice", &_validate, &support::page("example another"), &support::page("example"));
+     /// ```
+     pub fn text(mut self, text: &'a str) -> Self {
+-        self.texts.push(ValidateText { exists: true, text });
++        self.texts.push(ValidateText { exists: false, text });
+         self
+     }
+ 

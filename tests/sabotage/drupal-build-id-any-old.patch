@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..22bb0e1 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -202,7 +202,7 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
+ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
+     let re = Regex::new(&format!(
+         "{}{}{}",
+-        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
++        r#"\{"command":"update_build_id","old":""#, ".*?", r#"","new":"(.*?)"\}"#
+     ))
+     .unwrap();
+     // Return a specific form value.

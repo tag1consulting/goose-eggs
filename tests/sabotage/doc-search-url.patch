@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..9d10a9f 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -933,7 +933,7 @@ impl<'a> SearchParamsBuilder<'a> {
+     /// # support::search("url", &server, &search_params);
+     /// ```
+     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
+-        self.url = url.into();
++        self.url = { let _: &str = url.into(); "search" };
+         self
+     }
+ 

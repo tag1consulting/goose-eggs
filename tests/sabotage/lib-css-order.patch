@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..b038cbf 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1119,7 +1119,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+     let mut elements: Vec<String> = Vec::new();
+     for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
+         if valid_local_uri(user, &url[1]) {
+-            elements.push(url[1].to_string());
++            elements.insert(0, url[1].to_string());
+         }
+     }
+     elements

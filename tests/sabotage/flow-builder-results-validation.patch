@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..a10418a 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1050,7 +1050,7 @@ impl<'a> SearchParamsBuilder<'a> {
+     /// # support::search("results_page_validation", &server, &search_params);
+     /// ```
+     pub fn results_page_validation(mut self, validation: &'a crate::Validate) -> Self {
+-        self.results_page_validation = Some(validation);
++        self.results_page_validation = { let _ = validation; None };
+         self
+     }
+ 

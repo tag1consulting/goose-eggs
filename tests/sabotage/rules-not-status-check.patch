@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..6496c22 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1268,7 +1268,7 @@ pub async fn validate_page<'a>(
+             // Validate status code if defined.
+             if let Some(validate_status) = validate.status.as_ref() {
+                 // If equals is false, error if response.status == status
+-                if !validate_status.equals && response.status() == validate_status.status_code {
++                if !validate_status.equals && response.status() != validate_status.status_code {
+                     // Get as much as we can from the response for useful debug logging.
+                     let headers = &response.headers().clone();
+                     let response_status = response.status();

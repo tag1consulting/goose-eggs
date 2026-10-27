@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..290f751 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -373,7 +373,7 @@ impl<'a> LoginBuilder<'a> {
+             // Defaults to a password of "password".
+             password: "password",
+             // Defaults to Drupal's standard login path of "user/login".
+-            url: "user/login",
++            url: "user",
+             // Default tos performing no extra validation.
+             log_in_page_validation: None,
+             // Defaults to performing no extra validation.

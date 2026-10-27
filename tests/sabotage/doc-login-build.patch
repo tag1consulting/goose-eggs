@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..4a754a9 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -556,7 +556,7 @@ impl<'a> LoginBuilder<'a> {
+             logged_in_page_validation,
+         } = self;
+         Login {
+-            username,
++            username: "username",
+             password,
+             url,
+             log_in_page_validation,

@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..8ff9bda 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -560,7 +560,7 @@ impl<'a> ValidateBuilder<'a> {
+     /// ```
+     pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
+         self.headers.push(ValidateHeader {
+-            exists: true,
++            exists: false,
+             header: header.into(),
+             value: value.into(),
+         });

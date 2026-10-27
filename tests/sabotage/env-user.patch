@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..c65398f 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -609,7 +609,7 @@ pub async fn log_in(
+ ) -> Result<String, Box<TransactionError>> {
+     // Use the `GOOSE_USER` environment variable if it's set, otherwise use the specified
+     // (or default) login username.
+-    let username = env::var("GOOSE_USER").unwrap_or_else(|_| login.username.to_string());
++    let username = env::var("GOOSE_USERNAME").unwrap_or_else(|_| login.username.to_string());
+ 
+     // Use the `GOOSE_PASS` environment variable if it's set, otherwise use the specified
+     // (or default) login password.

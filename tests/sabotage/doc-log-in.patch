@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..e0ea326 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -696,7 +696,7 @@ pub async fn log_in(
+     // Build log in form with username and password from environment.
+     let params = [
+         ("name", &username),
+-        ("pass", &password),
++        ("pass", &username),
+         ("form_build_id", &form_build_id),
+         ("form_id", &form_id),
+         ("op", &"Log in".to_string()),

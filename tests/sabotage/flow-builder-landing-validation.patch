@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..5ffff48 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -529,7 +529,7 @@ impl<'a> LoginBuilder<'a> {
+     /// # support::log_in("logged_in_page_validation", &server, &_login);
+     /// ```
+     pub fn logged_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
+-        self.logged_in_page_validation = Some(validation);
++        self.logged_in_page_validation = { let _ = validation; None };
+         self
+     }
+ 

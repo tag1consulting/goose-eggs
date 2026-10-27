@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..f1ac4d6 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -715,7 +715,7 @@ pub async fn log_in(
+             .build();
+         user.request(goose_request).await.unwrap()
+     } else {
+-        user.post_form(login.url, &params).await?
++        user.post_form("user/login", &params).await?
+     };
+ 
+     // A successful log in is redirected.

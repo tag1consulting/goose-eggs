@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..d9efed3 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -369,7 +369,7 @@ impl<'a> LoginBuilder<'a> {
+     fn new() -> Self {
+         Self {
+             // Defaults to a username of "username".
+-            username: "username",
++            username: "user",
+             // Defaults to a password of "password".
+             password: "password",
+             // Defaults to Drupal's standard login path of "user/login".

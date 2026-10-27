@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..ecb4bd1 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1098,7 +1098,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
+     // <foo> is the URL to local image and js assets.
+     // @TODO: parse HTML5 srcset= also
+-    let src_elements = Regex::new(r#"(?i)src="(.*?)""#).unwrap();
++    let src_elements = Regex::new(r#"src="(.*?)""#).unwrap();
+     let mut elements: Vec<String> = Vec::new();
+     for url in src_elements.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
+         if valid_local_uri(user, &url[1]) {

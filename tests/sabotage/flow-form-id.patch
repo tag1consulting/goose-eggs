@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..35f3fde 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -698,7 +698,7 @@ pub async fn log_in(
+         ("name", &username),
+         ("pass", &password),
+         ("form_build_id", &form_build_id),
+-        ("form_id", &form_id),
++        ("form_id", &"user_login_form".to_string()),
+         ("op", &"Log in".to_string()),
+     ];
+     // Post the log in form.

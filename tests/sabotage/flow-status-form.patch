@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..4a98a00 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -711,7 +711,7 @@ pub async fn log_in(
+             .path(login.url)
+             .method(GooseMethod::Post)
+             .expect_status_code(validate_status.status_code)
+-            .set_request_builder(reqwest_request_builder.form(&params))
++            .set_request_builder(reqwest_request_builder)
+             .build();
+         user.request(goose_request).await.unwrap()
+     } else {

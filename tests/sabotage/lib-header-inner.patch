@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 96871fe..706f541 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -712,7 +712,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
+     // Strip carriage returns to simplify regex.
+     let line = html.replace('\n', "");
+     // Return the entire html header, a subset of the received html.
+-    re.captures(&line).map(|value| value[0].to_string())
++    re.captures(&line).map(|value| value[1].to_string())
+ }
+ 
+ /// Use a regular expression to get the web page title.

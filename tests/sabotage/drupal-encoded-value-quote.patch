@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index cc2a622..53f00f6 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -180,7 +180,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
+ /// ```
+ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
+     // Decode quotes, which is enough for the normal get_form_value() regex to work.
+-    let decoded_form = form_html.replace("\\u0022", r#"""#);
++    let decoded_form = form_html.replace("\\u0022", "'");
+     get_form_value(&decoded_form, name)
+ }
+ 
