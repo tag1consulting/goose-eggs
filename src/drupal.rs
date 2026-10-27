@@ -627,9 +627,10 @@ pub async fn log_in(
         return Ok("".to_string());
     }
 
-    // Now extract the form_build_id in order to POST to the log in form.
+    // Now extract the form_build_id in order to POST to the log in form
+    // (`get_form_value` returns "none" when it is missing).
     let form_build_id = get_form_value(&login_form, "form_build_id");
-    if form_build_id.is_empty() {
+    if form_build_id.is_empty() || form_build_id == "none" {
         user.set_failure(
             &format!("{}: no form_build_id on page", login.url),
             &mut login_request,
@@ -643,7 +644,7 @@ pub async fn log_in(
 
     // Also extract the form_id (defaults to `user_login_form`).
     let form_id = get_form_value(&login_form, "form_id");
-    if form_id.is_empty() {
+    if form_id.is_empty() || form_id == "none" {
         user.set_failure(
             &format!("{}: no form_id on page", login.url),
             &mut login_request,
