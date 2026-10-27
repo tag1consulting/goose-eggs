@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html class="wp-toolbar"
+	lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Dashboard &lsaquo; Theme Test Data &#8212; WordPress</title>
+<script>
+addLoadEvent = function(func){if(typeof jQuery!=='undefined')jQuery(function(){func();});else if(typeof wpOnload!=='function'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};
+var ajaxurl = '/wp-admin/admin-ajax.php',
+	pagenow = 'dashboard',
+	typenow = '',
+	adminpage = 'index-php',
+	thousandsSeparator = ',',
+	decimalPoint = '.',
+	isRtl = 0;
+</script>
+<link rel='stylesheet' href='/wp-admin/load-styles.php?c=0&amp;dir=ltr&amp;load%5Bchunk_0%5D=dashicons,admin-bar,site-health,common,forms,admin-menu,dashboard,list-tables,edit,revisions,media,themes,about,nav-menus,wp-poi&amp;load%5Bchunk_1%5D=nter,widgets,site-icon,l10n,wp-base-styles,wp-tooltip,buttons,wp-auth-check,wp-theme,wp-components,wp-commands&amp;ver=7.1.3' media='all' />
+<style>
+@media print { #wpadminbar { display:none; } }
+/*# sourceURL=css-inline-concat-dashicons%2Cadmin-bar%2Csite-health%2Ccommon%2Cforms%2Cadmin-menu%2Cdashboard%2Clist-tables%2Cedit%2Crevisions%2Cmedia%2Cthemes%2Cabout%2Cnav-menus%2Cwp-pointer%2Cwidgets%2Csite-icon%2Cl10n%2Cwp-base-styles%2Cwp-tooltip%2Cbuttons%2Cwp-auth-check%2Cwp-theme%2Cwp-components%2Cwp-commands */
+</style>
+<link rel='stylesheet' id='thickbox-css' href='/wp-includes/js/thickbox/thickbox.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='colors-css' href='/wp-admin/css/colors/modern/colors.min.css?ver=7.1.3' media='all' />
+<style id="wp-view-transitions-admin-inline-css">
+/*! This file is auto-generated */
+@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}#adminmenu>.menu-top{view-transition-name:attr(id type(<custom-ident>),none)}}
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<style class="wp-fonts-local">
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Fira Code";font-style:normal;font-weight:300 700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2') format('woff2');}
+</style>
+<style class="wp-fonts-local">
+@font-face{font-family:Beiruti;font-style:normal;font-weight:200 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/beiruti/Beiruti-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:Vollkorn;font-style:italic;font-weight:400 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Vollkorn;font-style:normal;font-weight:400 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Fira Code";font-style:normal;font-weight:300 700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:normal;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:italic;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:italic;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Roboto Slab";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/roboto-slab/RobotoSlab-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:italic;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:normal;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:italic;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:100;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Thin.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:100;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ThinItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Light.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-LightItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Italic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Regular.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Medium.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-SemiBold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Bold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Black.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:Beiruti;font-style:normal;font-weight:200 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/beiruti/Beiruti-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:Vollkorn;font-style:italic;font-weight:400 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Vollkorn;font-style:normal;font-weight:400 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Fira Code";font-style:normal;font-weight:300 700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:normal;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:italic;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:italic;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Roboto Slab";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/roboto-slab/RobotoSlab-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:normal;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Ysabeau Office";font-style:italic;font-weight:100 900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/ysabeau-office/YsabeauOffice-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:normal;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Platypi;font-style:italic;font-weight:300 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/platypi/Platypi-Italic-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Light.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-LightItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Regular.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-RegularItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Medium.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Bold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-Black.woff2') format('woff2');}
+@font-face{font-family:Literata;font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/literata/Literata72pt-BlackItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:100;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Thin.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:100;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ThinItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraLight.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:200;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraLightItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Light.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:300;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-LightItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Italic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:400;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Regular.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Medium.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:500;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-MediumItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-SemiBold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:600;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-SemiBoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Bold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-BoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraBold.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-ExtraBoldItalic.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:normal;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-Black.woff2') format('woff2');}
+@font-face{font-family:"Fira Sans";font-style:italic;font-weight:900;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-sans/FiraSans-BlackItalic.woff2') format('woff2');}
+</style>
+<script>
+var userSettings = {"url":"/","uid":"1","time":"1793102991","secure":""};
+//# sourceURL=js-inline-concat-jquery-core%2Cjquery-migrate%2Cutils
+</script>
+<script src="/wp-admin/load-scripts.php?c=0&#038;load%5Bchunk_0%5D=jquery-core,jquery-migrate,utils&#038;ver=7.1.3"></script>
+<script>var _wpColorScheme = {"icons":{"base":"#f3f1f1","focus":"#fff","current":"#fff"}};</script>
+	<link id="wp-admin-canonical" rel="canonical" href="/wp-admin/" />
+	<script>
+		if ( window.history.replaceState ) {
+			window.history.replaceState( null, null, document.getElementById( 'wp-admin-canonical' ).href + window.location.hash );
+		}
+	</script>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body class="wp-admin wp-core-ui no-js index-php auto-fold admin-bar branch-7-1 version-7-1-3 admin-color-modern locale-en-us no-customize-support svg wp-theme-twentytwentyfive">
+<script>
+	document.body.className = document.body.className.replace('no-js','js');
+</script>
+
+<script>
+		(function() {
+			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+				request = true;
+	
+			b[c] = b[c].replace( rcs, ' ' );
+			// The customizer requires postMessage and CORS (if the site is cross domain).
+			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+		}());
+	
+//# sourceURL=wp_customize_support_script
+</script>
+
+<div id="wpwrap">
+
+<div id="adminmenumain" role="navigation" aria-label="Main menu">
+<a href="#wpbody-content" class="screen-reader-shortcut">Skip to main content</a>
+<a href="#wp-toolbar" class="screen-reader-shortcut">Skip to toolbar</a>
+<div id="adminmenuback"></div>
+<div id="adminmenuwrap">
+<ul id="adminmenu">
+
+
+	<li class="wp-first-item wp-has-submenu wp-has-current-submenu wp-menu-open menu-top menu-top-first menu-icon-dashboard menu-top-last" id="menu-dashboard">
+	<a href='index.php' class="wp-first-item wp-has-submenu wp-has-current-submenu wp-menu-open menu-top menu-top-first menu-icon-dashboard menu-top-last" ><div class='wp-menu-image dashicons-before dashicons-dashboard' aria-hidden='true'><br /></div><div class='wp-menu-name'>Dashboard</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Dashboard</li><li class="wp-first-item current"><a href='index.php' class="wp-first-item current" aria-current="page">Home</a></li><li><a href='update-core.php'>Updates <span class="update-plugins count-0"><span class="update-count">0</span></span></a></li></ul></li>
+	<li class="wp-not-current-submenu wp-menu-separator" aria-hidden="true"><div class="separator"></div></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-post open-if-no-js menu-top-first" id="menu-posts">
+	<a href='edit.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-post open-if-no-js menu-top-first" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-post' aria-hidden='true'><br /></div><div class='wp-menu-name'>Posts</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Posts</li><li class="wp-first-item"><a href='edit.php' class="wp-first-item">All Posts</a></li><li><a href='post-new.php'>Add Post</a></li><li><a href='edit-tags.php?taxonomy=category'>Categories</a></li><li><a href='edit-tags.php?taxonomy=post_tag'>Tags</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-media" id="menu-media">
+	<a href='upload.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-media" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-media' aria-hidden='true'><br /></div><div class='wp-menu-name'>Media</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Media</li><li class="wp-first-item"><a href='upload.php' class="wp-first-item">Library</a></li><li><a href='media-new.php'>Add Media File</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-page" id="menu-pages">
+	<a href='edit.php?post_type=page' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-page" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-page' aria-hidden='true'><br /></div><div class='wp-menu-name'>Pages</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Pages</li><li class="wp-first-item"><a href='edit.php?post_type=page' class="wp-first-item">All Pages</a></li><li><a href='post-new.php?post_type=page'>Add Page</a></li></ul></li>
+	<li class="wp-not-current-submenu menu-top menu-icon-comments menu-top-last" id="menu-comments">
+	<a href='edit-comments.php' class="wp-not-current-submenu menu-top menu-icon-comments menu-top-last" ><div class='wp-menu-image dashicons-before dashicons-admin-comments' aria-hidden='true'><br /></div><div class='wp-menu-name'>Comments <span class="awaiting-mod count-5"><span class="pending-count" aria-hidden="true">5</span><span class="comments-in-moderation-text screen-reader-text">5 Comments in moderation</span></span></div></a></li>
+	<li class="wp-not-current-submenu wp-menu-separator" aria-hidden="true"><div class="separator"></div></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-appearance menu-top-first" id="menu-appearance">
+	<a href='themes.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-appearance menu-top-first" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-appearance' aria-hidden='true'><br /></div><div class='wp-menu-name'>Appearance</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Appearance</li><li class="wp-first-item"><a href='themes.php' class="wp-first-item">Themes <span class="update-plugins count-0"><span class="theme-count">0</span></span></a></li><li><a href='site-editor.php'>Editor</a></li><li><a href='font-library.php'>Fonts</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-plugins" id="menu-plugins">
+	<a href='plugins.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-plugins" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-plugins' aria-hidden='true'><br /></div><div class='wp-menu-name'>Plugins <span class="update-plugins count-0"><span class="plugin-count">0</span></span></div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Plugins <span class="update-plugins count-0"><span class="plugin-count">0</span></span></li><li class="wp-first-item"><a href='plugins.php' class="wp-first-item">Installed Plugins</a></li><li><a href='plugin-install.php'>Add Plugin</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-users" id="menu-users">
+	<a href='users.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-users" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-users' aria-hidden='true'><br /></div><div class='wp-menu-name'>Users</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Users</li><li class="wp-first-item"><a href='users.php' class="wp-first-item">All Users</a></li><li><a href='user-new.php'>Add User</a></li><li><a href='profile.php'>Profile</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-tools" id="menu-tools">
+	<a href='tools.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-tools" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-tools' aria-hidden='true'><br /></div><div class='wp-menu-name'>Tools</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Tools</li><li class="wp-first-item"><a href='tools.php' class="wp-first-item">Available Tools</a></li><li><a href='import.php'>Import</a></li><li><a href='export.php'>Export</a></li><li><a href='site-health.php'>Site Health <span class="menu-counter site-health-counter count-0"><span class="count">0</span></span></a></li><li><a href='export-personal-data.php'>Export Personal Data</a></li><li><a href='erase-personal-data.php'>Erase Personal Data</a></li><li><a href='theme-editor.php'>Theme File Editor</a></li><li><a href='plugin-editor.php'>Plugin File Editor</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-settings menu-top-last" id="menu-settings">
+	<a href='options-general.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-settings menu-top-last" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-settings' aria-hidden='true'><br /></div><div class='wp-menu-name'>Settings</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Settings</li><li class="wp-first-item"><a href='options-general.php' class="wp-first-item">General</a></li><li><a href='options-connectors.php'>Connectors</a></li><li><a href='options-writing.php'>Writing</a></li><li><a href='options-reading.php'>Reading</a></li><li><a href='options-discussion.php'>Discussion</a></li><li><a href='options-media.php'>Media</a></li><li><a href='options-permalink.php'>Permalinks</a></li><li><a href='options-privacy.php'>Privacy</a></li></ul></li><li id="collapse-menu" class="hide-if-no-js"><button type="button" id="collapse-button" aria-label="Collapse Main Menu" aria-expanded="true"><span class="collapse-button-icon" aria-hidden="true"></span><span class="collapse-button-label">Collapse Menu</span></button></li></ul>
+</div>
+</div>
+<div id="wpcontent">
+
+		<div id="wpadminbar" class="nojq nojs">
+						<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
+				<ul role='menu' id='wp-admin-bar-root-default' class="ab-top-menu"><li role='group' id='wp-admin-bar-menu-toggle'><a class='ab-item' role="menuitem" href='#'><span class="ab-icon" aria-hidden="true"></span><span class="screen-reader-text">Menu</span></a></li><li role='group' id='wp-admin-bar-wp-logo' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='/wp-admin/about.php'><span class="ab-icon" aria-hidden="true"></span><span class="screen-reader-text">About WordPress</span></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='About WordPress' id='wp-admin-bar-wp-logo-default' class="ab-submenu"><li role='group' id='wp-admin-bar-about'><a class='ab-item' role="menuitem" href='/wp-admin/about.php'>About WordPress</a></li><li role='group' id='wp-admin-bar-contribute'><a class='ab-item' role="menuitem" href='/wp-admin/contribute.php'>Get Involved</a></li></ul><ul role='menu' aria-label='About WordPress' id='wp-admin-bar-wp-logo-external' class="ab-sub-secondary ab-submenu"><li role='group' id='wp-admin-bar-wporg'><a class='ab-item' role="menuitem" href='https://wordpress.org/'>WordPress.org</a></li><li role='group' id='wp-admin-bar-documentation'><a class='ab-item' role="menuitem" href='https://wordpress.org/documentation/'>Documentation</a></li><li role='group' id='wp-admin-bar-learn'><a class='ab-item' role="menuitem" href='https://learn.wordpress.org/'>Learn WordPress</a></li><li role='group' id='wp-admin-bar-support-forums'><a class='ab-item' role="menuitem" href='https://wordpress.org/support/forums/'>Support</a></li><li role='group' id='wp-admin-bar-feedback'><a class='ab-item' role="menuitem" href='https://wordpress.org/support/forum/requests-and-feedback'>Feedback</a></li></ul></div></li><li role='group' id='wp-admin-bar-site-name' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='/'>Theme Test Data</a><div class="ab-sub-wrapper"><ul role='menu' aria-label='Theme Test Data' id='wp-admin-bar-site-name-default' class="ab-submenu"><li role='group' id='wp-admin-bar-view-site'><a class='ab-item' role="menuitem" href='/'>Visit Site</a></li></ul></div></li><li role='group' id='wp-admin-bar-command-palette' class="hide-if-no-js"><a class='ab-item' role="menuitem" href='#' onclick='wp.data.dispatch( &quot;core/commands&quot; ).open(); return false;'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label"><kbd>Ctrl+K</kbd><span class="screen-reader-text"> Open command palette</span></span></a><script>
+( 	( applePattern, appleOSLabel ) => {
+		if ( ! ( new RegExp( applePattern, 'i' ) ).test( navigator.userAgent ) ) {
+			return;
+		}
+		const kbd = document.querySelector( '#wp-admin-bar-command-palette .ab-label kbd' );
+		if ( kbd ) {
+			kbd.textContent = appleOSLabel;
+		}
+	} )( "Macintosh|Mac OS X|Mac_PowerPC", "\u2318K" );
+//# sourceURL=wp_admin_bar_command_palette_menu
+</script>
+</li><li role='group' id='wp-admin-bar-comments'><a class='ab-item' role="menuitem" href='/wp-admin/edit-comments.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label awaiting-mod pending-count count-5" aria-hidden="true">5</span><span class="screen-reader-text comments-in-moderation-text">5 Comments in moderation</span></a></li><li role='group' id='wp-admin-bar-new-content' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='/wp-admin/post-new.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label">New</span></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='New' id='wp-admin-bar-new-content-default' class="ab-submenu"><li role='group' id='wp-admin-bar-new-post'><a class='ab-item' role="menuitem" href='/wp-admin/post-new.php'>Post</a></li><li role='group' id='wp-admin-bar-new-media'><a class='ab-item' role="menuitem" href='/wp-admin/media-new.php'>Media</a></li><li role='group' id='wp-admin-bar-new-page'><a class='ab-item' role="menuitem" href='/wp-admin/post-new.php?post_type=page'>Page</a></li><li role='group' id='wp-admin-bar-new-user'><a class='ab-item' role="menuitem" href='/wp-admin/user-new.php'>User</a></li></ul></div></li></ul><ul role='menu' id='wp-admin-bar-top-secondary' class="ab-top-secondary ab-top-menu"><li role='group' id='wp-admin-bar-my-account' class="menupop with-avatar"><a class='ab-item' role="menuitem" aria-expanded="false" href='/wp-admin/profile.php'>Howdy, <span class="display-name">admin</span><img alt='' src='https://secure.gravatar.com/avatar/258d8dc916db8cea2cafb6c3cd0cb0246efe061421dbd83ec3a350428cabda4f?s=28&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/258d8dc916db8cea2cafb6c3cd0cb0246efe061421dbd83ec3a350428cabda4f?s=56&#038;d=mm&#038;r=g 2x' class='avatar avatar-28 photo' height='28' width='28' loading='lazy' decoding='async'/></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='Howdy, admin' id='wp-admin-bar-user-actions' class="ab-submenu"><li role='group' id='wp-admin-bar-user-info'><a class='ab-item' role="menuitem" href='/wp-admin/profile.php'><img alt='' src='https://secure.gravatar.com/avatar/258d8dc916db8cea2cafb6c3cd0cb0246efe061421dbd83ec3a350428cabda4f?s=64&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/258d8dc916db8cea2cafb6c3cd0cb0246efe061421dbd83ec3a350428cabda4f?s=128&#038;d=mm&#038;r=g 2x' class='avatar avatar-64 photo' height='64' width='64' loading='lazy' decoding='async'/><span class='display-name'>admin</span><span class='display-name edit-profile'>Edit Profile</span></a></li><li role='group' id='wp-admin-bar-logout'><a class='ab-item' role="menuitem" href='/wp-login.php?action=logout&#038;_wpnonce=8cd0d31761'>Log Out</a></li></ul></div></li></ul>			</div>
+		</div>
+
+		
+<div id="wpbody" role="main">
+
+<div id="wpbody-content">
+		<div id="screen-meta" class="metabox-prefs">
+
+			<div id="contextual-help-wrap" class="hidden" tabindex="-1" aria-label="Contextual Help Tab">
+				<div id="contextual-help-back"></div>
+				<div id="contextual-help-columns">
+					<div class="contextual-help-tabs">
+						<ul>
+						
+							<li id="tab-link-overview" class="active">
+								<a href="#tab-panel-overview" aria-controls="tab-panel-overview">
+									Overview								</a>
+							</li>
+							
+							<li id="tab-link-help-navigation">
+								<a href="#tab-panel-help-navigation" aria-controls="tab-panel-help-navigation">
+									Navigation								</a>
+							</li>
+							
+							<li id="tab-link-help-layout">
+								<a href="#tab-panel-help-layout" aria-controls="tab-panel-help-layout">
+									Layout								</a>
+							</li>
+							
+							<li id="tab-link-help-content">
+								<a href="#tab-panel-help-content" aria-controls="tab-panel-help-content">
+									Content								</a>
+							</li>
+													</ul>
+					</div>
+
+										<div class="contextual-help-sidebar">
+						<p><strong>For more information:</strong></p><p><a href="https://wordpress.org/documentation/article/dashboard-screen/">Documentation on Dashboard</a></p><p><a href="https://wordpress.org/support/forums/">Support forums</a></p><p><a href="https://wordpress.org/documentation/wordpress-version/version-7-1-3/">Version 7.1.3</a></p>					</div>
+					
+					<div class="contextual-help-tabs-wrap">
+						
+							<div id="tab-panel-overview" class="help-tab-content active">
+								<p>Welcome to your WordPress Dashboard!</p><p>The Dashboard is the first place you will come to every time you log into your site. It is where you will find all your WordPress tools. If you need help, just click the &#8220;Help&#8221; tab above the screen title.</p>							</div>
+							
+							<div id="tab-panel-help-navigation" class="help-tab-content">
+								<p>The left-hand navigation menu provides links to all of the WordPress administration screens, with submenu items displayed on hover. You can minimize this menu to a narrow icon strip by clicking on the Collapse Menu arrow at the bottom.</p><p>Links in the Toolbar at the top of the screen connect your dashboard and the front end of your site, and provide access to your profile and helpful WordPress information.</p>							</div>
+							
+							<div id="tab-panel-help-layout" class="help-tab-content">
+								<p>You can use the following controls to arrange your Dashboard screen to suit your workflow. This is true on most other administration screens as well.</p><p><strong>Screen Options</strong> &mdash; Use the Screen Options tab to choose which Dashboard boxes to show.</p><p><strong>Drag and Drop</strong> &mdash; To rearrange the boxes, drag and drop by clicking on the title bar of the selected box and releasing when you see a gray dotted-line rectangle appear in the location you want to place the box.</p><p><strong>Box Controls</strong> &mdash; Click the title bar of the box to expand or collapse it. Some boxes added by plugins may have configurable content, and will show a &#8220;Configure&#8221; link in the title bar if you hover over it.</p>							</div>
+							
+							<div id="tab-panel-help-content" class="help-tab-content">
+								<p>The boxes on your Dashboard screen are:</p><p><strong>Welcome</strong> &mdash; Shows links for some of the most common tasks when setting up a new site.</p><p><strong>Site Health Status</strong> &mdash; Informs you of any potential issues that should be addressed to improve the performance or security of your website.</p><p><strong>At a Glance</strong> &mdash; Displays a summary of the content on your site and identifies which theme and version of WordPress you are using.</p><p><strong>Activity</strong> &mdash; Shows the upcoming scheduled posts, recently published posts, and the most recent comments on your posts and allows you to moderate them.</p><p><strong>Quick Draft</strong> &mdash; Allows you to create a new post and save it as a draft. Also displays links to the 3 most recent draft posts you've started.</p><p><strong>WordPress Events and News</strong> &mdash; Upcoming events near you as well as the latest news from the official WordPress project and the <a href="https://planet.wordpress.org/">WordPress Planet</a>.</p>							</div>
+												</div>
+				</div>
+			</div>
+		<div id="screen-options-wrap" class="hidden" tabindex="-1" aria-label="Screen Options Tab">
+<form id='adv-settings' method='post'>
+		<fieldset class="metabox-prefs">
+		<legend>Screen elements</legend>
+		<p>
+			Some screen elements can be shown or hidden by using the checkboxes.			Expand or collapse the elements by clicking on their headings, and arrange them by dragging their headings or by clicking on the up and down arrows.		</p>
+		<div class="metabox-prefs-container">
+		<label for="dashboard_site_health-hide"><input class="hide-postbox-tog" name="dashboard_site_health-hide" type="checkbox" id="dashboard_site_health-hide" value="dashboard_site_health"  checked='checked' />Site Health Status</label><label for="dashboard_right_now-hide"><input class="hide-postbox-tog" name="dashboard_right_now-hide" type="checkbox" id="dashboard_right_now-hide" value="dashboard_right_now"  checked='checked' />At a Glance</label><label for="dashboard_activity-hide"><input class="hide-postbox-tog" name="dashboard_activity-hide" type="checkbox" id="dashboard_activity-hide" value="dashboard_activity"  checked='checked' />Activity</label><label for="dashboard_quick_press-hide"><input class="hide-postbox-tog" name="dashboard_quick_press-hide" type="checkbox" id="dashboard_quick_press-hide" value="dashboard_quick_press"  checked='checked' /><span class="hide-if-no-js">Quick Draft</span> <span class="hide-if-js">Your Recent Drafts</span></label><label for="dashboard_primary-hide"><input class="hide-postbox-tog" name="dashboard_primary-hide" type="checkbox" id="dashboard_primary-hide" value="dashboard_primary"  checked='checked' />WordPress Events and News</label><label for="wp_welcome_panel-hide"><input type="checkbox" id="wp_welcome_panel-hide" checked='checked' />Welcome</label>
+		</div>
+		</fieldset>
+		
+<input type="hidden" id="screenoptionnonce" name="screenoptionnonce" value="e202bae3a6" />
+</form>
+</div>		</div>
+				<div id="screen-meta-links">
+					<div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle">
+			<button type="button" id="show-settings-link" class="button button-compact show-settings" aria-controls="screen-options-wrap" aria-expanded="false">Screen Options</button>
+			</div>
+						<div id="contextual-help-link-wrap" class="hide-if-no-js screen-meta-toggle">
+			<button type="button" id="contextual-help-link" class="button button-compact show-settings" aria-controls="contextual-help-wrap" aria-expanded="false">Help</button>
+			</div>
+				</div>
+		
+<div class="wrap">
+	<h1>Dashboard</h1>
+
+	
+
+	<div id="welcome-panel" class="welcome-panel">
+		<input type="hidden" id="welcomepanelnonce" name="welcomepanelnonce" value="4c6fa1f049" />		<a class="welcome-panel-close" href="/wp-admin/?welcome=0" aria-label="Dismiss the welcome panel">Dismiss</a>
+			<div class="welcome-panel-content">
+	<div class="welcome-panel-header-wrap">
+		<div class="welcome-panel-header">
+			<div class="welcome-panel-header-image">
+				<svg preserveAspectRatio="xMidYMin slice" fill="none" viewBox="0 0 1232 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <g clip-path="url(#a)">
+    <path fill="#151515" d="M0 0h1232v240H0z"/>
+    <ellipse cx="616" cy="232" fill="url(#b)" opacity=".05" rx="1497" ry="249"/>
+    <mask id="d" width="1000" height="400" x="232" y="20" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+      <path fill="url(#c)" d="M0 0h1000v400H0z" transform="translate(232 20)"/>
+    </mask>
+    <g stroke-width="2" mask="url(#d)">
+      <path stroke="url(#e)" d="M387 20v1635"/>
+      <path stroke="url(#f)" d="M559.5 20v1635"/>
+      <path stroke="url(#g)" d="M732 20v1635"/>
+      <path stroke="url(#h)" d="M904.5 20v1635"/>
+      <path stroke="url(#i)" d="M1077 20v1635"/>
+    </g>
+  </g>
+  <defs>
+    <linearGradient id="e" x1="387.5" x2="387.5" y1="20" y2="1655" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3858E9" stop-opacity="0"/>
+      <stop offset=".297" stop-color="#3858E9"/>
+      <stop offset=".734" stop-color="#3858E9"/>
+      <stop offset="1" stop-color="#3858E9" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3858E9" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="f" x1="560" x2="560" y1="20" y2="1655" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFCB5" stop-opacity="0"/>
+      <stop offset="0" stop-color="#FFFCB5" stop-opacity="0"/>
+      <stop offset=".297" stop-color="#FFFCB5"/>
+      <stop offset=".734" stop-color="#FFFCB5"/>
+      <stop offset="1" stop-color="#FFFCB5" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g" x1="732.5" x2="732.5" y1="20" y2="1655" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C7FFDB" stop-opacity="0"/>
+      <stop offset=".297" stop-color="#C7FFDB"/>
+      <stop offset=".693" stop-color="#C7FFDB"/>
+      <stop offset="1" stop-color="#C7FFDB" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="h" x1="905" x2="905" y1="20" y2="1655" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFB7A7" stop-opacity="0"/>
+      <stop offset=".297" stop-color="#FFB7A7"/>
+      <stop offset=".734" stop-color="#FFB7A7"/>
+      <stop offset="1" stop-color="#3858E9" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FFB7A7" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="i" x1="1077.5" x2="1077.5" y1="20" y2="1655" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7B90FF" stop-opacity="0"/>
+      <stop offset=".297" stop-color="#7B90FF"/>
+      <stop offset=".734" stop-color="#7B90FF"/>
+      <stop offset="1" stop-color="#3858E9" stop-opacity="0"/>
+      <stop offset="1" stop-color="#7B90FF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="matrix(0 249 -1497 0 616 232)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3858E9"/>
+      <stop offset="1" stop-color="#151515" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c" cx="0" cy="0" r="1" gradientTransform="matrix(0 765 -1912.5 0 500 -110)" gradientUnits="userSpaceOnUse">
+      <stop offset=".161" stop-color="#151515" stop-opacity="0"/>
+      <stop offset=".682"/>
+    </radialGradient>
+    <clipPath id="a">
+      <path fill="#fff" d="M0 0h1232v240H0z"/>
+    </clipPath>
+  </defs>
+</svg>
+			</div>
+			<h2>Welcome to WordPress!</h2>
+			<p>
+				<a href="/wp-admin/about.php">
+				Learn more about the 7.1.3 version.				</a>
+			</p>
+		</div>
+	</div>
+	<div class="welcome-panel-column-container">
+		<div class="welcome-panel-column">
+			<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+				<rect width="48" height="48" rx="4" fill="#1E1E1E"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M32.0668 17.0854L28.8221 13.9454L18.2008 24.671L16.8983 29.0827L21.4257 27.8309L32.0668 17.0854ZM16 32.75H24V31.25H16V32.75Z" fill="white"/>
+			</svg>
+			<div class="welcome-panel-column-content">
+				<h3>Author rich content with blocks and patterns</h3>
+				<p>Block patterns are pre-configured block layouts. Use them to get inspired or create new pages in a flash.</p>
+				<a href="/wp-admin/post-new.php?post_type=page">Add a new page</a>
+			</div>
+		</div>
+		<div class="welcome-panel-column">
+			<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+				<rect width="48" height="48" rx="4" fill="#1E1E1E"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M18 16h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V18a2 2 0 0 1 2-2zm12 1.5H18a.5.5 0 0 0-.5.5v3h13v-3a.5.5 0 0 0-.5-.5zm.5 5H22v8h8a.5.5 0 0 0 .5-.5v-7.5zm-10 0h-3V30a.5.5 0 0 0 .5.5h2.5v-8z" fill="#fff"/>
+			</svg>
+			<div class="welcome-panel-column-content">
+							<h3>Customize your entire site with block themes</h3>
+				<p>Design everything on your site &#8212; from the header down to the footer, all using blocks and patterns.</p>
+				<a href="/wp-admin/site-editor.php">Open site editor</a>
+						</div>
+		</div>
+		<div class="welcome-panel-column">
+			<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+				<rect width="48" height="48" rx="4" fill="#1E1E1E"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M31 24a7 7 0 0 1-7 7V17a7 7 0 0 1 7 7zm-7-8a8 8 0 1 1 0 16 8 8 0 0 1 0-16z" fill="#fff"/>
+			</svg>
+			<div class="welcome-panel-column-content">
+							<h3>Switch up your site&#8217;s look & feel with Styles</h3>
+				<p>Tweak your site, or give it a whole new look! Get creative &#8212; how about a new color palette or font?</p>
+				<a href="/wp-admin/site-editor.php?p=%2Fstyles">Edit styles</a>
+						</div>
+		</div>
+	</div>
+	</div>
+		</div>
+
+	<div id="dashboard-widgets-wrap">
+	<div id="dashboard-widgets" class="metabox-holder">
+	<div id="postbox-container-1" class="postbox-container">
+	<div id="normal-sortables" class="meta-box-sortables"><div id="dashboard_site_health" class="postbox "  role="region" aria-label="Site Health Status">
+<div class="postbox-header"><h2 class="hndle" id="dashboard_site_health-title">Site Health Status</h2>
+<div class="handle-actions hide-if-no-js"><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move up" type="button" class="handle-order-higher wp-tooltip__toggle" aria-describedby="dashboard_site_health-title">
+							<span class="screen-reader-text">Move up</span>
+							<span class="order-higher-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_site_health-handle-order-higher-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_site_health-handle-order-higher-description-text" class="wp-tooltip__text">Move up</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move down" type="button" class="handle-order-lower wp-tooltip__toggle" aria-describedby="dashboard_site_health-title">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_site_health-handle-order-lower-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_site_health-handle-order-lower-description-text" class="wp-tooltip__text">Move down</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Show or hide panel" type="button" class="handlediv wp-tooltip__toggle" aria-expanded="true" aria-describedby="dashboard_site_health-title">
+							<span class="screen-reader-text">Show or hide panel</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_site_health-handlediv" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_site_health-handlediv-text" class="wp-tooltip__text">Show or hide panel</span></span></span></div></div><div class="inside">
+	<div class="health-check-widget">
+		<div class="health-check-widget-title-section site-health-progress-wrapper loading hide-if-no-js">
+			<div class="site-health-progress">
+				<svg aria-hidden="true" focusable="false" width="100%" height="100%" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+					<circle r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+					<circle id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+				</svg>
+			</div>
+			<div class="site-health-progress-label">
+									No information yet&hellip;							</div>
+		</div>
+
+		<div class="site-health-details">
+							<p>
+					Site health checks will automatically run periodically to gather information about your site. You can also <a href="/wp-admin/site-health.php">visit the Site Health screen</a> to gather information about your site now.				</p>
+			
+					</div>
+	</div>
+
+	</div>
+</div>
+<div id="dashboard_right_now" class="postbox "  role="region" aria-label="At a Glance">
+<div class="postbox-header"><h2 class="hndle" id="dashboard_right_now-title">At a Glance</h2>
+<div class="handle-actions hide-if-no-js"><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move up" type="button" class="handle-order-higher wp-tooltip__toggle" aria-describedby="dashboard_right_now-title">
+							<span class="screen-reader-text">Move up</span>
+							<span class="order-higher-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_right_now-handle-order-higher-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_right_now-handle-order-higher-description-text" class="wp-tooltip__text">Move up</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move down" type="button" class="handle-order-lower wp-tooltip__toggle" aria-describedby="dashboard_right_now-title">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_right_now-handle-order-lower-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_right_now-handle-order-lower-description-text" class="wp-tooltip__text">Move down</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Show or hide panel" type="button" class="handlediv wp-tooltip__toggle" aria-expanded="true" aria-describedby="dashboard_right_now-title">
+							<span class="screen-reader-text">Show or hide panel</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_right_now-handlediv" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_right_now-handlediv-text" class="wp-tooltip__text">Show or hide panel</span></span></span></div></div><div class="inside">
+	<div class="main">
+	<ul>
+	<li class="post-count"><a href="/wp-admin/edit.php?post_status=publish&#038;post_type=post">57 Published posts</a></li><li class="page-count"><a href="/wp-admin/edit.php?post_status=publish&#038;post_type=page">22 Published pages</a></li>		<li class="comment-count">
+			<a href="edit-comments.php">33 Comments</a>
+		</li>
+				<li class="comment-mod-count">
+			<a href="edit-comments.php?comment_status=moderated" class="comments-in-moderation-text">5 Comments in moderation</a>
+		</li>
+			</ul>
+	<p id='wp-version-message'><span id="wp-version">WordPress 7.1.3 running <a href="themes.php">Twenty Twenty-Five</a> theme.</span></p>	</div>
+	</div>
+</div>
+<div id="dashboard_activity" class="postbox "  role="region" aria-label="Activity">
+<div class="postbox-header"><h2 class="hndle" id="dashboard_activity-title">Activity</h2>
+<div class="handle-actions hide-if-no-js"><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move up" type="button" class="handle-order-higher wp-tooltip__toggle" aria-describedby="dashboard_activity-title">
+							<span class="screen-reader-text">Move up</span>
+							<span class="order-higher-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_activity-handle-order-higher-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_activity-handle-order-higher-description-text" class="wp-tooltip__text">Move up</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move down" type="button" class="handle-order-lower wp-tooltip__toggle" aria-describedby="dashboard_activity-title">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_activity-handle-order-lower-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_activity-handle-order-lower-description-text" class="wp-tooltip__text">Move down</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Show or hide panel" type="button" class="handlediv wp-tooltip__toggle" aria-expanded="true" aria-describedby="dashboard_activity-title">
+							<span class="screen-reader-text">Show or hide panel</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_activity-handlediv" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_activity-handlediv-text" class="wp-tooltip__text">Show or hide panel</span></span></span></div></div><div class="inside">
+<div id="activity-widget"><div id="future-posts" class="activity-block"><h3>Publishing Soon</h3><ul><li><span>Jan 1st 2030, 12:00 pm</span> <a href="/wp-admin/post.php?post=1153&amp;action=edit" aria-label="Edit &#8220;Scheduled&#8221;">Scheduled</a></li></ul></div><div id="published-posts" class="activity-block"><h3>Recently Published</h3><ul><li><span>Today, 11:46 am</span> <a href="/wp-admin/post.php?post=1&amp;action=edit" aria-label="Edit &#8220;Hello world!&#8221;">Hello world!</a></li><li><span>Jan 16th 2023, 7:08 am</span> <a href="/wp-admin/post.php?post=163&amp;action=edit" aria-label="Edit &#8220;WP 6.1 Font size scale&#8221;">WP 6.1 Font size scale</a></li><li><span>Jan 16th 2023, 6:56 am</span> <a href="/wp-admin/post.php?post=150&amp;action=edit" aria-label="Edit &#8220;WP 6.1 spacing presets&#8221;">WP 6.1 spacing presets</a></li><li><span>Jan 13th 2023, 6:38 pm</span> <a href="/wp-admin/post.php?post=51&amp;action=edit" aria-label="Edit &#8220;WP 6.1 Theme block category&#8221;">WP 6.1 Theme block category</a></li><li><span>Jan 13th 2023, 6:22 pm</span> <a href="/wp-admin/post.php?post=34&amp;action=edit" aria-label="Edit &#8220;WP 6.1 Widgets block category&#8221;">WP 6.1 Widgets block category</a></li></ul></div><div id="latest-comments" class="activity-block table-view-list"><h3>Recent Comments</h3><ul id="the-comment-list" data-wp-lists="list:comment">
+		<li id="comment-38" class="comment byuser comment-author-editor even thread-even depth-1 comment-item approved">
+
+			<img alt='' src='https://secure.gravatar.com/avatar/bc15ce5d4fa97606bf6987d111db7d744e04fda69d93ca4653ec189387e02fb3?s=50&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/bc15ce5d4fa97606bf6987d111db7d744e04fda69d93ca4653ec189387e02fb3?s=100&#038;d=mm&#038;r=g 2x' class='avatar avatar-50 photo' height='50' width='50' loading='lazy' decoding='async'/>
+			
+			<div class="dashboard-comment-wrap has-row-actions  has-avatar">
+			<p class="comment-meta">
+				From <cite class="comment-author">editor</cite> on <a href="/hello-world/">Hello world!</a> <span class="approve">[Pending]</span>			</p>
+
+							<blockquote><p>Erx3xYL ci7i TKGtGfp 4Opsg4WlHlG r8cVPUwV92p PKtMygzqP nCE4b 5Xtob6LIxhI 2OccUHX5 7hnmgchcNdl</p></blockquote>
+						<p class="row-actions"><span class='approve'><a href="comment.php?action=approvecomment&#038;p=1&#038;c=38&#038;_wpnonce=3d35241dc6" data-wp-lists="dim:the-comment-list:comment-38:unapproved:e7e7d3:e7e7d3:new=approved" class="vim-a aria-button-if-js" aria-label="Approve this comment">Approve</a></span><span class='unapprove'><a href="comment.php?action=unapprovecomment&#038;p=1&#038;c=38&#038;_wpnonce=3d35241dc6" data-wp-lists="dim:the-comment-list:comment-38:unapproved:e7e7d3:e7e7d3:new=unapproved" class="vim-u aria-button-if-js" aria-label="Unapprove this comment">Unapprove</a></span><span class='reply hide-if-no-js'> | <button type="button" onclick="window.commentReply && commentReply.open('38','1');" class="vim-r button-link hide-if-no-js" aria-label="Reply to this comment">Reply</button></span><span class='edit'> | <a href="comment.php?action=editcomment&amp;c=38" aria-label="Edit this comment">Edit</a></span><span class='spam'> | <a href="comment.php?action=spamcomment&#038;p=1&#038;c=38&#038;_wpnonce=bb87c11627" data-wp-lists="delete:the-comment-list:comment-38::spam=1" class="vim-s vim-destructive aria-button-if-js" aria-label="Mark this comment as spam">Spam</a></span><span class='trash'> | <a href="comment.php?action=trashcomment&#038;p=1&#038;c=38&#038;_wpnonce=bb87c11627" data-wp-lists="delete:the-comment-list:comment-38::trash=1" class="delete vim-d vim-destructive aria-button-if-js" aria-label="Move this comment to the Trash">Trash</a></span><span class='view'> | <a class="comment-link" href="/hello-world/#comment-38" aria-label="View this comment">View</a></span></p>
+						</div>
+		</li>
+	
+		<li id="comment-37" class="comment odd alt thread-odd thread-alt depth-1 comment-item unapproved">
+
+			<img alt='' src='https://secure.gravatar.com/avatar/0873c3d19a1f3dbbb73d25f239f630b15ea3b5b2829f4b8c54497d7edc38104a?s=50&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0873c3d19a1f3dbbb73d25f239f630b15ea3b5b2829f4b8c54497d7edc38104a?s=100&#038;d=mm&#038;r=g 2x' class='avatar avatar-50 photo' height='50' width='50' loading='lazy' decoding='async'/>
+			
+			<div class="dashboard-comment-wrap has-row-actions  has-avatar">
+			<p class="comment-meta">
+				From <cite class="comment-author">Goose</cite> on <a href="/hello-world/">Hello world!</a> <span class="approve">[Pending]</span>			</p>
+
+							<blockquote><p>Captured comment 1793102141</p></blockquote>
+						<p class="row-actions"><span class='approve'><a href="comment.php?action=approvecomment&#038;p=1&#038;c=37&#038;_wpnonce=71d09c9355" data-wp-lists="dim:the-comment-list:comment-37:unapproved:e7e7d3:e7e7d3:new=approved" class="vim-a aria-button-if-js" aria-label="Approve this comment">Approve</a></span><span class='unapprove'><a href="comment.php?action=unapprovecomment&#038;p=1&#038;c=37&#038;_wpnonce=71d09c9355" data-wp-lists="dim:the-comment-list:comment-37:unapproved:e7e7d3:e7e7d3:new=unapproved" class="vim-u aria-button-if-js" aria-label="Unapprove this comment">Unapprove</a></span><span class='reply hide-if-no-js'> | <button type="button" onclick="window.commentReply && commentReply.open('37','1');" class="vim-r button-link hide-if-no-js" aria-label="Reply to this comment">Reply</button></span><span class='edit'> | <a href="comment.php?action=editcomment&amp;c=37" aria-label="Edit this comment">Edit</a></span><span class='spam'> | <a href="comment.php?action=spamcomment&#038;p=1&#038;c=37&#038;_wpnonce=dd0baa2660" data-wp-lists="delete:the-comment-list:comment-37::spam=1" class="vim-s vim-destructive aria-button-if-js" aria-label="Mark this comment as spam">Spam</a></span><span class='trash'> | <a href="comment.php?action=trashcomment&#038;p=1&#038;c=37&#038;_wpnonce=dd0baa2660" data-wp-lists="delete:the-comment-list:comment-37::trash=1" class="delete vim-d vim-destructive aria-button-if-js" aria-label="Move this comment to the Trash">Trash</a></span><span class='view hidden'> | <a class="comment-link" href="/hello-world/#comment-37" aria-label="View this comment">View</a></span></p>
+						</div>
+		</li>
+	
+		<li id="comment-36" class="comment even thread-even depth-1 comment-item unapproved">
+
+			<img alt='' src='https://secure.gravatar.com/avatar/0873c3d19a1f3dbbb73d25f239f630b15ea3b5b2829f4b8c54497d7edc38104a?s=50&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0873c3d19a1f3dbbb73d25f239f630b15ea3b5b2829f4b8c54497d7edc38104a?s=100&#038;d=mm&#038;r=g 2x' class='avatar avatar-50 photo' height='50' width='50' loading='lazy' decoding='async'/>
+			
+			<div class="dashboard-comment-wrap has-row-actions  has-avatar">
+			<p class="comment-meta">
+				From <cite class="comment-author">Goose</cite> on <a href="/hello-world/">Hello world!</a> <span class="approve">[Pending]</span>			</p>
+
+							<blockquote><p>Captured comment 1793102079</p></blockquote>
+						<p class="row-actions"><span class='approve'><a href="comment.php?action=approvecomment&#038;p=1&#038;c=36&#038;_wpnonce=104f17110f" data-wp-lists="dim:the-comment-list:comment-36:unapproved:e7e7d3:e7e7d3:new=approved" class="vim-a aria-button-if-js" aria-label="Approve this comment">Approve</a></span><span class='unapprove'><a href="comment.php?action=unapprovecomment&#038;p=1&#038;c=36&#038;_wpnonce=104f17110f" data-wp-lists="dim:the-comment-list:comment-36:unapproved:e7e7d3:e7e7d3:new=unapproved" class="vim-u aria-button-if-js" aria-label="Unapprove this comment">Unapprove</a></span><span class='reply hide-if-no-js'> | <button type="button" onclick="window.commentReply && commentReply.open('36','1');" class="vim-r button-link hide-if-no-js" aria-label="Reply to this comment">Reply</button></span><span class='edit'> | <a href="comment.php?action=editcomment&amp;c=36" aria-label="Edit this comment">Edit</a></span><span class='spam'> | <a href="comment.php?action=spamcomment&#038;p=1&#038;c=36&#038;_wpnonce=d93b8bbee6" data-wp-lists="delete:the-comment-list:comment-36::spam=1" class="vim-s vim-destructive aria-button-if-js" aria-label="Mark this comment as spam">Spam</a></span><span class='trash'> | <a href="comment.php?action=trashcomment&#038;p=1&#038;c=36&#038;_wpnonce=d93b8bbee6" data-wp-lists="delete:the-comment-list:comment-36::trash=1" class="delete vim-d vim-destructive aria-button-if-js" aria-label="Move this comment to the Trash">Trash</a></span><span class='view hidden'> | <a class="comment-link" href="/hello-world/#comment-36" aria-label="View this comment">View</a></span></p>
+						</div>
+		</li>
+	
+		<li id="comment-35" class="comment odd alt thread-odd thread-alt depth-1 comment-item approved">
+
+			<img alt='' src='https://secure.gravatar.com/avatar/e3eee336b0968f93554afdae5ee49f00c14a4f25be66a9f75355b5ca429096d5?s=50&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/e3eee336b0968f93554afdae5ee49f00c14a4f25be66a9f75355b5ca429096d5?s=100&#038;d=mm&#038;r=g 2x' class='avatar avatar-50 photo' height='50' width='50' loading='lazy' decoding='async'/>
+			
+			<div class="dashboard-comment-wrap has-row-actions  has-avatar">
+			<p class="comment-meta">
+				From <cite class="comment-author">Anon</cite> on <a href="/hello-world/">Hello world!</a> <span class="approve">[Pending]</span>			</p>
+
+							<blockquote><p>first test comment abc</p></blockquote>
+						<p class="row-actions"><span class='approve'><a href="comment.php?action=approvecomment&#038;p=1&#038;c=35&#038;_wpnonce=695bd77773" data-wp-lists="dim:the-comment-list:comment-35:unapproved:e7e7d3:e7e7d3:new=approved" class="vim-a aria-button-if-js" aria-label="Approve this comment">Approve</a></span><span class='unapprove'><a href="comment.php?action=unapprovecomment&#038;p=1&#038;c=35&#038;_wpnonce=695bd77773" data-wp-lists="dim:the-comment-list:comment-35:unapproved:e7e7d3:e7e7d3:new=unapproved" class="vim-u aria-button-if-js" aria-label="Unapprove this comment">Unapprove</a></span><span class='reply hide-if-no-js'> | <button type="button" onclick="window.commentReply && commentReply.open('35','1');" class="vim-r button-link hide-if-no-js" aria-label="Reply to this comment">Reply</button></span><span class='edit'> | <a href="comment.php?action=editcomment&amp;c=35" aria-label="Edit this comment">Edit</a></span><span class='spam'> | <a href="comment.php?action=spamcomment&#038;p=1&#038;c=35&#038;_wpnonce=d359bc67a7" data-wp-lists="delete:the-comment-list:comment-35::spam=1" class="vim-s vim-destructive aria-button-if-js" aria-label="Mark this comment as spam">Spam</a></span><span class='trash'> | <a href="comment.php?action=trashcomment&#038;p=1&#038;c=35&#038;_wpnonce=d359bc67a7" data-wp-lists="delete:the-comment-list:comment-35::trash=1" class="delete vim-d vim-destructive aria-button-if-js" aria-label="Move this comment to the Trash">Trash</a></span><span class='view'> | <a class="comment-link" href="/hello-world/#comment-35" aria-label="View this comment">View</a></span></p>
+						</div>
+		</li>
+	
+		<li id="comment-1" class="comment even thread-even depth-1 comment-item approved">
+
+			<img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=50&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=100&#038;d=mm&#038;r=g 2x' class='avatar avatar-50 photo' height='50' width='50' loading='lazy' decoding='async'/>
+			
+			<div class="dashboard-comment-wrap has-row-actions  has-avatar">
+			<p class="comment-meta">
+				From <cite class="comment-author"><a href="https://wordpress.org/" class="url" rel="ugc external nofollow">A WordPress Commenter</a></cite> on <a href="/hello-world/">Hello world!</a> <span class="approve">[Pending]</span>			</p>
+
+							<blockquote><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p></blockquote>
+						<p class="row-actions"><span class='approve'><a href="comment.php?action=approvecomment&#038;p=1&#038;c=1&#038;_wpnonce=74ba4ea493" data-wp-lists="dim:the-comment-list:comment-1:unapproved:e7e7d3:e7e7d3:new=approved" class="vim-a aria-button-if-js" aria-label="Approve this comment">Approve</a></span><span class='unapprove'><a href="comment.php?action=unapprovecomment&#038;p=1&#038;c=1&#038;_wpnonce=74ba4ea493" data-wp-lists="dim:the-comment-list:comment-1:unapproved:e7e7d3:e7e7d3:new=unapproved" class="vim-u aria-button-if-js" aria-label="Unapprove this comment">Unapprove</a></span><span class='reply hide-if-no-js'> | <button type="button" onclick="window.commentReply && commentReply.open('1','1');" class="vim-r button-link hide-if-no-js" aria-label="Reply to this comment">Reply</button></span><span class='edit'> | <a href="comment.php?action=editcomment&amp;c=1" aria-label="Edit this comment">Edit</a></span><span class='spam'> | <a href="comment.php?action=spamcomment&#038;p=1&#038;c=1&#038;_wpnonce=ae19376475" data-wp-lists="delete:the-comment-list:comment-1::spam=1" class="vim-s vim-destructive aria-button-if-js" aria-label="Mark this comment as spam">Spam</a></span><span class='trash'> | <a href="comment.php?action=trashcomment&#038;p=1&#038;c=1&#038;_wpnonce=ae19376475" data-wp-lists="delete:the-comment-list:comment-1::trash=1" class="delete vim-d vim-destructive aria-button-if-js" aria-label="Move this comment to the Trash">Trash</a></span><span class='view'> | <a class="comment-link" href="/hello-world/#comment-1" aria-label="View this comment">View</a></span></p>
+						</div>
+		</li>
+	</ul><h3 class="screen-reader-text">View more comments</h3><ul class='subsubsub'>
+	<li class='all'><a href="/wp-admin/edit-comments.php?comment_status=all">All <span class="count">(<span class="all-count">38</span>)</span></a> |</li>
+	<li class='mine'><a href="/wp-admin/edit-comments.php?comment_status=mine&#038;user_id=1">Mine <span class="count">(<span class="mine-count">0</span>)</span></a> |</li>
+	<li class='moderated'><a href="/wp-admin/edit-comments.php?comment_status=moderated">Pending <span class="count">(<span class="pending-count">5</span>)</span></a> |</li>
+	<li class='approved'><a href="/wp-admin/edit-comments.php?comment_status=approved">Approved <span class="count">(<span class="approved-count">33</span>)</span></a> |</li>
+	<li class='spam'><a href="/wp-admin/edit-comments.php?comment_status=spam">Spam <span class="count">(<span class="spam-count">0</span>)</span></a> |</li>
+	<li class='trash'><a href="/wp-admin/edit-comments.php?comment_status=trash">Trash <span class="count">(<span class="trash-count">0</span>)</span></a></li>
+</ul><form method="get">
+	<div id="com-reply" style="display:none;"><div id="replyrow" style="display:none;">
+	<fieldset class="comment-reply">
+	<legend>
+		<span class="hidden" id="editlegend">Edit Comment</span>
+		<span class="hidden" id="replyhead">Reply to Comment</span>
+		<span class="hidden" id="addhead">Add Comment</span>
+	</legend>
+
+	<div id="replycontainer">
+	<label for="replycontent" class="screen-reader-text">
+		Comment	</label>
+	<div id="wp-replycontent-wrap" class="wp-core-ui wp-editor-wrap html-active"><link rel='stylesheet' id='editor-buttons-css' href='/wp-includes/css/editor.min.css?ver=7.1.3' media='all' />
+<div id="wp-replycontent-editor-container" class="wp-editor-container"><div id="qt_replycontent_toolbar" class="quicktags-toolbar hide-if-no-js"></div><textarea class="wp-editor-area" rows="20" cols="40" name="replycontent" id="replycontent"></textarea></div>
+</div>
+
+	</div>
+
+	<div id="edithead" style="display:none;">
+		<div class="inside">
+		<label for="author-name">Name</label>
+		<input type="text" name="newcomment_author" size="50" value="" id="author-name" />
+		</div>
+
+		<div class="inside">
+		<label for="author-email">Email</label>
+		<input type="text" name="newcomment_author_email" size="50" class="code" value="" id="author-email" />
+		</div>
+
+		<div class="inside">
+		<label for="author-url">URL</label>
+		<input type="text" id="author-url" name="newcomment_author_url" class="code" size="103" value="" />
+		</div>
+	</div>
+
+	<div id="replysubmit" class="submit">
+		<p class="reply-submit-buttons">
+			<button type="button" class="save button button-primary">
+				<span id="addbtn" style="display: none;">Add Comment</span>
+				<span id="savebtn" style="display: none;">Update Comment</span>
+				<span id="replybtn" style="display: none;">Submit Reply</span>
+			</button>
+			<button type="button" class="cancel button">Cancel</button>
+			<span class="waiting spinner"></span>
+		</p>
+		<div class="notice notice-error notice-alt inline hidden"><p class="error"></p></div>	</div>
+
+	<input type="hidden" name="action" id="action" value="" />
+	<input type="hidden" name="comment_ID" id="comment_ID" value="" />
+	<input type="hidden" name="comment_post_ID" id="comment_post_ID" value="" />
+	<input type="hidden" name="status" id="status" value="" />
+	<input type="hidden" name="position" id="position" value="-1" />
+	<input type="hidden" name="checkbox" id="checkbox" value="0" />
+	<input type="hidden" name="mode" id="mode" value="dashboard" />
+	<input type="hidden" id="_ajax_nonce-replyto-comment" name="_ajax_nonce-replyto-comment" value="838b541862" /><input type="hidden" id="_wp_unfiltered_html_comment" name="_wp_unfiltered_html_comment" value="c3215ffa90" />	</fieldset>
+	</div></div>
+	</form>
+	<div class="hidden" id="trash-undo-holder">
+	<div class="trash-undo-inside">
+		Comment by <strong></strong> moved to the Trash.		<span class="undo untrash"><a href="#">Undo</a></span>
+	</div>
+</div>
+<div class="hidden" id="spam-undo-holder">
+	<div class="spam-undo-inside">
+		Comment by <strong></strong> marked as spam.		<span class="undo unspam"><a href="#">Undo</a></span>
+	</div>
+</div>
+	</div></div></div>
+</div>
+</div>	</div>
+	<div id="postbox-container-2" class="postbox-container">
+	<div id="side-sortables" class="meta-box-sortables"><div id="dashboard_quick_press" class="postbox "  role="region" aria-label="Quick Draft Your Recent Drafts">
+<div class="postbox-header"><h2 class="hndle" id="dashboard_quick_press-title"><span class="hide-if-no-js">Quick Draft</span> <span class="hide-if-js">Your Recent Drafts</span></h2>
+<div class="handle-actions hide-if-no-js"><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move up" type="button" class="handle-order-higher wp-tooltip__toggle" aria-describedby="dashboard_quick_press-title">
+							<span class="screen-reader-text">Move up</span>
+							<span class="order-higher-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_quick_press-handle-order-higher-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_quick_press-handle-order-higher-description-text" class="wp-tooltip__text">Move up</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move down" type="button" class="handle-order-lower wp-tooltip__toggle" aria-describedby="dashboard_quick_press-title">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_quick_press-handle-order-lower-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_quick_press-handle-order-lower-description-text" class="wp-tooltip__text">Move down</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Show or hide panel" type="button" class="handlediv wp-tooltip__toggle" aria-expanded="true" aria-describedby="dashboard_quick_press-title">
+							<span class="screen-reader-text">Show or hide panel</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_quick_press-handlediv" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_quick_press-handlediv-text" class="wp-tooltip__text">Show or hide panel</span></span></span></div></div><div class="inside">
+
+	<form name="post" action="/wp-admin/post.php" method="post" id="quick-press" class="hide-if-no-js">
+
+		
+		<div class="input-text-wrap" id="title-wrap">
+			<label for="title">
+				Title			</label>
+			<input type="text" name="post_title" id="title" autocomplete="off" />
+		</div>
+
+		<div class="textarea-wrap" id="description-wrap">
+			<label for="content">Content</label>
+			<textarea name="content" id="content" placeholder="What&#8217;s on your mind?" class="mceEditor" rows="3" cols="15" autocomplete="off"></textarea>
+		</div>
+
+		<p class="submit">
+			<input type="hidden" name="action" id="quickpost-action" value="post-quickdraft-save" />
+			<input type="hidden" name="post_ID" value="1832" />
+			<input type="hidden" name="post_type" value="post" />
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="f8b1022897" /><input type="hidden" name="_wp_http_referer" value="/wp-admin/" />			<input type="submit" name="save" id="save-post" class="button button-primary" value="Save Draft"  />			<br class="clear" />
+		</p>
+
+	</form>
+	</div>
+</div>
+<div id="dashboard_primary" class="postbox "  role="region" aria-label="WordPress Events and News">
+<div class="postbox-header"><h2 class="hndle" id="dashboard_primary-title">WordPress Events and News</h2>
+<div class="handle-actions hide-if-no-js"><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move up" type="button" class="handle-order-higher wp-tooltip__toggle" aria-describedby="dashboard_primary-title">
+							<span class="screen-reader-text">Move up</span>
+							<span class="order-higher-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_primary-handle-order-higher-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_primary-handle-order-higher-description-text" class="wp-tooltip__text">Move up</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Move down" type="button" class="handle-order-lower wp-tooltip__toggle" aria-describedby="dashboard_primary-title">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_primary-handle-order-lower-description" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_primary-handle-order-lower-description-text" class="wp-tooltip__text">Move down</span></span></span><span class="wp-tooltip wp-is-tooltip">
+				<button aria-label="Show or hide panel" type="button" class="handlediv wp-tooltip__toggle" aria-expanded="true" aria-describedby="dashboard_primary-title">
+							<span class="screen-reader-text">Show or hide panel</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				<span popover="hint" id="dashboard_primary-handlediv" class="wp-tooltip__bubble" role="tooltip"><span id="dashboard_primary-handlediv-text" class="wp-tooltip__text">Show or hide panel</span></span></span></div></div><div class="inside">
+<div class="notice notice-error community-events-errors inline hide-if-js"><p class="hide-if-js">This widget requires JavaScript.</p><p class="community-events-error-occurred" aria-hidden="true">An error occurred. Please try again.</p><p class="community-events-could-not-locate" aria-hidden="true"></p></div>	<div id="community-events" class="community-events" aria-hidden="true">
+		<div class="activity-block">
+			<p>
+				<span id="community-events-location-message"></span>
+
+				<button class="button-link community-events-toggle-location" aria-expanded="false">
+					<span class="dashicons dashicons-location" aria-hidden="true"></span>
+					<span class="community-events-location-edit">Select location</span>
+				</button>
+			</p>
+
+			<form class="community-events-form" aria-hidden="true" action="/wp-admin/admin-ajax.php" method="post">
+				<label for="community-events-location">
+					City:				</label>
+								<input id="community-events-location" class="regular-text" type="text" name="community-events-location" placeholder="Cincinnati" />
+
+				<input type="submit" name="community-events-submit" id="community-events-submit" class="button" value="Submit"  />
+				<button class="community-events-cancel button-link" type="button" aria-expanded="false">
+					Cancel				</button>
+
+				<span class="spinner"></span>
+			</form>
+		</div>
+
+		<ul class="community-events-results activity-block last"></ul>
+	</div>
+
+	
+	<div class="wordpress-news hide-if-no-js">
+		<p class="widget-loading hide-if-no-js">Loading&hellip;</p><div class="notice notice-error inline hide-if-js"><p>This widget requires JavaScript.</p></div>	</div>
+
+	<p class="community-events-footer">
+		<a href="https://make.wordpress.org/community/meetups-landing-page" target="_blank">Meetups <span class="screen-reader-text"> (opens in a new tab)</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+		|
+
+		<a href="https://central.wordcamp.org/schedule/" target="_blank">WordCamps <span class="screen-reader-text"> (opens in a new tab)</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+		|
+
+		<a href="https://wordpress.org/news/" target="_blank">News <span class="screen-reader-text"> (opens in a new tab)</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a>	</p>
+
+	</div>
+</div>
+</div>	</div>
+	<div id="postbox-container-3" class="postbox-container">
+	<div id="column3-sortables" class="meta-box-sortables"></div>	</div>
+	<div id="postbox-container-4" class="postbox-container">
+	<div id="column4-sortables" class="meta-box-sortables"></div>	</div>
+</div>
+
+	<input type="hidden" id="closedpostboxesnonce" name="closedpostboxesnonce" value="990270509c" /><input type="hidden" id="meta-box-order-nonce" name="meta-box-order-nonce" value="5d6a861681" />	</div><!-- dashboard-widgets-wrap -->
+
+</div><!-- wrap -->
+
+
+	<script id="tmpl-community-events-attend-event-near" type="text/template">
+		Attend an upcoming event near <strong>{{ data.location.description }}</strong>.	</script>
+
+	<script id="tmpl-community-events-could-not-locate" type="text/template">
+		<em>{{data.unknownCity}}</em> could not be located. Please try another nearby city. For example: Kansas City; Springfield; Portland.	</script>
+
+	<script id="tmpl-community-events-event-list" type="text/template">
+		<# _.each( data.events, function( event ) { #>
+			<li class="event event-{{ event.type }} wp-clearfix">
+				<div class="event-info">
+					<div class="dashicons event-icon" aria-hidden="true"></div>
+					<div class="event-info-inner">
+						<a class="event-title" href="{{ event.url }}">{{ event.title }}</a>
+						<# if ( event.type ) {
+							const titleCaseEventType = event.type.replace(
+								/\w\S*/g,
+								function ( type ) { return type.charAt(0).toUpperCase() + type.substr(1).toLowerCase(); }
+							);
+						#>
+							{{ 'wordcamp' === event.type ? 'WordCamp' : titleCaseEventType }}
+							<span class="ce-separator" aria-hidden="true"></span>
+						<# } #>
+						<span class="event-city">{{ event.location.location }}</span>
+					</div>
+				</div>
+
+				<div class="event-date-time">
+					<span class="event-date">{{ event.user_formatted_date }}</span>
+					<# if ( 'meetup' === event.type ) { #>
+						<span class="event-time">
+							{{ event.user_formatted_time }} {{ event.timeZoneAbbreviation }}
+						</span>
+					<# } #>
+				</div>
+			</li>
+		<# } ) #>
+
+		<# if ( data.events.length <= 2 ) { #>
+			<li class="event-none">
+				Want more events? <a href="https://make.wordpress.org/community/organize-event-landing-page/">Help organize the next one</a>!			</li>
+		<# } #>
+
+	</script>
+
+	<script id="tmpl-community-events-no-upcoming-events" type="text/template">
+		<li class="event-none">
+			<# if ( data.location.description ) { #>
+				There are no events scheduled near {{ data.location.description }} at the moment. Would you like to <a href="https://make.wordpress.org/community/handbook/meetup-organizer/welcome/">organize a WordPress event</a>?
+			<# } else { #>
+				There are no events scheduled near you at the moment. Would you like to <a href="https://make.wordpress.org/community/handbook/meetup-organizer/welcome/">organize a WordPress event</a>?			<# } #>
+		</li>
+	</script>
+	
+<div class="clear"></div></div><!-- wpbody-content -->
+<div class="clear"></div></div><!-- wpbody -->
+<div class="clear"></div></div><!-- wpcontent -->
+
+<div id="wpfooter" role="contentinfo">
+		<p id="footer-left" class="alignleft">
+		<span id="footer-thankyou">Thank you for creating with <a href="https://wordpress.org/">WordPress</a>.</span>	</p>
+	<p id="footer-upgrade" class="alignright">
+		Version 7.1.3	</p>
+	<div class="clear"></div>
+</div>
+<script>list_args = {"class":"WP_Comments_List_Table","screen":{"id":"dashboard","base":"dashboard"}};</script>
+<script>list_args = {"class":"WP_Comments_List_Table","screen":{"id":"dashboard","base":"dashboard"}};</script>
+	<div id="wp-auth-check-wrap" class="hidden">
+	<div id="wp-auth-check-bg"></div>
+	<div id="wp-auth-check">
+	<button type="button" class="wp-auth-check-close button-link"><span class="screen-reader-text">
+		Close dialog	</span></button>
+			<div id="wp-auth-check-form" class="loading" data-src="/wp-login.php?interim-login=1&#038;wp_lang=en_US"></div>
+			<div class="wp-auth-fallback">
+		<p><b class="wp-auth-fallback-expired" tabindex="0">Session expired</b></p>
+		<p><a href="/wp-login.php" target="_blank">Please log in again.</a>
+		The login page will open in a new tab. After logging in you can close it and return to this page.</p>
+	</div>
+	</div>
+	</div>
+	<script id="wp-importmap" type="importmap">
+{"imports":{"@wordpress/video-conversion/worker":"/wp-includes/js/dist/script-modules/video-conversion/worker.min.js?ver=4d3627c45251ceb4f9a2","@wordpress/vips/worker":"/wp-includes/js/dist/script-modules/vips/worker.min.js?ver=7e33cd8c4128731126e8"}}
+</script>
+<script src="/wp-admin/load-scripts.php?c=0&#038;load%5Bchunk_0%5D=hoverIntent,wp-dom-ready,wp-hooks&#038;ver=7.1.3"></script>
+<script id="wp-i18n-js" src="/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="wp-a11y-js" src="/wp-includes/js/dist/a11y.min.js?ver=31c6cec5a4ff7aff483d"></script>
+<script id="common-js-extra">
+var bulkActionObserverIds = {"bulk_action":"action","changeit":"new_role"};
+//# sourceURL=common-js-extra
+</script>
+<script id="common-js" src="/wp-admin/js/common.min.js?ver=7.1.3"></script>
+<script id="hoverintent-js-js" src="/wp-includes/js/hoverintent-js.min.js?ver=2.2.1"></script>
+<script id="admin-bar-js" src="/wp-includes/js/admin-bar.min.js?ver=7.1.3"></script>
+<script id="clipboard-js" src="/wp-includes/js/clipboard.min.js?ver=2.0.11"></script>
+<script id="underscore-js" src="/wp-includes/js/underscore.min.js?ver=1.13.8"></script>
+<script id="wp-util-js-extra">
+var _wpUtilSettings = {"ajax":{"url":"/wp-admin/admin-ajax.php"}};
+//# sourceURL=wp-util-js-extra
+</script>
+<script id="wp-util-js" src="/wp-includes/js/wp-util.min.js?ver=7.1.3"></script>
+<script id="wp-api-request-js-extra">
+var wpApiSettings = {"root":"/wp-json/","nonce":"9a34d508d4","versionString":"wp/v2/"};
+//# sourceURL=wp-api-request-js-extra
+</script>
+<script id="wp-api-request-js" src="/wp-includes/js/api-request.min.js?ver=7.1.3"></script>
+<script id="wp-url-js" src="/wp-includes/js/dist/url.min.js?ver=7b0de086d4ae11d55704"></script>
+<script id="site-health-js-extra">
+var SiteHealth = {"screen":"dashboard","nonce":{"site_status":"6155d6789a","site_status_result":"c5110078ee"},"site_status":{"direct":[],"async":[],"issues":{"good":0,"recommended":0,"critical":0}}};
+//# sourceURL=site-health-js-extra
+</script>
+<script id="site-health-js" src="/wp-admin/js/site-health.min.js?ver=7.1.3"></script>
+<script id="wp-ajax-response-js-extra">
+var wpAjax = {"noPerm":"Sorry, you are not allowed to do that.","broken":"An error occurred while processing your request. Please try again later."};
+//# sourceURL=wp-ajax-response-js-extra
+</script>
+<script id="wp-ajax-response-js" src="/wp-includes/js/wp-ajax-response.min.js?ver=7.1.3"></script>
+<script id="jquery-color-js" src="/wp-includes/js/jquery/jquery.color.min.js?ver=3.0.0"></script>
+<script id="wp-lists-js" src="/wp-includes/js/wp-lists.min.js?ver=7.1.3"></script>
+<script id="quicktags-js-extra">
+var quicktagsL10n = {"closeAllOpenTags":"Close all open tags","closeTags":"close tags","enterURL":"Enter the URL","enterImageURL":"Enter the URL of the image","enterImageDescription":"Enter a description of the image","textdirection":"text direction","toggleTextdirection":"Switch Editor Text Direction","dfw":"Distraction-free writing mode","strong":"Bold","strongClose":"Close bold tag","em":"Italic","emClose":"Close italic tag","link":"Insert link","blockquote":"Blockquote","blockquoteClose":"Close blockquote tag","del":"Deleted text (strikethrough)","delClose":"Close deleted text tag","ins":"Inserted text","insClose":"Close inserted text tag","image":"Insert image","ul":"Bulleted list","ulClose":"Close bulleted list tag","ol":"Numbered list","olClose":"Close numbered list tag","li":"List item","liClose":"Close list item tag","code":"Code","codeClose":"Close code tag","more":"Insert Read More tag"};
+//# sourceURL=quicktags-js-extra
+</script>
+<script id="quicktags-js" src="/wp-includes/js/quicktags.min.js?ver=7.1.3"></script>
+<script id="jquery-query-js" src="/wp-includes/js/jquery/jquery.query.js?ver=2.2.3"></script>
+<script id="admin-comments-js-extra">
+var adminCommentsSettings = {"hotkeys_highlight_first":"","hotkeys_highlight_last":""};
+//# sourceURL=admin-comments-js-extra
+</script>
+<script id="admin-comments-js" src="/wp-admin/js/edit-comments.min.js?ver=7.1.3"></script>
+<script id="jquery-ui-core-js-before">
+jQuery.uiBackCompat = true;
+//# sourceURL=jquery-ui-core-js-before
+</script>
+<script id="jquery-ui-core-js" src="/wp-includes/js/jquery/ui/core.min.js?ver=1.14.2"></script>
+<script id="jquery-ui-mouse-js" src="/wp-includes/js/jquery/ui/mouse.min.js?ver=1.14.2"></script>
+<script id="jquery-ui-sortable-js" src="/wp-includes/js/jquery/ui/sortable.min.js?ver=1.14.2"></script>
+<script id="wp-tooltip-js" src="/wp-includes/js/wp-tooltip.js?ver=7.1.3"></script>
+<script id="postbox-js" src="/wp-admin/js/postbox.min.js?ver=7.1.3"></script>
+<script id="moment-js" src="/wp-includes/js/dist/vendor/moment.min.js?ver=2.30.1"></script>
+<script id="moment-js-after">
+moment.updateLocale( 'en_US', {"months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsShort":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"weekdaysShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"week":{"dow":1},"longDateFormat":{"LT":"g:i a","LTS":null,"L":null,"LL":"F j, Y","LLL":"F j, Y g:i a","LLLL":null}} );
+//# sourceURL=moment-js-after
+</script>
+<script id="wp-deprecated-js" src="/wp-includes/js/dist/deprecated.min.js?ver=fe587bac92b7d0ef760e"></script>
+<script id="wp-date-js" src="/wp-includes/js/dist/date.min.js?ver=8173fc0fc12b7bb7eaf0"></script>
+<script id="wp-date-js-after">
+wp.date.setSettings( {"l10n":{"locale":"en_US","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"monthsShort":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"weekdaysShort":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"meridiem":{"am":"am","pm":"pm","AM":"AM","PM":"PM"},"relative":{"future":"%s from now","past":"%s ago","s":"a second","ss":"%d seconds","m":"a minute","mm":"%d minutes","h":"an hour","hh":"%d hours","d":"a day","dd":"%d days","M":"a month","MM":"%d months","y":"a year","yy":"%d years"},"startOfWeek":1},"formats":{"time":"g:i a","date":"F j, Y","datetime":"F j, Y g:i a","datetimeAbbreviated":"M j, Y g:i a"},"timezone":{"offset":0,"offsetFormatted":"0","string":"","abbr":""}} );
+//# sourceURL=wp-date-js-after
+</script>
+<script id="dashboard-js-extra">
+var communityEventsData = {"nonce":"03488f850a","cache":"","time_format":"g:i a"};
+//# sourceURL=dashboard-js-extra
+</script>
+<script id="dashboard-js" src="/wp-admin/js/dashboard.min.js?ver=7.1.3"></script>
+<script id="thickbox-js-extra">
+var thickboxL10n = {"next":"Next \u003E","prev":"\u003C Prev","image":"Image","of":"of","close":"Close","noiframes":"This feature requires inline frames. You have iframes disabled or your browser does not support them.","loadingAnimation":"/wp-includes/js/thickbox/loadingAnimation.gif"};
+//# sourceURL=thickbox-js-extra
+</script>
+<script id="thickbox-js" src="/wp-includes/js/thickbox/thickbox.js?ver=3.1-20121105"></script>
+<script id="plugin-install-js" src="/wp-admin/js/plugin-install.min.js?ver=7.1.3"></script>
+<script id="wp-sanitize-js" src="/wp-includes/js/wp-sanitize.min.js?ver=7.1.3"></script>
+<script id="updates-js-extra">
+var _wpUpdatesSettings = {"ajax_nonce":"d0fbca6ef2"};
+//# sourceURL=updates-js-extra
+</script>
+<script id="updates-js" src="/wp-admin/js/updates.min.js?ver=7.1.3"></script>
+<script id="shortcode-js" src="/wp-includes/js/shortcode.min.js?ver=7.1.3"></script>
+<script id="media-upload-js" src="/wp-admin/js/media-upload.min.js?ver=7.1.3"></script>
+<script id="svg-painter-js" src="/wp-admin/js/svg-painter.js?ver=7.1.3"></script>
+<script id="heartbeat-js-extra">
+var heartbeatSettings = {"nonce":"517b2e791d"};
+//# sourceURL=heartbeat-js-extra
+</script>
+<script id="heartbeat-js" src="/wp-includes/js/heartbeat.min.js?ver=7.1.3"></script>
+<script id="wp-auth-check-js" src="/wp-includes/js/wp-auth-check.min.js?ver=7.1.3"></script>
+<script id="react-js" src="/wp-includes/js/dist/vendor/react.min.js?ver=18.3.1.1"></script>
+<script id="react-dom-js" src="/wp-includes/js/dist/vendor/react-dom.min.js?ver=18.3.1.1"></script>
+<script id="react-jsx-runtime-js" src="/wp-includes/js/dist/vendor/react-jsx-runtime.min.js?ver=18.3.1"></script>
+<script id="wp-dom-js" src="/wp-includes/js/dist/dom.min.js?ver=c95f94cbbc1ac3fde84f"></script>
+<script id="wp-escape-html-js" src="/wp-includes/js/dist/escape-html.min.js?ver=87ebe53e97bba59805a5"></script>
+<script id="wp-element-js" src="/wp-includes/js/dist/element.min.js?ver=4a4370b2b349066fd440"></script>
+<script id="wp-is-shallow-equal-js" src="/wp-includes/js/dist/is-shallow-equal.min.js?ver=7ad271045c1fe60f5496"></script>
+<script id="wp-keycodes-js" src="/wp-includes/js/dist/keycodes.min.js?ver=d0b4204e4bbeb412df6e"></script>
+<script id="wp-priority-queue-js" src="/wp-includes/js/dist/priority-queue.min.js?ver=6c0aa59b65d55dfd509b"></script>
+<script id="wp-private-apis-js" src="/wp-includes/js/dist/private-apis.min.js?ver=eb85f28c4c729bb4f002"></script>
+<script id="wp-undo-manager-js" src="/wp-includes/js/dist/undo-manager.min.js?ver=4554fce6276d8910a4ae"></script>
+<script id="wp-compose-js" src="/wp-includes/js/dist/compose.min.js?ver=0e8bde2a499ea6073b42"></script>
+<script id="wp-html-entities-js" src="/wp-includes/js/dist/html-entities.min.js?ver=a976ff3a0f00bc2999a3"></script>
+<script id="wp-primitives-js" src="/wp-includes/js/dist/primitives.min.js?ver=44cc5a35c7b9fe07a838"></script>
+<script id="wp-redux-routine-js" src="/wp-includes/js/dist/redux-routine.min.js?ver=acca2b4857d83ad1790e"></script>
+<script id="wp-data-js" src="/wp-includes/js/dist/data.min.js?ver=14a216e0932d72c22976"></script>
+<script id="wp-data-js-after">
+( function() {
+	var userId = 1;
+	var storageKey = "WP_DATA_USER_" + userId;
+	wp.data
+		.use( wp.data.plugins.persistence, { storageKey: storageKey } );
+} )();
+//# sourceURL=wp-data-js-after
+</script>
+<script id="wp-rich-text-js" src="/wp-includes/js/dist/rich-text.min.js?ver=3e5852e42cee1c239bae"></script>
+<script id="wp-theme-js" src="/wp-includes/js/dist/theme.min.js?ver=56a75cc08ae66c1fcb7a"></script>
+<script id="wp-warning-js" src="/wp-includes/js/dist/warning.min.js?ver=a0978839debc564a6608"></script>
+<script id="wp-components-js" src="/wp-includes/js/dist/components.min.js?ver=9b751f17060211272a5c"></script>
+<script id="wp-keyboard-shortcuts-js" src="/wp-includes/js/dist/keyboard-shortcuts.min.js?ver=37da95806f2339bc80d0"></script>
+<script id="wp-api-fetch-js" src="/wp-includes/js/dist/api-fetch.min.js?ver=6f2a4faeee3c722b1e57"></script>
+<script id="wp-api-fetch-js-after">
+wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( "/wp-json/" ) );
+wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( "9a34d508d4" );
+wp.apiFetch.use( wp.apiFetch.nonceMiddleware );
+wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );
+wp.apiFetch.nonceEndpoint = "/wp-admin/admin-ajax.php?action=rest-nonce";
+//# sourceURL=wp-api-fetch-js-after
+</script>
+<script id="wp-preferences-persistence-js" src="/wp-includes/js/dist/preferences-persistence.min.js?ver=a34abbdacd8f50f9acb1"></script>
+<script id="wp-preferences-js" src="/wp-includes/js/dist/preferences.min.js?ver=5a169e3fc0e657f74172"></script>
+<script id="wp-preferences-js-after">
+( function() {
+				var serverData = "";
+				var userId = "1";
+				var persistenceLayer = wp.preferencesPersistence.__unstableCreatePersistenceLayer( serverData, userId );
+				var preferencesStore = wp.preferences.store;
+				wp.data.dispatch( preferencesStore ).setPersistenceLayer( persistenceLayer );
+			} ) ();
+//# sourceURL=wp-preferences-js-after
+</script>
+<script id="wp-commands-js" src="/wp-includes/js/dist/commands.min.js?ver=1a4910212c7ed2355300"></script>
+<script id="wp-blob-js" src="/wp-includes/js/dist/blob.min.js?ver=c7582a735ddd2edc9731"></script>
+<script id="wp-block-serialization-default-parser-js" src="/wp-includes/js/dist/block-serialization-default-parser.min.js?ver=4c6f3dd40077f7c17604"></script>
+<script id="wp-autop-js" src="/wp-includes/js/dist/autop.min.js?ver=4e10a18cb6f21a043fc0"></script>
+<script id="wp-shortcode-js" src="/wp-includes/js/dist/shortcode.min.js?ver=f6273476300cc5fad4cd"></script>
+<script id="wp-blocks-js" src="/wp-includes/js/dist/blocks.min.js?ver=c0e57a630a0b6f6c3bb5"></script>
+<script id="wp-notices-js" src="/wp-includes/js/dist/notices.min.js?ver=c09a068fdab0eb465e14"></script>
+<script id="wp-style-engine-js" src="/wp-includes/js/dist/style-engine.min.js?ver=914befb08774033e6265"></script>
+<script id="wp-token-list-js" src="/wp-includes/js/dist/token-list.min.js?ver=e86ab419d8302d57822c"></script>
+<script id="wp-upload-media-js" src="/wp-includes/js/dist/upload-media.min.js?ver=a2c026d433c295fd5145"></script>
+<script id="wp-block-editor-js-before">
+window.__clientSideMediaProcessing = true;
+//# sourceURL=wp-block-editor-js-before
+</script>
+<script id="wp-block-editor-js" src="/wp-includes/js/dist/block-editor.min.js?ver=37e58da384b2558bd479"></script>
+<script id="wp-core-data-js" src="/wp-includes/js/dist/core-data.min.js?ver=573f98dbff9f49ffeb0b"></script>
+<script id="wp-router-js" src="/wp-includes/js/dist/router.min.js?ver=dda75cd9ff9d7e0eb19f"></script>
+<script id="wp-core-commands-js" src="/wp-includes/js/dist/core-commands.min.js?ver=426a33508599b7f31db3"></script>
+<script id="wp-core-commands-js-after">
+wp.coreCommands.initializeCommandPalette( {"is_network_admin":false,"menu_commands":[{"label":"Dashboard","url":"index.php","name":"index.php"},{"label":"Dashboard \u003E Home","url":"index.php","name":"index.php-index.php"},{"label":"Dashboard \u003E Updates","url":"update-core.php","name":"index.php-update-core.php"},{"label":"Posts","url":"edit.php","name":"edit.php"},{"label":"Posts \u003E All Posts","url":"edit.php","name":"edit.php-edit.php"},{"label":"Posts \u003E Add Post","url":"post-new.php","name":"edit.php-post-new.php"},{"label":"Posts \u003E Categories","url":"edit-tags.php?taxonomy=category","name":"edit.php-edit-tags.php?taxonomy=category"},{"label":"Posts \u003E Tags","url":"edit-tags.php?taxonomy=post_tag","name":"edit.php-edit-tags.php?taxonomy=post_tag"},{"label":"Media","url":"upload.php","name":"upload.php"},{"label":"Media \u003E Library","url":"upload.php","name":"upload.php-upload.php"},{"label":"Media \u003E Add Media File","url":"media-new.php","name":"upload.php-media-new.php"},{"label":"Pages","url":"edit.php?post_type=page","name":"edit.php?post_type=page"},{"label":"Pages \u003E All Pages","url":"edit.php?post_type=page","name":"edit.php?post_type=page-edit.php?post_type=page"},{"label":"Pages \u003E Add Page","url":"post-new.php?post_type=page","name":"edit.php?post_type=page-post-new.php?post_type=page"},{"label":"Comments","url":"edit-comments.php","name":"edit-comments.php"},{"label":"Appearance","url":"themes.php","name":"themes.php"},{"label":"Appearance \u003E Themes","url":"themes.php","name":"themes.php-themes.php"},{"label":"Appearance \u003E Editor","url":"site-editor.php","name":"themes.php-site-editor.php"},{"label":"Appearance \u003E Fonts","url":"font-library.php","name":"themes.php-font-library.php"},{"label":"Plugins","url":"plugins.php","name":"plugins.php"},{"label":"Plugins \u003E Installed Plugins","url":"plugins.php","name":"plugins.php-plugins.php"},{"label":"Plugins \u003E Add Plugin","url":"plugin-install.php","name":"plugins.php-plugin-install.php"},{"label":"Users","url":"users.php","name":"users.php"},{"label":"Users \u003E All Users","url":"users.php","name":"users.php-users.php"},{"label":"Users \u003E Add User","url":"user-new.php","name":"users.php-user-new.php"},{"label":"Users \u003E Profile","url":"profile.php","name":"users.php-profile.php"},{"label":"Tools","url":"tools.php","name":"tools.php"},{"label":"Tools \u003E Available Tools","url":"tools.php","name":"tools.php-tools.php"},{"label":"Tools \u003E Import","url":"import.php","name":"tools.php-import.php"},{"label":"Tools \u003E Export","url":"export.php","name":"tools.php-export.php"},{"label":"Tools \u003E Site Health","url":"site-health.php","name":"tools.php-site-health.php"},{"label":"Tools \u003E Export Personal Data","url":"export-personal-data.php","name":"tools.php-export-personal-data.php"},{"label":"Tools \u003E Erase Personal Data","url":"erase-personal-data.php","name":"tools.php-erase-personal-data.php"},{"label":"Tools \u003E Theme File Editor","url":"theme-editor.php","name":"tools.php-theme-editor.php"},{"label":"Tools \u003E Plugin File Editor","url":"plugin-editor.php","name":"tools.php-plugin-editor.php"},{"label":"Settings","url":"options-general.php","name":"options-general.php"},{"label":"Settings \u003E General","url":"options-general.php","name":"options-general.php-options-general.php"},{"label":"Settings \u003E Connectors","url":"options-connectors.php","name":"options-general.php-options-connectors.php"},{"label":"Settings \u003E Writing","url":"options-writing.php","name":"options-general.php-options-writing.php"},{"label":"Settings \u003E Reading","url":"options-reading.php","name":"options-general.php-options-reading.php"},{"label":"Settings \u003E Discussion","url":"options-discussion.php","name":"options-general.php-options-discussion.php"},{"label":"Settings \u003E Media","url":"options-media.php","name":"options-general.php-options-media.php"},{"label":"Settings \u003E Permalinks","url":"options-permalink.php","name":"options-general.php-options-permalink.php"},{"label":"Settings \u003E Privacy","url":"options-privacy.php","name":"options-general.php-options-privacy.php"}]} );
+//# sourceURL=wp-core-commands-js-after
+</script>
+<script id="wplink-js-extra">
+var wpLinkL10n = {"title":"Insert/edit link","update":"Update","save":"Add Link","noTitle":"(no title)","noMatchesFound":"No results found.","linkSelected":"Link selected.","linkInserted":"Link inserted.","minInputLength":"3"};
+//# sourceURL=wplink-js-extra
+</script>
+<script id="wplink-js" src="/wp-includes/js/wplink.min.js?ver=7.1.3"></script>
+<script id="jquery-ui-menu-js" src="/wp-includes/js/jquery/ui/menu.min.js?ver=1.14.2"></script>
+<script id="jquery-ui-autocomplete-js" src="/wp-includes/js/jquery/ui/autocomplete.min.js?ver=1.14.2"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"/wp-includes/js/wp-emoji-release.min.js?ver=7.1.3"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=/wp-includes/js/wp-emoji-loader.min.js
+</script>
+
+		<script>
+		tinyMCEPreInit = {
+			baseURL: "/wp-includes/js/tinymce",
+			suffix: ".min",
+						mceInit: {},
+			qtInit: {'replycontent':{id:"replycontent",buttons:"strong,em,link,block,del,ins,img,ul,ol,li,code,close"}},
+			ref: {plugins:"",theme:"modern",language:""},
+			load_ext: function(url,lang){var sl=tinymce.ScriptLoader;sl.markDone(url+'/langs/'+lang+'.js');sl.markDone(url+'/langs/'+lang+'_dlg.js');}
+		};
+		</script>
+				<script>
+		
+		( function() {
+			var initialized = [];
+			var initialize  = function() {
+				var init, id, inPostbox, $wrap;
+				var readyState = document.readyState;
+
+				if ( readyState !== 'complete' && readyState !== 'interactive' ) {
+					return;
+				}
+
+				for ( id in tinyMCEPreInit.mceInit ) {
+					if ( initialized.indexOf( id ) > -1 ) {
+						continue;
+					}
+
+					init      = tinyMCEPreInit.mceInit[id];
+					$wrap     = tinymce.$( '#wp-' + id + '-wrap' );
+					inPostbox = $wrap.parents( '.postbox' ).length > 0;
+
+					if (
+						! init.wp_skip_init &&
+						( $wrap.hasClass( 'tmce-active' ) || ! tinyMCEPreInit.qtInit.hasOwnProperty( id ) ) &&
+						( readyState === 'complete' || ( ! inPostbox && readyState === 'interactive' ) )
+					) {
+						tinymce.init( init );
+						initialized.push( id );
+
+						if ( ! window.wpActiveEditor ) {
+							window.wpActiveEditor = id;
+						}
+					}
+				}
+			}
+
+			if ( typeof tinymce !== 'undefined' ) {
+				if ( tinymce.Env.ie && tinymce.Env.ie < 11 ) {
+					tinymce.$( '.wp-editor-wrap ' ).removeClass( 'tmce-active' ).addClass( 'html-active' );
+				} else {
+					if ( document.readyState === 'complete' ) {
+						initialize();
+					} else {
+						document.addEventListener( 'readystatechange', initialize );
+					}
+				}
+			}
+
+			if ( typeof quicktags !== 'undefined' ) {
+				for ( id in tinyMCEPreInit.qtInit ) {
+					quicktags( tinyMCEPreInit.qtInit[id] );
+
+					if ( ! window.wpActiveEditor ) {
+						window.wpActiveEditor = id;
+					}
+				}
+			}
+		}());
+		</script>
+				<div id="wp-link-backdrop" style="display: none"></div>
+		<div id="wp-link-wrap" class="wp-core-ui" style="display: none" role="dialog" aria-modal="true" aria-labelledby="link-modal-title">
+		<form id="wp-link" tabindex="-1">
+		<input type="hidden" id="_ajax_linking_nonce" name="_ajax_linking_nonce" value="8f8d5976ab" />		<h1 id="link-modal-title">Insert/edit link</h1>
+		<button type="button" id="wp-link-close"><span class="screen-reader-text">
+			Close		</span></button>
+		<div id="link-selector">
+			<div id="link-options">
+				<p class="howto" id="wplink-enter-url">Enter the destination URL</p>
+				<div>
+					<label><span>URL</span>
+					<input id="wp-link-url" type="text" aria-describedby="wplink-enter-url" /></label>
+				</div>
+				<div class="wp-link-text-field">
+					<label><span>Link Text</span>
+					<input id="wp-link-text" type="text" /></label>
+				</div>
+				<div class="link-target">
+					<label><span></span>
+					<input type="checkbox" id="wp-link-target" /> Open link in a new tab</label>
+				</div>
+			</div>
+			<p class="howto" id="wplink-link-existing-content">Or link to existing content</p>
+			<div id="search-panel">
+				<div class="link-search-wrapper">
+					<label>
+						<span class="search-label">Search</span>
+						<input type="search" id="wp-link-search" class="link-search-field" autocomplete="off" aria-describedby="wplink-link-existing-content" />
+						<span class="spinner"></span>
+					</label>
+				</div>
+				<div id="search-results" class="query-results" tabindex="0">
+					<ul></ul>
+					<div class="river-waiting">
+						<span class="spinner"></span>
+					</div>
+				</div>
+				<div id="most-recent-results" class="query-results" tabindex="0">
+					<div class="query-notice" id="query-notice-message">
+						<em class="query-notice-default">No search term specified. Showing recent items.</em>
+						<em class="query-notice-hint screen-reader-text">
+							Search or use up and down arrow keys to select an item.						</em>
+					</div>
+					<ul></ul>
+					<div class="river-waiting">
+						<span class="spinner"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="submitbox">
+			<div id="wp-link-cancel">
+				<button type="button" class="button">Cancel</button>
+			</div>
+			<div id="wp-link-update">
+				<input type="submit" value="Add Link" class="button button-primary" id="wp-link-submit" name="wp-link-submit">
+			</div>
+		</div>
+		</form>
+		</div>
+			<script>
+	var compressionNonce = "c114263591";
+	var testCompression = {
+		get : function(test) {
+			var x;
+			if ( window.XMLHttpRequest ) {
+				x = new XMLHttpRequest();
+			} else {
+				try{x=new ActiveXObject('Msxml2.XMLHTTP');}catch(e){try{x=new ActiveXObject('Microsoft.XMLHTTP');}catch(e){};}
+			}
+
+			if (x) {
+				x.onreadystatechange = function() {
+					var r, h;
+					if ( x.readyState == 4 ) {
+						r = x.responseText.substr(0, 18);
+						h = x.getResponseHeader('Content-Encoding');
+						testCompression.check(r, h, test);
+					}
+				};
+
+				x.open('GET', ajaxurl + '?action=wp-compression-test&test='+test+'&_ajax_nonce='+compressionNonce+'&'+(new Date()).getTime(), true);
+				x.send('');
+			}
+		},
+
+		check : function(r, h, test) {
+			if ( ! r && ! test )
+				this.get(1);
+
+			if ( 1 == test ) {
+				if ( h && ( h.match(/deflate/i) || h.match(/gzip/i) ) )
+					this.get('no');
+				else
+					this.get(2);
+
+				return;
+			}
+
+			if ( 2 == test ) {
+				if ( '"wpCompressionTest' === r )
+					this.get('yes');
+				else
+					this.get('no');
+			}
+		}
+	};
+	testCompression.check();
+	</script>
+	
+<div class="clear"></div></div><!-- wpwrap -->
+<script>if(typeof wpOnload==='function')wpOnload();</script>
+</body>
+</html>

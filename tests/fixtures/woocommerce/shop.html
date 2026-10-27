@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name='robots' content='max-image-preview:large' />
+<title>Shop &#8211; WooCommerce Demo</title>
+<link rel="alternate" type="application/rss+xml" title="WooCommerce Demo &raquo; Feed" href="/feed/" />
+<link rel="alternate" type="application/rss+xml" title="WooCommerce Demo &raquo; Comments Feed" href="/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="WooCommerce Demo &raquo; Products Feed" href="/shop/feed/" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-block-site-title-inline-css">
+.wp-block-site-title{box-sizing:border-box}.wp-block-site-title :where(a){color:inherit;font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit;text-decoration:inherit}
+/*# sourceURL=/wp-includes/blocks/site-title/style.min.css */
+</style>
+<style id="wp-block-page-list-inline-css">
+.wp-block-navigation .wp-block-page-list{align-items:var(--navigation-layout-align,initial);background-color:inherit;display:flex;flex-direction:var(--navigation-layout-direction,initial);flex-wrap:var(--navigation-layout-wrap,wrap);justify-content:var(--navigation-layout-justify,initial)}.wp-block-navigation .wp-block-navigation-item{background-color:inherit}.wp-block-page-list{box-sizing:border-box}
+/*# sourceURL=/wp-includes/blocks/page-list/style.min.css */
+</style>
+<link rel='stylesheet' id='wp-block-navigation-css' href='/wp-includes/blocks/navigation/style.min.css?ver=7.1.3' media='all' />
+<style id="wp-block-group-inline-css">
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=/wp-includes/blocks/group/style.min.css */
+</style>
+<link rel='stylesheet' id='wc-blocks-style-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-11.2.1' media='all' />
+<link rel='stylesheet' id='wc-blocks-style-breadcrumbs-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/breadcrumbs.css?ver=wc-11.2.1' media='all' />
+<style id="wp-block-query-title-inline-css">
+.wp-block-query-title{box-sizing:border-box}
+/*# sourceURL=/wp-includes/blocks/query-title/style.min.css */
+</style>
+<link rel='stylesheet' id='wc-blocks-style-store-notices-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/store-notices.css?ver=wc-11.2.1' media='all' />
+<link rel='stylesheet' id='wc-blocks-style-product-results-count-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/product-results-count.css?ver=wc-11.2.1' media='all' />
+<style id="woocommerce-catalog-sorting-style-inline-css">
+@keyframes wc-skeleton-shimmer{to{transform:translateX(100%)}}.woocommerce.wc-block-catalog-sorting form{float:none}.woocommerce.wc-block-catalog-sorting label{margin-bottom:0;margin-right:.25rem;vertical-align:middle}.woocommerce.wc-block-catalog-sorting select.orderby{field-sizing:content;font-size:inherit;vertical-align:middle}.woocommerce.wc-block-catalog-sorting.has-text-color select.orderby{color:inherit}.woocommerce.wc-block-catalog-sorting .woocommerce-ordering{margin:auto}
+
+/*# sourceURL=/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/catalog-sorting-style.css */
+</style>
+<link rel='stylesheet' id='wc-blocks-style-product-image-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/product-image.css?ver=wc-11.2.1' media='all' />
+<style id="wp-block-post-title-inline-css">
+.wp-block-post-title{box-sizing:border-box;word-break:break-word}.wp-block-post-title :where(a){display:inline-block;font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit;text-decoration:inherit}
+/*# sourceURL=/wp-includes/blocks/post-title/style.min.css */
+</style>
+<style id="woocommerce-product-price-style-inline-css">
+@keyframes wc-skeleton-shimmer{to{transform:translateX(100%)}}.wc-block-components-product-price--align-left{display:block;text-align:left}.wc-block-components-product-price--align-center{display:block;text-align:center}.wc-block-components-product-price--align-right{display:block;text-align:right}.wc-block-components-product-price{display:block}.wc-block-components-product-price[hidden]{display:none}.wc-block-components-product-price>:empty{display:none}.wc-block-components-product-price .wc-block-all-products .wc-block-components-product-price{margin-bottom:12px}.wc-block-components-product-price ins{text-decoration:none}.wc-block-components-product-price .woocommerce-Price-amount{white-space:nowrap}.wc-block-components-product-price__value.is-discounted{margin-left:.5em}.is-loading .wc-block-components-product-price:before{background-color:currentColor!important;border:0!important;border-radius:.25rem;box-shadow:none;color:currentColor!important;content:".";display:block;display:inline-block;line-height:1;max-width:100%!important;opacity:.15;outline:0!important;overflow:hidden!important;pointer-events:none;position:relative!important;width:100%;width:5em;z-index:1}.is-loading .wc-block-components-product-price:before>*{visibility:hidden}.is-loading .wc-block-components-product-price:before:after{animation:loading__animation 1.5s ease-in-out infinite;background-image:linear-gradient(90deg,currentColor,hsla(0,0%,96%,.302),currentColor);background-repeat:no-repeat;content:" ";display:block;height:100%;left:0;position:absolute;right:0;top:0;transform:translateX(-100%)}@keyframes loading__animation{to{transform:translateX(100%)}}@media screen and (prefers-reduced-motion:reduce){.is-loading .wc-block-components-product-price:before{animation:none}}
+
+/*# sourceURL=/wp-content/plugins/woocommerce/assets/client/blocks/product-price.css */
+</style>
+<style id="wp-block-button-inline-css">
+.wp-block-button__link{align-content:center;box-sizing:border-box;cursor:pointer;display:inline-block;height:100%;text-align:center;word-break:break-word}.wp-block-button__link.aligncenter{text-align:center}.wp-block-button__link.alignright{text-align:right}:where(.wp-block-button__link){border-radius:9999px;box-shadow:none;padding:calc(.667em + 2px) calc(1.333em + 2px);text-decoration:none}.wp-block-button[style*=text-decoration] .wp-block-button__link{text-decoration:inherit}.wp-block-buttons>.wp-block-button.has-custom-width{max-width:none}.wp-block-buttons>.wp-block-button.has-custom-width .wp-block-button__link{width:100%}.wp-block-buttons>.wp-block-button.has-custom-font-size .wp-block-button__link{font-size:inherit}.wp-block-buttons>.wp-block-button[class*=wp-block-button__width]{width:calc(var(--wp--block-button--width)*1% - var(--wp--style--block-gap, .5em)*(1 - var(--wp--block-button--width)/100))}.wp-block-buttons>.wp-block-button.wp-block-button__width-25{width:calc(25% - var(--wp--style--block-gap, .5em)*.75)}.wp-block-buttons>.wp-block-button.wp-block-button__width-50{width:calc(50% - var(--wp--style--block-gap, .5em)*.5)}.wp-block-buttons>.wp-block-button.wp-block-button__width-75{width:calc(75% - var(--wp--style--block-gap, .5em)*.25)}.wp-block-buttons>.wp-block-button.wp-block-button__width-100{flex-basis:100%;width:100%}.wp-block-buttons.is-vertical>.wp-block-button[class*=wp-block-button__width]{width:calc(var(--wp--block-button--width)*1%)}.wp-block-buttons.is-vertical>.wp-block-button.wp-block-button__width-25{width:25%}.wp-block-buttons.is-vertical>.wp-block-button.wp-block-button__width-50{width:50%}.wp-block-buttons.is-vertical>.wp-block-button.wp-block-button__width-75{width:75%}.wp-block-button.is-style-squared,.wp-block-button__link.wp-block-button.is-style-squared{border-radius:0}.wp-block-button.no-border-radius,.wp-block-button__link.no-border-radius{border-radius:0!important}:root :where(.wp-block-button .wp-block-button__link.is-style-outline),:root :where(.wp-block-button.is-style-outline>.wp-block-button__link){border:2px solid;padding:.667em 1.333em}:root :where(.wp-block-button .wp-block-button__link.is-style-outline:not(.has-text-color)),:root :where(.wp-block-button.is-style-outline>.wp-block-button__link:not(.has-text-color)){color:currentColor}:root :where(.wp-block-button .wp-block-button__link.is-style-outline:not(.has-background)),:root :where(.wp-block-button.is-style-outline>.wp-block-button__link:not(.has-background)){background-color:transparent;background-image:none}
+/*# sourceURL=/wp-includes/blocks/button/style.min.css */
+</style>
+<style id="woocommerce-product-button-style-inline-css">
+@keyframes wc-skeleton-shimmer{to{transform:translateX(100%)}}.wp-block-button.wc-block-components-product-button{align-items:center;display:flex;flex-direction:column;gap:12px;justify-content:center;white-space:normal}.wp-block-button.wc-block-components-product-button.is-style-outline .wp-block-button__link{border:2px solid}.wp-block-button.wc-block-components-product-button.is-style-outline .wp-block-button__link:not(.has-text-color){color:currentColor}.wp-block-button.wc-block-components-product-button.is-style-outline .wp-block-button__link:not(.has-background){background-color:transparent;background-image:none}.wp-block-button.wc-block-components-product-button.has-custom-width .wp-block-button__link{box-sizing:border-box}.wp-block-button.wc-block-components-product-button.wp-block-button__width-25 .wp-block-button__link{width:25%}.wp-block-button.wc-block-components-product-button.wp-block-button__width-50 .wp-block-button__link{width:50%}.wp-block-button.wc-block-components-product-button.wp-block-button__width-75 .wp-block-button__link{width:75%}.wp-block-button.wc-block-components-product-button.wp-block-button__width-100 .wp-block-button__link{width:100%}.wp-block-button.wc-block-components-product-button .wp-block-button__link{display:inline-flex;justify-content:center;text-align:center;white-space:normal;width:auto}.wp-block-button.wc-block-components-product-button a[hidden],.wp-block-button.wc-block-components-product-button button[hidden]{display:none}@keyframes slideOut{0%{transform:translateY(0)}to{transform:translateY(-100%)}}@keyframes slideIn{0%{opacity:0;transform:translateY(90%)}to{opacity:1;transform:translate(0)}}.wp-block-button.wc-block-components-product-button.align-left{align-items:flex-start}.wp-block-button.wc-block-components-product-button.align-right{align-items:flex-end}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button{align-items:center;border-style:none;display:inline-flex;justify-content:center;line-height:inherit;overflow:hidden;white-space:normal;word-break:normal}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button span.wc-block-slide-out{animation:slideOut .1s linear 1 normal forwards}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button span.wc-block-slide-in{animation:slideIn .1s linear 1 normal}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button--placeholder{background-color:currentColor!important;border:0!important;border-radius:.25rem;box-shadow:none;color:currentColor!important;display:block;line-height:1;max-width:100%!important;min-height:3em;min-width:8em;opacity:.15;outline:0!important;overflow:hidden!important;pointer-events:none;position:relative!important;width:100%;z-index:1}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button--placeholder>*{visibility:hidden}.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button--placeholder:after{animation:loading__animation 1.5s ease-in-out infinite;background-image:linear-gradient(90deg,currentColor,hsla(0,0%,96%,.302),currentColor);background-repeat:no-repeat;content:" ";display:block;height:100%;left:0;position:absolute;right:0;top:0;transform:translateX(-100%)}@keyframes loading__animation{to{transform:translateX(100%)}}@media screen and (prefers-reduced-motion:reduce){.wp-block-button.wc-block-components-product-button .wc-block-components-product-button__button--placeholder{animation:none}}.wc-block-all-products .wp-block-button.wc-block-components-product-button{margin-bottom:12px}.theme-twentytwentyone .editor-styles-wrapper .wc-block-components-product-button .wp-block-button__link{background-color:var(--button--color-background);border-color:var(--button--color-background);color:var(--button--color-text)}
+
+/*# sourceURL=/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/product-button-style.css */
+</style>
+<link rel='stylesheet' id='wc-blocks-style-product-sale-badge-css' href='/wp-content/plugins/woocommerce/assets/client/blocks/product-sale-badge.css?ver=wc-11.2.1' media='all' />
+<style id="woocommerce-product-template-style-inline-css">
+@keyframes wc-skeleton-shimmer{to{transform:translateX(100%)}}.wc-block-product-template{list-style:none;margin-bottom:0;margin-top:0;max-width:100%;padding:0}.wc-block-product-template.wc-block-product-template{background:none}.wc-block-product-template.is-flex-container{display:flex;flex-direction:row;flex-wrap:wrap;gap:1.25em}.wc-block-product-template.is-flex-container>li{list-style:none;margin:0;width:100%}@media(min-width:600px){.wc-block-product-template.is-flex-container.is-flex-container.columns-2>li{width:calc(50% - .625em)}.wc-block-product-template.is-flex-container.is-flex-container.columns-3>li{width:calc(33.33333% - .83333em)}.wc-block-product-template.is-flex-container.is-flex-container.columns-4>li{width:calc(25% - .9375em)}.wc-block-product-template.is-flex-container.is-flex-container.columns-5>li{width:calc(20% - 1em)}.wc-block-product-template.is-flex-container.is-flex-container.columns-6>li{width:calc(16.66667% - 1.04167em)}}.wc-block-product-template__responsive{grid-gap:1.25em;display:grid}.wc-block-product-template__responsive.columns-2{grid-template-columns:repeat(auto-fill,minmax(max(150px,calc(50% - .625em)),1fr))}.wc-block-product-template__responsive.columns-3{grid-template-columns:repeat(auto-fill,minmax(max(150px,calc(33.33333% - .83333em)),1fr))}.wc-block-product-template__responsive.columns-4{grid-template-columns:repeat(auto-fill,minmax(max(150px,calc(25% - .9375em)),1fr))}.wc-block-product-template__responsive.columns-5{grid-template-columns:repeat(auto-fill,minmax(max(150px,calc(20% - 1em)),1fr))}.wc-block-product-template__responsive.columns-6{grid-template-columns:repeat(auto-fill,minmax(max(150px,calc(16.66667% - 1.04167em)),1fr))}.wc-block-product-template__responsive>li{margin-block-start:0}:where(.wc-block-product-template .wc-block-product)>:not(:last-child){margin-bottom:.75rem;margin-top:0}.is-product-collection-layout-list .wc-block-product:not(:last-child){margin-bottom:1.2rem}.is-product-collection-layout-carousel{container-name:carousel;container-type:inline-size;overflow-x:auto;padding:4px;position:relative;scroll-padding:0 30%;scroll-snap-type:x mandatory;scrollbar-width:none}.is-product-collection-layout-carousel .wc-block-product{flex-basis:0;max-width:400px;min-width:42.5%;scroll-snap-align:center}@container carousel (min-width: 600px){.is-product-collection-layout-carousel .wc-block-product{min-width:28.5%}}@container carousel (min-width: 782px){.is-product-collection-layout-carousel .wc-block-product{min-width:29%}}@container carousel (min-width: 960px){.is-product-collection-layout-carousel .wc-block-product{min-width:22%}}@container carousel (min-width: 1280px){.is-product-collection-layout-carousel .wc-block-product{min-width:18%}}@container carousel (min-width: 1440px){.is-product-collection-layout-carousel .wc-block-product{min-width:15%}}
+
+/*# sourceURL=/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/product-template-style.css */
+</style>
+<style id="wp-block-query-pagination-inline-css">
+.wp-block-query-pagination.is-content-justification-space-between>.wp-block-query-pagination-next:last-of-type{margin-inline-start:auto}.wp-block-query-pagination.is-content-justification-space-between>.wp-block-query-pagination-previous:first-child{margin-inline-end:auto}.wp-block-query-pagination .wp-block-query-pagination-previous-arrow{display:inline-block;margin-right:1ch}.wp-block-query-pagination .wp-block-query-pagination-previous-arrow:not(.is-arrow-chevron){transform:scaleX(1)}.wp-block-query-pagination .wp-block-query-pagination-next-arrow{display:inline-block;margin-left:1ch}.wp-block-query-pagination .wp-block-query-pagination-next-arrow:not(.is-arrow-chevron){transform:scaleX(1)}.wp-block-query-pagination.aligncenter{justify-content:center}
+/*# sourceURL=/wp-includes/blocks/query-pagination/style.min.css */
+</style>
+<style id="woocommerce-product-collection-style-inline-css">
+@keyframes wc-skeleton-shimmer{to{transform:translateX(100%)}}.wp-block-woocommerce-product-collection{margin-bottom:30px}.wp-block-woocommerce-product-collection .wc-block-components-product-stock-indicator{text-align:center}.wp-block-woocommerce-product-collection .wc-block-components-notices:not(:has(*))+.wc-block-product-template{margin-block-start:0}@media(max-width:600px)and (hover:none)and (pointer:coarse){.wp-block-woocommerce-product-collection:has(.is-product-collection-layout-carousel) :where(.wc-block-next-previous-buttons.wc-block-next-previous-buttons){display:none}}.wc-product-collection-carousel-header .wp-block-heading{margin-bottom:0;margin-top:0}.wc-block-components-notice-banner .wc-block-components-button.wc-block-components-notice-banner__dismiss[hidden]{display:none}
+
+/*# sourceURL=/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/product-collection-style.css */
+</style>
+<style id="wp-interactivity-router-animations-inline-css">
+			.wp-interactivity-router-loading-bar {
+				position: fixed;
+				top: 0;
+				left: 0;
+				margin: 0;
+				padding: 0;
+				width: 100vw;
+				max-width: 100vw !important;
+				height: 4px;
+				background-color: #000;
+				opacity: 0
+			}
+			.wp-interactivity-router-loading-bar.start-animation {
+				animation: wp-interactivity-router-loading-bar-start-animation 30s cubic-bezier(0.03, 0.5, 0, 1) forwards
+			}
+			.wp-interactivity-router-loading-bar.finish-animation {
+				animation: wp-interactivity-router-loading-bar-finish-animation 300ms ease-in
+			}
+			@keyframes wp-interactivity-router-loading-bar-start-animation {
+				0% { transform: scaleX(0); transform-origin: 0 0; opacity: 1 }
+				100% { transform: scaleX(1); transform-origin: 0 0; opacity: 1 }
+			}
+			@keyframes wp-interactivity-router-loading-bar-finish-animation {
+				0% { opacity: 1 }
+				50% { opacity: 1 }
+				100% { opacity: 0 }
+			}
+/*# sourceURL=wp-interactivity-router-animations-inline-css */
+</style>
+<style id="wp-block-spacer-inline-css">
+.wp-block-spacer{clear:both}
+/*# sourceURL=/wp-includes/blocks/spacer/style.min.css */
+</style>
+<style id="wp-block-columns-inline-css">
+.wp-block-columns{box-sizing:border-box;display:flex;flex-wrap:wrap!important}@media (min-width:782px){.wp-block-columns{flex-wrap:nowrap!important}}.wp-block-columns{align-items:normal!important}.wp-block-columns.are-vertically-aligned-top{align-items:flex-start}.wp-block-columns.are-vertically-aligned-center{align-items:center}.wp-block-columns.are-vertically-aligned-bottom{align-items:flex-end}@media (max-width:781px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:100%!important}}@media (min-width:782px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column[style*=flex-basis]{flex-grow:0}}.wp-block-columns.is-not-stacked-on-mobile{flex-wrap:nowrap!important}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column[style*=flex-basis]{flex-grow:0}:where(.wp-block-columns){margin-bottom:1.75em}:where(.wp-block-columns.has-background){padding:1.25em 2.375em}.wp-block-column{flex-grow:1;min-width:0;overflow-wrap:break-word;word-break:break-word}.wp-block-column.is-vertically-aligned-top{align-self:flex-start}.wp-block-column.is-vertically-aligned-center{align-self:center}.wp-block-column.is-vertically-aligned-bottom{align-self:flex-end}.wp-block-column.is-vertically-aligned-stretch{align-self:stretch}.wp-block-column.is-vertically-aligned-bottom,.wp-block-column.is-vertically-aligned-center,.wp-block-column.is-vertically-aligned-top{width:100%}
+/*# sourceURL=/wp-includes/blocks/columns/style.min.css */
+</style>
+<style id="wp-block-navigation-link-inline-css">
+.wp-block-navigation .wp-block-navigation-item__label{overflow-wrap:break-word}.wp-block-navigation .wp-block-navigation-item__description{display:none}.link-ui-tools{outline:1px solid #f0f0f0;padding:8px}.link-ui-block-inserter{padding-top:8px}.link-ui-block-inserter__back{margin-left:8px;text-transform:uppercase}
+/*# sourceURL=/wp-includes/blocks/navigation-link/style.min.css */
+</style>
+<style id="wp-block-paragraph-inline-css">
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<link rel='stylesheet' id='woocommerce-blocktheme-css' href='/wp-content/plugins/woocommerce/assets/css/woocommerce-blocktheme.css?ver=11.2.1' media='all' />
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--base: #FFFFFF;--wp--preset--color--contrast: #111111;--wp--preset--color--accent-1: #FFEE58;--wp--preset--color--accent-2: #F6CFF4;--wp--preset--color--accent-3: #503AA8;--wp--preset--color--accent-4: #686868;--wp--preset--color--accent-5: #FBFAF3;--wp--preset--color--accent-6: color-mix(in srgb, currentColor 20%, transparent);--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 0.875rem;--wp--preset--font-size--medium: clamp(1rem, 1rem + ((1vw - 0.2rem) * 0.196), 1.125rem);--wp--preset--font-size--large: clamp(1.125rem, 1.125rem + ((1vw - 0.2rem) * 0.392), 1.375rem);--wp--preset--font-size--x-large: clamp(1.75rem, 1.75rem + ((1vw - 0.2rem) * 0.392), 2rem);--wp--preset--font-size--xx-large: clamp(2.15rem, 2.15rem + ((1vw - 0.2rem) * 1.333), 3rem);--wp--preset--font-family--manrope: Manrope, sans-serif;--wp--preset--font-family--fira-code: "Fira Code", monospace;--wp--preset--spacing--20: 10px;--wp--preset--spacing--30: 20px;--wp--preset--spacing--40: 30px;--wp--preset--spacing--50: clamp(30px, 5vw, 50px);--wp--preset--spacing--60: clamp(30px, 7vw, 70px);--wp--preset--spacing--70: clamp(50px, 7vw, 90px);--wp--preset--spacing--80: clamp(70px, 10vw, 140px);--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:root { --wp--style--global--content-size: 645px;--wp--style--global--wide-size: 1340px; }:where(body) { margin: 0; }.wp-site-blocks { padding-top: var(--wp--style--root--padding-top); padding-bottom: var(--wp--style--root--padding-bottom); }.has-global-padding { padding-right: var(--wp--style--root--padding-right); padding-left: var(--wp--style--root--padding-left); }.has-global-padding > .alignfull { margin-right: calc(var(--wp--style--root--padding-right) * -1); margin-left: calc(var(--wp--style--root--padding-left) * -1); }.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) { padding-right: 0; padding-left: 0; }.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) > .alignfull { margin-left: 0; margin-right: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }:where(.wp-site-blocks) > * { margin-block-start: 1.2rem; margin-block-end: 0; }:where(.wp-site-blocks) > :first-child { margin-block-start: 0; }:where(.wp-site-blocks) > :last-child { margin-block-end: 0; }:root { --wp--style--block-gap: 1.2rem; }:root :where(.is-layout-flow) > :first-child{margin-block-start: 0;}:root :where(.is-layout-flow) > :last-child{margin-block-end: 0;}:root :where(.is-layout-flow) > *{margin-block-start: 1.2rem;margin-block-end: 0;}:root :where(.is-layout-constrained) > :first-child{margin-block-start: 0;}:root :where(.is-layout-constrained) > :last-child{margin-block-end: 0;}:root :where(.is-layout-constrained) > *{margin-block-start: 1.2rem;margin-block-end: 0;}:root :where(.is-layout-flex){gap: 1.2rem;}:root :where(.is-layout-grid){gap: 1.2rem;}.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{background-color: var(--wp--preset--color--base);color: var(--wp--preset--color--contrast);font-family: var(--wp--preset--font-family--manrope);font-size: var(--wp--preset--font-size--large);font-weight: 300;letter-spacing: -0.1px;line-height: 1.4;--wp--style--root--padding-top: 0px;--wp--style--root--padding-right: var(--wp--preset--spacing--50);--wp--style--root--padding-bottom: 0px;--wp--style--root--padding-left: var(--wp--preset--spacing--50);}a:where(:not(.wp-element-button)){color: currentColor;}:root :where(a:where(:not(.wp-element-button)):hover){text-decoration: none;}h1, h2, h3, h4, h5, h6{font-weight: 400;letter-spacing: -0.1px;line-height: 1.125;}h1{font-size: var(--wp--preset--font-size--xx-large);}h2{font-size: var(--wp--preset--font-size--x-large);}h3{font-size: var(--wp--preset--font-size--large);}h4{font-size: var(--wp--preset--font-size--medium);}h5{font-size: var(--wp--preset--font-size--small);letter-spacing: 0.5px;}h6{font-size: var(--wp--preset--font-size--small);font-weight: 700;letter-spacing: 1.4px;text-transform: uppercase;}:root :where(.wp-element-button, .wp-block-button__link){background-color: var(--wp--preset--color--contrast);border-width: 0;color: var(--wp--preset--color--base);font-family: inherit;font-size: var(--wp--preset--font-size--medium);font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: 1rem;padding-right: 2.25rem;padding-bottom: 1rem;padding-left: 2.25rem;text-decoration: none;text-transform: inherit;}:root :where(.wp-element-button:hover, .wp-block-button__link:hover){background-color: color-mix(in srgb, var(--wp--preset--color--contrast) 85%, transparent);border-color: transparent;color: var(--wp--preset--color--base);}:root :where(.wp-element-button:focus, .wp-block-button__link:focus){outline-color: var(--wp--preset--color--accent-4);outline-offset: 2px;}:root :where(.wp-element-caption, .wp-block-audio figcaption, .wp-block-embed figcaption, .wp-block-gallery figcaption, .wp-block-image figcaption, .wp-block-table figcaption, .wp-block-video figcaption){font-size: var(--wp--preset--font-size--small);line-height: 1.4;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-base-color{color: var(--wp--preset--color--base) !important;}.has-contrast-color{color: var(--wp--preset--color--contrast) !important;}.has-accent-1-color{color: var(--wp--preset--color--accent-1) !important;}.has-accent-2-color{color: var(--wp--preset--color--accent-2) !important;}.has-accent-3-color{color: var(--wp--preset--color--accent-3) !important;}.has-accent-4-color{color: var(--wp--preset--color--accent-4) !important;}.has-accent-5-color{color: var(--wp--preset--color--accent-5) !important;}.has-accent-6-color{color: var(--wp--preset--color--accent-6) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-base-background-color{background-color: var(--wp--preset--color--base) !important;}.has-contrast-background-color{background-color: var(--wp--preset--color--contrast) !important;}.has-accent-1-background-color{background-color: var(--wp--preset--color--accent-1) !important;}.has-accent-2-background-color{background-color: var(--wp--preset--color--accent-2) !important;}.has-accent-3-background-color{background-color: var(--wp--preset--color--accent-3) !important;}.has-accent-4-background-color{background-color: var(--wp--preset--color--accent-4) !important;}.has-accent-5-background-color{background-color: var(--wp--preset--color--accent-5) !important;}.has-accent-6-background-color{background-color: var(--wp--preset--color--accent-6) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-base-border-color{border-color: var(--wp--preset--color--base) !important;}.has-contrast-border-color{border-color: var(--wp--preset--color--contrast) !important;}.has-accent-1-border-color{border-color: var(--wp--preset--color--accent-1) !important;}.has-accent-2-border-color{border-color: var(--wp--preset--color--accent-2) !important;}.has-accent-3-border-color{border-color: var(--wp--preset--color--accent-3) !important;}.has-accent-4-border-color{border-color: var(--wp--preset--color--accent-4) !important;}.has-accent-5-border-color{border-color: var(--wp--preset--color--accent-5) !important;}.has-accent-6-border-color{border-color: var(--wp--preset--color--accent-6) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}.has-xx-large-font-size{font-size: var(--wp--preset--font-size--xx-large) !important;}.has-manrope-font-family{font-family: var(--wp--preset--font-family--manrope) !important;}.has-fira-code-font-family{font-family: var(--wp--preset--font-family--fira-code) !important;}
+:root :where(.wp-block-columns-is-layout-flow) > :first-child{margin-block-start: 0;}:root :where(.wp-block-columns-is-layout-flow) > :last-child{margin-block-end: 0;}:root :where(.wp-block-columns-is-layout-flow) > *{margin-block-start: var(--wp--preset--spacing--50);margin-block-end: 0;}:root :where(.wp-block-columns-is-layout-constrained) > :first-child{margin-block-start: 0;}:root :where(.wp-block-columns-is-layout-constrained) > :last-child{margin-block-end: 0;}:root :where(.wp-block-columns-is-layout-constrained) > *{margin-block-start: var(--wp--preset--spacing--50);margin-block-end: 0;}:root :where(.wp-block-columns-is-layout-flex){gap: var(--wp--preset--spacing--50);}:root :where(.wp-block-columns-is-layout-grid){gap: var(--wp--preset--spacing--50);}
+:root :where(.wp-block-post-title a:where(:not(.wp-element-button))){text-decoration: none;}
+:root :where(.wp-block-post-title a:where(:not(.wp-element-button)):hover){text-decoration: underline;}
+:root :where(.wp-block-query-pagination){font-size: var(--wp--preset--font-size--medium);font-weight: 500;}
+:root :where(.wp-block-site-title){font-weight: 700;letter-spacing: -.5px;}
+:root :where(.wp-block-site-title a:where(:not(.wp-element-button))){text-decoration: none;}
+:root :where(.wp-block-site-title a:where(:not(.wp-element-button)):hover){text-decoration: underline;}
+:root :where(.wp-block-navigation){font-size: var(--wp--preset--font-size--medium);}
+:root :where(.wp-block-navigation a:where(:not(.wp-element-button))){text-decoration: none;}
+:root :where(.wp-block-navigation a:where(:not(.wp-element-button)):hover){text-decoration: underline;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+<style id="core-block-supports-inline-css">
+.wp-container-core-navigation-is-layout-6e943505{justify-content:flex-end;}.wp-container-core-group-is-layout-fbffc046{flex-wrap:nowrap;gap:var(--wp--preset--spacing--10);justify-content:flex-end;}.wp-container-core-group-is-layout-ec1e7a1e{flex-wrap:nowrap;justify-content:space-between;}.wp-container-core-group-is-layout-788841da{flex-wrap:nowrap;justify-content:space-between;}.wp-container-core-query-pagination-is-layout-b29d4327{justify-content:center;}.wp-container-core-group-is-layout-331295ae{flex-direction:column;align-items:center;}.wp-container-core-columns-is-layout-794e3cfa{flex-wrap:nowrap;}.wp-container-core-navigation-is-layout-831b2db5{flex-direction:column;align-items:flex-start;}.wp-container-core-group-is-layout-bf19e0b3{gap:var(--wp--preset--spacing--80);justify-content:space-between;align-items:flex-start;}.wp-container-core-group-is-layout-cf54d0a6{justify-content:space-between;align-items:flex-start;}.wp-container-core-group-is-layout-2ab8c7fb{gap:var(--wp--preset--spacing--20);justify-content:space-between;}
+/*# sourceURL=core-block-supports-inline-css */
+</style>
+<style id="wp-block-template-skip-link-inline-css">
+/*! This file is auto-generated */
+.skip-link.screen-reader-text{border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute!important;width:1px;word-wrap:normal!important;word-break:normal!important}.skip-link.screen-reader-text:focus{background-color:#eee;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}
+/*# sourceURL=/wp-includes/css/wp-block-template-skip-link.min.css */
+</style>
+<link rel='stylesheet' id='woocommerce-layout-css' href='/wp-content/plugins/woocommerce/assets/css/woocommerce-layout.css?ver=11.2.1' media='all' />
+<link rel='stylesheet' id='woocommerce-smallscreen-css' href='/wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreen.css?ver=11.2.1' media='only screen and (max-width: 768px)' />
+<link rel='stylesheet' id='woocommerce-general-css' href='/wp-content/plugins/woocommerce/assets/css/woocommerce.css?ver=11.2.1' media='all' />
+<style id="woocommerce-inline-inline-css">
+.woocommerce form .form-row .required { visibility: visible; }
+/*# sourceURL=woocommerce-inline-inline-css */
+</style>
+<style id="twentytwentyfive-style-inline-css">
+a{text-decoration-thickness:1px!important;text-underline-offset:.1em}:where(.wp-site-blocks :focus){outline-width:2px;outline-style:solid}.wp-block-navigation .wp-block-navigation-submenu .wp-block-navigation-item:not(:last-child){margin-bottom:3px}.wp-block-navigation .wp-block-navigation-item .wp-block-navigation-item__content{outline-offset:4px}.wp-block-navigation .wp-block-navigation-item ul.wp-block-navigation__submenu-container .wp-block-navigation-item__content{outline-offset:0}blockquote,caption,figcaption,h1,h2,h3,h4,h5,h6,p{text-wrap:pretty}.more-link{display:block}:where(pre){overflow-x:auto}
+/*# sourceURL=/wp-content/themes/twentytwentyfive/style.min.css */
+</style>
+<script id="jquery-core-js" src="/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<script data-wp-strategy="defer" defer id="wc-jquery-blockui-js" src="/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.11.2.1"></script>
+<script data-wp-strategy="defer" defer id="wc-js-cookie-js" src="/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.11.2.1"></script>
+<script id="woocommerce-js-extra">
+var woocommerce_params = {"ajax_url":"/wp-admin/admin-ajax.php","wc_ajax_url":"/?wc-ajax=%%endpoint%%","i18n_password_show":"Show password","i18n_password_hide":"Hide password"};
+//# sourceURL=woocommerce-js-extra
+</script>
+<script data-wp-strategy="defer" defer id="woocommerce-js" src="/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=11.2.1"></script>
+<link rel="https://api.w.org/" href="/wp-json/" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.1.3" />
+<meta name="generator" content="WooCommerce 11.2.1" />
+<script id="wp-importmap" type="importmap">
+{"imports":{"@wordpress/interactivity":"/wp-includes/js/dist/script-modules/interactivity/index.min.js?ver=efaa5193bbad9c60ffd1","@wordpress/interactivity-router":"/wp-includes/js/dist/script-modules/interactivity-router/index.min.js?ver=a6e90b8896f83fb1b5dd","@woocommerce/stores/woocommerce/cart":"/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/woocommerce/cart.js?ver=b6c4f13305af68a3b567","@woocommerce/stores/woocommerce/products":"/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/woocommerce/products.js?ver=d2328963c7e9ed84708e","@wordpress/a11y":"/wp-includes/js/dist/script-modules/a11y/index.min.js?ver=f62f48906198ea8abc60","@woocommerce/stores/store-notices":"/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/store-notices.js?ver=c1eae8d5e518e3fbcf40"}}
+</script>
+<script id="woocommerce/catalog-sorting-js-module" src="/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/catalog-sorting.js?ver=4834bb2b899b3dade49a" type="module"></script>
+<script id="woocommerce/product-button-js-module" src="/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/product-button.js?ver=1ced8ea5bb9f2b4dbf13" type="module"></script>
+<script id="woocommerce/product-collection-js-module" src="/wp-content/plugins/woocommerce/assets/client/blocks/woocommerce/product-collection.js?ver=6f9c1ff012316bd15e75" type="module"></script>
+<link rel="modulepreload" href="/wp-includes/js/dist/script-modules/interactivity/index.min.js?ver=efaa5193bbad9c60ffd1" id="@wordpress/interactivity-js-modulepreload" data-wp-fetchpriority="low">
+<link rel="modulepreload" href="/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/store-notices.js?ver=c1eae8d5e518e3fbcf40" id="@woocommerce/stores/store-notices-js-modulepreload">
+<link rel="modulepreload" href="/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/woocommerce/products.js?ver=d2328963c7e9ed84708e" id="@woocommerce/stores/woocommerce/products-js-modulepreload">
+<link rel="modulepreload" href="/wp-content/plugins/woocommerce/assets/client/blocks/@woocommerce/stores/woocommerce/cart.js?ver=b6c4f13305af68a3b567" id="@woocommerce/stores/woocommerce/cart-js-modulepreload">
+	<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
+	<style class="wp-fonts-local">
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/manrope/Manrope-VariableFont_wght.woff2') format('woff2');}
+@font-face{font-family:"Fira Code";font-style:normal;font-weight:300 700;font-display:fallback;src:url('/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2') format('woff2');}
+</style>
+</head>
+
+<body class="archive post-type-archive post-type-archive-product wp-embed-responsive wp-theme-twentytwentyfive theme-twentytwentyfive woocommerce-shop woocommerce woocommerce-page woocommerce-uses-block-theme woocommerce-block-theme-has-button-styles woocommerce-no-js">
+
+<a class="skip-link screen-reader-text" id="wp-skip-link" href="#wp--skip-link--target">Skip to content</a><div class="wp-site-blocks"><header class="wp-block-template-part">
+<div class="wp-block-group alignfull is-layout-flow wp-block-group-is-layout-flow">
+	
+	<div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+		
+		<div class="wp-block-group alignwide is-content-justification-space-between is-nowrap is-layout-flex wp-container-core-group-is-layout-ec1e7a1e wp-block-group-is-layout-flex" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30)">
+			<p class="wp-block-site-title"><a href="http://localhost:18082" target="_self" rel="home">WooCommerce Demo</a></p>
+			
+			<div class="wp-block-group is-content-justification-right is-nowrap is-layout-flex wp-container-core-group-is-layout-fbffc046 wp-block-group-is-layout-flex">
+				<nav class="is-responsive items-justified-right wp-block-navigation is-content-justification-right is-layout-flex wp-container-core-navigation-is-layout-6e943505 wp-block-navigation-is-layout-flex" 
+		 data-wp-interactive="core/navigation" data-wp-context='{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"Menu"}'><button aria-haspopup="dialog" aria-label="Open menu" class="wp-block-navigation__responsive-container-open" 
+				data-wp-on--click="actions.openMenuOnClick"
+				data-wp-on--keydown="actions.handleMenuKeydown"
+			><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7.5h16v1.5H4z"></path><path d="M4 15h16v1.5H4z"></path></svg></button>
+				<div class="wp-block-navigation__responsive-container has-text-color has-contrast-color has-background has-base-background-color"  id="modal-1" 
+				data-wp-class--has-modal-open="state.isMenuOpen"
+				data-wp-class--is-menu-open="state.isMenuOpen"
+				data-wp-watch="callbacks.initMenu"
+				data-wp-on--keydown="actions.handleMenuKeydown"
+				data-wp-on--focusout="actions.handleMenuFocusout"
+				tabindex="-1"
+			>
+					<div class="wp-block-navigation__responsive-close" tabindex="-1">
+						<div class="wp-block-navigation__responsive-dialog" 
+				data-wp-bind--aria-modal="state.ariaModal"
+				data-wp-bind--aria-label="state.ariaLabel"
+				data-wp-bind--role="state.roleAttribute"
+			>
+							<button aria-label="Close menu" class="wp-block-navigation__responsive-container-close" 
+				data-wp-on--click="actions.closeMenuOnClick"
+			><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z"></path></svg></button>
+							<div class="wp-block-navigation__responsive-container-content" 
+				data-wp-watch="callbacks.focusFirstElement"
+			 id="modal-1-content">
+								<ul class="wp-block-navigation__container is-responsive items-justified-right wp-block-navigation"><ul class="wp-block-page-list"><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/cart/">Cart</a></li><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/checkout/">Checkout</a></li><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/classic-cart/">Classic Cart</a></li><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/classic-checkout/">Classic Checkout</a></li><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/my-account/">My account</a></li><li class="wp-block-pages-list__item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/sample-page/">Sample Page</a></li><li class="wp-block-pages-list__item current-menu-item wp-block-navigation-item open-on-hover-click"><a class="wp-block-pages-list__item__link wp-block-navigation-item__content" href="/shop/" aria-current="page">Shop</a></li></ul></ul>
+								
+							</div>
+						</div>
+					</div>
+				</div></nav>
+			</div>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+
+</header>
+
+
+<main id="wp--skip-link--target" class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+	<div data-block-name="woocommerce/breadcrumbs" class="woocommerce wc-block-breadcrumbs alignwide has-font-size has-small-font-size wp-block-woocommerce-breadcrumbs"><nav class="woocommerce-breadcrumb" aria-label="Breadcrumb"><a href="http://localhost:18082">Home</a>&nbsp;&#47;&nbsp;Shop</nav></div>
+
+	<h1 class="alignwide wp-block-query-title">Shop</h1>
+
+	
+
+	<div data-block-name="woocommerce/store-notices" class="wc-block-store-notices woocommerce alignwide wp-block-woocommerce-store-notices"><div class="woocommerce-notices-wrapper"></div></div>
+
+	
+	<div class="wp-block-group alignwide is-content-justification-space-between is-nowrap is-layout-flex wp-container-core-group-is-layout-788841da wp-block-group-is-layout-flex">
+		<div data-block-name="woocommerce/product-results-count" class=" woocommerce wc-block-product-results-count wp-block-woocommerce-product-results-count" data-wp-interactive="woocommerce/product-results-count" data-wp-router-region="wc-product-results-count-0" style=""><p class="woocommerce-result-count" role="status" aria-relevant="all" >
+	Showing 1&ndash;16 of 17 results</p>
+</div>
+		<div data-block-name="woocommerce/catalog-sorting" class="woocommerce wc-block-catalog-sorting has-font-size has-small-font-size wp-block-woocommerce-catalog-sorting"><form data-wp-interactive="woocommerce/catalog-sorting" data-wp-on--submit="actions.preventSubmit" class="woocommerce-ordering" method="get">
+		<select data-wp-on--change="actions.handleSortChange"
+		name="orderby"
+		class="orderby"
+					aria-label="Shop order"
+			>
+					<option value="menu_order"  selected='selected'>Default sorting</option>
+					<option value="popularity" >Sort by popularity</option>
+					<option value="rating" >Sort by average rating</option>
+					<option value="date" >Sort by latest</option>
+					<option value="price" >Sort by price: low to high</option>
+					<option value="price-desc" >Sort by price: high to low</option>
+			</select>
+	<input type="hidden" name="paged" value="1" />
+	</form>
+</div>
+	</div>
+	
+	
+	<div data-wp-context="{&quot;notices&quot;:[],&quot;hideNextPreviousButtons&quot;:false,&quot;isDisabledPrevious&quot;:true,&quot;isDisabledNext&quot;:false,&quot;ariaLabelPrevious&quot;:&quot;Previous products&quot;,&quot;ariaLabelNext&quot;:&quot;Next products&quot;}" data-wp-init="callbacks.onRender" data-wp-interactive="woocommerce/product-collection" data-wp-router-region="wc-product-collection-0" data-block-name="woocommerce/product-collection" data-converted-from-products="false" data-dimensions="{&quot;widthType&quot;:&quot;fill&quot;,&quot;fixedWidth&quot;:&quot;&quot;}" data-display-layout="{&quot;type&quot;:&quot;flex&quot;,&quot;columns&quot;:3,&quot;shrinkColumns&quot;:true}" data-is-inherited="1" data-query-context-includes="[&quot;collection&quot;]" data-query-id="0" data-query="{&quot;woocommerceAttributes&quot;:[],&quot;woocommerceStockStatus&quot;:[&quot;instock&quot;,&quot;outofstock&quot;,&quot;onbackorder&quot;],&quot;taxQuery&quot;:[],&quot;isProductCollectionBlock&quot;:true,&quot;perPage&quot;:10,&quot;pages&quot;:0,&quot;offset&quot;:0,&quot;postType&quot;:&quot;product&quot;,&quot;order&quot;:&quot;asc&quot;,&quot;orderBy&quot;:&quot;title&quot;,&quot;author&quot;:&quot;&quot;,&quot;search&quot;:&quot;&quot;,&quot;exclude&quot;:[],&quot;sticky&quot;:&quot;&quot;,&quot;inherit&quot;:true}" data-tag-name="div" class="wp-block-woocommerce-product-collection alignwide is-layout-flow wp-block-woocommerce-product-collection-is-layout-flow">		<div data-wp-interactive="woocommerce/store-notices" class="wc-block-components-notices alignwide">
+			<template data-wp-each--notice="state.notices" data-wp-each-key="context.notice.id">
+				<div
+					class="wc-block-components-notice-banner"
+					data-wp-init="callbacks.scrollIntoView"
+					data-wp-class--is-error="state.isError"
+					data-wp-class--is-success="state.isSuccess"
+					data-wp-class--is-info="state.isInfo"
+					data-wp-class--is-dismissible="context.notice.dismissible"
+					data-wp-bind--role="state.role"
+					data-wp-watch="callbacks.injectIcon"
+				>
+					<div class="wc-block-components-notice-banner__content">
+						<span data-wp-init="callbacks.renderNoticeContent" aria-live="assertive" aria-atomic="true"></span>
+					</div>
+					<button
+						data-wp-bind--hidden="!context.notice.dismissible"
+						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
+						aria-label="Dismiss this notice"
+						data-wp-on--click="actions.removeNotice"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" />
+						</svg>
+					</button>
+				</div>
+			</template>
+		</div>
+		
+		<ul data-block-name="woocommerce/product-template" data-is-inherited="1" class="wc-block-product-template__responsive columns-3 wc-block-product-template wp-block-woocommerce-product-template is-layout-flow wp-block-woocommerce-product-template-is-layout-flow" data-wp-on--scroll="actions.watchScroll" data-wp-init="callbacks.initResizeObserver"><li class="wc-block-product post-22 product type-product status-publish has-post-thumbnail product_cat-music first instock downloadable virtual purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":22,"variationId":null}'
+				data-wp-key="product-item-22"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/album/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Album" data-testid="product-image" data-image-id="47" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/album/" target="_self" >Album</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>15.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="22" data-product_sku="woo-album" aria-label="Add to cart: &ldquo;Album&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-14 product type-product status-publish has-post-thumbnail product_cat-accessories  instock sale shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":14,"variationId":null}'
+				data-wp-key="product-item-14"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/beanie/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Beanie" data-testid="product-image" data-image-id="39" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/beanie/" target="_self" >Beanie</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<del aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>20.00</bdi></span></del> <span class="screen-reader-text">Original price was: &#036;20.00.</span><ins aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.00</bdi></span></ins><span class="screen-reader-text">Current price is: &#036;18.00.</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="14" data-product_sku="woo-beanie" aria-label="Add to cart: &ldquo;Beanie&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-31 product type-product status-publish has-post-thumbnail product_cat-accessories  instock sale shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":31,"variationId":null}'
+				data-wp-key="product-item-31"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/beanie-with-logo/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Beanie with Logo" data-testid="product-image" data-image-id="50" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/beanie-with-logo/" target="_self" >Beanie with Logo</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<del aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>20.00</bdi></span></del> <span class="screen-reader-text">Original price was: &#036;20.00.</span><ins aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.00</bdi></span></ins><span class="screen-reader-text">Current price is: &#036;18.00.</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="31" data-product_sku="Woo-beanie-logo" aria-label="Add to cart: &ldquo;Beanie with Logo&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-15 product type-product status-publish has-post-thumbnail product_cat-accessories last instock sale shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":15,"variationId":null}'
+				data-wp-key="product-item-15"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/belt/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Belt" data-testid="product-image" data-image-id="40" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/belt/" target="_self" >Belt</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<del aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>65.00</bdi></span></del> <span class="screen-reader-text">Original price was: &#036;65.00.</span><ins aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>55.00</bdi></span></ins><span class="screen-reader-text">Current price is: &#036;55.00.</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="15" data-product_sku="woo-belt" aria-label="Add to cart: &ldquo;Belt&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-16 product type-product status-publish has-post-thumbnail product_cat-accessories first instock sale featured shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":16,"variationId":null}'
+				data-wp-key="product-item-16"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/cap/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Cap" data-testid="product-image" data-image-id="41" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/cap/" target="_self" >Cap</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<del aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.00</bdi></span></del> <span class="screen-reader-text">Original price was: &#036;18.00.</span><ins aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>16.00</bdi></span></ins><span class="screen-reader-text">Current price is: &#036;16.00.</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="16" data-product_sku="woo-cap" aria-label="Add to cart: &ldquo;Cap&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-11 product type-product status-publish has-post-thumbnail product_cat-hoodies  instock sale shipping-taxable purchasable product-type-variable"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":11,"variationId":null}'
+				data-wp-key="product-item-11"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/hoodie/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Hoodie" data-testid="product-image" data-image-id="34" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/hoodie/" target="_self" >Hoodie</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount" aria-hidden="true"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>42.00</bdi></span> <span aria-hidden="true">&ndash;</span> <span class="woocommerce-Price-amount amount" aria-hidden="true"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>45.00</bdi></span><span class="screen-reader-text">Price range: &#36;42.00 through &#36;45.00</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Select options","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<a
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button product_type_variable has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						href="/product/hoodie/" rel="" data-product_id="11" data-product_sku="woo-hoodie" aria-label="Select options for &ldquo;Hoodie&rdquo;"
+						data-wp-on--click="woocommerce/product-collection::actions.viewProduct"
+					>
+					<span >Select options</span>
+					</a>
+					
+				</div>
+		
+				</li><li class="wc-block-product post-12 product type-product status-publish has-post-thumbnail product_cat-hoodies  instock shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":12,"variationId":null}'
+				data-wp-key="product-item-12"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/hoodie-with-logo/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Hoodie with Logo" data-testid="product-image" data-image-id="37" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/hoodie-with-logo/" target="_self" >Hoodie with Logo</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>45.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="12" data-product_sku="woo-hoodie-with-logo" aria-label="Add to cart: &ldquo;Hoodie with Logo&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-19 product type-product status-publish has-post-thumbnail product_cat-hoodies last instock featured shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":19,"variationId":null}'
+				data-wp-key="product-item-19"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/hoodie-with-zipper/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Hoodie with Zipper" data-testid="product-image" data-image-id="44" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/hoodie-with-zipper/" target="_self" >Hoodie with Zipper</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>45.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="19" data-product_sku="woo-hoodie-with-zipper" aria-label="Add to cart: &ldquo;Hoodie with Zipper&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-32 product type-product status-publish has-post-thumbnail product_cat-clothing first instock shipping-taxable product-type-grouped"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":32,"variationId":null}'
+				data-wp-key="product-item-32"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/logo-collection/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Logo Collection" data-testid="product-image" data-image-id="51" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/logo-collection/" target="_self" >Logo Collection</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>15.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"View products","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"Added to cart","noticeId":"","hasPressedButton":false,"groupedProductIds":[8,9,10]}'
+				>
+					<a
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button product_type_grouped has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						href="/product/logo-collection/" rel="" data-product_id="32" data-product_sku="logo-collection" aria-label="View products in the &ldquo;Logo Collection&rdquo; group"
+						data-wp-on--click="woocommerce/product-collection::actions.viewProduct"
+					>
+					<span >View products</span>
+					</a>
+					
+				</div>
+		
+				</li><li class="wc-block-product post-20 product type-product status-publish has-post-thumbnail product_cat-tshirts  instock shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":20,"variationId":null}'
+				data-wp-key="product-item-20"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/long-sleeve-tee/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Long Sleeve Tee" data-testid="product-image" data-image-id="45" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/long-sleeve-tee/" target="_self" >Long Sleeve Tee</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>25.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="20" data-product_sku="woo-long-sleeve-tee" aria-label="Add to cart: &ldquo;Long Sleeve Tee&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-21 product type-product status-publish has-post-thumbnail product_cat-tshirts  instock shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":21,"variationId":null}'
+				data-wp-key="product-item-21"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/polo/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Polo" data-testid="product-image" data-image-id="46" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/polo/" target="_self" >Polo</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>20.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="21" data-product_sku="woo-polo" aria-label="Add to cart: &ldquo;Polo&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-23 product type-product status-publish has-post-thumbnail product_cat-music last instock sale downloadable virtual purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":23,"variationId":null}'
+				data-wp-key="product-item-23"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/single/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Single" data-testid="product-image" data-image-id="48" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			<div data-block-name="woocommerce/product-sale-badge" data-is-descendent-of-query-loop="true" data-is-inherited="1" class="wp-block-woocommerce-product-sale-badge "><div class="wc-block-components-product-sale-badge alignright wc-block-components-product-sale-badge--align-right" style=""><span class="wc-block-components-product-sale-badge__text" aria-hidden="true">Sale</span><span class="screen-reader-text">Product on sale</span></div></div>
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/single/" target="_self" >Single</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<del aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>3.00</bdi></span></del> <span class="screen-reader-text">Original price was: &#036;3.00.</span><ins aria-hidden="true"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>2.00</bdi></span></ins><span class="screen-reader-text">Current price is: &#036;2.00.</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="23" data-product_sku="woo-single" aria-label="Add to cart: &ldquo;Single&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-17 product type-product status-publish has-post-thumbnail product_cat-accessories first instock featured shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":17,"variationId":null}'
+				data-wp-key="product-item-17"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/sunglasses/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="Sunglasses" data-testid="product-image" data-image-id="42" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/sunglasses/" target="_self" >Sunglasses</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>90.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="17" data-product_sku="woo-sunglasses" aria-label="Add to cart: &ldquo;Sunglasses&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-13 product type-product status-publish has-post-thumbnail product_cat-tshirts  instock shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":13,"variationId":null}'
+				data-wp-key="product-item-13"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/t-shirt/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="T-Shirt" data-testid="product-image" data-image-id="38" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/t-shirt/" target="_self" >T-Shirt</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="13" data-product_sku="woo-tshirt" aria-label="Add to cart: &ldquo;T-Shirt&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-30 product type-product status-publish has-post-thumbnail product_cat-tshirts  instock shipping-taxable purchasable product-type-simple"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":30,"variationId":null}'
+				data-wp-key="product-item-30"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/t-shirt-with-logo/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="T-Shirt with Logo" data-testid="product-image" data-image-id="49" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/t-shirt-with-logo/" target="_self" >T-Shirt with Logo</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>18.00</bdi></span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+			data-wp-interactive="woocommerce/product-button"
+		
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Add to cart","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<button
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button ajax_add_to_cart product_type_simple has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						type="button" data-product_id="30" data-product_sku="Woo-tshirt-logo" aria-label="Add to cart: &ldquo;T-Shirt with Logo&rdquo;"
+						data-wp-on--click="actions.addCartItem"
+					>
+					<span 
+			data-wp-text="state.addToCartText"
+			data-wp-class--wc-block-slide-in="state.slideInAnimation"
+			data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+			data-wp-on--animationend="actions.handleAnimationEnd"
+			data-wp-watch="callbacks.startAnimation"
+			data-wp-run="callbacks.syncTempQuantityOnLoad"
+		>Add to cart</span>
+					</button>
+					<span
+				hidden
+				data-wp-bind--hidden="!state.displayViewCart"
+			>
+				<a
+					href="/cart/"
+					class="added_to_cart wc_forward"
+					title="View cart"
+				>
+					View cart
+				</a>
+			</span>
+				</div>
+		
+				</li><li class="wc-block-product post-10 product type-product status-publish has-post-thumbnail product_cat-tshirts last instock featured shipping-taxable purchasable product-type-variable"
+					
+				data-wp-interactive="woocommerce/product-collection"
+				data-wp-context='woocommerce/products::{"productId":10,"variationId":null}'
+				data-wp-key="product-item-10"
+			
+				>
+					
+		<div data-block-name="woocommerce/product-image" data-image-sizing="thumbnail" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-show-sale-badge="false" class="wc-block-components-product-image wc-block-grid__product-image wc-block-components-product-image--aspect-ratio-1-1 wp-block-woocommerce-product-image"><a href="/product/v-neck-t-shirt/" data-wp-on--click="woocommerce/product-collection::actions.viewProduct"><img width="1024" height="1024" src="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp" class="woocommerce-placeholder wp-post-image" alt="V-Neck T-Shirt" data-testid="product-image" data-image-id="31" style="object-fit:cover;aspect-ratio:1/1;" loading="lazy" decoding="async" srcset="/wp-content/uploads/woocommerce-placeholder-1024x1024.webp 1024w, /wp-content/uploads/woocommerce-placeholder-300x300.webp 300w, /wp-content/uploads/woocommerce-placeholder-150x150.webp 150w, /wp-content/uploads/woocommerce-placeholder-768x768.webp 768w, /wp-content/uploads/woocommerce-placeholder.webp 1200w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /><div class="wc-block-components-product-image__inner-container">
+			
+		</div></a></div>
+		<h2 style="line-height:1.4" class="has-text-align-center wp-block-post-title has-medium-font-size"><a data-wp-on--click="woocommerce/product-collection::actions.viewProduct" href="/product/v-neck-t-shirt/" target="_self" >V-Neck T-Shirt</a></h2>
+		<div data-block-name="woocommerce/product-price" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" style="margin-bottom:1rem" class="wp-block-woocommerce-product-price" ><div class="wc-block-components-product-price wc-block-grid__product-price has-font-size has-small-font-size has-text-align-center" style="" >
+					<span class="woocommerce-Price-amount amount" aria-hidden="true"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>15.00</bdi></span> <span aria-hidden="true">&ndash;</span> <span class="woocommerce-Price-amount amount" aria-hidden="true"><bdi><span class="woocommerce-Price-currencySymbol" translate="no" dir="auto">&#36;</span>20.00</bdi></span><span class="screen-reader-text">Price range: &#36;15.00 through &#36;20.00</span>
+				</div></div>
+		<div data-block-name="woocommerce/product-button" data-font-size="small" data-is-descendent-of-query-loop="true" data-is-inherited="1" data-style="{&quot;spacing&quot;:{&quot;margin&quot;:{&quot;bottom&quot;:&quot;1rem&quot;}}}" data-text-align="center" class="wp-block-button wc-block-components-product-button align-center wp-block-woocommerce-product-button has-small-font-size"
+					
+					data-wp-context='{"quantityToAdd":1,"addToCartText":"Select options","tempQuantity":0,"animationStatus":"IDLE","inTheCartText":"### in cart","noticeId":"","hasPressedButton":false}'
+				>
+					<a
+						class="wp-block-button__link wp-element-button wc-block-components-product-button__button add_to_cart_button product_type_variable has-font-size has-small-font-size has-text-align-center wc-interactive"
+						style="margin-bottom:1rem;"
+						href="/product/v-neck-t-shirt/" rel="" data-product_id="10" data-product_sku="woo-vneck-tee" aria-label="Select options for &ldquo;V-Neck T-Shirt&rdquo;"
+						data-wp-on--click="woocommerce/product-collection::actions.viewProduct"
+					>
+					<span >Select options</span>
+					</a>
+					
+				</div>
+		
+				</li></ul>
+
+		<nav class="wp-block-query-pagination is-content-justification-center is-layout-flex wp-container-core-query-pagination-is-layout-b29d4327 wp-block-query-pagination-is-layout-flex" aria-label="Pagination">
+		
+		<div class="wp-block-query-pagination-numbers"><span aria-label="Page 1" aria-current="page" class="page-numbers current">1</span>
+<a data-wp-key="product-collection-pagination-numbers--Page 2" data-wp-on--click="woocommerce/product-collection::actions.navigate" aria-label="Page 2" class="page-numbers" href="/shop/page/2/">2</a></div>
+		<a data-wp-key="product-collection-pagination--next" data-wp-on--click="woocommerce/product-collection::actions.navigate" data-wp-on--mouseenter="woocommerce/product-collection::actions.prefetchOnHover" data-wp-watch="woocommerce/product-collection::callbacks.prefetch" href="/shop/page/2/" class="wp-block-query-pagination-next">Next Page</a>
+		</nav>
+
+		
+	</div>
+	
+</main>
+
+
+<footer class="wp-block-template-part">
+<div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--50)">
+	
+	<div class="wp-block-group alignwide is-layout-flow wp-block-group-is-layout-flow">
+		
+
+		
+		<div class="wp-block-group alignfull is-content-justification-space-between is-layout-flex wp-container-core-group-is-layout-cf54d0a6 wp-block-group-is-layout-flex">
+			
+			<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-794e3cfa wp-block-columns-is-layout-flex">
+				
+				<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:100%"><h2 class="wp-block-site-title"><a href="http://localhost:18082" target="_self" rel="home">WooCommerce Demo</a></h2>
+
+				
+				</div>
+				
+
+				
+				<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow">
+					
+					<div style="height:var(--wp--preset--spacing--40);width:0px" aria-hidden="true" class="wp-block-spacer"></div>
+					
+				</div>
+				
+			</div>
+			
+
+			
+			<div class="wp-block-group is-content-justification-space-between is-layout-flex wp-container-core-group-is-layout-bf19e0b3 wp-block-group-is-layout-flex">
+				<nav class="is-vertical wp-block-navigation is-layout-flex wp-container-core-navigation-is-layout-831b2db5 wp-block-navigation-is-layout-flex" aria-label=" 2"><ul class="wp-block-navigation__container is-vertical wp-block-navigation"><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Blog</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">About</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">FAQs</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Authors</span></a></li></ul></nav>
+
+				<nav class="is-vertical wp-block-navigation is-layout-flex wp-container-core-navigation-is-layout-831b2db5 wp-block-navigation-is-layout-flex" aria-label=" 3"><ul class="wp-block-navigation__container is-vertical wp-block-navigation"><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Events</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Shop</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Patterns</span></a></li><li class="wp-block-navigation-item wp-block-navigation-link"><a class="wp-block-navigation-item__content"  href="#"><span class="wp-block-navigation-item__label">Themes</span></a></li></ul></nav>
+			</div>
+				
+		</div>
+		
+
+		
+		<div style="height:var(--wp--preset--spacing--70)" aria-hidden="true" class="wp-block-spacer"></div>
+		
+
+		
+		<div class="wp-block-group alignfull is-content-justification-space-between is-layout-flex wp-container-core-group-is-layout-2ab8c7fb wp-block-group-is-layout-flex">
+			
+			<p class="has-small-font-size wp-block-paragraph">Twenty Twenty-Five</p>
+			
+			
+			<p class="has-small-font-size wp-block-paragraph">
+				Designed with <a href="https://wordpress.org" rel="nofollow">WordPress</a>			</p>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+
+</footer>
+</div>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/twentytwentyfive/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script data-wp-router-options="{&quot;loadOnClientNavigation&quot;:true}" fetchpriority="low" id="@wordpress/block-library/navigation/view-js-module" src="/wp-includes/js/dist/script-modules/block-library/navigation/view.min.js?ver=1bf28ded04f9f188bdcb" type="module"></script>
+<script id="wp-script-module-data-@wordpress/interactivity" type="application/json">
+{"config":{"woocommerce":{"nonOptimisticProperties":[],"messages":{"addedToCartText":"Added to cart"}}},"state":{"woocommerce":{"cart":{"items":[],"coupons":[],"fees":[],"totals":{"total_items":"0","total_items_tax":"0","total_fees":"0","total_fees_tax":"0","total_discount":"0","total_discount_tax":"0","total_shipping":null,"total_shipping_tax":null,"total_price":"0","total_tax":"0","tax_lines":[],"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"shipping_address":{"first_name":"","last_name":"","company":"","address_1":"","address_2":"","city":"","state":"CA","postcode":"","country":"US","phone":""},"billing_address":{"first_name":"","last_name":"","company":"","address_1":"","address_2":"","city":"","state":"CA","postcode":"","country":"US","email":"","phone":""},"needs_payment":false,"needs_shipping":false,"payment_requirements":["products"],"has_calculated_shipping":false,"shipping_rates":[],"items_count":0,"items_weight":0,"cross_sells":[],"errors":[],"payment_methods":["cod"],"extensions":{}},"noticeId":"","restUrl":"/wp-json/"},"woocommerce/product-button":{"addToCartText":{}},"woocommerce/products":{"mainProductInContext":{},"productVariationInContext":{},"productInContext":{},"products":{"22":{"id":22,"name":"Album","slug":"album","parent":0,"type":"simple","variation":"","permalink":"/product/album/","sku":"woo-album","short_description":"\u003Cp\u003EThis is a simple, virtual product.\u003C/p\u003E","description":"\u003Cp\u003ELorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sagittis orci ac odio dictum tincidunt. Donec ut metus leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed luctus, dui eu sagittis sodales, nulla nibh sagittis augue, vel porttitor diam enim non metus. Vestibulum aliquam augue neque. Phasellus tincidunt odio eget ullamcorper efficitur. Cras placerat ut turpis pellentesque vulputate. Nam sed consequat tortor. Curabitur finibus sapien dolor. Ut eleifend tellus nec erat pulvinar dignissim. Nam non arcu purus. Vivamus et massa massa.\u003C/p\u003E","on_sale":false,"prices":{"price":"1500","regular_price":"1500","sale_price":"1500","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E15.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":27,"name":"Music","slug":"music","link":"/product-category/music/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"","dimensions":{"length":"","width":"","height":""},"formatted_weight":"N/A","formatted_dimensions":"N/A","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Album&rdquo;","url":"/shop/?add-to-cart=22","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"14":{"id":14,"name":"Beanie","slug":"beanie","parent":0,"type":"simple","variation":"","permalink":"/product/beanie/","sku":"woo-beanie","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":true,"prices":{"price":"1800","regular_price":"2000","sale_price":"1800","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cdel aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E20.00\u003C/span\u003E\u003C/del\u003E \u003Cspan class=\"screen-reader-text\"\u003EOriginal price was: &#036;20.00.\u003C/span\u003E\u003Cins aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E18.00\u003C/span\u003E\u003C/ins\u003E\u003Cspan class=\"screen-reader-text\"\u003ECurrent price is: &#036;18.00.\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":25,"name":"Accessories","slug":"accessories","link":"/product-category/accessories/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":20,"name":"Red","slug":"red"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.2","dimensions":{"length":"4","width":"5","height":"0.5"},"formatted_weight":"0.2 lbs","formatted_dimensions":"4 × 5 × 0.5 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Beanie&rdquo;","url":"/shop/?add-to-cart=14","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"31":{"id":31,"name":"Beanie with Logo","slug":"beanie-with-logo","parent":0,"type":"simple","variation":"","permalink":"/product/beanie-with-logo/","sku":"Woo-beanie-logo","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":true,"prices":{"price":"1800","regular_price":"2000","sale_price":"1800","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cdel aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E20.00\u003C/span\u003E\u003C/del\u003E \u003Cspan class=\"screen-reader-text\"\u003EOriginal price was: &#036;20.00.\u003C/span\u003E\u003Cins aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E18.00\u003C/span\u003E\u003C/ins\u003E\u003Cspan class=\"screen-reader-text\"\u003ECurrent price is: &#036;18.00.\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":25,"name":"Accessories","slug":"accessories","link":"/product-category/accessories/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":20,"name":"Red","slug":"red"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.2","dimensions":{"length":"6","width":"4","height":"1"},"formatted_weight":"0.2 lbs","formatted_dimensions":"6 × 4 × 1 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Beanie with Logo&rdquo;","url":"/shop/?add-to-cart=31","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"15":{"id":15,"name":"Belt","slug":"belt","parent":0,"type":"simple","variation":"","permalink":"/product/belt/","sku":"woo-belt","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":true,"prices":{"price":"5500","regular_price":"6500","sale_price":"5500","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cdel aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E65.00\u003C/span\u003E\u003C/del\u003E \u003Cspan class=\"screen-reader-text\"\u003EOriginal price was: &#036;65.00.\u003C/span\u003E\u003Cins aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E55.00\u003C/span\u003E\u003C/ins\u003E\u003Cspan class=\"screen-reader-text\"\u003ECurrent price is: &#036;55.00.\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":25,"name":"Accessories","slug":"accessories","link":"/product-category/accessories/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"1.2","dimensions":{"length":"12","width":"2","height":"1.5"},"formatted_weight":"1.2 lbs","formatted_dimensions":"12 × 2 × 1.5 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Belt&rdquo;","url":"/shop/?add-to-cart=15","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"16":{"id":16,"name":"Cap","slug":"cap","parent":0,"type":"simple","variation":"","permalink":"/product/cap/","sku":"woo-cap","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":true,"prices":{"price":"1600","regular_price":"1800","sale_price":"1600","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cdel aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E18.00\u003C/span\u003E\u003C/del\u003E \u003Cspan class=\"screen-reader-text\"\u003EOriginal price was: &#036;18.00.\u003C/span\u003E\u003Cins aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E16.00\u003C/span\u003E\u003C/ins\u003E\u003Cspan class=\"screen-reader-text\"\u003ECurrent price is: &#036;16.00.\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":25,"name":"Accessories","slug":"accessories","link":"/product-category/accessories/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":26,"name":"Yellow","slug":"yellow"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.6","dimensions":{"length":"8","width":"6.5","height":"4"},"formatted_weight":"0.6 lbs","formatted_dimensions":"8 × 6.5 × 4 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Cap&rdquo;","url":"/shop/?add-to-cart=16","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"11":{"id":11,"name":"Hoodie","slug":"hoodie","parent":0,"type":"variable","variation":"","permalink":"/product/hoodie/","sku":"woo-hoodie","short_description":"\u003Cp\u003EThis is a variable product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":true,"prices":{"price":"4200","regular_price":"4500","sale_price":"4200","price_range":{"min_amount":"4200","max_amount":"4500"},"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\" aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E42.00\u003C/span\u003E \u003Cspan aria-hidden=\"true\"\u003E&ndash;\u003C/span\u003E \u003Cspan class=\"woocommerce-Price-amount amount\" aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E45.00\u003C/span\u003E\u003Cspan class=\"screen-reader-text\"\u003EPrice range: &#036;42.00 through &#036;45.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":23,"name":"Hoodies","slug":"hoodies","link":"/product-category/hoodies/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":true,"terms":[{"id":16,"name":"Blue","slug":"blue"},{"id":17,"name":"Green","slug":"green"},{"id":20,"name":"Red","slug":"red"}]},{"id":0,"name":"Logo","taxonomy":null,"has_variations":true,"terms":[{"id":0,"name":"Yes","slug":"Yes"},{"id":0,"name":"No","slug":"No"}]}],"variations":[{"id":34,"attributes":[{"name":"color","value":"blue"},{"name":"Logo","value":"Yes"}]},{"id":27,"attributes":[{"name":"color","value":"red"},{"name":"Logo","value":"No"}]},{"id":28,"attributes":[{"name":"color","value":"green"},{"name":"Logo","value":"No"}]},{"id":29,"attributes":[{"name":"color","value":"blue"},{"name":"Logo","value":"No"}]}],"grouped_products":[],"has_options":true,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"1.5","dimensions":{"length":"10","width":"8","height":"3"},"formatted_weight":"1.5 lbs","formatted_dimensions":"10 × 8 × 3 in","add_to_cart":{"text":"Select options","description":"Select options for &ldquo;Hoodie&rdquo;","url":"/product/hoodie/","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"12":{"id":12,"name":"Hoodie with Logo","slug":"hoodie-with-logo","parent":0,"type":"simple","variation":"","permalink":"/product/hoodie-with-logo/","sku":"woo-hoodie-with-logo","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"4500","regular_price":"4500","sale_price":"4500","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E45.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":23,"name":"Hoodies","slug":"hoodies","link":"/product-category/hoodies/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":16,"name":"Blue","slug":"blue"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"2","dimensions":{"length":"10","width":"6","height":"3"},"formatted_weight":"2 lbs","formatted_dimensions":"10 × 6 × 3 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Hoodie with Logo&rdquo;","url":"/shop/?add-to-cart=12","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"19":{"id":19,"name":"Hoodie with Zipper","slug":"hoodie-with-zipper","parent":0,"type":"simple","variation":"","permalink":"/product/hoodie-with-zipper/","sku":"woo-hoodie-with-zipper","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"4500","regular_price":"4500","sale_price":"4500","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E45.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":23,"name":"Hoodies","slug":"hoodies","link":"/product-category/hoodies/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"2","dimensions":{"length":"8","width":"6","height":"2"},"formatted_weight":"2 lbs","formatted_dimensions":"8 × 6 × 2 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Hoodie with Zipper&rdquo;","url":"/shop/?add-to-cart=19","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"32":{"id":32,"name":"Logo Collection","slug":"logo-collection","parent":0,"type":"grouped","variation":"","permalink":"/product/logo-collection/","sku":"logo-collection","short_description":"\u003Cp\u003EThis is a grouped product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"1800","regular_price":"1800","sale_price":"1800","price_range":{"min_amount":"1500","max_amount":"1500"},"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E15.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":28,"name":"Clothing","slug":"clothing","link":"/product-category/clothing/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":{"2":10},"has_options":false,"is_purchasable":false,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"","dimensions":{"length":"","width":"","height":""},"formatted_weight":"N/A","formatted_dimensions":"N/A","add_to_cart":{"text":"View products","description":"View products in the &ldquo;Logo Collection&rdquo; group","url":"/product/logo-collection/","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"20":{"id":20,"name":"Long Sleeve Tee","slug":"long-sleeve-tee","parent":0,"type":"simple","variation":"","permalink":"/product/long-sleeve-tee/","sku":"woo-long-sleeve-tee","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"2500","regular_price":"2500","sale_price":"2500","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E25.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":22,"name":"Tshirts","slug":"tshirts","link":"/product-category/tshirts/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":17,"name":"Green","slug":"green"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"1","dimensions":{"length":"7","width":"5","height":"1"},"formatted_weight":"1 lbs","formatted_dimensions":"7 × 5 × 1 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Long Sleeve Tee&rdquo;","url":"/shop/?add-to-cart=20","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"21":{"id":21,"name":"Polo","slug":"polo","parent":0,"type":"simple","variation":"","permalink":"/product/polo/","sku":"woo-polo","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"2000","regular_price":"2000","sale_price":"2000","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E20.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":22,"name":"Tshirts","slug":"tshirts","link":"/product-category/tshirts/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":16,"name":"Blue","slug":"blue"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.8","dimensions":{"length":"6","width":"5","height":"1"},"formatted_weight":"0.8 lbs","formatted_dimensions":"6 × 5 × 1 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Polo&rdquo;","url":"/shop/?add-to-cart=21","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"23":{"id":23,"name":"Single","slug":"single","parent":0,"type":"simple","variation":"","permalink":"/product/single/","sku":"woo-single","short_description":"\u003Cp\u003EThis is a simple, virtual product.\u003C/p\u003E","description":"\u003Cp\u003ELorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sagittis orci ac odio dictum tincidunt. Donec ut metus leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed luctus, dui eu sagittis sodales, nulla nibh sagittis augue, vel porttitor diam enim non metus. Vestibulum aliquam augue neque. Phasellus tincidunt odio eget ullamcorper efficitur. Cras placerat ut turpis pellentesque vulputate. Nam sed consequat tortor. Curabitur finibus sapien dolor. Ut eleifend tellus nec erat pulvinar dignissim. Nam non arcu purus. Vivamus et massa massa.\u003C/p\u003E","on_sale":true,"prices":{"price":"200","regular_price":"300","sale_price":"200","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cdel aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E3.00\u003C/span\u003E\u003C/del\u003E \u003Cspan class=\"screen-reader-text\"\u003EOriginal price was: &#036;3.00.\u003C/span\u003E\u003Cins aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E2.00\u003C/span\u003E\u003C/ins\u003E\u003Cspan class=\"screen-reader-text\"\u003ECurrent price is: &#036;2.00.\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":27,"name":"Music","slug":"music","link":"/product-category/music/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"","dimensions":{"length":"","width":"","height":""},"formatted_weight":"N/A","formatted_dimensions":"N/A","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Single&rdquo;","url":"/shop/?add-to-cart=23","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"17":{"id":17,"name":"Sunglasses","slug":"sunglasses","parent":0,"type":"simple","variation":"","permalink":"/product/sunglasses/","sku":"woo-sunglasses","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"9000","regular_price":"9000","sale_price":"9000","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E90.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":25,"name":"Accessories","slug":"accessories","link":"/product-category/accessories/"}],"tags":[],"brands":[],"attributes":[],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.2","dimensions":{"length":"4","width":"1.4","height":"1"},"formatted_weight":"0.2 lbs","formatted_dimensions":"4 × 1.4 × 1 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;Sunglasses&rdquo;","url":"/shop/?add-to-cart=17","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"13":{"id":13,"name":"T-Shirt","slug":"t-shirt","parent":0,"type":"simple","variation":"","permalink":"/product/t-shirt/","sku":"woo-tshirt","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"1800","regular_price":"1800","sale_price":"1800","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E18.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":22,"name":"Tshirts","slug":"tshirts","link":"/product-category/tshirts/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":24,"name":"Gray","slug":"gray"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.8","dimensions":{"length":"8","width":"6","height":"1"},"formatted_weight":"0.8 lbs","formatted_dimensions":"8 × 6 × 1 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;T-Shirt&rdquo;","url":"/shop/?add-to-cart=13","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"30":{"id":30,"name":"T-Shirt with Logo","slug":"t-shirt-with-logo","parent":0,"type":"simple","variation":"","permalink":"/product/t-shirt-with-logo/","sku":"Woo-tshirt-logo","short_description":"\u003Cp\u003EThis is a simple product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"1800","regular_price":"1800","sale_price":"1800","price_range":null,"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E18.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":22,"name":"Tshirts","slug":"tshirts","link":"/product-category/tshirts/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":false,"terms":[{"id":24,"name":"Gray","slug":"gray"}]}],"variations":[],"grouped_products":[],"has_options":false,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.5","dimensions":{"length":"10","width":"12","height":"0.5"},"formatted_weight":"0.5 lbs","formatted_dimensions":"10 × 12 × 0.5 in","add_to_cart":{"text":"Add to cart","description":"Add to cart: &ldquo;T-Shirt with Logo&rdquo;","url":"/shop/?add-to-cart=30","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}},"10":{"id":10,"name":"V-Neck T-Shirt","slug":"v-neck-t-shirt","parent":0,"type":"variable","variation":"","permalink":"/product/v-neck-t-shirt/","sku":"woo-vneck-tee","short_description":"\u003Cp\u003EThis is a variable product.\u003C/p\u003E","description":"\u003Cp\u003EPellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.\u003C/p\u003E","on_sale":false,"prices":{"price":"1500","regular_price":"1500","sale_price":"1500","price_range":{"min_amount":"1500","max_amount":"2000"},"currency_code":"USD","currency_symbol":"$","currency_minor_unit":2,"currency_decimal_separator":".","currency_thousand_separator":",","currency_prefix":"$","currency_suffix":""},"price_html":"\u003Cspan class=\"woocommerce-Price-amount amount\" aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E15.00\u003C/span\u003E \u003Cspan aria-hidden=\"true\"\u003E&ndash;\u003C/span\u003E \u003Cspan class=\"woocommerce-Price-amount amount\" aria-hidden=\"true\"\u003E\u003Cspan class=\"woocommerce-Price-currencySymbol\" dir=\"auto\"\u003E&#036;\u003C/span\u003E20.00\u003C/span\u003E\u003Cspan class=\"screen-reader-text\"\u003EPrice range: &#036;15.00 through &#036;20.00\u003C/span\u003E","average_rating":"0","review_count":0,"images":[],"categories":[{"id":22,"name":"Tshirts","slug":"tshirts","link":"/product-category/tshirts/"}],"tags":[],"brands":[],"attributes":[{"id":1,"name":"color","taxonomy":"pa_color","has_variations":true,"terms":[{"id":16,"name":"Blue","slug":"blue"},{"id":17,"name":"Green","slug":"green"},{"id":20,"name":"Red","slug":"red"}]},{"id":2,"name":"size","taxonomy":"pa_size","has_variations":true,"terms":[{"id":18,"name":"Large","slug":"large"},{"id":19,"name":"Medium","slug":"medium"},{"id":21,"name":"Small","slug":"small"}]}],"variations":[{"id":24,"attributes":[{"name":"color","value":"red"},{"name":"size","value":null}]},{"id":25,"attributes":[{"name":"color","value":"green"},{"name":"size","value":null}]},{"id":26,"attributes":[{"name":"color","value":"blue"},{"name":"size","value":null}]}],"grouped_products":[],"has_options":true,"is_purchasable":true,"is_in_stock":true,"is_on_backorder":false,"low_stock_remaining":null,"stock_availability":{"text":"","class":"in-stock"},"sold_individually":false,"weight":"0.5","dimensions":{"length":"24","width":"1","height":"2"},"formatted_weight":"0.5 lbs","formatted_dimensions":"24 × 1 × 2 in","add_to_cart":{"text":"Select options","description":"Select options for &ldquo;V-Neck T-Shirt&rdquo;","url":"/product/v-neck-t-shirt/","single_text":"Add to cart","minimum":1,"maximum":9999,"multiple_of":1},"is_password_protected":false,"extensions":{}}}},"woocommerce/store-notices":{"notices":[]},"core/router":{"url":"/shop/"}},"derivedStateClosures":{"woocommerce/product-button":["state.addToCartText"]}}
+</script>
+<script id="wp-script-module-data-@wordpress/interactivity-router" type="application/json">
+{"i18n":{"loading":"Loading page, please wait.","loaded":"Page Loaded."}}
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org/","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"name":"Home","@id":"http://localhost:18082"}},{"@type":"ListItem","position":2,"item":{"name":"Shop","@id":"/shop/"}}]}</script>			<div
+				class="wp-interactivity-router-loading-bar"
+				data-wp-interactive="core/router/private"
+				data-wp-class--start-animation="state.navigation.hasStarted"
+				data-wp-class--finish-animation="state.navigation.hasFinished"
+			></div>	<script>
+		(function () {
+			var c = document.body.className;
+			c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
+			document.body.className = c;
+		})();
+	</script>
+	<script id="sourcebuster-js-js" src="/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=11.2.1"></script>
+<script id="wc-order-attribution-js-extra">
+var wc_order_attribution = {"params":{"lifetime":1.0e-5,"session":30,"base64":false,"ajaxurl":"/wp-admin/admin-ajax.php","prefix":"wc_order_attribution_","allowTracking":true},"fields":{"source_type":"current.typ","referrer":"current_add.rf","utm_campaign":"current.cmp","utm_source":"current.src","utm_medium":"current.mdm","utm_content":"current.cnt","utm_id":"current.id","utm_term":"current.trm","utm_source_platform":"current.plt","utm_creative_format":"current.fmt","utm_marketing_tactic":"current.tct","session_entry":"current_add.ep","session_start_time":"current_add.fd","session_pages":"session.pgs","session_count":"udata.vst","user_agent":"udata.uag"}};
+//# sourceURL=wc-order-attribution-js-extra
+</script>
+<script id="wc-order-attribution-js" src="/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=11.2.1"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"/wp-includes/js/wp-emoji-release.min.js?ver=7.1.3"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=/wp-includes/js/wp-emoji-loader.min.js
+</script>
+<div style="position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;"><p id="a11y-speak-intro-text" class="a11y-speak-intro-text" hidden>Notifications</p><div id="a11y-speak-assertive" class="a11y-speak-region" aria-live="assertive" aria-relevant="additions text" aria-atomic="true"></div><div id="a11y-speak-polite" class="a11y-speak-region" aria-live="polite" aria-relevant="additions text" aria-atomic="true"></div></div></body>
+</html>
