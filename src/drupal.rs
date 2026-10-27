@@ -369,7 +369,7 @@ impl<'a> LoginBuilder<'a> {
             // Defaults to a username of "username".
             username: "username",
             // Defaults to a password of "password".
-            password: "search",
+            password: "password",
             // Defaults to Drupal's standard login path of "user/login".
             url: "user/login",
             // Default tos performing no extra validation.
