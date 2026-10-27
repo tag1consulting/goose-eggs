@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..abb5cb9 100644
+index f57e0ac..eb4d91a 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -155,7 +155,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {

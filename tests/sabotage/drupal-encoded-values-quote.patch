@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..68af539 100644
+index f57e0ac..03f3a2a 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -288,7 +288,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,

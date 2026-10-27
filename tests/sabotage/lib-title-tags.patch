@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..2e7bad9 100644
+index a6ec0ca..d67415b 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -753,7 +753,7 @@ pub fn get_title(html: &str) -> Option<String> {

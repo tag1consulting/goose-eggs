@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..8cdbc09 100644
+index a6ec0ca..0ecb53c 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1532,7 +1532,7 @@ pub async fn validate_and_load_static_assets<'a>(

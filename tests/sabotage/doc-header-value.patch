@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..6b986a0 100644
+index a6ec0ca..0fde10e 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1033,7 +1033,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -

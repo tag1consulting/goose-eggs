@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..b57e2ff 100644
+index a6ec0ca..19dc322 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -749,7 +749,7 @@ pub fn get_html_header(html: &str) -> Option<String> {

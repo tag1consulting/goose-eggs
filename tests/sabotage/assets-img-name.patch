@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..d74cf57 100644
+index a6ec0ca..a438fb4 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1185,7 +1185,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {

@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..4cffd13 100644
+index a6ec0ca..22d7779 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -840,7 +840,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {

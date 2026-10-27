@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..659e8ed 100644
+index a6ec0ca..c2afc26 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1102,7 +1102,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {

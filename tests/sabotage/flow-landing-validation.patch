@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..7047ba0 100644
+index f57e0ac..5512bb0 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -687,7 +687,7 @@ pub async fn log_in(

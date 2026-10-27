@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..22bb0e1 100644
+index f57e0ac..c5deb7f 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -202,7 +202,7 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {

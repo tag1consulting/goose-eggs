@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..c5dfc4e 100644
+index f57e0ac..f4434cf 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -39,7 +39,7 @@ use std::env;

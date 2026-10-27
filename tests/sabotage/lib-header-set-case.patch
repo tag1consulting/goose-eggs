@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..d3d5606 100644
+index a6ec0ca..969e750 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -962,7 +962,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {

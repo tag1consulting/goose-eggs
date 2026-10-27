@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..a8e3e79 100644
+index f57e0ac..cb6513a 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -1078,7 +1078,7 @@ impl<'a> SearchParamsBuilder<'a> {

@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..a36683e 100644
+index f57e0ac..0bc07ff 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -46,7 +46,7 @@ pub fn get_form(html: &str, name: &str) -> String {

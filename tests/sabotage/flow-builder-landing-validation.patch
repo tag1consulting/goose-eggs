@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index cc2a622..5ffff48 100644
+index f57e0ac..974e4b1 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -529,7 +529,7 @@ impl<'a> LoginBuilder<'a> {

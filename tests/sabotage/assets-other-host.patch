@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 96871fe..aabb1c4 100644
+index a6ec0ca..2d8e412 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1062,7 +1062,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
