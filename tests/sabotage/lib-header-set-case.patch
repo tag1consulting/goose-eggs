@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..969e750 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -962,7 +962,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
+ /// # assert!(result.is_ok(), "doc example header_is_set: {}", support::failure(&result));
+ /// ```
+ pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
+-    headers.contains_key(header)
++    headers.keys().any(|k| k.as_str() == header)
+ }
+ 
+ /// Returns a [`bool`] indicating whether or not a header contains an expected value.

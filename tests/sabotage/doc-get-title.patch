@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..d67415b 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -753,7 +753,7 @@ pub fn get_title(html: &str) -> Option<String> {
+     // Strip carriage returns to simplify regex.
+     let line = html.replace('\n', "");
+     // Return the entire title, a subset of the received html.
+-    re.captures(&line).map(|value| value[1].to_string())
++    re.captures(&line).map(|value| value[0].to_string())
+ }
+ 
+ /// Returns a [`bool`] indicating whether or not the title (case insensitive) on the

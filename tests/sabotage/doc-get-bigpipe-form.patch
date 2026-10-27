@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..cfeaa5a 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -144,7 +144,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
+     let re = Regex::new(
+         // Lazy match to avoid matching multiple forms.
+         &format!(
+-            "{}.*?data-drupal-selector=.*?{}(.*?){}",
++            "{}.*?data-drupal-selectors=.*?{}(.*?){}",
+             regex::escape(r#"[{"#),
+             regex::escape(name),
+             regex::escape(r#"}]"#)

@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..5512bb0 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -687,7 +687,7 @@ pub async fn log_in(
+     // By default verify that the username that logged in is in the title of the
+     // logged in page.
+     let default_validation = crate::Validate::builder().title(username.as_str()).build();
+-    let validate = if let Some(validation) = login.logged_in_page_validation {
++    let validate = if let Some(validation) = None::<&crate::Validate> {
+         validation
+     } else {
+         &default_validation

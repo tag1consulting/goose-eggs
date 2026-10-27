@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..19dc322 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -749,7 +749,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
+ /// assert_eq!(title, "Example Website");
+ /// ```
+ pub fn get_title(html: &str) -> Option<String> {
+-    let re = Regex::new(r#"<title>(.*?)</title>"#).unwrap();
++    let re = Regex::new(r#"<title>(.*)</title>"#).unwrap();
+     // Strip carriage returns to simplify regex.
+     let line = html.replace('\n', "");
+     // Return the entire title, a subset of the received html.

@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..0fde10e 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1033,7 +1033,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
+                 None => "",
+             };
+             // Check if the desired value is in the header.
+-            if header_value.contains(header.1) {
++            if !header_value.is_empty() {
+                 true
+             } else {
+                 // Provide some extra debug.

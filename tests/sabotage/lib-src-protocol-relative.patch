@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..a073461 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1054,7 +1054,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
+ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+     // A protocol relative URI (`//host/path`) names a host: give it a scheme so
+     // the host is parsed and compared, instead of reading it as a local path.
+-    let uri = if uri.starts_with("//") {
++    let uri = if uri.starts_with("///") {
+         format!("http:{}", uri)
+     } else {
+         uri.to_string()

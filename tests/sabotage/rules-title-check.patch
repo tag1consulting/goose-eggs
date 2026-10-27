@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..652059e 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1413,7 +1413,7 @@ pub async fn validate_page<'a>(
+                             // errors when a page fails to load.
+                             return Ok(html);
+                         // Be sure the title contains the specified text.
+-                        } else if validate_title.exists && !valid_title(&html, validate_title.title)
++                        } else if validate_title.exists && false && !valid_title(&html, validate_title.title)
+                         {
+                             user.set_failure(
+                                 &format!(

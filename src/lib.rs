@@ -92,6 +92,9 @@ impl<'a> Validate<'a> {
     /// use goose_eggs::Validate;
     ///
     /// let _validate = Validate::none();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let page = support::Page { status: 500, headers: &[], body: "any page" };
+    /// # assert_eq!(support::check(&_validate, &page).as_deref(), Ok("any page"), "doc example none");
     /// ```
     pub fn none() -> Validate<'a> {
         Validate::builder().build()
@@ -133,6 +136,12 @@ impl<'a> Validate<'a> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page(r#"<head><title>Example</title></head><body>foo <a href="bar"></body>"#));
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(load_and_validate_page(&mut user));
+/// # assert!(result.is_ok(), "doc example ValidateBuilder: {}", support::failure(&result));
+/// ```
 #[derive(Clone, Debug)]
 pub struct ValidateBuilder<'a> {
     /// Optionally validate the response status code.
@@ -169,6 +178,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .status(200)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let bad = support::Page { status: 500, headers: &[], body: "" };
+    /// # support::proves("status", &_validate, &support::page(""), &bad);
     /// ```
     pub fn status(mut self, status_code: u16) -> Self {
         self.status = Some(ValidateStatus {
@@ -189,6 +201,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_status(404)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let bad = support::Page { status: 404, headers: &[], body: "" };
+    /// # support::proves("not_status", &_validate, &support::page(""), &bad);
     /// ```
     pub fn not_status(mut self, status_code: u16) -> Self {
         self.status = Some(ValidateStatus {
@@ -210,6 +225,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .title("Home page")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let home = support::page("<head><title>Home page</title></head>");
+    /// # support::proves("title", &_validate, &home, &support::page("<head><title>Other</title></head>"));
     /// ```
     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
         self.title = Some(ValidateTitle {
@@ -231,6 +249,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_title("Home page")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let home = support::page("<head><title>Home page</title></head>");
+    /// # support::proves("not_title", &_validate, &support::page("<head><title>Other</title></head>"), &home);
     /// ```
     pub fn not_title(mut self, title: impl Into<&'a str>) -> Self {
         self.title = Some(ValidateTitle {
@@ -252,6 +273,8 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .text("example")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("text", &_validate, &support::page("an example page"), &support::page("nothing"));
     /// ```
     ///
     /// It's possible to call this function multiple times to validate that multiple texts
@@ -265,6 +288,8 @@ impl<'a> ValidateBuilder<'a> {
     ///     .text("example")
     ///     .text("another")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("text, twice", &_validate, &support::page("example another"), &support::page("example"));
     /// ```
     pub fn text(mut self, text: &'a str) -> Self {
         self.texts.push(ValidateText { exists: true, text });
@@ -283,6 +308,8 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_text("example not on page")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("not_text", &_validate, &support::page("clean"), &support::page("example not on page"));
     /// ```
     ///
     /// It's possible to call this function multiple times (and together with `text()`,
@@ -298,6 +325,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .not_text("another not on the page")
     ///     .text("this is on the page")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::page("this is on the page");
+    /// # let bad = support::page("this is on the page, another not on the page");
+    /// # support::proves("not_text, with text", &_validate, &good, &bad);
     /// ```
     pub fn not_text(mut self, text: &'a str) -> Self {
         self.texts.push(ValidateText {
@@ -319,6 +350,8 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .texts(vec!["example", "another"])
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("texts", &_validate, &support::page("example another"), &support::page("example"));
     /// ```
     ///
     /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
@@ -334,6 +367,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .not_texts(vec!["foo", "bar"])
     ///     .texts(vec!["also this", "and this"])
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::page("example another also this and this");
+    /// # let bad = support::page("example another also this and this foo");
+    /// # support::proves("texts, with not_texts", &_validate, &good, &bad);
     /// ```
     ///
     /// Alternatively you can call [`ValidateBuilder::text`].
@@ -356,6 +393,8 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_texts(vec!["example", "another"])
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("not_texts", &_validate, &support::page("clean"), &support::page("another"));
     /// ```
     ///
     /// It's possible to call this function multiple times (and together with `text()`, `not_text()`
@@ -371,6 +410,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .texts(vec!["does include foo", "and bar"])
     ///     .not_texts(vec!["but not this", "or this"])
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::page("does include foo and bar");
+    /// # let bad = support::page("does include foo and bar or this");
+    /// # support::proves("not_texts, with texts", &_validate, &good, &bad);
     /// ```
     ///
     /// Alternatively you can call [`ValidateBuilder::text`].
@@ -396,6 +439,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .header("x-cache")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-cache", "HIT")], body: "" };
+    /// # support::proves("header", &_validate, &good, &support::page(""));
     /// ```
     ///
     /// It's possible to call this function multiple times, and/or together with
@@ -410,6 +456,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .header("x-cache")
     ///     .header("x-generator")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-cache", "HIT"), ("x-generator", "Drupal")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-cache", "HIT")], body: "" };
+    /// # support::proves("header, twice", &_validate, &good, &bad);
     /// ```
     pub fn header(mut self, header: impl Into<&'a str>) -> Self {
         self.headers.push(ValidateHeader {
@@ -435,6 +485,9 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_header("x-cache")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let bad = support::Page { status: 200, headers: &[("x-cache", "HIT")], body: "" };
+    /// # support::proves("not_header", &_validate, &support::page(""), &bad);
     /// ```
     ///
     /// It's possible to call this function multiple times, and/or together with
@@ -449,6 +502,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     .not_header("x-cache")
     ///     .header("x-generator")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-generator", "Drupal")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-generator", "Drupal"), ("x-cache", "HIT")], body: "" };
+    /// # support::proves("not_header, with header", &_validate, &good, &bad);
     /// ```
     pub fn not_header(mut self, header: impl Into<&'a str>) -> Self {
         self.headers.push(ValidateHeader {
@@ -474,6 +531,10 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .header_value("x-generator", "Drupal 7")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-generator", "Drupal 7")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-generator", "Drupal 8")], body: "" };
+    /// # support::proves("header_value", &_validate, &good, &bad);
     /// ```
     ///
     /// It's possible to call this function multiple times, and/or together with
@@ -492,6 +553,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     // Validate that the "x-drupal-cache" header is set and contains "HIT".
     ///     .header_value("x-drupal-cache", "HIT")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-cache", "HIT"), ("x-generator", "Drupal-7"), ("x-drupal-cache", "HIT")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-cache", "HIT"), ("x-generator", "Drupal-7"), ("x-drupal-cache", "MISS")], body: "" };
+    /// # support::proves("header_value, with header", &_validate, &good, &bad);
     /// ```
     pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
         self.headers.push(ValidateHeader {
@@ -517,6 +582,10 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .not_header_value("x-generator", "Drupal 7")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-generator", "Drupal 8")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-generator", "Drupal 7")], body: "" };
+    /// # support::proves("not_header_value", &_validate, &good, &bad);
     /// ```
     ///
     /// It's possible to call this function multiple times, and/or together with
@@ -535,6 +604,10 @@ impl<'a> ValidateBuilder<'a> {
     ///     // Validate that the "x-drupal-cache" header is set to "HIT".
     ///     .header_value("x-drupal-cache", "HIT")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let good = support::Page { status: 200, headers: &[("x-cache", "HIT"), ("x-generator", "Drupal-8"), ("x-drupal-cache", "HIT")], body: "" };
+    /// # let bad = support::Page { status: 200, headers: &[("x-cache", "HIT"), ("x-generator", "Drupal-7"), ("x-drupal-cache", "HIT")], body: "" };
+    /// # support::proves("not_header_value, with header", &_validate, &good, &bad);
     /// ```
     pub fn not_header_value(
         mut self,
@@ -559,9 +632,13 @@ impl<'a> ValidateBuilder<'a> {
     ///
     /// // Verify the response redirected.
     /// let _validate = Validate::builder().redirect(true).build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let redirect = support::Page { status: 301, headers: &[("location", "/landing")], body: "" };
+    /// # support::proves("redirect(true)", &_validate, &redirect, &support::page(""));
     ///
     /// // Verify the response did not redirect.
     /// let _validate = Validate::builder().redirect(false).build();
+    /// # support::proves("redirect(false)", &_validate, &support::page(""), &redirect);
     /// ```
     pub fn redirect(mut self, redirect: impl Into<bool>) -> Self {
         self.redirect = Some(redirect.into());
@@ -579,6 +656,8 @@ impl<'a> ValidateBuilder<'a> {
     /// let _validate = Validate::builder()
     ///     .text("example text")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # support::proves("build", &_validate, &support::page("example text"), &support::page("other"));
     /// ```
     pub fn build(self) -> Validate<'a> {
         let Self {
@@ -748,6 +827,11 @@ pub fn get_title(html: &str) -> Option<String> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page("<head><title>An Example Site</title></head>"));
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(validate_title(&mut user));
+/// # assert!(result.is_ok(), "doc example valid_title: {}", support::failure(&result));
 /// ```
 pub fn valid_title(html: &str, title: &str) -> bool {
     // Extract the HTML header from the provided html.
@@ -819,6 +903,11 @@ pub fn valid_title(html: &str, title: &str) -> bool {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page(r#"<code class="language-console">$ cargo new hello_world --bin</code>"#));
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(validate_text(&mut user));
+/// # assert!(result.is_ok(), "doc example valid_text: {}", support::failure(&result));
 /// ```
 pub fn valid_text(html: &str, text: &str) -> bool {
     html.contains(text)
@@ -866,6 +955,11 @@ pub fn valid_text(html: &str, text: &str) -> bool {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::Page { status: 200, headers: &[("server", "nginx")], body: "" });
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(validate_header(&mut user));
+/// # assert!(result.is_ok(), "doc example header_is_set: {}", support::failure(&result));
 /// ```
 pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
     headers.contains_key(header)
@@ -916,6 +1010,11 @@ pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::Page { status: 200, headers: &[("server", "nginx/1.27")], body: "" });
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(validate_header_value(&mut user));
+/// # assert!(result.is_ok(), "doc example valid_header_value: {}", support::failure(&result));
 /// ```
 pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -> bool {
     // A header name is required, exit early if it's empty.
@@ -953,6 +1052,13 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
 
 /// Helper to confirm the URI is valid and local.
 fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+    // A protocol relative URI (`//host/path`) names a host: give it a scheme so
+    // the host is parsed and compared, instead of reading it as a local path.
+    let uri = if uri.starts_with("//") {
+        format!("http:{}", uri)
+    } else {
+        uri.to_string()
+    };
     match uri.parse::<Uri>() {
         Ok(parsed_uri) => {
             if let Some(parsed_host) = parsed_uri.host() {
@@ -1065,6 +1171,13 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page(r#"<body><img src="/logo.png"></body>"#));
+/// # let asset = server.mock(|when, then| { when.path("/logo.png"); then.status(200); });
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(load_page_and_static_elements(&mut user));
+/// # assert!(result.is_ok(), "doc example load_static_elements: {}", support::failure(&result));
+/// # assert_eq!(asset.hits(), 1, "doc example load_static_elements: static asset requests");
 /// ```
 pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
@@ -1117,6 +1230,13 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page(r#"<head><title>my page</title></head><body>foo <a href="bar"> <img src="/logo.png"></body>"#));
+/// # let asset = server.mock(|when, then| { when.path("/logo.png"); then.status(200); });
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(load_page(&mut user));
+/// # assert!(result.is_ok(), "doc example validate_page: {}", support::failure(&result));
+/// # assert_eq!(asset.hits(), 0, "doc example validate_page: static asset requests");
 /// ```
 pub async fn validate_page<'a>(
     user: &mut GooseUser,
@@ -1191,7 +1311,11 @@ pub async fn validate_page<'a>(
             let headers = &response.headers().clone();
             for validate_header in &validate.headers {
                 if !validate_header.exists {
-                    if header_is_set(headers, validate_header.header) {
+                    // `not_header` refuses the header; `not_header_value` refuses
+                    // only the value, so the header itself may be set.
+                    if validate_header.value.is_empty()
+                        && header_is_set(headers, validate_header.header)
+                    {
                         // Get as much as we can from the response for useful debug logging.
                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
                         user.set_failure(
@@ -1393,6 +1517,13 @@ pub async fn validate_page<'a>(
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::server(&support::page(r#"<head><title>my page</title></head><body>foo <a href="bar"> <img src="/logo.png"></body>"#));
+/// # let asset = server.mock(|when, then| { when.path("/logo.png"); then.status(200); });
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(load_page(&mut user));
+/// # assert!(result.is_ok(), "doc example validate_and_load_static_assets: {}", support::failure(&result));
+/// # assert_eq!(asset.hits(), 1, "doc example validate_and_load_static_assets: static asset requests");
 /// ```
 pub async fn validate_and_load_static_assets<'a>(
     user: &mut GooseUser,
@@ -1500,5 +1631,318 @@ mod tests {
             eprintln!("actual matches: {:#?}", urls);
         }
         assert_eq!(urls.len(), 7);
+    }
+
+    // A user whose base url is HOST, for the helpers that need one.
+    fn test_user() -> GooseUser {
+        let configuration = GooseConfiguration::parse_args_default(&EMPTY_ARGS).unwrap();
+        let base_url = get_base_url(Some(HOST.to_string()), None, None).unwrap();
+        GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap()
+    }
+
+    #[test]
+    fn get_html_header_cases() {
+        // (case, html, expected header)
+        let cases = [
+            (
+                "normal",
+                "<html><head><title>T</title></head><body>B</body></html>",
+                Some("<head><title>T</title></head>"),
+            ),
+            (
+                "attributes",
+                r#"<html><head lang="en"><title>T</title></head></html>"#,
+                Some(r#"<head lang="en"><title>T</title></head>"#),
+            ),
+            (
+                "multiline",
+                "<html>\n<head>\n<title>T</title>\n</head>\n</html>",
+                Some("<head><title>T</title></head>"),
+            ),
+            (
+                "first of two",
+                "<head>one</head><head>two</head>",
+                Some("<head>one</head>"),
+            ),
+            ("missing", "<html><body>no head</body></html>", None),
+            ("unclosed", "<html><head><title>T</title>", None),
+            ("empty", "", None),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_html_header(html).as_deref(),
+                expected,
+                "get_html_header case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn get_title_cases() {
+        // (case, html, expected title)
+        let cases = [
+            ("normal", "<head><title>Home</title></head>", Some("Home")),
+            ("empty title", "<head><title></title></head>", Some("")),
+            (
+                "multiline",
+                "<head><title>\nHome\n</title></head>",
+                Some("Home"),
+            ),
+            (
+                "entities kept",
+                "<title>Let&#039;s eat</title>",
+                Some("Let&#039;s eat"),
+            ),
+            (
+                "first of two",
+                "<title>one</title><title>two</title>",
+                Some("one"),
+            ),
+            ("missing", "<head></head>", None),
+            ("unclosed", "<title>Home", None),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_title(html).as_deref(),
+                expected,
+                "get_title case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_title_cases() {
+        let html = "<html><head><title>This is the Title</title></head><body><title>Body</title></body></html>";
+        // (case, html, title to find, expected)
+        let cases = [
+            ("exact", html, "This is the Title", true),
+            ("substring", html, "the Title", true),
+            ("upper case", html, "THE TITLE", true),
+            ("lower case", html, "this is", true),
+            ("absent", html, "foo", false),
+            ("title in body only", html, "Body", false),
+            (
+                "no head",
+                "<body><title>Title</title></body>",
+                "Title",
+                false,
+            ),
+            ("no title", "<head></head>", "Title", false),
+        ];
+        for (case, html, title, expected) in cases {
+            assert_eq!(
+                valid_title(html, title),
+                expected,
+                "valid_title case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_text_cases() {
+        let html = r#"<p>Foo bar</p><a href="baz">"#;
+        // (case, text to find, expected)
+        let cases = [
+            ("present", "Foo bar", true),
+            ("markup", r#"<a href="baz">"#, true),
+            ("wrong case", "foo bar", false),
+            ("absent", "qux", false),
+        ];
+        for (case, text, expected) in cases {
+            assert_eq!(valid_text(html, text), expected, "valid_text case {}", case);
+        }
+    }
+
+    fn headers() -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        headers.insert("x-cache", "HIT".parse().unwrap());
+        headers.insert(
+            "x-generator",
+            "Drupal 11 (https://www.drupal.org)".parse().unwrap(),
+        );
+        headers.insert("x-binary", http::HeaderValue::from_bytes(b"\xff").unwrap());
+        headers
+    }
+
+    #[test]
+    fn header_is_set_cases() {
+        let headers = headers();
+        // (case, header name, expected)
+        let cases = [
+            ("present", "x-cache", true),
+            ("any case", "X-Cache", true),
+            ("absent", "x-missing", false),
+        ];
+        for (case, header, expected) in cases {
+            assert_eq!(
+                header_is_set(&headers, header),
+                expected,
+                "header_is_set case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
+    fn valid_header_value_cases() {
+        let headers = headers();
+        // (case, (header name, value), expected)
+        let cases = [
+            ("exact", ("x-cache", "HIT"), true),
+            ("substring", ("x-generator", "Drupal 11"), true),
+            ("any case name", ("X-Generator", "Drupal"), true),
+            ("value case matters", ("x-cache", "hit"), false),
+            ("wrong value", ("x-cache", "MISS"), false),
+            ("absent header", ("x-missing", "HIT"), false),
+            ("empty value", ("x-cache", ""), false),
+            ("empty name", ("", "HIT"), false),
+            ("value not text", ("x-binary", "x"), false),
+        ];
+        for (case, header, expected) in cases {
+            assert_eq!(
+                valid_header_value(&headers, header),
+                expected,
+                "valid_header_value case {}",
+                case
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn get_src_elements_cases() {
+        let mut user = test_user();
+        // (case, html, expected elements)
+        let cases: Vec<(&str, &str, Vec<&str>)> = vec![
+            (
+                "absolute local",
+                r#"<img src="http://example.com/a.png">"#,
+                vec!["http://example.com/a.png"],
+            ),
+            ("relative", r#"<img src="a/b.png">"#, vec!["a/b.png"]),
+            (
+                "root relative",
+                r#"<script src="/a.js"></script>"#,
+                vec!["/a.js"],
+            ),
+            (
+                "query string",
+                r#"<img src="/a.jpg?itok=Q8u7GC4u">"#,
+                vec!["/a.jpg?itok=Q8u7GC4u"],
+            ),
+            (
+                "encoded entities",
+                r#"<script src="/a.js?x=1&amp;y=2"></script>"#,
+                vec!["/a.js?x=1&y=2"],
+            ),
+            (
+                "upper case attribute",
+                r#"<IMG SRC="/a.png">"#,
+                vec!["/a.png"],
+            ),
+            (
+                "other domain",
+                r#"<img src="http://other.com/a.png">"#,
+                vec![],
+            ),
+            (
+                "other subdomain",
+                r#"<img src="http://cdn.example.com/a.png">"#,
+                vec![],
+            ),
+            (
+                "protocol relative local",
+                r#"<script src="//example.com/a.js"></script>"#,
+                vec!["//example.com/a.js"],
+            ),
+            (
+                "protocol relative other domain",
+                r#"<script src="//other.com/a.js"></script>"#,
+                vec![],
+            ),
+            (
+                "in order",
+                r#"<img src="/1.png"><script src="/2.js"></script><img src="/3.gif">"#,
+                vec!["/1.png", "/2.js", "/3.gif"],
+            ),
+            ("none", "<p>no assets</p>", vec![]),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_src_elements(&mut user, html).await,
+                expected,
+                "get_src_elements case {}",
+                case
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn get_css_elements_cases() {
+        let mut user = test_user();
+        // (case, html, expected elements)
+        let cases: Vec<(&str, &str, Vec<&str>)> = vec![
+            (
+                "absolute local",
+                r#"<link href="http://example.com/a.css" rel="stylesheet">"#,
+                vec!["http://example.com/a.css"],
+            ),
+            (
+                "relative",
+                r#"<link href="a/b.css" rel="stylesheet">"#,
+                vec!["a/b.css"],
+            ),
+            (
+                "query string",
+                r#"<link href="/a.css?v=1" rel="stylesheet">"#,
+                vec!["/a.css?v=1"],
+            ),
+            (
+                "encoded entities",
+                r#"<link href="/a.css?x=1&amp;y=2" rel="stylesheet">"#,
+                vec!["/a.css?x=1&y=2"],
+            ),
+            (
+                "upper case attribute",
+                r#"<LINK HREF="/a.css" rel="stylesheet">"#,
+                vec!["/a.css"],
+            ),
+            (
+                "not css",
+                r#"<link href="/feed.xml" rel="alternate">"#,
+                vec![],
+            ),
+            ("page link", r#"<a href="/page">page</a>"#, vec![]),
+            (
+                "not css then css attribute",
+                r#"<a href="/page" data-theme="dark.css">page</a>"#,
+                vec![],
+            ),
+            (
+                "other domain",
+                r#"<link href="http://other.com/a.css" rel="stylesheet">"#,
+                vec![],
+            ),
+            (
+                "protocol relative other domain",
+                r#"<link href="//other.com/a.css" rel="stylesheet">"#,
+                vec![],
+            ),
+            (
+                "in order",
+                r#"<link href="/1.css"><link href="/2.css">"#,
+                vec!["/1.css", "/2.css"],
+            ),
+        ];
+        for (case, html, expected) in cases {
+            assert_eq!(
+                get_css_elements(&mut user, html).await,
+                expected,
+                "get_css_elements case {}",
+                case
+            );
+        }
     }
 }

@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..0ecb53c 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1532,7 +1532,7 @@ pub async fn validate_and_load_static_assets<'a>(
+ ) -> Result<String, Box<TransactionError>> {
+     match validate_page(user, goose, validate).await {
+         Ok(html) => {
+-            load_static_elements(user, &html).await;
++            load_static_elements(user, "").await;
+             Ok(html)
+         }
+         Err(e) => Err(e),

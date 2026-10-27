@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..22d7779 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -840,7 +840,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
+     let html_title = get_title(&html_header).unwrap_or_default();
+     // Finally, confirm that the title contains the expected text.
+     html_title
+-        .to_ascii_lowercase()
++        .to_string()
+         .contains(title.to_ascii_lowercase().as_str())
+ }
+ 

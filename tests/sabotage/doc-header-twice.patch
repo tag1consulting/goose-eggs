@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..a74474d 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1309,7 +1309,7 @@ pub async fn validate_page<'a>(
+ 
+             // Validate headers if defined.
+             let headers = &response.headers().clone();
+-            for validate_header in &validate.headers {
++            for validate_header in validate.headers.iter().take(1) {
+                 if !validate_header.exists {
+                     // `not_header` refuses the header; `not_header_value` refuses
+                     // only the value, so the header itself may be set.

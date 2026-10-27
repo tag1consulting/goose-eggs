@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..b107707 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1128,7 +1128,7 @@ pub async fn search<'a>(
+     params: &'a SearchParams<'a>,
+ ) -> Result<String, Box<TransactionError>> {
+     // Load the search page.
+-    let goose = user.get(params.url).await?;
++    let goose = user.get("search/node").await?;
+ 
+     // Optionally validate the page with the search form.
+     let no_validation = crate::Validate::none();

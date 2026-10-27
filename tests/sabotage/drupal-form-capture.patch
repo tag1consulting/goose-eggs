@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..0bc07ff 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -46,7 +46,7 @@ pub fn get_form(html: &str, name: &str) -> String {
+     let line = html.replace('\n', "");
+     // Return the entire form, a subset of the received html.
+     match re.captures(&line) {
+-        Some(capture) => capture[2].to_string(),
++        Some(capture) => capture[1].to_string(),
+         None => {
+             warn!("form {} not found", name);
+             "".to_string()

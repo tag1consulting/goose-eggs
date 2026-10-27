@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..473f20f 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1146,7 +1146,7 @@ pub async fn search<'a>(
+     let form_values = get_form_values(&search_form, params.form_values);
+ 
+     // Build search form.
+-    let keys = params.keys.to_string();
++    let keys = params.keys.replace(' ', "+");
+     let submit = params.submit.to_string();
+     let mut search_params = vec![("keys", keys), ("op", submit)];
+     for value in params.form_values {

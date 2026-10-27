@@ -1,0 +1,13 @@
+diff --git a/src/text.rs b/src/text.rs
+index 958edb6..6d3dedc 100644
+--- a/src/text.rs
++++ b/src/text.rs
+@@ -39,7 +39,7 @@ pub fn random_words(number: usize) -> String {
+         let mut rng = rng();
+         words.push(random_word(rng.random_range(3..=12)));
+     }
+-    words.join(" ")
++    words.join("")
+ }
+ 
+ #[cfg(test)]

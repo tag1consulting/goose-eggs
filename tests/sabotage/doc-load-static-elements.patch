@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..f6f96fb 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1183,7 +1183,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
+     // <foo> is the URL to local image and js assets.
+     // @TODO: parse HTML5 srcset= also
+-    for url in get_src_elements(user, html).await {
++    for url in get_src_elements(user, html).await.into_iter().skip(1) {
+         let is_js = url.contains(".js");
+         let resource_type = if is_js { "js" } else { "img" };
+         let _ = user

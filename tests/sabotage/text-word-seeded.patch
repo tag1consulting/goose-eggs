@@ -1,0 +1,13 @@
+diff --git a/src/text.rs b/src/text.rs
+index 958edb6..e38743a 100644
+--- a/src/text.rs
++++ b/src/text.rs
+@@ -15,7 +15,7 @@ use rand::{rng, Rng};
+ /// assert_eq!(word.len(), 10);
+ /// ```
+ pub fn random_word(length: usize) -> String {
+-    rng()
++    <rand::rngs::StdRng as rand::SeedableRng>::seed_from_u64(7)
+         .sample_iter(&Alphanumeric)
+         .take(length)
+         .map(char::from)

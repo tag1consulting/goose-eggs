@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..8deec84 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1478,7 +1478,7 @@ pub async fn validate_page<'a>(
+                 &mut goose.request,
+                 None,
+                 None,
+-            )?;
++            );
+             Ok(empty)
+         }
+     }

@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..b9b01ae 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -671,7 +671,7 @@ impl<'a> ValidateBuilder<'a> {
+             status,
+             title,
+             texts,
+-            headers,
++            headers: vec![],
+             redirect,
+         }
+     }

@@ -57,3 +57,67 @@ jobs:
 
     - name: 🔎 Test with rustls-tls
       run: cargo test --verbose --no-default-features --features rustls-tls
+
+  coverage:
+    name: line coverage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: ⚡ Cache
+      uses: Swatinem/rust-cache@v2.9.2
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: llvm-tools-preview
+
+    - name: Install cargo-llvm-cov
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-llvm-cov@0.8.7
+
+    - name: 📏 Coverage, with a floor
+      run: cargo llvm-cov --all-features --lcov --output-path lcov.info --fail-under-lines 95
+
+    - name: Upload lcov.info
+      uses: actions/upload-artifact@v7
+      with:
+        name: lcov
+        path: lcov.info
+
+  sabotage:
+    name: every test catches its break
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: ⚡ Cache
+      uses: Swatinem/rust-cache@v2.9.2
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: 💣 Apply each ledger break and run its test
+      run: scripts/sabotage.sh
+
+  umami:
+    name: umami example against Drupal 11
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: ⚡ Cache
+      uses: Swatinem/rust-cache@v2.9.2
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: 🥘 Run the Umami example against a Drupal 11 Umami site
+      run: scripts/umami.sh

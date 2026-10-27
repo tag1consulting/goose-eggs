@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..ed7b2ab 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -642,7 +642,7 @@ pub async fn log_in(
+     let login_page = crate::validate_and_load_static_assets(user, goose, validate).await?;
+ 
+     // A web page can have multiple forms, so first get the correct form.
+-    let login_form = get_form(&login_page, "user-login-form");
++    let login_form = get_form(&login_page, "user-login");
+     if login_form.is_empty() {
+         user.set_failure(
+             &format!("{}: no user-login-form on page", login.url),

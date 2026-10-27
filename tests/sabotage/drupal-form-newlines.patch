@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..22dabdb 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -43,7 +43,7 @@ pub fn get_form(html: &str, name: &str) -> String {
+     ))
+     .unwrap();
+     // Strip carriage returns to simplify regex.
+-    let line = html.replace('\n', "");
++    let line = html.replace('\r', "");
+     // Return the entire form, a subset of the received html.
+     match re.captures(&line) {
+         Some(capture) => capture[2].to_string(),

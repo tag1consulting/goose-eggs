@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..834bfe7 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -256,7 +256,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
+ 
+     // Extract the form elements needed to submit a form.
+     for &element in elements {
+-        let value = get_form_value(form, element);
++        let value = get_form_value(form, "form_id");
+         form_elements.insert(element, value);
+     }
+ 

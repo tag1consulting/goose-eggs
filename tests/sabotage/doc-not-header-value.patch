@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..604236f 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -617,7 +617,7 @@ impl<'a> ValidateBuilder<'a> {
+         self.headers.push(ValidateHeader {
+             exists: false,
+             header: header.into(),
+-            value: value.into(),
++            value: { let _: &str = value.into(); "" },
+         });
+         self
+     }

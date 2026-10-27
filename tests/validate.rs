@@ -23,6 +23,7 @@ pub async fn get_path_valid(user: &mut GooseUser) -> TransactionResult {
         user,
         goose,
         &goose_eggs::Validate::builder()
+            .status(200)
             .title("1234ABCD")
             .not_title("Example")
             .text("Test text")
@@ -138,7 +139,8 @@ async fn test_valid() {
 }
 
 #[tokio::test]
-// Make a single request and confirm detection of invalid status code.
+// Make a single request and confirm detection of invalid status code. A 201 is a
+// success to Goose, so only the `status(200)` rule can catch it.
 async fn test_invalid_status() {
     // Start the mock server.
     let server = MockServer::start();
@@ -147,7 +149,7 @@ async fn test_invalid_status() {
         // Set up PATH, store in vector at KEY_ONE.
         server.mock(|when, then| {
             when.method(GET).path(PATH);
-            then.status(404)
+            then.status(201)
                 .header("foo", "bar")
                 .body(HTML);
         });
@@ -160,6 +162,12 @@ async fn test_invalid_status() {
         println!("EXPECTED ONE ERRORS: {:#?}", goose_metrics.errors);
     }
     assert!(goose_metrics.errors.len() == 1);
+    let error = goose_metrics.errors.values().next().unwrap();
+    assert!(
+        error.error.contains("response status != 200"),
+        "unexpected error: {}",
+        error.error
+    );
 }
 
 #[tokio::test]

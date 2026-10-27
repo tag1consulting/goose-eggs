@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..20532fc 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1115,7 +1115,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
+     // <foo> is the URL to local css assets.
+-    let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
++    let css = Regex::new(r#"href="(.*?\.css.*?)""#).unwrap();
+     let mut elements: Vec<String> = Vec::new();
+     for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
+         if valid_local_uri(user, &url[1]) {

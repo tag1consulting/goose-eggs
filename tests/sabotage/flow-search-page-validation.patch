@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..49cc29d 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -1132,7 +1132,7 @@ pub async fn search<'a>(
+ 
+     // Optionally validate the page with the search form.
+     let no_validation = crate::Validate::none();
+-    let validate = if let Some(validation) = params.search_page_validation {
++    let validate = if let Some(validation) = None::<&crate::Validate> {
+         validation
+     } else {
+         &no_validation

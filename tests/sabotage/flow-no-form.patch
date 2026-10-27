@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index f57e0ac..1606d63 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -643,7 +643,7 @@ pub async fn log_in(
+ 
+     // A web page can have multiple forms, so first get the correct form.
+     let login_form = get_form(&login_page, "user-login-form");
+-    if login_form.is_empty() {
++    if false {
+         user.set_failure(
+             &format!("{}: no user-login-form on page", login.url),
+             &mut login_request,

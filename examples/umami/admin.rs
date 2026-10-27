@@ -34,15 +34,32 @@ pub async fn edit_article(user: &mut GooseUser) -> TransactionResult {
     let nodes = common::get_nodes(&common::ContentType::Article);
     let article = nodes.choose(&mut rand::rng());
     let goose = user.get(article.unwrap().url_en).await?;
-    goose_eggs::validate_and_load_static_assets(
+    let mut article_request = goose.request.clone();
+    let article_page = goose_eggs::validate_and_load_static_assets(
         user,
         goose,
         &goose_eggs::Validate::builder()
             .title(article.unwrap().title_en)
-            .text(&format!("en/node/{}/edit", article.unwrap().nid))
             .build(),
     )
     .await?;
+
+    // The edit link proves the admin is logged in. When Drupal's render cache is
+    // cold, BigPipe streams the link inside a JSON placeholder with its slashes
+    // escaped, so accept it in either form.
+    let edit_link = format!("en/node/{}/edit", article.unwrap().nid);
+    if !article_page.contains(&edit_link) && !article_page.contains(&edit_link.replace('/', "\\/"))
+    {
+        return user.set_failure(
+            &format!(
+                "{}: edit link not found: {}",
+                article_request.raw.url, edit_link
+            ),
+            &mut article_request,
+            None,
+            Some(&article_page),
+        );
+    }
 
     // Next, load the edit link for the chosen article.
     let goose = user

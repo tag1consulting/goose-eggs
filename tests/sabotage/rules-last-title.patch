@@ -1,0 +1,17 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..d900ba4 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -230,10 +230,10 @@ impl<'a> ValidateBuilder<'a> {
+     /// # support::proves("title", &_validate, &home, &support::page("<head><title>Other</title></head>"));
+     /// ```
+     pub fn title(mut self, title: impl Into<&'a str>) -> Self {
+-        self.title = Some(ValidateTitle {
++        self.title = self.title.or(Some(ValidateTitle {
+             exists: true,
+             title: title.into(),
+-        });
++        }));
+         self
+     }
+ 

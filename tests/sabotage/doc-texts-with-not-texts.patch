@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..0b82fc0 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -419,7 +419,7 @@ impl<'a> ValidateBuilder<'a> {
+     /// Alternatively you can call [`ValidateBuilder::text`].
+     pub fn not_texts(mut self, texts: Vec<&'a str>) -> Self {
+         for text in texts {
+-            self = self.not_text(text);
++            self = self.text(text);
+         }
+         self
+     }

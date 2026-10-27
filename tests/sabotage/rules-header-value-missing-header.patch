@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..eef522e 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1353,7 +1353,7 @@ pub async fn validate_page<'a>(
+                         return Ok(html);
+                     }
+                 } else {
+-                    if !header_is_set(headers, validate_header.header) {
++                    if false {
+                         // Get as much as we can from the response for useful debug logging.
+                         let html = response.text().await.unwrap_or_else(|_| "".to_string());
+                         user.set_failure(

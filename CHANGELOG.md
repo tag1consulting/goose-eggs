@@ -8,6 +8,19 @@
  - drop the `gumdrop` dev dependency, as Goose now parses its options with `clap`
  - tests use `--increase-rate`, which replaced `--hatch-rate` in Goose 0.19
  - CI uses `dtolnay/rust-toolchain` and plain `cargo` in place of the archived `actions-rs` actions, and also tests the `rustls-tls` feature
+ - **API change**: `random_words(n)` returns n words (was n - 1) of 3 to 12 characters
+ - **API change**: protocol relative asset urls on other hosts (`//cdn.example.com/a.js`) are no longer loaded
+ - fix `not_header_value` failing whenever the header is set, so its value check never ran
+ - fix `log_in` posting `op=Log+in` instead of the button's `Log in`
+ - **API change**: `LoginBuilder` defaults to password `password` (was `search`)
+ - fix `log_in` posting the form when the page has no `form_build_id` or `form_id`
+ - **API change**: with `GOOSE_USER` set, `log_in` checks that user's name in the logged in page title (was the configured username)
+ - fix three wrong doc examples: `LoginBuilder` (never ran), `LoginBuilder::url` (set the password) and `LoginBuilder::build` (built a `SearchParams`)
+ - every public item tested: table driven unit tests, one Goose run per integration test file against `httpmock`, Drupal tests replaying pages captured from a Drupal 11 Umami site (`scripts/capture-fixtures.sh`), and every doc example checking its result
+ - every test proven by a deliberate break: `tests/sabotage/LEDGER.tsv` and `scripts/sabotage.sh`, run by the `sabotage` CI job
+ - `coverage` CI job: `cargo llvm-cov` with a 95% line floor, `lcov.info` uploaded as an artifact
+ - `umami` CI job: the Umami example against a Drupal 11 Umami site in Docker (`scripts/umami-site.sh`, `scripts/umami.sh`), failing on any request or transaction error
+ - umami example: the mushroom article path, the admin's edit link when BigPipe streams it, and the contact form's real `op`
 
 ## 0.6.0 February 28, 2025
  - **API change**: update goose to [0.18](https://github.com/tag1consulting/goose/releases/tag/0.18.0)

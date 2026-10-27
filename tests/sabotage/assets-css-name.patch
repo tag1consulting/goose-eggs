@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..8a4deb3 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1194,7 +1194,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
+     // <foo> is the URL to local css assets.
+     for url in get_css_elements(user, html).await {
+-        let _ = user.get_named(&url, "static asset: css").await;
++        let _ = user.get_named(&url, "static asset: style").await;
+     }
+ }
+ 

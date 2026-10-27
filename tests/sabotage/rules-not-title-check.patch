@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index a6ec0ca..7b049e0 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1399,7 +1399,7 @@ pub async fn validate_page<'a>(
+                     // Validate title if defined.
+                     if let Some(validate_title) = validate.title.as_ref() {
+                         // Be sure the title doesn't contain the specified text.
+-                        if !validate_title.exists && valid_title(&html, validate_title.title) {
++                        if !validate_title.exists && false && valid_title(&html, validate_title.title) {
+                             user.set_failure(
+                                 &format!(
+                                     "{}: title found: {}",
