@@ -341,15 +341,17 @@ impl<'a> Login<'a> {
 /// ```rust
 /// use goose_eggs::drupal::Login;
 ///
-/// fn examples() {
-///     // Manually build a Login structure with custom default username and password,
-///     // and a custom log in path.
-///     let _login = Login::builder()
-///         .username("foo")
-///         .password("bar")
-///         .url("custom/user/login")
-///         .build();
-/// }
+/// // Manually build a Login structure with custom default username and password,
+/// // and a custom log in path.
+/// let _login = Login::builder()
+///     .username("foo")
+///     .password("bar")
+///     .url("custom/user/login")
+///     .build();
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::log_in_server("foo", "bar", "custom/user/login");
+/// # support::log_in("LoginBuilder", &server, &_login);
+/// ```
 pub struct LoginBuilder<'a> {
     // Optionally set a default username.
     username: &'a str,
@@ -395,6 +397,9 @@ impl<'a> LoginBuilder<'a> {
     /// let _login = Login::builder()
     ///     .username("foo")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("foo", "password", "user/login");
+    /// # support::log_in("username", &server, &_login);
     /// ```
     pub fn username(mut self, username: impl Into<&'a str>) -> Self {
         self.username = username.into();
@@ -417,6 +422,9 @@ impl<'a> LoginBuilder<'a> {
     /// let _login = Login::builder()
     ///     .password("bar")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("username", "bar", "user/login");
+    /// # support::log_in("password", &server, &_login);
     /// ```
     pub fn password(mut self, password: impl Into<&'a str>) -> Self {
         self.password = password.into();
@@ -435,8 +443,11 @@ impl<'a> LoginBuilder<'a> {
     ///
     /// // Login at a custom path.
     /// let _login = Login::builder()
-    ///     .password("custom/user/login")
+    ///     .url("custom/user/login")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("username", "password", "custom/user/login");
+    /// # support::log_in("url", &server, &_login);
     /// ```
     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
         self.url = url.into();
@@ -466,6 +477,9 @@ impl<'a> LoginBuilder<'a> {
     /// let _login = drupal::Login::builder()
     ///     .log_in_page_validation(&validate)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("username", "password", "user/login");
+    /// # support::log_in("log_in_page_validation", &server, &_login);
     /// ```
     pub fn log_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
         self.log_in_page_validation = Some(validation);
@@ -492,6 +506,9 @@ impl<'a> LoginBuilder<'a> {
     /// let search_params = SearchParams::builder()
     ///     .keys("foo bar")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("keys", "foo bar")], "Results");
+    /// # support::search("logged_in_page_validation, search", &server, &search_params);
     /// ```
     /// # Example
     /// ```rust
@@ -507,6 +524,9 @@ impl<'a> LoginBuilder<'a> {
     ///     .username(username)
     ///     .logged_in_page_validation(&validate)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("foo", "password", "user/login");
+    /// # support::log_in("logged_in_page_validation", &server, &_login);
     /// ```
     pub fn logged_in_page_validation(mut self, validation: &'a crate::Validate) -> Self {
         self.logged_in_page_validation = Some(validation);
@@ -517,12 +537,15 @@ impl<'a> LoginBuilder<'a> {
     ///
     /// # Example
     /// ```rust
-    /// use goose_eggs::drupal::SearchParams;
+    /// use goose_eggs::drupal::Login;
     ///
-    /// // Use the default search form to search for `example keys`.
-    /// let search_params = SearchParams::builder()
-    ///     .keys("example keys")
+    /// // Log in as `foo` with the default password.
+    /// let _login = Login::builder()
+    ///     .username("foo")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::log_in_server("foo", "password", "user/login");
+    /// # support::log_in("LoginBuilder::build", &server, &_login);
     /// ```
     pub fn build(self) -> Login<'a> {
         let Self {
@@ -573,6 +596,11 @@ impl<'a> LoginBuilder<'a> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::log_in_server("foo", "bar", "user/login");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(login(&mut user));
+/// # assert!(result.is_ok(), "doc example log_in: {}", support::failure(&result));
 ///
 /// ```
 pub async fn log_in(
@@ -784,6 +812,11 @@ impl<'a> SearchParams<'a> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::search_server("search", "Search", &[("keys", "search terms"), ("op", "Search")], "Results");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(search(&mut user));
+/// # assert!(result.is_ok(), "doc example SearchParamsBuilder: {}", support::failure(&result));
 /// ```
 ///
 /// The builder can also be used to customize the search parameters, for example:
@@ -823,6 +856,11 @@ impl<'a> SearchParams<'a> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::search_server("custom/search/path", "Custom Search", &[("keys", "search terms"), ("op", "Custom Search")], "search terms");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(search(&mut user));
+/// # assert!(result.is_ok(), "doc example SearchParamsBuilder, customized: {}", support::failure(&result));
 /// ```
 pub struct SearchParamsBuilder<'a> {
     keys: &'a str,
@@ -865,6 +903,9 @@ impl<'a> SearchParamsBuilder<'a> {
     /// let search_params = SearchParams::builder()
     ///     .keys("foo bar")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("keys", "foo bar")], "Results");
+    /// # support::search("keys", &server, &search_params);
     /// ```
     pub fn keys(mut self, keys: impl Into<&'a str>) -> Self {
         self.keys = keys.into();
@@ -885,6 +926,9 @@ impl<'a> SearchParamsBuilder<'a> {
     /// let search_params = SearchParams::builder()
     ///     .url("custom/search/path")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("custom/search/path", "Search", &[], "Results");
+    /// # support::search("url", &server, &search_params);
     /// ```
     pub fn url(mut self, url: impl Into<&'a str>) -> Self {
         self.url = url.into();
@@ -908,6 +952,9 @@ impl<'a> SearchParamsBuilder<'a> {
     ///     // Searching on Drupal 7 also requires `form_token`.
     ///     .form_values(&["form_token", "form_build_id", "form_id"])
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("form_token", support::search_token())], "Results");
+    /// # support::search("form_values", &server, &search_params);
     /// ```
     pub fn form_values(mut self, form_values: &'a [&'a str]) -> Self {
         self.form_values = form_values;
@@ -938,6 +985,9 @@ impl<'a> SearchParamsBuilder<'a> {
     /// let search_params = SearchParams::builder()
     ///     .search_page_validation(&validate_search_page)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Custom Search", &[], "Results");
+    /// # support::search("search_page_validation", &server, &search_params);
     /// ```
     pub fn search_page_validation(mut self, validation: &'a crate::Validate) -> Self {
         self.search_page_validation = Some(validation);
@@ -959,6 +1009,9 @@ impl<'a> SearchParamsBuilder<'a> {
     ///     // Searching on Drupal 7 also requires `form_token`.
     ///     .submit("Custom Search")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("op", "Custom Search")], "Results");
+    /// # support::search("submit", &server, &search_params);
     /// ```
     pub fn submit(mut self, submit: impl Into<&'a str>) -> Self {
         self.submit = submit.into();
@@ -990,6 +1043,9 @@ impl<'a> SearchParamsBuilder<'a> {
     ///     .keys("foo")
     ///     .results_page_validation(&validate_results_page)
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("keys", "foo")], "Search for foo");
+    /// # support::search("results_page_validation", &server, &search_params);
     /// ```
     pub fn results_page_validation(mut self, validation: &'a crate::Validate) -> Self {
         self.results_page_validation = Some(validation);
@@ -1006,6 +1062,9 @@ impl<'a> SearchParamsBuilder<'a> {
     /// let search_params = SearchParams::builder()
     ///     .keys("example keys")
     ///     .build();
+    /// # mod support { include!("../tests/doc/support.rs"); }
+    /// # let server = support::search_server("search", "Search", &[("keys", "example keys")], "Results");
+    /// # support::search("SearchParamsBuilder::build", &server, &search_params);
     /// ```
     pub fn build(self) -> SearchParams<'a> {
         let Self {
@@ -1055,6 +1114,11 @@ impl<'a> SearchParamsBuilder<'a> {
 ///
 ///     Ok(())
 /// }
+/// # mod support { include!("../tests/doc/support.rs"); }
+/// # let server = support::search_server("search", "Search", &[("keys", "foo")], "Results");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(search(&mut user));
+/// # assert!(result.is_ok(), "doc example search: {}", support::failure(&result));
 /// ```
 pub async fn search<'a>(
     user: &mut GooseUser,
