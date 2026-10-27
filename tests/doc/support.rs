@@ -136,6 +136,27 @@ pub fn log_in(example: &str, server: &MockServer, login: &Login) {
     }
 }
 
+/// A mock server with Drupal's search form, counting the posts that carry the
+/// expected fields.
+pub struct SearchServer {
+    server: MockServer,
+    post: usize,
+}
+
+impl SearchServer {
+    /// How many times the search form was posted with the expected fields.
+    pub fn posts(&self) -> usize {
+        httpmock::Mock::new(self.post, &self.server).hits()
+    }
+}
+
+impl std::ops::Deref for SearchServer {
+    type Target = MockServer;
+    fn deref(&self) -> &MockServer {
+        &self.server
+    }
+}
+
 /// A server with Drupal's search form at `/{path}`, titled `page_title`, that
 /// answers a POST of `fields` with results titled `results_title`.
 pub fn search_server(
@@ -143,7 +164,7 @@ pub fn search_server(
     page_title: &str,
     fields: &[(&str, &str)],
     results_title: &str,
-) -> MockServer {
+) -> SearchServer {
     let server = MockServer::start();
     let search_page = SEARCH_PAGE.replace("<title>Search |", &format!("<title>{} |", page_title));
     server.mock(|when, then| {
@@ -154,7 +175,7 @@ pub fn search_server(
         "<title>Search for mushrooms |",
         &format!("<title>{} |", results_title),
     );
-    server.mock(|when, then| {
+    let post = server.mock(|when, then| {
         let mut when = when
             .method(POST)
             .path(format!("/{}", path))
@@ -165,7 +186,8 @@ pub fn search_server(
         }
         then.status(200).body(results);
     });
-    server
+    let post = post.id;
+    SearchServer { server, post }
 }
 
 /// The form_token on the search fixture, for a Drupal 7 style search.
@@ -173,12 +195,22 @@ pub fn search_token() -> &'static str {
     SEARCH_TOKEN
 }
 
-/// Search with `params` against `server`; panic naming `example` on failure.
-pub fn search(example: &str, server: &MockServer, params: &SearchParams) -> String {
+/// Search with `params` against `server`; panic naming `example` unless the
+/// search posted the expected fields once and returned the results page.
+pub fn search(example: &str, server: &SearchServer, params: &SearchParams) -> String {
     let mut user = user(server);
     let result = block_on(goose_eggs::drupal::search(&mut user, params));
-    match result {
+    let html = match result {
         Ok(html) => html,
         Err(_) => panic!("doc example {}: search failed: {}", example, failure(&result)),
+    };
+    if server.posts() != 1 || !html.contains("search-result") {
+        panic!(
+            "doc example {}: search form posted with the expected fields {} times, results returned: {}",
+            example,
+            server.posts(),
+            html.contains("search-result")
+        );
     }
+    html
 }

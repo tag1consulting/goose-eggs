@@ -817,6 +817,7 @@ impl<'a> SearchParams<'a> {
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(search(&mut user));
 /// # assert!(result.is_ok(), "doc example SearchParamsBuilder: {}", support::failure(&result));
+/// # assert_eq!(server.posts(), 1, "doc example SearchParamsBuilder: search form posts");
 /// ```
 ///
 /// The builder can also be used to customize the search parameters, for example:
@@ -861,6 +862,7 @@ impl<'a> SearchParams<'a> {
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(search(&mut user));
 /// # assert!(result.is_ok(), "doc example SearchParamsBuilder, customized: {}", support::failure(&result));
+/// # assert_eq!(server.posts(), 1, "doc example SearchParamsBuilder, customized: search form posts");
 /// ```
 pub struct SearchParamsBuilder<'a> {
     keys: &'a str,
@@ -1119,6 +1121,7 @@ impl<'a> SearchParamsBuilder<'a> {
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(search(&mut user));
 /// # assert!(result.is_ok(), "doc example search: {}", support::failure(&result));
+/// # assert_eq!(server.posts(), 1, "doc example search: search form posts");
 /// ```
 pub async fn search<'a>(
     user: &mut GooseUser,
