@@ -1,7 +1,7 @@
 # Changelog
 
-## 0.7.0-dev
- - **API change**: update goose to 0.19 (currently Goose `main`, 0.19.0-dev, pinned by git revision until 0.19.0 is released)
+## 0.7.0 October 29, 2026
+ - **API change**: update goose to [0.19](https://github.com/tag1consulting/goose/releases/tag/0.19.0)
  - **API change**: the `default` feature enables Goose's default features, which are now cookie support, and no longer selects a TLS backend; `default-features = false` turns off cookies, where it turned off TLS
  - **API change**: the `rustls-tls` feature forwards to `goose/rustls-tls` only; Goose 0.19 sends load test requests with rustls in every build
  - drop the direct `reqwest` dependency; `header_is_set()` and `valid_header_value()` take `http::HeaderMap`, the same type `reqwest::header::HeaderMap` named
