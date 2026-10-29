@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.7.1-dev
+
 ## 0.7.0 October 29, 2026
  - **API change**: update goose to [0.19](https://github.com/tag1consulting/goose/releases/tag/0.19.0)
  - **API change**: the `default` feature enables Goose's default features, which are now cookie support, and no longer selects a TLS backend; `default-features = false` turns off cookies, where it turned off TLS
