@@ -3,7 +3,7 @@ index a6ec0ca..c0ec180 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -1118,7 +1118,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
-     let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
+     let css = Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap();
      let mut elements: Vec<String> = Vec::new();
      for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
 -        if valid_local_uri(user, &url[1]) {

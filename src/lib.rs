@@ -1117,7 +1117,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
 pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
-    let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
+    let css = Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
     for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
         if valid_local_uri(user, &url[1]) {
@@ -1869,6 +1869,16 @@ mod tests {
                 r#"<img src="/1.png"><script src="/2.js"></script><img src="/3.gif">"#,
                 vec!["/1.png", "/2.js", "/3.gif"],
             ),
+            (
+                "two on one line with attributes",
+                r#"<img src="/1.png" alt="one"><script src="/2.js" defer></script>"#,
+                vec!["/1.png", "/2.js"],
+            ),
+            (
+                "other domain then local on one line",
+                r#"<img src="http://other.com/1.png" alt="one"><img src="/2.png">"#,
+                vec!["/2.png"],
+            ),
             ("none", "<p>no assets</p>", vec![]),
         ];
         for (case, html, expected) in cases {
@@ -1936,6 +1946,26 @@ mod tests {
                 "in order",
                 r#"<link href="/1.css"><link href="/2.css">"#,
                 vec!["/1.css", "/2.css"],
+            ),
+            (
+                "favicon then stylesheet",
+                r#"<link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/style.css">"#,
+                vec!["/style.css"],
+            ),
+            (
+                "page link then stylesheet",
+                r#"<a href="/page">page</a><link href="/a.css" rel="stylesheet">"#,
+                vec!["/a.css"],
+            ),
+            (
+                "non css links between stylesheets",
+                r#"<link href="/1.css"><link rel="icon" href="/favicon.ico"><link href="/2.css"><a href="/page">page</a><link href="/3.css">"#,
+                vec!["/1.css", "/2.css", "/3.css"],
+            ),
+            (
+                "fragment",
+                r#"<link href="/a.css#x" rel="stylesheet">"#,
+                vec!["/a.css#x"],
             ),
         ];
         for (case, html, expected) in cases {

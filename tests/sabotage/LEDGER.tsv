@@ -24,6 +24,7 @@ lib-css-extension.patch	lib	tests::get_css_elements_cases	get_css_elements case 
 lib-css-entities.patch	lib	tests::get_css_elements_cases	get_css_elements case encoded entities	get_css_elements
 lib-css-order.patch	lib	tests::get_css_elements_cases	get_css_elements case in order	get_css_elements
 lib-css-host.patch	lib	tests::get_css_elements_cases	get_css_elements case absolute local	get_css_elements
+lib-css-quote.patch	lib	tests::get_css_elements_cases	get_css_elements case favicon then stylesheet	get_css_elements
 lib-static-src-any-host.patch	lib	tests::get_static_elements	right: 7	get_src_elements
 lib-static-css-any-host.patch	lib	tests::get_static_elements	right: 4	get_css_elements
 text-word-length.patch	lib	text::tests::random_word_cases	random_word case empty	random_word
