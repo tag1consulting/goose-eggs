@@ -6,8 +6,8 @@ index a6ec0ca..b7b07e3 100644
  pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
      // Use a case-insensitive regular expression to find all href=<foo> in the html, where
      // <foo> is the URL to local css assets.
--    let css = Regex::new(r#"(?i)href="(.*?\.css.*?)""#).unwrap();
-+    let css = Regex::new(r#"(?i)href="(.*?\.(css|html).*?)""#).unwrap();
+-    let css = Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap();
++    let css = Regex::new(r#"(?i)href="([^"]*\.(css|html)[^"]*)""#).unwrap();
      let mut elements: Vec<String> = Vec::new();
      for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
          if valid_local_uri(user, &url[1]) {

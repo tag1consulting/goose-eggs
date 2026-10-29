@@ -25,6 +25,7 @@
  - add `goose_eggs::woocommerce`: shop, product and search pages, Store API product discovery, a `StoreApiCart` that keeps each user's nonce through cart and checkout, the classic shortcode cart and checkout, and My Account
  - add the `woocommerce` example: browsing shoppers, buyers and returning customers against any WooCommerce shop, run by the `woocommerce` CI job (`scripts/woocommerce.sh`)
  - add WordPress and WooCommerce demo sites in Docker (`examples/wordpress-sites`), with the `wordpress` CI job running the wordpress helpers against the theme test data site (`scripts/wordpress.sh`)
+ - fix `validate_and_load_static_assets` and `load_static_elements` skipping a stylesheet when an `href` link without `.css`, such as a favicon, comes before it on the same line, as the `get_css_elements` pattern matched across the closing quote
 
 ## 0.6.0 February 28, 2025
  - **API change**: update goose to [0.18](https://github.com/tag1consulting/goose/releases/tag/0.18.0)
