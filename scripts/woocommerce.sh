@@ -34,9 +34,11 @@ REPORT_DIR=$(mktemp -d)
 trap 'rm -rf "$REPORT_DIR"' EXIT
 REPORT="$REPORT_DIR/woocommerce.json"
 
+# The scenario weights (6, 3 and 1) start one returning customer in every ten
+# users, so 30 users run three at once, each logged into its own account.
 cargo run --example woocommerce -- \
     --host "http://localhost:${PORT}" \
-    --users 5 --increase-rate 5 --run-time "$RUN_TIME" \
+    --users 30 --increase-rate 10 --run-time "$RUN_TIME" \
     --no-telnet --no-websocket \
     --no-reset-metrics \
     --report-file "$REPORT" \
