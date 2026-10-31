@@ -1,0 +1,13 @@
+diff --git a/examples/woocommerce/customer.rs b/examples/woocommerce/customer.rs
+index b0e4568..3c2f06a 100644
+--- a/examples/woocommerce/customer.rs
++++ b/examples/woocommerce/customer.rs
+@@ -13,7 +13,7 @@ pub fn credentials(
+     password: Option<String>,
+ ) -> (String, String) {
+     (
+-        username.unwrap_or_else(|| format!("customer{}", index + 1)),
++        username.unwrap_or_else(|| format!("customer{}", index % 10 + 1)),
+         password.unwrap_or_else(|| "customer-password".to_string()),
+     )
+ }

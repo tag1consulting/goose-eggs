@@ -22,6 +22,9 @@ EDITOR_USERNAME=${EDITOR_USERNAME:-editor}
 EDITOR_PASSWORD=${EDITOR_PASSWORD:-editor-password}
 CUSTOMER_USERNAME=${CUSTOMER_USERNAME:-customer}
 CUSTOMER_PASSWORD=${CUSTOMER_PASSWORD:-customer-password}
+# Accounts customer1 to customerN, one for each Goose user of the example: its
+# Nth user logs in as customerN, so a run needs as many as it has users.
+CUSTOMER_COUNT=${CUSTOMER_COUNT:-100}
 
 compose() { docker compose -f "$DIR/compose.yaml" "$@"; }
 wp() { compose run --rm -T cli wp "$@"; }
@@ -62,11 +65,34 @@ start() {
     wp wc payment_gateway update cod --enabled=true --user="$ADMIN_USERNAME" >/dev/null
     wp wc shipping_zone_method create 0 --method_id=free_shipping --enabled=true \
         --user="$ADMIN_USERNAME" >/dev/null
-    # A customer with an address on file, for the returning customer.
+    # A customer with an address on file, for a run with CUSTOMER_USERNAME set.
     wp wc customer create --email=customer@example.com --username="$CUSTOMER_USERNAME" \
         --password="$CUSTOMER_PASSWORD" --first_name=Casey --last_name=Customer \
         --billing='{"first_name":"Casey","last_name":"Customer","address_1":"1 Main Street","city":"San Francisco","state":"CA","postcode":"94105","country":"US","email":"customer@example.com","phone":"5555550100"}' \
         --user="$ADMIN_USERNAME" >/dev/null
+    # One customer per returning customer user of the example, each with its
+    # own cart and logins: users sharing one account empty each other's carts
+    # and drop each other's logins. One `wp eval` creates them all.
+    # shellcheck disable=SC2016 # PHP, not shell, expands these variables.
+    CUSTOMER_COUNT=$CUSTOMER_COUNT CUSTOMER_PASSWORD=$CUSTOMER_PASSWORD \
+        compose run --rm -T -e CUSTOMER_COUNT -e CUSTOMER_PASSWORD cli wp eval '
+        $password = getenv( "CUSTOMER_PASSWORD" );
+        for ( $n = 1; $n <= (int) getenv( "CUSTOMER_COUNT" ); $n++ ) {
+            $billing  = [ "first_name" => "Casey", "last_name" => "Customer $n",
+                "address_1" => "1 Main Street", "city" => "San Francisco", "state" => "CA",
+                "postcode" => "94105", "country" => "US", "email" => "customer$n@example.com",
+                "phone" => "5555550100" ];
+            $customer = new WC_Customer();
+            $customer->set_username( "customer$n" );
+            $customer->set_email( "customer$n@example.com" );
+            $customer->set_password( $password );
+            $customer->set_first_name( "Casey" );
+            $customer->set_last_name( "Customer $n" );
+            foreach ( $billing as $field => $value ) {
+                $customer->{"set_billing_$field"}( $value );
+            }
+            $customer->save();
+        }'
     # Shortcode cart and checkout pages, for the classic flows. The block pages
     # above stay WooCommerce's cart and checkout.
     wp post create --post_type=page --post_status=publish --post_title='Classic Cart' \

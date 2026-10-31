@@ -56,12 +56,14 @@ pub fn random_search_word() -> String {
         .to_lowercase()
 }
 
-/// The customer's username and password, from `CUSTOMER_USERNAME` and
-/// `CUSTOMER_PASSWORD`, defaulting to the demo shop's customer.
-pub fn customer() -> (String, String) {
-    (
-        env::var("CUSTOMER_USERNAME").unwrap_or_else(|_| "customer".to_string()),
-        env::var("CUSTOMER_PASSWORD").unwrap_or_else(|_| "customer-password".to_string()),
+/// This user's username and password: its own demo shop customer, unless
+/// `CUSTOMER_USERNAME` names one account for every user, with the password from
+/// `CUSTOMER_PASSWORD` (see `crate::customer::credentials`).
+pub fn customer(user: &GooseUser) -> (String, String) {
+    crate::customer::credentials(
+        user.weighted_users_index,
+        env::var("CUSTOMER_USERNAME").ok(),
+        env::var("CUSTOMER_PASSWORD").ok(),
     )
 }
 

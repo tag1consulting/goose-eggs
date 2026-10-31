@@ -416,3 +416,5 @@ doc-wc-classic-update-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_u
 doc-wc-classic-checkout.patch	doc	src/woocommerce.rs - woocommerce::classic_checkout (line 1253)	doc example classic_checkout	woocommerce::classic_checkout
 doc-wc-my-account-log-in.patch	doc	src/woocommerce.rs - woocommerce::my_account_log_in (line 1330)	doc example my_account_log_in	woocommerce::my_account_log_in
 doc-wc-my-account-orders.patch	doc	src/woocommerce.rs - woocommerce::my_account_orders (line 1404)	doc example my_account_orders	woocommerce::my_account_orders
+wc-example-shared-account.patch	woocommerce_example	credentials_cases	credentials case first user	woocommerce example credentials
+wc-example-account-wraps.patch	woocommerce_example	credentials_cases	credentials case per user	woocommerce example credentials

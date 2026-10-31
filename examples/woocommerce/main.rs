@@ -1,4 +1,5 @@
 mod common;
+mod customer;
 
 use goose::prelude::*;
 use goose_eggs::woocommerce;
@@ -10,7 +11,8 @@ use crate::common::*;
 ///  - Browsing shopper: the shop page, category archives, product pages and search
 ///  - Buyer: browses products, puts one to three in the cart, views it, and
 ///    sometimes checks out with Cash on delivery
-///  - Returning customer: logs into My Account, checks past orders, and buys
+///  - Returning customer: logs into My Account with its own account, checks
+///    past orders, and buys
 #[tokio::main]
 async fn main() -> Result<(), GooseError> {
     let _goose_metrics = GooseAttack::initialize()?
@@ -131,9 +133,9 @@ async fn view_cart(user: &mut GooseUser) -> TransactionResult {
     result.map(|_| ())
 }
 
-/// Log in as the customer, then load the cart for the customer's nonce.
+/// Log in as this user's customer, then load the cart for the customer's nonce.
 async fn log_in(user: &mut GooseUser) -> TransactionResult {
-    let (username, password) = customer();
+    let (username, password) = customer(user);
     woocommerce::my_account_log_in(user, &shop(), &username, &password).await?;
     view_cart(user).await
 }

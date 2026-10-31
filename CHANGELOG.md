@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.7.1-dev
+ - fix the `woocommerce` example's returning customers failing at 100 users: they all logged in to one account, whose single cart and list of login sessions they shared, so one checkout emptied the cart another was checking out (`409 Conflict`) and simultaneous logins dropped each other's sessions (My Account served logged out); each user now logs in as its own `customer1` to `customerN`, which `setup.sh` creates (`CUSTOMER_COUNT`, default 100), `CUSTOMER_USERNAME` still names one account for every user, and the `woocommerce` CI job runs 30 users so three returning customers run at once
 
 ## 0.7.0 October 29, 2026
  - **API change**: update goose to [0.19](https://github.com/tag1consulting/goose/releases/tag/0.19.0)
