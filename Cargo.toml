@@ -27,8 +27,15 @@ rustls-tls = ["goose/rustls-tls"]
 
 [dev-dependencies]
 httpmock = "0.7"
+# The WooCommerce example shares its catalog through a tokio OnceCell.
+tokio = { version = "1", features = [ "sync" ] }
 
 # Needs a live WordPress site; see the file for how to run it.
 [[test]]
 name = "wordpress_site"
 path = "tests/sites/wordpress.rs"
+
+# Needs the demo sites; compares every helper's requests with a browser's.
+[[test]]
+name = "parity_site"
+path = "tests/sites/parity.rs"

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Run the `wordpress` integration test (tests/sites/wordpress.rs) against the
-# theme test data site. The `wordpress` CI job runs this script unchanged.
+# Run the `wordpress` integration test (tests/sites/wordpress.rs) and the
+# WordPress parity test (tests/sites/parity.rs: every helper's requests against
+# a browser's) against the theme test data site. The `wordpress` CI job runs this
+# script unchanged.
 #
 #   scripts/wordpress.sh                           # starts the site, tests, leaves it up
 #   WORDPRESS_SITE_RUNNING=1 scripts/wordpress.sh  # reuse a site already started
@@ -16,3 +18,6 @@ fi
 
 WORDPRESS_SITE="http://localhost:${PORT}" \
     cargo test --all-features --test wordpress_site -- --nocapture
+
+WORDPRESS_SITE="http://localhost:${PORT}" \
+    cargo test --all-features --test parity_site wordpress_parity -- --nocapture
