@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..e51e49f 100644
+index 99cd8aa..c4f149a 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2425,7 +2425,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+@@ -2423,7 +2423,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
  // take are left out: `rel="nofollow"` (WooCommerce's add to cart links among
  // them), feeds, comment links, admin and log in pages, the REST API and files.
  pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<String> {
--    let html = Regex::new(r"(?is)<!--.*?-->|<script\b.*?</script\s*>")
-+    let html = Regex::new(r"(?is)<script\b.*?</script\s*>")
-         .unwrap()
-         .replace_all(html, " ");
+-    let html = regex(r"(?is)<!--.*?-->|<script\b.*?</script\s*>").replace_all(html, " ");
++    let html = regex(r"(?is)<script\b.*?</script\s*>").replace_all(html, " ");
      let section = |tag: &str| -> Vec<String> {
+         regex(&format!(r"(?is)<{}\b.*?</{}\s*>", tag, tag))
+             .find_iter(&html)

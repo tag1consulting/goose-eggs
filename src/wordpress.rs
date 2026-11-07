@@ -24,19 +24,36 @@ use rand::seq::IndexedRandom;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
 
+// A compiled regular expression for `pattern`, compiled once per thread: page
+// parsing runs patterns per tag and per link, and compiling each every time
+// made a load test spend seconds of CPU between a user's requests.
+pub(crate) fn regex(pattern: &str) -> Regex {
+    thread_local! {
+        static CACHE: std::cell::RefCell<HashMap<String, Regex>> = Default::default();
+    }
+    CACHE.with(|cache| {
+        let mut cache = cache.borrow_mut();
+        if let Some(compiled) = cache.get(pattern) {
+            return compiled.clone();
+        }
+        let compiled = Regex::new(pattern).unwrap();
+        cache.insert(pattern.to_string(), compiled.clone());
+        compiled
+    })
+}
+
 // Matches one opening tag of the named element, across lines.
 fn tag_regex(tag: &str) -> Regex {
-    Regex::new(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag))).unwrap()
+    regex(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag)))
 }
 
 // The decoded value of `name` in an opening tag, with the value in double,
 // single or no quotes; `Some("")` for an attribute without a value.
 pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    let re = Regex::new(&format!(
+    let re = regex(&format!(
         r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
         regex::escape(name)
-    ))
-    .unwrap();
+    ));
     let capture = re.captures(tag)?;
     let value = capture
         .get(1)
@@ -49,8 +66,8 @@ pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
 pub(crate) fn plain_text(html: &str) -> String {
-    let hidden = Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap();
-    let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
+    let hidden = regex(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>");
+    let tags = regex(r"(?s)<[^>]*>");
     let text = hidden.replace_all(html, " ");
     let text = tags.replace_all(&text, " ");
     html_escape::decode_html_entities(&text)
@@ -97,7 +114,7 @@ pub(crate) fn get_form_by_class(html: &str, class: &str) -> String {
 
 // The contents of the first form whose opening tag matches.
 fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
-    let end = Regex::new(r"(?i)</form\s*>").unwrap();
+    let end = regex(r"(?i)</form\s*>");
     for form in tag_regex("form").find_iter(html) {
         if matches(form.as_str()) {
             let rest = &html[form.end()..];
@@ -117,10 +134,9 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
 /// buttons; every textarea; every select, with its selected option or its first.
 pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
     let mut controls = Vec::new();
-    let control = Regex::new(
+    let control = regex(
         r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
-    )
-    .unwrap();
+    );
     let option = tag_regex("option");
     for m in control.find_iter(form) {
         let html = m.as_str();
@@ -276,7 +292,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
         r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
     ];
     for pattern in patterns {
-        if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+        if let Some(capture) = regex(pattern).captures(html) {
             return Some(capture[1].to_string());
         }
     }
@@ -298,8 +314,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
 /// );
 /// ```
 pub fn get_log_out_url(html: &str) -> Option<String> {
-    let re =
-        Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
+    let re = regex(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#);
     match re.captures(html) {
         Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
         None => {
@@ -780,8 +795,7 @@ pub async fn log_in(
         read_response(goose).await.1
     };
     if !request.redirected || html.contains(r#"id="login_error""#) {
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
+        let error = regex(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
             .captures(&html)
             .map(|c| plain_text(&c[1]))
             .unwrap_or_else(|| "not redirected".to_string());
@@ -1534,8 +1548,7 @@ pub async fn post_comment(
     // 200 error page for an empty comment. WordPress's page says which.
     let mut request = goose.request.clone();
     let (headers, html) = read_response(goose).await;
-    let reason = Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
-        .unwrap()
+    let reason = regex(r"(?s)<body[^>]*>(.*?)</body>")
         .captures(&html)
         .map(|c| plain_text(&c[1]))
         .unwrap_or_default();
@@ -2173,10 +2186,7 @@ impl SiteContent {
 
 // The path (and query) of a URL, so it is requested on the load test's host.
 pub(crate) fn site_path(url: &str) -> String {
-    match Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*")
-        .unwrap()
-        .find(url)
-    {
+    match regex(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*").find(url) {
         Some(origin) if origin.end() == url.len() => "/".to_string(),
         Some(origin) => url[origin.end()..].to_string(),
         None => url.to_string(),
@@ -2185,8 +2195,7 @@ pub(crate) fn site_path(url: &str) -> String {
 
 // Every <loc> in a sitemap, decoded.
 fn sitemap_locations(xml: &str) -> Vec<String> {
-    Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>")
-        .unwrap()
+    regex(r"(?s)<loc>\s*(.*?)\s*</loc>")
         .captures_iter(xml)
         .map(|c| html_escape::decode_html_entities(&c[1]).to_string())
         .collect()
@@ -2196,9 +2205,7 @@ fn sitemap_locations(xml: &str) -> Vec<String> {
 // wp-sitemap-posts-<post type>-<n>.xml, wp-sitemap-taxonomies-<taxonomy>-<n>.xml
 // or wp-sitemap-users-<n>.xml.
 fn sitemap_kind(url: &str) -> Option<String> {
-    let re =
-        Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
-            .unwrap();
+    let re = regex(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml");
     let capture = re.captures(url)?;
     Some(
         match capture.get(1) {
@@ -2416,12 +2423,9 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
 // take are left out: `rel="nofollow"` (WooCommerce's add to cart links among
 // them), feeds, comment links, admin and log in pages, the REST API and files.
 pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<String> {
-    let html = Regex::new(r"(?is)<!--.*?-->|<script\b.*?</script\s*>")
-        .unwrap()
-        .replace_all(html, " ");
+    let html = regex(r"(?is)<!--.*?-->|<script\b.*?</script\s*>").replace_all(html, " ");
     let section = |tag: &str| -> Vec<String> {
-        Regex::new(&format!(r"(?is)<{}\b.*?</{}\s*>", tag, tag))
-            .unwrap()
+        regex(&format!(r"(?is)<{}\b.*?</{}\s*>", tag, tag))
             .find_iter(&html)
             .map(|m| m.as_str().to_string())
             .collect()
@@ -2510,10 +2514,9 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
     }
     let url = crate::page::resolve(user, page_url, href);
     let path = site_path(url.split('#').next().unwrap_or_default());
-    let skip = Regex::new(
+    let skip = regex(
         r"(?i)/(wp-admin|wp-login\.php|wp-json|wp-content|wp-includes|xmlrpc\.php|wp-comments-post\.php|feed|embed|trackback)(/|\?|$)|/comment-page-\d+|[?&](replytocom|s|add-to-cart|add_to_wishlist|share|orderby|feed|query-\d+-page)=|\.(xml|jpe?g|png|gif|webp|svg|pdf|zip|mp[34]|mov|css|js)(\?|$)",
-    )
-    .unwrap();
+    );
     if skip.is_match(&path) {
         return None;
     }
@@ -3009,8 +3012,7 @@ mod tests {
             "Error: The password & more.",
             "plain_text case tags and entities"
         );
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
+        let error = regex(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
             .captures(LOGIN_FAILED)
             .map(|c| plain_text(&c[1]))
             .unwrap();

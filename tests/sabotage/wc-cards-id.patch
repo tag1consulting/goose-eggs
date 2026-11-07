@@ -1,13 +1,13 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..eb81018 100644
+index 32d02c0..f09de41 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
 @@ -524,7 +524,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
                  .then(|| (m.start(), class))
          })
          .collect();
--    let post = Regex::new(r"^post-(\d+)$").unwrap();
-+    let post = Regex::new(r"^post-(\d)").unwrap();
-     let heading = Regex::new(r"(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>").unwrap();
+-    let post = regex(r"^post-(\d+)$");
++    let post = regex(r"^post-(\d)");
+     let heading = regex(r"(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>");
      let mut products = Vec::new();
      for (n, (start, class)) in starts.iter().enumerate() {

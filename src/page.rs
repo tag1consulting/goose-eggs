@@ -5,7 +5,7 @@
 //! What a browser requests for each action on the demo sites is recorded under
 //! `tests/fixtures/browser/`; the rules here follow those recordings.
 
-use crate::wordpress::{attribute, read_response, request_ok};
+use crate::wordpress::{attribute, read_response, regex, request_ok};
 use goose::goose::GooseResponse;
 use goose::prelude::*;
 use regex::Regex;
@@ -27,10 +27,9 @@ pub(crate) struct LoadedPage {
 fn live_markup(html: &str) -> String {
     // One pass, left to right, as a browser's parser reads them: a "<!--" in a
     // script is script, and a "<script" in a comment is comment.
-    let hidden = Regex::new(
+    let hidden = regex(
         r"(?is)<!--.*?-->|(<script\b[^>]*>).*?</script\s*>|<noscript\b.*?</noscript\s*>|<template\b.*?</template\s*>",
-    )
-    .unwrap();
+    );
     hidden
         .replace_all(html, |c: &regex::Captures| match c.get(1) {
             Some(open) => format!("{}</script>", open.as_str()),
@@ -48,7 +47,7 @@ fn live_markup(html: &str) -> String {
 /// viewport.
 pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
     let html = live_markup(html);
-    let tag = Regex::new(r"(?is)<(script|link|img)\b[^>]*>").unwrap();
+    let tag = regex(r"(?is)<(script|link|img)\b[^>]*>");
     let mut assets: Vec<(String, &'static str)> = Vec::new();
     for m in tag.find_iter(&html) {
         let tag = m.as_str();
@@ -124,10 +123,7 @@ pub(crate) fn same_site(user: &GooseUser, url: &str) -> bool {
     } else {
         url.to_string()
     };
-    if !Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
-        .unwrap()
-        .is_match(&absolute)
-    {
+    if !regex(r"^[a-zA-Z][a-zA-Z0-9+.-]*:").is_match(&absolute) {
         return true;
     }
     match user.base_url.join(&absolute) {
@@ -170,7 +166,7 @@ pub(crate) fn resolve(user: &GooseUser, page_url: &str, url: &str) -> String {
 /// The site's REST API root, as WordPress links it from every page's head
 /// (`<link rel="https://api.w.org/" href="...">`); `wp-json/` when it is not.
 pub(crate) fn rest_root(html: &str) -> String {
-    let link = Regex::new(r"(?is)<link\b[^>]*>").unwrap();
+    let link = regex(r"(?is)<link\b[^>]*>");
     let root = link
         .find_iter(html)
         .map(|m| m.as_str())
@@ -223,9 +219,7 @@ pub(crate) fn api_fetch_root(html: &str) -> String {
 // The preferences read WordPress's persistence layer makes on an admin page
 // when the user has no preferences saved yet.
 async fn preferences(user: &mut GooseUser, html: &str) -> Result<(), Box<TransactionError>> {
-    let unsaved = Regex::new(r#"var serverData = (""|null);"#)
-        .unwrap()
-        .is_match(html)
+    let unsaved = regex(r#"var serverData = (""|null);"#).is_match(html)
         && html.contains("__unstableCreatePersistenceLayer( serverData");
     let nonce = match crate::wordpress::get_rest_nonce(html) {
         Some(nonce) if unsaved => nonce,
@@ -255,15 +249,11 @@ async fn compression_test(user: &mut GooseUser, html: &str) -> Result<(), Box<Tr
     if !html.contains("testCompression.check()") {
         return Ok(());
     }
-    let nonce = match Regex::new(r#"var compressionNonce\s*=\s*["']([^"']+)["']"#)
-        .unwrap()
-        .captures(html)
-    {
+    let nonce = match regex(r#"var compressionNonce\s*=\s*["']([^"']+)["']"#).captures(html) {
         Some(c) => c[1].to_string(),
         None => return Ok(()),
     };
-    let ajax = Regex::new(r#"var ajaxurl\s*=\s*["']([^"']+)["']"#)
-        .unwrap()
+    let ajax = regex(r#"var ajaxurl\s*=\s*["']([^"']+)["']"#)
         .captures(html)
         .map(|c| c[1].to_string())
         .unwrap_or_else(|| "/wp-admin/admin-ajax.php".to_string());

@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..25033a5 100644
+index 99cd8aa..4c4423b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2520,7 +2520,7 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
+@@ -2515,7 +2515,7 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
      let url = crate::page::resolve(user, page_url, href);
      let path = site_path(url.split('#').next().unwrap_or_default());
-     let skip = Regex::new(
+     let skip = regex(
 -        r"(?i)/(wp-admin|wp-login\.php|wp-json|wp-content|wp-includes|xmlrpc\.php|wp-comments-post\.php|feed|embed|trackback)(/|\?|$)|/comment-page-\d+|[?&](replytocom|s|add-to-cart|add_to_wishlist|share|orderby|feed|query-\d+-page)=|\.(xml|jpe?g|png|gif|webp|svg|pdf|zip|mp[34]|mov|css|js)(\?|$)",
 +        r"(?i)/(wp-login\.php|wp-json|wp-content|wp-includes|xmlrpc\.php|wp-comments-post\.php|feed|embed|trackback)(/|\?|$)|/comment-page-\d+|[?&](replytocom|s|add-to-cart|add_to_wishlist|share|orderby|feed|query-\d+-page)=|\.(xml|jpe?g|png|gif|webp|svg|pdf|zip|mp[34]|mov|css|js)(\?|$)",
-     )
-     .unwrap();
+     );
      if skip.is_match(&path) {
+         return None;

@@ -288,73 +288,73 @@ wc-flow-classic-order-received.patch	woocommerce	woocommerce_flows	behaviour cla
 wc-flow-classic-checkout-no-form.patch	woocommerce	woocommerce_flows	behaviour classic_checkout fails without a checkout form	woocommerce::classic_checkout
 wc-flow-my-account-credentials.patch	woocommerce	woocommerce_flows	behaviour my_account_log_in posts the form with its nonce	woocommerce::my_account_log_in
 wc-flow-my-account-no-form.patch	woocommerce	woocommerce_flows	behaviour my_account_log_in fails without a log in form	woocommerce::my_account_log_in
-doc-wp-get-form.patch	doc	src/wordpress.rs - wordpress::get_form (line 68)	assertion failed: form.contains	wordpress::get_form
-doc-wp-get-form-value.patch	doc	src/wordpress.rs - wordpress::get_form_value (line 179)	right: Some("1")	wordpress::get_form_value
-doc-wp-get-form-values.patch	doc	src/wordpress.rs - wordpress::get_form_values (line 208)	right: Some("12")	wordpress::get_form_values
-doc-wp-get-nonce.patch	doc	src/wordpress.rs - wordpress::get_nonce (line 240)	right: Some("3f6e8a0b1c")	wordpress::get_nonce
-doc-wp-get-rest-nonce.patch	doc	src/wordpress.rs - wordpress::get_rest_nonce (line 262)	right: Some("e84e9447f9")	wordpress::get_rest_nonce
-doc-wp-get-log-out-url.patch	doc	src/wordpress.rs - wordpress::get_log_out_url (line 291)	right: Some("/wp-login.php?action=logout&_wpnonce=6e935bd99e")	wordpress::get_log_out_url
-doc-wp-login.patch	doc	src/wordpress.rs - wordpress::Login (line 466)	doc example Login	wordpress::Login
-doc-wp-login-builder-fn.patch	doc	src/wordpress.rs - wordpress::Login<'a>::builder (line 493)	doc example Login::builder	wordpress::Login,wordpress::LoginBuilder
-doc-wp-login-builder.patch	doc	src/wordpress.rs - wordpress::LoginBuilder (line 509)	doc example LoginBuilder	wordpress::LoginBuilder
-doc-wp-login-username.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::username (line 554)	doc example LoginBuilder::username	wordpress::LoginBuilder
-doc-wp-login-password.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::password (line 573)	doc example LoginBuilder::password	wordpress::LoginBuilder
-doc-wp-login-url.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::url (line 592)	doc example LoginBuilder::url	wordpress::LoginBuilder
-doc-wp-login-redirect-to.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::redirect_to (line 612)	doc example LoginBuilder::redirect_to	wordpress::LoginBuilder
-doc-wp-login-log-in-page-validation.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::log_in_page_validation (line 632)	doc example LoginBuilder::log_in_page_validation: expected a failure	wordpress::LoginBuilder
-doc-wp-login-logged-in-page-validation.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::logged_in_page_validation (line 655)	doc example LoginBuilder::logged_in_page_validation: expected a failure	wordpress::LoginBuilder
-doc-wp-login-build.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::build (line 676)	doc example LoginBuilder::build	wordpress::LoginBuilder
-doc-wp-log-in.patch	doc	src/wordpress.rs - wordpress::log_in (line 715)	doc example log_in	wordpress::log_in
-doc-wp-log-out.patch	doc	src/wordpress.rs - wordpress::log_out (line 810)	doc example log_out	wordpress::log_out
-doc-wp-search-params.patch	doc	src/wordpress.rs - wordpress::SearchParams (line 870)	doc example SearchParams	wordpress::SearchParams
-doc-wp-search-params-builder-fn.patch	doc	src/wordpress.rs - wordpress::SearchParams<'a>::builder (line 893)	doc example SearchParams::builder	wordpress::SearchParams,wordpress::SearchParamsBuilder
-doc-wp-search-params-builder.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder (line 909)	doc example SearchParamsBuilder	wordpress::SearchParamsBuilder
-doc-wp-search-keys.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::keys (line 949)	doc example SearchParamsBuilder::keys	wordpress::SearchParamsBuilder
-doc-wp-search-url.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::url (line 968)	doc example SearchParamsBuilder::url	wordpress::SearchParamsBuilder
-doc-wp-search-post-type.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::post_type (line 987)	doc example SearchParamsBuilder::post_type	wordpress::SearchParamsBuilder
-doc-wp-search-results-page-validation.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::results_page_validation (line 1006)	doc example SearchParamsBuilder::results_page_validation: expected a failure	wordpress::SearchParamsBuilder
-doc-wp-search-build.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::build (line 1029)	doc example SearchParamsBuilder::build	wordpress::SearchParamsBuilder
-doc-wp-search.patch	doc	src/wordpress.rs - wordpress::search (line 1098)	doc example search	wordpress::search
-doc-wp-comment.patch	doc	src/wordpress.rs - wordpress::Comment (line 1133)	doc example Comment	wordpress::Comment
-doc-wp-comment-builder-fn.patch	doc	src/wordpress.rs - wordpress::Comment<'a>::builder (line 1165)	doc example Comment::builder	wordpress::Comment,wordpress::CommentBuilder
-doc-wp-comment-builder.patch	doc	src/wordpress.rs - wordpress::CommentBuilder (line 1181)	doc example CommentBuilder	wordpress::CommentBuilder
-doc-wp-comment-post-url.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::post_url (line 1233)	doc example CommentBuilder::post_url	wordpress::CommentBuilder
-doc-wp-comment-author.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::author (line 1275)	doc example CommentBuilder::author	wordpress::CommentBuilder
-doc-wp-comment-email.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::email (line 1294)	doc example CommentBuilder::email	wordpress::CommentBuilder
-doc-wp-comment-text.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::text (line 1253)	doc example CommentBuilder::text	wordpress::CommentBuilder
-doc-wp-comment-url.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::url (line 1315)	doc example CommentBuilder::url	wordpress::CommentBuilder
-doc-wp-comment-parent.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::parent (line 1337)	doc example CommentBuilder::parent	wordpress::CommentBuilder
-doc-wp-comment-post-page-validation.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::post_page_validation (line 1356)	doc example CommentBuilder::post_page_validation: expected a failure	wordpress::CommentBuilder
-doc-wp-comment-commented-page-validation.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::commented_page_validation (line 1382)	doc example CommentBuilder::commented_page_validation: expected a failure	wordpress::CommentBuilder
-doc-wp-comment-build.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::build (line 1405)	doc example CommentBuilder::build	wordpress::CommentBuilder
-doc-wp-post-comment.patch	doc	src/wordpress.rs - wordpress::post_comment (line 1460)	doc example post_comment	wordpress::post_comment
-doc-wp-post.patch	doc	src/wordpress.rs - wordpress::Post (line 1562)	doc example Post	wordpress::Post
-doc-wp-post-builder-fn.patch	doc	src/wordpress.rs - wordpress::Post<'a>::builder (line 1583)	doc example Post::builder	wordpress::Post,wordpress::PostBuilder
-doc-wp-post-builder.patch	doc	src/wordpress.rs - wordpress::PostBuilder (line 1600)	doc example PostBuilder	wordpress::PostBuilder
-doc-wp-post-title.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::title (line 1634)	doc example PostBuilder::title	wordpress::PostBuilder
-doc-wp-post-content.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::content (line 1649)	doc example PostBuilder::content	wordpress::PostBuilder
-doc-wp-post-status.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::status (line 1670)	doc example PostBuilder::status	wordpress::PostBuilder
-doc-wp-post-field.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::field (line 1685)	doc example PostBuilder::field	wordpress::PostBuilder
-doc-wp-post-url.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::url (line 1707)	doc example PostBuilder::url	wordpress::PostBuilder
-doc-wp-post-build.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::build (line 1750)	doc example PostBuilder::build	wordpress::PostBuilder
-doc-wp-create-post.patch	doc	src/wordpress.rs - wordpress::create_post (line 1935)	doc example create_post	wordpress::create_post
-doc-wp-update-post.patch	doc	src/wordpress.rs - wordpress::update_post (line 1990)	doc example update_post	wordpress::update_post
-doc-wp-site-content.patch	doc	src/wordpress.rs - wordpress::SiteContent (line 2041)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::urls (line 2056)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-kinds.patch	doc	src/wordpress.rs - wordpress::SiteContent::kinds (line 2070)	right: ["page", "post"]	wordpress::SiteContent
-doc-wp-site-content-posts.patch	doc	src/wordpress.rs - wordpress::SiteContent::posts (line 2083)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-pages.patch	doc	src/wordpress.rs - wordpress::SiteContent::pages (line 2096)	right: ["/about/"]	wordpress::SiteContent
-doc-wp-site-content-categories.patch	doc	src/wordpress.rs - wordpress::SiteContent::categories (line 2109)	right: ["/category/news/"]	wordpress::SiteContent
-doc-wp-site-content-tags.patch	doc	src/wordpress.rs - wordpress::SiteContent::tags (line 2122)	right: ["/tag/rust/"]	wordpress::SiteContent
-doc-wp-site-content-random.patch	doc	src/wordpress.rs - wordpress::SiteContent::random (line 2135)	called `Option::unwrap()` on a `None` value	wordpress::SiteContent
-doc-wp-site-content-from-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::from_urls (line 2151)	right: ["/a/", "/b/"]	wordpress::SiteContent
-doc-wp-discover-struct.patch	doc	src/wordpress.rs - wordpress::Discover (line 2216)	doc example Discover: pages	wordpress::Discover
-doc-wp-discover-builder-fn.patch	doc	src/wordpress.rs - wordpress::Discover<'a>::builder (line 2238)	doc example Discover::builder	wordpress::Discover,wordpress::DiscoverBuilder
-doc-wp-discover-builder.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder (line 2255)	doc example DiscoverBuilder: posts	wordpress::DiscoverBuilder
-doc-wp-discover-sitemap.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::sitemap (line 2311)	doc example DiscoverBuilder::sitemap	wordpress::DiscoverBuilder
-doc-wp-discover-max-per-kind.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::max_per_kind (line 2331)	doc example DiscoverBuilder::max_per_kind: posts	wordpress::DiscoverBuilder
-doc-wp-discover-build.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::build (line 2348)	doc example DiscoverBuilder::build: categories	wordpress::DiscoverBuilder
-doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2539)	doc example discover: posts	wordpress::discover
+doc-wp-get-form.patch	doc	src/wordpress.rs - wordpress::get_form (line 85)	assertion failed: form.contains	wordpress::get_form
+doc-wp-get-form-value.patch	doc	src/wordpress.rs - wordpress::get_form_value (line 195)	right: Some("1")	wordpress::get_form_value
+doc-wp-get-form-values.patch	doc	src/wordpress.rs - wordpress::get_form_values (line 224)	right: Some("12")	wordpress::get_form_values
+doc-wp-get-nonce.patch	doc	src/wordpress.rs - wordpress::get_nonce (line 256)	right: Some("3f6e8a0b1c")	wordpress::get_nonce
+doc-wp-get-rest-nonce.patch	doc	src/wordpress.rs - wordpress::get_rest_nonce (line 278)	right: Some("e84e9447f9")	wordpress::get_rest_nonce
+doc-wp-get-log-out-url.patch	doc	src/wordpress.rs - wordpress::get_log_out_url (line 307)	right: Some("/wp-login.php?action=logout&_wpnonce=6e935bd99e")	wordpress::get_log_out_url
+doc-wp-login.patch	doc	src/wordpress.rs - wordpress::Login (line 481)	doc example Login	wordpress::Login
+doc-wp-login-builder-fn.patch	doc	src/wordpress.rs - wordpress::Login<'a>::builder (line 508)	doc example Login::builder	wordpress::Login,wordpress::LoginBuilder
+doc-wp-login-builder.patch	doc	src/wordpress.rs - wordpress::LoginBuilder (line 524)	doc example LoginBuilder	wordpress::LoginBuilder
+doc-wp-login-username.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::username (line 569)	doc example LoginBuilder::username	wordpress::LoginBuilder
+doc-wp-login-password.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::password (line 588)	doc example LoginBuilder::password	wordpress::LoginBuilder
+doc-wp-login-url.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::url (line 607)	doc example LoginBuilder::url	wordpress::LoginBuilder
+doc-wp-login-redirect-to.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::redirect_to (line 627)	doc example LoginBuilder::redirect_to	wordpress::LoginBuilder
+doc-wp-login-log-in-page-validation.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::log_in_page_validation (line 647)	doc example LoginBuilder::log_in_page_validation: expected a failure	wordpress::LoginBuilder
+doc-wp-login-logged-in-page-validation.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::logged_in_page_validation (line 670)	doc example LoginBuilder::logged_in_page_validation: expected a failure	wordpress::LoginBuilder
+doc-wp-login-build.patch	doc	src/wordpress.rs - wordpress::LoginBuilder<'a>::build (line 691)	doc example LoginBuilder::build	wordpress::LoginBuilder
+doc-wp-log-in.patch	doc	src/wordpress.rs - wordpress::log_in (line 730)	doc example log_in	wordpress::log_in
+doc-wp-log-out.patch	doc	src/wordpress.rs - wordpress::log_out (line 824)	doc example log_out	wordpress::log_out
+doc-wp-search-params.patch	doc	src/wordpress.rs - wordpress::SearchParams (line 884)	doc example SearchParams	wordpress::SearchParams
+doc-wp-search-params-builder-fn.patch	doc	src/wordpress.rs - wordpress::SearchParams<'a>::builder (line 907)	doc example SearchParams::builder	wordpress::SearchParams,wordpress::SearchParamsBuilder
+doc-wp-search-params-builder.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder (line 923)	doc example SearchParamsBuilder	wordpress::SearchParamsBuilder
+doc-wp-search-keys.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::keys (line 963)	doc example SearchParamsBuilder::keys	wordpress::SearchParamsBuilder
+doc-wp-search-url.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::url (line 982)	doc example SearchParamsBuilder::url	wordpress::SearchParamsBuilder
+doc-wp-search-post-type.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::post_type (line 1001)	doc example SearchParamsBuilder::post_type	wordpress::SearchParamsBuilder
+doc-wp-search-results-page-validation.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::results_page_validation (line 1020)	doc example SearchParamsBuilder::results_page_validation: expected a failure	wordpress::SearchParamsBuilder
+doc-wp-search-build.patch	doc	src/wordpress.rs - wordpress::SearchParamsBuilder<'a>::build (line 1043)	doc example SearchParamsBuilder::build	wordpress::SearchParamsBuilder
+doc-wp-search.patch	doc	src/wordpress.rs - wordpress::search (line 1112)	doc example search	wordpress::search
+doc-wp-comment.patch	doc	src/wordpress.rs - wordpress::Comment (line 1147)	doc example Comment	wordpress::Comment
+doc-wp-comment-builder-fn.patch	doc	src/wordpress.rs - wordpress::Comment<'a>::builder (line 1179)	doc example Comment::builder	wordpress::Comment,wordpress::CommentBuilder
+doc-wp-comment-builder.patch	doc	src/wordpress.rs - wordpress::CommentBuilder (line 1195)	doc example CommentBuilder	wordpress::CommentBuilder
+doc-wp-comment-post-url.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::post_url (line 1247)	doc example CommentBuilder::post_url	wordpress::CommentBuilder
+doc-wp-comment-author.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::author (line 1289)	doc example CommentBuilder::author	wordpress::CommentBuilder
+doc-wp-comment-email.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::email (line 1308)	doc example CommentBuilder::email	wordpress::CommentBuilder
+doc-wp-comment-text.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::text (line 1267)	doc example CommentBuilder::text	wordpress::CommentBuilder
+doc-wp-comment-url.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::url (line 1329)	doc example CommentBuilder::url	wordpress::CommentBuilder
+doc-wp-comment-parent.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::parent (line 1351)	doc example CommentBuilder::parent	wordpress::CommentBuilder
+doc-wp-comment-post-page-validation.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::post_page_validation (line 1370)	doc example CommentBuilder::post_page_validation: expected a failure	wordpress::CommentBuilder
+doc-wp-comment-commented-page-validation.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::commented_page_validation (line 1396)	doc example CommentBuilder::commented_page_validation: expected a failure	wordpress::CommentBuilder
+doc-wp-comment-build.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::build (line 1419)	doc example CommentBuilder::build	wordpress::CommentBuilder
+doc-wp-post-comment.patch	doc	src/wordpress.rs - wordpress::post_comment (line 1474)	doc example post_comment	wordpress::post_comment
+doc-wp-post.patch	doc	src/wordpress.rs - wordpress::Post (line 1575)	doc example Post	wordpress::Post
+doc-wp-post-builder-fn.patch	doc	src/wordpress.rs - wordpress::Post<'a>::builder (line 1596)	doc example Post::builder	wordpress::Post,wordpress::PostBuilder
+doc-wp-post-builder.patch	doc	src/wordpress.rs - wordpress::PostBuilder (line 1613)	doc example PostBuilder	wordpress::PostBuilder
+doc-wp-post-title.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::title (line 1647)	doc example PostBuilder::title	wordpress::PostBuilder
+doc-wp-post-content.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::content (line 1662)	doc example PostBuilder::content	wordpress::PostBuilder
+doc-wp-post-status.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::status (line 1683)	doc example PostBuilder::status	wordpress::PostBuilder
+doc-wp-post-field.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::field (line 1698)	doc example PostBuilder::field	wordpress::PostBuilder
+doc-wp-post-url.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::url (line 1720)	doc example PostBuilder::url	wordpress::PostBuilder
+doc-wp-post-build.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::build (line 1763)	doc example PostBuilder::build	wordpress::PostBuilder
+doc-wp-create-post.patch	doc	src/wordpress.rs - wordpress::create_post (line 1948)	doc example create_post	wordpress::create_post
+doc-wp-update-post.patch	doc	src/wordpress.rs - wordpress::update_post (line 2003)	doc example update_post	wordpress::update_post
+doc-wp-site-content.patch	doc	src/wordpress.rs - wordpress::SiteContent (line 2054)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::urls (line 2069)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-kinds.patch	doc	src/wordpress.rs - wordpress::SiteContent::kinds (line 2083)	right: ["page", "post"]	wordpress::SiteContent
+doc-wp-site-content-posts.patch	doc	src/wordpress.rs - wordpress::SiteContent::posts (line 2096)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-pages.patch	doc	src/wordpress.rs - wordpress::SiteContent::pages (line 2109)	right: ["/about/"]	wordpress::SiteContent
+doc-wp-site-content-categories.patch	doc	src/wordpress.rs - wordpress::SiteContent::categories (line 2122)	right: ["/category/news/"]	wordpress::SiteContent
+doc-wp-site-content-tags.patch	doc	src/wordpress.rs - wordpress::SiteContent::tags (line 2135)	right: ["/tag/rust/"]	wordpress::SiteContent
+doc-wp-site-content-random.patch	doc	src/wordpress.rs - wordpress::SiteContent::random (line 2148)	called `Option::unwrap()` on a `None` value	wordpress::SiteContent
+doc-wp-site-content-from-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::from_urls (line 2164)	right: ["/a/", "/b/"]	wordpress::SiteContent
+doc-wp-discover-struct.patch	doc	src/wordpress.rs - wordpress::Discover (line 2223)	doc example Discover: pages	wordpress::Discover
+doc-wp-discover-builder-fn.patch	doc	src/wordpress.rs - wordpress::Discover<'a>::builder (line 2245)	doc example Discover::builder	wordpress::Discover,wordpress::DiscoverBuilder
+doc-wp-discover-builder.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder (line 2262)	doc example DiscoverBuilder: posts	wordpress::DiscoverBuilder
+doc-wp-discover-sitemap.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::sitemap (line 2318)	doc example DiscoverBuilder::sitemap	wordpress::DiscoverBuilder
+doc-wp-discover-max-per-kind.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::max_per_kind (line 2338)	doc example DiscoverBuilder::max_per_kind: posts	wordpress::DiscoverBuilder
+doc-wp-discover-build.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::build (line 2355)	doc example DiscoverBuilder::build: categories	wordpress::DiscoverBuilder
+doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2542)	doc example discover: posts	wordpress::discover
 doc-wc-shop.patch	doc	src/woocommerce.rs - woocommerce::Shop (line 31)	doc example Shop	woocommerce::Shop
 doc-wc-shop-builder-fn.patch	doc	src/woocommerce.rs - woocommerce::Shop<'a>::builder (line 52)	doc example Shop::builder	woocommerce::Shop,woocommerce::ShopBuilder
 doc-wc-shop-default.patch	doc	src/woocommerce.rs - woocommerce::Shop<'_>::default (line 68)	doc example Shop::default	woocommerce::Shop
@@ -393,11 +393,11 @@ doc-wc-checkout-builder.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuil
 doc-wc-checkout-builder-billing.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::billing (line 1157)	right: Some("Austin")	woocommerce::CheckoutBuilder
 doc-wc-checkout-builder-payment-method.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::payment_method (line 1177)	right: "bacs"	woocommerce::CheckoutBuilder
 doc-wc-checkout-build.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::build (line 1191)	right: Some("goose@example.com")	woocommerce::CheckoutBuilder
-doc-wc-classic-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_add_to_cart (line 1255)	doc example classic_add_to_cart	woocommerce::classic_add_to_cart
-doc-wc-classic-update-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_update_cart (line 1290)	doc example classic_update_cart	woocommerce::classic_update_cart
-doc-wc-classic-checkout.patch	doc	src/woocommerce.rs - woocommerce::classic_checkout (line 1355)	doc example classic_checkout	woocommerce::classic_checkout
-doc-wc-my-account-log-in.patch	doc	src/woocommerce.rs - woocommerce::my_account_log_in (line 1432)	doc example my_account_log_in	woocommerce::my_account_log_in
-doc-wc-my-account-orders.patch	doc	src/woocommerce.rs - woocommerce::my_account_orders (line 1507)	doc example my_account_orders	woocommerce::my_account_orders
+doc-wc-classic-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_add_to_cart (line 1252)	doc example classic_add_to_cart	woocommerce::classic_add_to_cart
+doc-wc-classic-update-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_update_cart (line 1287)	doc example classic_update_cart	woocommerce::classic_update_cart
+doc-wc-classic-checkout.patch	doc	src/woocommerce.rs - woocommerce::classic_checkout (line 1352)	doc example classic_checkout	woocommerce::classic_checkout
+doc-wc-my-account-log-in.patch	doc	src/woocommerce.rs - woocommerce::my_account_log_in (line 1429)	doc example my_account_log_in	woocommerce::my_account_log_in
+doc-wc-my-account-orders.patch	doc	src/woocommerce.rs - woocommerce::my_account_orders (line 1504)	doc example my_account_orders	woocommerce::my_account_orders
 wc-example-shared-account.patch	woocommerce_example	credentials_cases	credentials case first user	woocommerce example credentials
 wc-example-account-wraps.patch	woocommerce_example	credentials_cases	credentials case per user	woocommerce example credentials
 wp-post-default-url.patch	lib	wordpress::tests::post_builder_defaults	Post default url	wordpress::PostBuilder,wordpress::Post
@@ -490,14 +490,14 @@ wc-place-total.patch	woocommerce	woocommerce_flows	behaviour place_order sends t
 wc-place-order-number.patch	woocommerce	woocommerce_flows	behaviour place_order fails without an order number	woocommerce::place_order
 wc-order-number-block.patch	lib	woocommerce::tests::order_number_cases	order_number case block order summary	woocommerce::place_order
 wc-order-number-classic.patch	lib	woocommerce::tests::order_number_cases	order_number case classic overview	woocommerce::classic_checkout
-doc-wc-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart (line 1568)	doc example add_to_cart	woocommerce::add_to_cart
-doc-wc-add-to-cart-from-archive.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart_from_archive (line 1683)	doc example add_to_cart_from_archive	woocommerce::add_to_cart_from_archive
-doc-wc-cart-page.patch	doc	src/woocommerce.rs - woocommerce::cart_page (line 1803)	doc example cart_page	woocommerce::cart_page
-doc-wc-checkout-page.patch	doc	src/woocommerce.rs - woocommerce::checkout_page (line 2039)	doc example checkout_page	woocommerce::checkout_page
-doc-wc-place-order.patch	doc	src/woocommerce.rs - woocommerce::place_order (line 2104)	doc example place_order	woocommerce::place_order
-doc-wc-remove-cart-item.patch	doc	src/woocommerce.rs - woocommerce::remove_cart_item (line 1963)	doc example remove_cart_item	woocommerce::remove_cart_item
-doc-wc-update-cart-item.patch	doc	src/woocommerce.rs - woocommerce::update_cart_item (line 1903)	doc example update_cart_item	woocommerce::update_cart_item
-doc-wp-discover-home.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::home (line 2288)	doc example DiscoverBuilder::home: posts	wordpress::DiscoverBuilder
-doc-wp-view-page.patch	doc	src/wordpress.rs - wordpress::view_page (line 1064)	doc example view_page: assets loaded	wordpress::view_page
-doc-wp-post-type.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::post_type (line 1730)	doc example PostBuilder::post_type	wordpress::PostBuilder,wordpress::create_post
+doc-wc-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart (line 1564)	doc example add_to_cart	woocommerce::add_to_cart
+doc-wc-add-to-cart-from-archive.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart_from_archive (line 1677)	doc example add_to_cart_from_archive	woocommerce::add_to_cart_from_archive
+doc-wc-cart-page.patch	doc	src/woocommerce.rs - woocommerce::cart_page (line 1797)	doc example cart_page	woocommerce::cart_page
+doc-wc-checkout-page.patch	doc	src/woocommerce.rs - woocommerce::checkout_page (line 2032)	doc example checkout_page	woocommerce::checkout_page
+doc-wc-place-order.patch	doc	src/woocommerce.rs - woocommerce::place_order (line 2096)	doc example place_order	woocommerce::place_order
+doc-wc-remove-cart-item.patch	doc	src/woocommerce.rs - woocommerce::remove_cart_item (line 1956)	doc example remove_cart_item	woocommerce::remove_cart_item
+doc-wc-update-cart-item.patch	doc	src/woocommerce.rs - woocommerce::update_cart_item (line 1896)	doc example update_cart_item	woocommerce::update_cart_item
+doc-wp-discover-home.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::home (line 2295)	doc example DiscoverBuilder::home: posts	wordpress::DiscoverBuilder
+doc-wp-view-page.patch	doc	src/wordpress.rs - wordpress::view_page (line 1078)	doc example view_page: assets loaded	wordpress::view_page
+doc-wp-post-type.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::post_type (line 1743)	doc example PostBuilder::post_type	wordpress::PostBuilder,wordpress::create_post
 page-preferences.patch	wordpress	wordpress_flows	behaviour log_in loads the form for the test cookie, then posts it: preferences read on the dashboard	wordpress::log_in,wordpress::log_out

@@ -17,7 +17,7 @@
 use crate::wordpress::{
     attribute, fail, form_controls, get_form, get_form_by_class, get_named, get_rest_nonce,
     header_value, json_response, load_page, pagination_links, plain_text, query_encode,
-    read_response, request_ok, send_json, site_path,
+    read_response, regex, request_ok, send_json, site_path,
 };
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -513,7 +513,7 @@ pub async fn discover_products(
 
 // The products on a page, one from each product card, in page order.
 pub(crate) fn product_cards(html: &str) -> Vec<Product> {
-    let item = Regex::new(r"(?is)<li\b[^>]*>").unwrap();
+    let item = regex(r"(?is)<li\b[^>]*>");
     let starts: Vec<(usize, String)> = item
         .find_iter(html)
         .filter_map(|m| {
@@ -524,8 +524,8 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
                 .then(|| (m.start(), class))
         })
         .collect();
-    let post = Regex::new(r"^post-(\d+)$").unwrap();
-    let heading = Regex::new(r"(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>").unwrap();
+    let post = regex(r"^post-(\d+)$");
+    let heading = regex(r"(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>");
     let mut products = Vec::new();
     for (n, (start, class)) in starts.iter().enumerate() {
         let end = starts.get(n + 1).map_or(html.len(), |(next, _)| *next);
@@ -576,11 +576,11 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
 }
 
 fn tag_regex_a() -> Regex {
-    Regex::new(r"(?is)<a\b[^>]*>").unwrap()
+    regex(r"(?is)<a\b[^>]*>")
 }
 
 fn button_regex() -> Regex {
-    Regex::new(r"(?is)<button\b[^>]*>").unwrap()
+    regex(r"(?is)<button\b[^>]*>")
 }
 
 /// A product that [`Product::can_add_to_cart`], picked at random; `None` when
@@ -1209,18 +1209,15 @@ impl<'a> CheckoutBuilder<'a> {
 // The text of the first error notice on a page, classic (`woocommerce-error`)
 // or block (`is-error`) themed.
 fn error_notice(html: &str) -> Option<String> {
-    let re = Regex::new(
+    let re = regex(
         r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
-    )
-    .unwrap();
+    );
     re.captures(html).map(|c| plain_text(&c[1]))
 }
 
 // Whether a page shows a success notice, classic or block themed.
 fn has_success_notice(html: &str) -> bool {
-    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#)
-        .unwrap()
-        .is_match(html)
+    regex(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#).is_match(html)
 }
 
 // Load a classic page and fail unless it shows a success notice.
@@ -1313,7 +1310,7 @@ pub async fn classic_update_cart(
     let mut request = goose.request.clone();
     let page = load_page(user, goose, None).await?;
     let form = get_form_by_class(&page, "woocommerce-cart-form");
-    let quantity_field = Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap();
+    let quantity_field = regex(r"^cart\[[^\]]+\]\[qty\]$");
     let mut params: Vec<(String, String)> = form_controls(&form)
         .into_iter()
         .map(|(name, value)| {
@@ -1534,9 +1531,8 @@ pub async fn my_account_orders(
 // The form WooCommerce writes on a product page for adding it to the cart,
 // `<form class="cart">`: its action and contents.
 fn add_to_cart_form(html: &str) -> Option<(String, String)> {
-    let end = Regex::new(r"(?i)</form\s*>").unwrap();
-    Regex::new(r"(?is)<form\b[^>]*>")
-        .unwrap()
+    let end = regex(r"(?i)</form\s*>");
+    regex(r"(?is)<form\b[^>]*>")
         .find_iter(html)
         .find(|form| {
             attribute(form.as_str(), "class")
@@ -1604,8 +1600,7 @@ pub async fn add_to_cart(
     let (action, form) = match add_to_cart_form(&page) {
         Some(form) => form,
         None => {
-            let stock = Regex::new(r#"(?is)<p\b[^>]*class="[^"]*\bstock\b[^"]*"[^>]*>(.*?)</p>"#)
-                .unwrap()
+            let stock = regex(r#"(?is)<p\b[^>]*class="[^"]*\bstock\b[^"]*"[^>]*>(.*?)</p>"#)
                 .captures(&page)
                 .map(|c| plain_text(&c[1]))
                 .unwrap_or_else(|| "not sold".to_string());
@@ -1618,8 +1613,7 @@ pub async fn add_to_cart(
             );
         }
     };
-    let button = Regex::new(r"(?is)<button\b[^>]*>")
-        .unwrap()
+    let button = regex(r"(?is)<button\b[^>]*>")
         .find_iter(&form)
         .map(|b| b.as_str().to_string())
         .find(|b| attribute(b, "name").as_deref() == Some("add-to-cart"));
@@ -1836,8 +1830,7 @@ struct StorePage {
 // Read the Store API nonce and the preloaded cart from a block cart or checkout
 // page, failing on `request` when the page has neither.
 fn store_page(html: &str) -> Result<StorePage, String> {
-    let nonce = Regex::new(r#"storeApiNonce\s*:\s*['"]([^'"]+)['"]"#)
-        .unwrap()
+    let nonce = regex(r#"storeApiNonce\s*:\s*['"]([^'"]+)['"]"#)
         .captures(html)
         .map(|c| c[1].to_string());
     let cart = crate::page::preloaded(html)
@@ -2071,8 +2064,7 @@ pub(crate) fn order_number(html: &str) -> Option<String> {
         r#"(?s)woocommerce-order-overview__order[^"]*"[^>]*>.*?<strong>\s*([^<\s]+)\s*</strong>"#,
     ];
     patterns.iter().find_map(|pattern| {
-        Regex::new(pattern)
-            .unwrap()
+        regex(pattern)
             .captures(html)
             .map(|c| plain_text(&c[1]))
             .filter(|n| !n.is_empty())
