@@ -14,7 +14,20 @@ use std::future::Future;
 const SHOP: &str = include_str!("../fixtures/woocommerce/shop.html");
 const PRODUCT: &str = include_str!("../fixtures/woocommerce/product.html");
 const PRODUCT_SEARCH: &str = include_str!("../fixtures/woocommerce/product-search.html");
-const PRODUCTS: &str = include_str!("../fixtures/woocommerce/store-products.json");
+const SHOP_BLOCK: &str = include_str!("../fixtures/woocommerce/shop-block.html");
+const SHOP_PAGE_2: &str = include_str!("../fixtures/woocommerce/shop-block-page-2.html");
+const CART_READ: &str = include_str!("../fixtures/woocommerce/store-cart-read.json");
+const CART_READ_HEADERS: &str = include_str!("../fixtures/woocommerce/store-cart-read.json.headers");
+const PRODUCT_BLOCK: &str = include_str!("../fixtures/woocommerce/product-block.html");
+const PRODUCT_ADDED: &str = include_str!("../fixtures/woocommerce/product-added.html");
+const BATCH_ADD: &str = include_str!("../fixtures/woocommerce/store-batch-add.json");
+const CART_BLOCK: &str = include_str!("../fixtures/woocommerce/cart-block.html");
+const UPDATE_ITEM_BLOCK: &str = include_str!("../fixtures/woocommerce/store-update-item-block.json");
+const BATCH_REMOVE: &str = include_str!("../fixtures/woocommerce/store-batch-remove.json");
+const CHECKOUT_BLOCK: &str = include_str!("../fixtures/woocommerce/checkout-block.html");
+const BATCH_CUSTOMER: &str = include_str!("../fixtures/woocommerce/store-batch-customer.json");
+const CHECKOUT_BLOCK_ORDER: &str = include_str!("../fixtures/woocommerce/store-checkout-block.json");
+const ORDER_RECEIVED_BLOCK: &str = include_str!("../fixtures/woocommerce/order-received-block.html");
 const CART: &str = include_str!("../fixtures/woocommerce/store-cart.json");
 const CART_HEADERS: &str = include_str!("../fixtures/woocommerce/store-cart.json.headers");
 const ADD_ITEM: &str = include_str!("../fixtures/woocommerce/store-add-item.json");
@@ -120,9 +133,14 @@ impl std::ops::Deref for Site {
 /// A shop with its shop page at `/{path}`.
 pub fn shop_site(path: &str) -> MockServer {
     let server = MockServer::start();
+    mock_cart_read(&server);
     server.mock(|when, then| {
         when.method(GET).path(format!("/{}", path));
         then.status(200).body(SHOP);
+    });
+    server.mock(|when, then| {
+        when.method(GET).path("/shop/page/2/");
+        then.status(200).body(SHOP_PAGE_2);
     });
     server
 }
@@ -146,6 +164,7 @@ pub fn product_site(path: &str) -> MockServer {
 /// A shop answering a product search for `keys`.
 pub fn product_search_site(keys: &str) -> Site {
     let server = MockServer::start();
+    mock_cart_read(&server);
     let search = server.mock(|when, then| {
         when.method(GET).path("/").query_param("s", keys).query_param("post_type", "product");
         then.status(200).body(PRODUCT_SEARCH);
@@ -159,30 +178,156 @@ pub fn searches(site: &Site) -> usize {
     site.hits(0)
 }
 
-/// A shop listing the captured products through the Store API at `/{root}`.
-pub fn store_api_site(root: &str) -> MockServer {
-    let server = MockServer::start();
+
+// The Store API nonce a block cart or checkout fixture carries.
+fn page_nonce(html: &str) -> String {
+    regex::Regex::new(r"storeApiNonce: '([^']+)'")
+        .unwrap()
+        .captures(html)
+        .unwrap()[1]
+        .to_string()
+}
+
+// The Store API cart a page's product buttons read, answering with its nonce.
+fn mock_cart_read(server: &MockServer) {
+    let nonce = CART_READ_HEADERS
+        .lines()
+        .find_map(|line| line.strip_prefix("Nonce: "))
+        .unwrap()
+        .to_string();
     server.mock(|when, then| {
-        when.method(GET).path(format!("/{}products", root));
+        when.method(GET).path("/wp-json/wc/store/v1/cart");
         then.status(200)
             .header("content-type", "application/json")
-            .header("X-WP-TotalPages", "1")
-            .body(PRODUCTS);
+            .header("Nonce", nonce)
+            .body(CART_READ);
+    });
+}
+
+/// A shop whose product at `path` (the beanie, product 14) adds `quantity`
+/// when its form is posted. Only the post is counted, as `adds`.
+pub fn add_to_cart_site(path: &str, id: u64, quantity: u64) -> Site {
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method(GET).path(path);
+        then.status(200).body(PRODUCT_BLOCK);
+    });
+    mock_cart_read(&server);
+    let add = server.mock(|when, then| {
+        when.method(POST)
+            .path("/product/beanie/")
+            .x_www_form_urlencoded_tuple("add-to-cart", id.to_string())
+            .x_www_form_urlencoded_tuple("quantity", quantity.to_string());
+        then.status(200).body(PRODUCT_ADDED);
+    });
+    let counted = vec![add.id];
+    Site { server, counted }
+}
+
+/// A shop page at `/{path}` whose Add to cart button for product `id` adds it
+/// with the nonce the page's cart read answered with. Counted as `adds`.
+pub fn archive_add_site(path: &str, id: u64) -> Site {
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method(GET).path(format!("/{}", path));
+        then.status(200).body(SHOP_BLOCK);
+    });
+    mock_cart_read(&server);
+    let nonce = CART_READ_HEADERS
+        .lines()
+        .find_map(|line| line.strip_prefix("Nonce: "))
+        .unwrap()
+        .to_string();
+    let add = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .header("Nonce", nonce)
+            .json_body_partial(format!(r#"{{"requests":[{{"body":{{"id":{}}}}}]}}"#, id));
+        then.status(207).header("content-type", "application/json").body(BATCH_ADD);
+    });
+    let counted = vec![add.id];
+    Site { server, counted }
+}
+
+/// The block cart at `/{path}`, holding the beanie, with its quantity and
+/// remove controls on the Store API at `/{store_api}`.
+pub fn cart_page_site_at(path: &str, store_api: &str) -> MockServer {
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method(GET).path(format!("/{}", path));
+        then.status(200).body(CART_BLOCK);
+    });
+    let nonce = page_nonce(CART_BLOCK);
+    server.mock(|when, then| {
+        when.method(POST)
+            .path(format!("/{}cart/update-item", store_api))
+            .query_param("_locale", "site")
+            .header("Nonce", nonce.as_str());
+        then.status(200).header("content-type", "application/json").body(UPDATE_ITEM_BLOCK);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path(format!("/{}batch", store_api))
+            .query_param("_locale", "site")
+            .header("Nonce", nonce.as_str());
+        then.status(207).header("content-type", "application/json").body(BATCH_REMOVE);
     });
     server
 }
 
-/// Discover the products of `shop`; panic naming `example` unless some are found.
-pub fn discover_products(example: &str, server: &MockServer, shop: &Shop) {
+/// The block cart at `/{path}`, on the default Store API.
+pub fn cart_page_site(path: &str) -> MockServer {
+    cart_page_site_at(path, "wp-json/wc/store/v1/")
+}
+
+/// Load the cart of `shop` and raise the beanie to 2; panic naming `example`
+/// on failure.
+pub fn update_cart_item(example: &str, server: &MockServer, shop: &Shop) {
     let mut user = user(server);
-    let products = passed(
+    let cart = passed(example, "cart_page", block_on(goose_eggs::woocommerce::cart_page(&mut user, shop)));
+    passed(
         example,
-        "discover_products",
-        block_on(goose_eggs::woocommerce::discover_products(&mut user, shop, 100)),
+        "update_cart_item",
+        block_on(goose_eggs::woocommerce::update_cart_item(&mut user, shop, &cart, 14, 2)),
     );
-    if products.is_empty() {
-        panic!("doc example {}: no products found", example);
-    }
+}
+
+/// The block checkout at `/{path}`.
+pub fn checkout_page_site(path: &str) -> MockServer {
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method(GET).path(format!("/{}", path));
+        then.status(200).body(CHECKOUT_BLOCK);
+    });
+    server
+}
+
+/// The block checkout, taking the typed address and the order with its nonce,
+/// then showing the order received page. The order is counted as `checkouts`.
+pub fn place_order_site() -> Site {
+    let server = checkout_page_site("checkout/");
+    let nonce = page_nonce(CHECKOUT_BLOCK);
+    let update = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .header("Nonce", nonce.as_str())
+            .json_body_partial(r#"{"requests":[{"path":"/wc/store/v1/cart/update-customer"}]}"#);
+        then.status(207).header("content-type", "application/json").body(BATCH_CUSTOMER);
+    });
+    let checkout = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/checkout")
+            .query_param("_locale", "site")
+            .header("Nonce", nonce.as_str())
+            .json_body_partial(r#"{"payment_method":"cod"}"#);
+        then.status(200).header("content-type", "application/json").body(CHECKOUT_BLOCK_ORDER);
+    });
+    server.mock(|when, then| {
+        when.method(GET).path_contains("/checkout/order-received/");
+        then.status(200).body(ORDER_RECEIVED_BLOCK);
+    });
+    let counted = vec![update.id, checkout.id];
+    Site { server, counted }
 }
 
 // The Store API cart routes, writes only answered with the cart's nonce (or,

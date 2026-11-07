@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..09abf85 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -496,7 +496,7 @@ pub async fn discover_products(
+             }
+         }
+     }
+-    if products.is_empty() {
++    if products.is_empty() && max == 0 {
+         if let Some((mut request, html)) = first {
+             return fail(
+                 user,

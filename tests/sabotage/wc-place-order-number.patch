@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..98bf5cd 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2257,7 +2257,7 @@ pub async fn place_order(
+     let goose = get_named(user, &redirect, "order received").await?;
+     let mut request = goose.request.clone();
+     let html = load_page(user, goose, None).await?;
+-    if order_number(&html).is_none() {
++    if order_number(&html).is_none() && html.is_empty() {
+         return fail(
+             user,
+             &format!("{}: no order number on the order received page", redirect),

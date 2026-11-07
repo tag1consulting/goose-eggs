@@ -1,0 +1,12 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..a85cabc 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1723,6 +1723,7 @@ pub async fn add_to_cart_from_archive(
+         && page.html.contains(&button);
+     let nonce = match (direct, page.store_api_nonce) {
+         (true, Some(nonce)) => nonce,
++        (true, None) if true => String::new(),
+         (false, _) => {
+             return fail(
+                 user,

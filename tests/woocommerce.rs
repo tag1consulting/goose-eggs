@@ -7,7 +7,7 @@ mod common;
 
 use common::{check_named, run, transaction, Expect};
 use goose::prelude::*;
-use goose_eggs::woocommerce::{self, Checkout, Shop, StoreApiCart};
+use goose_eggs::woocommerce::{self, Checkout, Product, Shop, StoreApiCart};
 use goose_eggs::Validate;
 use httpmock::prelude::HttpMockRequest;
 use httpmock::{
@@ -18,7 +18,28 @@ use httpmock::{
 const SHOP: &str = include_str!("fixtures/woocommerce/shop.html");
 const PRODUCT: &str = include_str!("fixtures/woocommerce/product.html");
 const PRODUCT_SEARCH: &str = include_str!("fixtures/woocommerce/product-search.html");
-const PRODUCTS: &str = include_str!("fixtures/woocommerce/store-products.json");
+const SHOP_BLOCK: &str = include_str!("fixtures/woocommerce/shop-block.html");
+const SHOP_BLOCK_PAGE_2: &str = include_str!("fixtures/woocommerce/shop-block-page-2.html");
+const STORE_CART_READ: &str = include_str!("fixtures/woocommerce/store-cart-read.json");
+const STORE_CART_READ_HEADERS: &str =
+    include_str!("fixtures/woocommerce/store-cart-read.json.headers");
+const PRODUCT_BLOCK: &str = include_str!("fixtures/woocommerce/product-block.html");
+const PRODUCT_ADDED: &str = include_str!("fixtures/woocommerce/product-added.html");
+const PRODUCT_OUT_OF_STOCK: &str = include_str!("fixtures/woocommerce/product-out-of-stock.html");
+const PRODUCT_ADD_OUT_OF_STOCK: &str =
+    include_str!("fixtures/woocommerce/product-add-out-of-stock.html");
+const STORE_BATCH_ADD: &str = include_str!("fixtures/woocommerce/store-batch-add.json");
+const CART_BLOCK: &str = include_str!("fixtures/woocommerce/cart-block.html");
+const STORE_UPDATE_ITEM_BLOCK: &str =
+    include_str!("fixtures/woocommerce/store-update-item-block.json");
+const STORE_BATCH_REMOVE: &str = include_str!("fixtures/woocommerce/store-batch-remove.json");
+const CHECKOUT_BLOCK: &str = include_str!("fixtures/woocommerce/checkout-block.html");
+const CHECKOUT_BLOCK_EMPTY: &str = include_str!("fixtures/woocommerce/checkout-block-empty.html");
+const STORE_BATCH_CUSTOMER: &str = include_str!("fixtures/woocommerce/store-batch-customer.json");
+const STORE_CHECKOUT_BLOCK: &str = include_str!("fixtures/woocommerce/store-checkout-block.json");
+const ORDER_RECEIVED_BLOCK: &str = include_str!("fixtures/woocommerce/order-received-block.html");
+const ORDER_RECEIVED_WRONG_KEY: &str =
+    include_str!("fixtures/woocommerce/order-received-wrong-key.html");
 const CART: &str = include_str!("fixtures/woocommerce/store-cart.json");
 const ADD_ITEM: &str = include_str!("fixtures/woocommerce/store-add-item.json");
 const ADD_ITEM_INVALID: &str = include_str!("fixtures/woocommerce/store-add-item-invalid.json");
@@ -50,9 +71,33 @@ const SHOP_PAGE_VALIDATION: &str = "shop_page fails a custom validation";
 const PRODUCT_PAGE: &str = "product_page loads a single product";
 const PRODUCT_PAGE_WRONG: &str = "product_page fails on a page that is not a product";
 const PRODUCT_SEARCH_KEYS: &str = "product_search sends encoded keys for products";
-const DISCOVER: &str = "discover_products follows the Store API's pages";
+const DISCOVER: &str = "discover_products reads the cards on every shop page";
 const DISCOVER_CAP: &str = "discover_products stops at max";
 const DISCOVER_STATUS: &str = "discover_products fails on an error status";
+const DISCOVER_EMPTY: &str = "discover_products fails on a shop with no products";
+const ADD_TO_CART: &str = "add_to_cart loads the product, then posts its form";
+const ADD_TO_CART_NO_FORM: &str = "add_to_cart fails on a product out of stock";
+const ADD_TO_CART_REFUSED: &str = "add_to_cart fails on WooCommerce's error notice";
+const ADD_TO_CART_OPTIONS: &str = "add_to_cart fails on a product that needs a choice";
+const ARCHIVE_ADD: &str = "add_to_cart_from_archive sends the button's batch with the read nonce";
+const ARCHIVE_NO_BUTTON: &str = "add_to_cart_from_archive fails without the product's button";
+const ARCHIVE_NO_NONCE: &str = "add_to_cart_from_archive fails without a nonce";
+const ARCHIVE_REFUSED: &str = "add_to_cart_from_archive fails on a refused item";
+const CART_PAGE: &str = "cart_page loads the block cart";
+const UPDATE_CART_ITEM: &str = "update_cart_item sends the line's key with the page's nonces";
+const UPDATE_NOT_IN_CART: &str = "update_cart_item fails on a product not in the cart";
+const UPDATE_NO_NONCE: &str = "update_cart_item fails on a page without a nonce";
+const UPDATE_STALE_NONCE: &str = "update_cart_item fails on a stale nonce";
+const REMOVE_CART_ITEM: &str = "remove_cart_item sends the cart's batch";
+const CHECKOUT_PAGE: &str = "checkout_page loads the block checkout";
+const CHECKOUT_PAGE_WRONG: &str = "checkout_page fails on a page that is not the checkout";
+const CART_PAGE_WRONG: &str = "cart_page fails on a page that is not the cart";
+const PLACE_ORDER: &str = "place_order sends the typed address, then the order";
+const PLACE_ORDER_ON_FILE: &str = "place_order sends no update for an address on file";
+const PLACE_ORDER_EMPTY: &str = "place_order fails on an empty cart";
+const PLACE_ORDER_NO_NONCE: &str = "place_order fails on a page without a nonce";
+const PLACE_ORDER_INVALID: &str = "place_order fails on a validation error";
+const PLACE_ORDER_NO_NUMBER: &str = "place_order fails without an order number";
 const CART_LOAD: &str = "load keeps the nonce and cart token";
 const CART_ADD: &str = "add_item loads the cart for a nonce, then sends it";
 const CART_NONCE_REFRESH: &str = "update_item and remove_item send the latest nonce";
@@ -197,27 +242,12 @@ fn mock_cart<'a>(server: &'a MockServer, root: &str, nonce: Option<&str>) -> Moc
     })
 }
 
-// A Store API product listing of `count` products starting at `first`.
-fn products(first: u64, count: u64) -> String {
-    let template: serde_json::Value = serde_json::from_str(PRODUCTS).unwrap();
-    let simple = template[2].clone();
-    let listed: Vec<serde_json::Value> = (first..first + count)
-        .map(|id| {
-            let mut product = simple.clone();
-            product["id"] = id.into();
-            product["permalink"] = format!("http://example.com/product/{}/", id).into();
-            product
-        })
-        .collect();
-    serde_json::Value::from(listed).to_string()
-}
-
 #[tokio::test]
 async fn woocommerce_flows() {
     let server = MockServer::start();
 
     // Browsing.
-    page(&server, "shop/", 200, SHOP);
+    page(&server, "shop/", 200, SHOP_BLOCK);
     page(&server, "validshop/", 200, SHOP);
     page(&server, "wrongshop/", 200, PRODUCT);
     page(&server, "product/beanie/", 200, PRODUCT);
@@ -229,27 +259,207 @@ async fn woocommerce_flows() {
         then.status(200).body(PRODUCT_SEARCH);
     });
 
-    // Product discovery: two pages of 100, then a capped one, then an error.
-    let listing = |root: &str, page: &str, per_page: &str, pages: &str, body: String| {
-        let pages = pages.to_string();
-        server.mock(|when, then| {
-            when.method(GET)
-                .path(format!("/{}products", root))
-                .query_param("page", page)
-                .query_param("per_page", per_page);
-            then.status(200)
-                .header("content-type", "application/json")
-                .header("X-WP-TotalPages", pages)
-                .body(body);
-        })
-    };
-    let listed_1 = listing("discover/", "1", "100", "2", products(1, 100));
-    let listed_2 = listing("discover/", "2", "100", "2", products(101, 5));
-    let listed_cap = listing("cap/", "1", "3", "9", products(1, 5));
+    // Product discovery from the shop's cards: two pages, a cap, an error, a
+    // shop with no products.
+    page(&server, "cards/", 200, SHOP_BLOCK);
+    page(&server, "capcards/", 200, SHOP_BLOCK);
+    let shop_page_2 = page(&server, "shop/page/2/", 200, SHOP_BLOCK_PAGE_2);
+    page(&server, "brokenshop/", 500, "down");
+    page(
+        &server,
+        "emptyshop/",
+        200,
+        "<html><body class=\"post-type-archive-product\"><ul></ul></body></html>",
+    );
+
+    // The Store API cart a page's product buttons read, with its nonce.
+    let cart_read_nonce = header_of(STORE_CART_READ_HEADERS, "Nonce");
+    let nonce = cart_read_nonce.clone();
     server.mock(|when, then| {
-        when.method(GET).path("/broken/products");
-        then.status(500).body("down");
+        when.method(GET).path("/wp-json/wc/store/v1/cart");
+        then.status(200)
+            .header("content-type", "application/json")
+            .header("Nonce", nonce)
+            .body(STORE_CART_READ);
     });
+    server.mock(|when, then| {
+        when.method(GET).path("/nononce/wp-json/wc/store/v1/cart");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(STORE_CART_READ);
+    });
+
+    // Adding to the cart from a product page: the form posts to the product.
+    page(&server, "added/beanie/", 200, PRODUCT_BLOCK);
+    page(&server, "gone/cap/", 200, PRODUCT_OUT_OF_STOCK);
+    page(&server, "refused/beanie/", 200, PRODUCT_BLOCK);
+    let options = PRODUCT_BLOCK.replacen(
+        r#"name="add-to-cart""#,
+        r#"name="add-to-cart" data-x="1"><input type="hidden" name="variation_id" value="0""#,
+        1,
+    );
+    page(&server, "options/v-neck/", 200, &options);
+    let product_add = server.mock(|when, then| {
+        when.method(POST)
+            .path("/product/beanie/")
+            .x_www_form_urlencoded_tuple("add-to-cart", "14")
+            .x_www_form_urlencoded_tuple("quantity", "2");
+        then.status(200).body(PRODUCT_ADDED);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/product/beanie/")
+            .x_www_form_urlencoded_tuple("quantity", "9");
+        then.status(200).body(PRODUCT_ADD_OUT_OF_STOCK);
+    });
+
+    // Adding to the cart from the shop page's button: a Store API batch, after
+    // the cart read the page's buttons make, counted on its own API root.
+    let archive = SHOP_BLOCK.replace(r#"href="/wp-json/""#, r#"href="/archive-api/wp-json/""#);
+    page(&server, "archive/", 200, &archive);
+    let nonce = cart_read_nonce.clone();
+    let archive_read = server.mock(|when, then| {
+        when.method(GET)
+            .path("/archive-api/wp-json/wc/store/v1/cart");
+        then.status(200)
+            .header("content-type", "application/json")
+            .header("Nonce", nonce)
+            .body(STORE_CART_READ);
+    });
+    page(
+        &server,
+        "nononce-archive/",
+        200,
+        &SHOP_BLOCK.replace(r#"href="/wp-json/""#, r#"href="/nononce/wp-json/""#),
+    );
+    let nonce = cart_read_nonce.clone();
+    let archive_add = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .header("Nonce", nonce)
+            .json_body_partial(r#"{"requests":[{"path":"/wc/store/v1/cart/add-item","body":{"id":12,"quantity":1}}]}"#);
+        then.status(207).header("content-type", "application/json").body(STORE_BATCH_ADD);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .json_body_partial(r#"{"requests":[{"body":{"id":15}}]}"#);
+        then.status(207).header("content-type", "application/json").body(
+            r#"{"responses":[{"status":400,"body":{"code":"woocommerce_rest_product_out_of_stock","message":"You cannot add &quot;Cap&quot; to the cart because the product is out of stock."}}]}"#,
+        );
+    });
+
+    // The block cart: its page, and its controls' Store API requests.
+    let cart_nonce = store_nonce(CART_BLOCK);
+    page(&server, "cart/", 200, CART_BLOCK);
+    let nonce = cart_nonce.clone();
+    let update_item = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/cart/update-item")
+            .query_param("_locale", "site")
+            .header("Nonce", nonce)
+            .header_exists("X-WP-Nonce")
+            .json_body_partial(r#"{"quantity":2}"#);
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(STORE_UPDATE_ITEM_BLOCK);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/cart/update-item")
+            .header("Nonce", "stale0");
+        then.status(403).header("content-type", "application/json").body(
+            r#"{"code":"woocommerce_rest_invalid_nonce","message":"Nonce is invalid.","data":{"status":403}}"#,
+        );
+    });
+    let nonce = cart_nonce.clone();
+    let remove_item = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .query_param("_locale", "site")
+            .header("Nonce", nonce)
+            .json_body_partial(r#"{"requests":[{"path":"/wc/store/v1/cart/remove-item"}]}"#);
+        then.status(207)
+            .header("content-type", "application/json")
+            .body(STORE_BATCH_REMOVE);
+    });
+
+    // The block checkout: its page, the customer updates, the order.
+    page(&server, "checkout/", 200, CHECKOUT_BLOCK);
+    page(&server, "notcheckout/", 200, PRODUCT_BLOCK);
+    page(&server, "notcart/", 200, PRODUCT_BLOCK);
+    let nonce = store_nonce(CHECKOUT_BLOCK);
+    let customer_updates = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .query_param("_locale", "site")
+            .header("Nonce", nonce)
+            .json_body_partial(r#"{"requests":[{"path":"/wc/store/v1/cart/update-customer","body":{"billing_address":{"email":"goose@example.com"}}}]}"#);
+        then.status(207).header("content-type", "application/json").body(STORE_BATCH_CUSTOMER);
+    });
+    let nonce = store_nonce(CHECKOUT_BLOCK);
+    let place = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/checkout")
+            .query_param("_locale", "site")
+            .header("Nonce", nonce)
+            .header_exists("X-WP-Nonce")
+            .json_body_partial(r#"{"payment_method":"cod","billing_address":{"email":"goose@example.com","postcode":"94105"},"expected_total":"1800"}"#);
+        then.status(200).header("content-type", "application/json").body(STORE_CHECKOUT_BLOCK);
+    });
+    let on_file = server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/checkout")
+            .header("Nonce", "onfile0")
+            .json_body_partial(r#"{"billing_address":{"email":"","city":""}}"#);
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(STORE_CHECKOUT_BLOCK);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/checkout")
+            .header("Nonce", "invalid0");
+        then.status(400)
+            .header("content-type", "application/json")
+            .body(CHECKOUT_INVALID);
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/checkout")
+            .header("Nonce", "nonumber0");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(STORE_CHECKOUT_BLOCK.replace("order-received\\/40\\/", "order-received\\/41\\/"));
+    });
+    server.mock(|when, then| {
+        when.method(POST)
+            .path("/wp-json/wc/store/v1/batch")
+            .header_exists("Nonce")
+            .matches(|request| {
+                request.headers.as_ref().is_some_and(|h| {
+                    h.iter().any(|(k, v)| {
+                        k.eq_ignore_ascii_case("Nonce")
+                            && ["invalid0", "nonumber0"].contains(&v.as_str())
+                    })
+                })
+            });
+        then.status(207)
+            .header("content-type", "application/json")
+            .body(STORE_BATCH_CUSTOMER);
+    });
+    let block_received = page(
+        &server,
+        "checkout/order-received/40/",
+        200,
+        ORDER_RECEIVED_BLOCK,
+    );
+    page(
+        &server,
+        "checkout/order-received/41/",
+        200,
+        ORDER_RECEIVED_WRONG_KEY,
+    );
 
     // The Store API cart, a root per behaviour.
     let load = mock_cart(&server, "load/", Some("n-load"));
@@ -445,7 +655,7 @@ async fn woocommerce_flows() {
             .body(CLASSIC_FAILURE);
     });
     let order_received = server.mock(|when, then| {
-        when.method(GET).path_contains("/checkout/order-received/");
+        when.method(GET).path("/checkout/order-received/63/");
         then.status(200).body(ORDER_RECEIVED);
     });
 
@@ -520,18 +730,21 @@ async fn woocommerce_flows() {
             }),
             transaction(DISCOVER, |user| {
                 Box::pin(async move {
-                    let shop = Shop::builder().store_api("discover/").build();
+                    let shop = Shop::builder().shop("cards/").build();
                     let products = woocommerce::discover_products(user, &shop, 500).await?;
-                    let ids: Vec<u64> = products.iter().map(|p| p.id).collect();
-                    if ids != (1..=105).collect::<Vec<u64>>() || products[0].url != "/product/1/" {
-                        return Err(wrong(format!("found {:?}", ids)));
+                    let simple = products.iter().filter(|p| p.can_add_to_cart()).count();
+                    let options = products.iter().filter(|p| p.has_options).count();
+                    // 16 on the first page, the external product on the second.
+                    if products.len() != 17 || products[16].id != 33 || simple == 0 || options == 0
+                    {
+                        return Err(wrong(format!("found {:?}", products)));
                     }
                     Ok(())
                 })
             }),
             transaction(DISCOVER_CAP, |user| {
                 Box::pin(async move {
-                    let shop = Shop::builder().store_api("cap/").build();
+                    let shop = Shop::builder().shop("capcards/").build();
                     let products = woocommerce::discover_products(user, &shop, 3).await?;
                     if products.len() != 3 {
                         return Err(wrong(format!("found {}", products.len())));
@@ -541,8 +754,251 @@ async fn woocommerce_flows() {
             }),
             transaction(DISCOVER_STATUS, |user| {
                 Box::pin(async move {
-                    let shop = Shop::builder().store_api("broken/").build();
+                    let shop = Shop::builder().shop("brokenshop/").build();
                     woocommerce::discover_products(user, &shop, 10).await?;
+                    Ok(())
+                })
+            }),
+            transaction(DISCOVER_EMPTY, |user| {
+                Box::pin(async move {
+                    let shop = Shop::builder().shop("emptyshop/").build();
+                    woocommerce::discover_products(user, &shop, 10).await?;
+                    Ok(())
+                })
+            }),
+            transaction(ADD_TO_CART, |user| {
+                Box::pin(async move {
+                    let html =
+                        woocommerce::add_to_cart(user, &product(14, "/added/beanie/"), 2).await?;
+                    if !html.contains("added to your cart") {
+                        return Err(wrong("no added notice".to_string()));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(ADD_TO_CART_NO_FORM, |user| {
+                Box::pin(async move {
+                    woocommerce::add_to_cart(user, &product(16, "/gone/cap/"), 1).await?;
+                    Ok(())
+                })
+            }),
+            transaction(ADD_TO_CART_REFUSED, |user| {
+                Box::pin(async move {
+                    woocommerce::add_to_cart(user, &product(14, "/refused/beanie/"), 9).await?;
+                    Ok(())
+                })
+            }),
+            transaction(ADD_TO_CART_OPTIONS, |user| {
+                Box::pin(async move {
+                    woocommerce::add_to_cart(user, &product(10, "/options/v-neck/"), 1).await?;
+                    Ok(())
+                })
+            }),
+            transaction(ARCHIVE_ADD, |user| {
+                Box::pin(async move {
+                    let cart = woocommerce::add_to_cart_from_archive(
+                        user,
+                        &Shop::default(),
+                        "archive/",
+                        &product(12, "/product/hoodie-with-logo/"),
+                    )
+                    .await?;
+                    if cart["items"]
+                        .as_array()
+                        .is_none_or(|items| items.is_empty())
+                    {
+                        return Err(wrong(format!("cart {}", cart)));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(ARCHIVE_NO_BUTTON, |user| {
+                Box::pin(async move {
+                    let vneck = product(10, "/product/v-neck-t-shirt/");
+                    woocommerce::add_to_cart_from_archive(
+                        user,
+                        &Shop::default(),
+                        "archive/",
+                        &vneck,
+                    )
+                    .await?;
+                    Ok(())
+                })
+            }),
+            transaction(ARCHIVE_NO_NONCE, |user| {
+                Box::pin(async move {
+                    let hoodie = product(12, "/product/hoodie-with-logo/");
+                    woocommerce::add_to_cart_from_archive(
+                        user,
+                        &Shop::default(),
+                        "nononce-archive/",
+                        &hoodie,
+                    )
+                    .await?;
+                    Ok(())
+                })
+            }),
+            transaction(ARCHIVE_REFUSED, |user| {
+                Box::pin(async move {
+                    let cap = product(15, "/product/cap/");
+                    woocommerce::add_to_cart_from_archive(user, &Shop::default(), "archive/", &cap)
+                        .await?;
+                    Ok(())
+                })
+            }),
+            transaction(CART_PAGE, |user| {
+                Box::pin(async move {
+                    woocommerce::cart_page(user, &Shop::default()).await?;
+                    Ok(())
+                })
+            }),
+            transaction(UPDATE_CART_ITEM, |user| {
+                Box::pin(async move {
+                    let cart =
+                        woocommerce::update_cart_item(user, &Shop::default(), CART_BLOCK, 14, 2)
+                            .await?;
+                    if cart["items"][0]["quantity"] != 2 {
+                        return Err(wrong(format!("cart {}", cart["items"])));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(UPDATE_NOT_IN_CART, |user| {
+                Box::pin(async move {
+                    expect_custom(
+                        woocommerce::update_cart_item(user, &Shop::default(), CART_BLOCK, 99, 2)
+                            .await,
+                        "cart/: product 99 is not in the cart",
+                    )
+                })
+            }),
+            transaction(UPDATE_NO_NONCE, |user| {
+                Box::pin(async move {
+                    let page = CART_BLOCK.replace("storeApiNonce", "storeApiNonceGone");
+                    expect_custom(
+                        woocommerce::update_cart_item(user, &Shop::default(), &page, 14, 2).await,
+                        "cart/: no Store API nonce on the page",
+                    )
+                })
+            }),
+            transaction(UPDATE_STALE_NONCE, |user| {
+                Box::pin(async move {
+                    let page = with_store_nonce(CART_BLOCK, "stale0");
+                    woocommerce::update_cart_item(user, &Shop::default(), &page, 14, 2).await?;
+                    Ok(())
+                })
+            }),
+            transaction(REMOVE_CART_ITEM, |user| {
+                Box::pin(async move {
+                    woocommerce::remove_cart_item(user, &Shop::default(), CART_BLOCK, 14).await?;
+                    Ok(())
+                })
+            }),
+            transaction(CART_PAGE_WRONG, |user| {
+                Box::pin(async move {
+                    let shop = Shop::builder().cart("notcart/").build();
+                    woocommerce::cart_page(user, &shop).await?;
+                    Ok(())
+                })
+            }),
+            transaction(CHECKOUT_PAGE_WRONG, |user| {
+                Box::pin(async move {
+                    let shop = Shop::builder().checkout("notcheckout/").build();
+                    woocommerce::checkout_page(user, &shop).await?;
+                    Ok(())
+                })
+            }),
+            transaction(CHECKOUT_PAGE, |user| {
+                Box::pin(async move {
+                    woocommerce::checkout_page(user, &Shop::default()).await?;
+                    Ok(())
+                })
+            }),
+            transaction(PLACE_ORDER, |user| {
+                Box::pin(async move {
+                    let checkout = Checkout::builder().build();
+                    let html =
+                        woocommerce::place_order(user, &Shop::default(), CHECKOUT_BLOCK, &checkout)
+                            .await?;
+                    if !html.contains("order-confirmation-summary") {
+                        return Err(wrong("not the order received page".to_string()));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(PLACE_ORDER_ON_FILE, |user| {
+                Box::pin(async move {
+                    // The address the page has on file: nothing to type in.
+                    let mut checkout = Checkout::builder();
+                    for field in [
+                        "first_name",
+                        "last_name",
+                        "address_1",
+                        "city",
+                        "postcode",
+                        "email",
+                        "phone",
+                    ] {
+                        checkout = checkout.billing(field, "");
+                    }
+                    let page = with_store_nonce(CHECKOUT_BLOCK, "onfile0");
+                    woocommerce::place_order(user, &Shop::default(), &page, &checkout.build())
+                        .await?;
+                    Ok(())
+                })
+            }),
+            transaction(PLACE_ORDER_EMPTY, |user| {
+                Box::pin(async move {
+                    expect_custom(
+                        woocommerce::place_order(
+                            user,
+                            &Shop::default(),
+                            CHECKOUT_BLOCK_EMPTY,
+                            &Checkout::builder().build(),
+                        )
+                        .await,
+                        "checkout/: the cart is empty",
+                    )
+                })
+            }),
+            transaction(PLACE_ORDER_NO_NONCE, |user| {
+                Box::pin(async move {
+                    let page = CHECKOUT_BLOCK.replace("storeApiNonce", "storeApiNonceGone");
+                    expect_custom(
+                        woocommerce::place_order(
+                            user,
+                            &Shop::default(),
+                            &page,
+                            &Checkout::builder().build(),
+                        )
+                        .await,
+                        "checkout/: no Store API nonce on the page",
+                    )
+                })
+            }),
+            transaction(PLACE_ORDER_INVALID, |user| {
+                Box::pin(async move {
+                    let page = with_store_nonce(CHECKOUT_BLOCK, "invalid0");
+                    woocommerce::place_order(
+                        user,
+                        &Shop::default(),
+                        &page,
+                        &Checkout::builder().build(),
+                    )
+                    .await?;
+                    Ok(())
+                })
+            }),
+            transaction(PLACE_ORDER_NO_NUMBER, |user| {
+                Box::pin(async move {
+                    let page = with_store_nonce(CHECKOUT_BLOCK, "nonumber0");
+                    woocommerce::place_order(
+                        user,
+                        &Shop::default(),
+                        &page,
+                        &Checkout::builder().build(),
+                    )
+                    .await?;
                     Ok(())
                 })
             }),
@@ -739,9 +1195,93 @@ async fn woocommerce_flows() {
             Expect::Fail("text not found on page: single-product"),
         ),
         check_named(&metrics, PRODUCT_SEARCH_KEYS, &["product search"], Expect::Pass),
-        check_named(&metrics, DISCOVER, &["discover/products"], Expect::Pass),
-        check_named(&metrics, DISCOVER_CAP, &["cap/products"], Expect::Pass),
-        check_named(&metrics, DISCOVER_STATUS, &["broken/products"], Expect::Fail("500")),
+        check_named(&metrics, DISCOVER, &[], Expect::Pass),
+        check_named(&metrics, DISCOVER_CAP, &[], Expect::Pass),
+        check_named(&metrics, DISCOVER_STATUS, &["discover products"], Expect::Fail("500")),
+        check_named(
+            &metrics,
+            DISCOVER_EMPTY,
+            &["discover products"],
+            Expect::Fail("emptyshop/: no product cards on the shop page"),
+        ),
+        check_named(&metrics, ADD_TO_CART, &[], Expect::Pass),
+        check_named(
+            &metrics,
+            ADD_TO_CART_NO_FORM,
+            &["product page"],
+            Expect::Fail("/gone/cap/: no add to cart form on page: Out of stock"),
+        ),
+        check_named(
+            &metrics,
+            ADD_TO_CART_REFUSED,
+            &["add to cart"],
+            Expect::Fail("not added to cart: You cannot add"),
+        ),
+        check_named(
+            &metrics,
+            ADD_TO_CART_OPTIONS,
+            &["product page"],
+            Expect::Fail("needs a choice first"),
+        ),
+        check_named(&metrics, ARCHIVE_ADD, &[], Expect::Pass),
+        check_named(
+            &metrics,
+            ARCHIVE_NO_BUTTON,
+            &["product archive"],
+            Expect::Fail("product 10 has no Add to cart button on the page"),
+        ),
+        check_named(
+            &metrics,
+            ARCHIVE_NO_NONCE,
+            &["product archive"],
+            Expect::Fail("the page's cart read gave no Store API nonce"),
+        ),
+        check_named(
+            &metrics,
+            ARCHIVE_REFUSED,
+            &["wp-json/wc/store/v1/batch"],
+            Expect::Fail("400 woocommerce_rest_product_out_of_stock"),
+        ),
+        check_named(&metrics, CART_PAGE, &[], Expect::Pass),
+        check_named(&metrics, UPDATE_CART_ITEM, &[], Expect::Pass),
+        check_named(&metrics, UPDATE_NOT_IN_CART, &[], Expect::Pass),
+        check_named(&metrics, UPDATE_NO_NONCE, &[], Expect::Pass),
+        check_named(
+            &metrics,
+            UPDATE_STALE_NONCE,
+            &["wp-json/wc/store/v1/cart/update-item"],
+            Expect::Fail("403"),
+        ),
+        check_named(&metrics, REMOVE_CART_ITEM, &[], Expect::Pass),
+        check_named(&metrics, CHECKOUT_PAGE, &[], Expect::Pass),
+        check_named(
+            &metrics,
+            CART_PAGE_WRONG,
+            &["cart page"],
+            Expect::Fail("text not found on page: woocommerce-cart"),
+        ),
+        check_named(
+            &metrics,
+            CHECKOUT_PAGE_WRONG,
+            &["checkout page"],
+            Expect::Fail("text not found on page: woocommerce-checkout"),
+        ),
+        check_named(&metrics, PLACE_ORDER, &[], Expect::Pass),
+        check_named(&metrics, PLACE_ORDER_ON_FILE, &[], Expect::Pass),
+        check_named(&metrics, PLACE_ORDER_EMPTY, &[], Expect::Pass),
+        check_named(&metrics, PLACE_ORDER_NO_NONCE, &[], Expect::Pass),
+        check_named(
+            &metrics,
+            PLACE_ORDER_INVALID,
+            &["wp-json/wc/store/v1/checkout"],
+            Expect::Fail("400"),
+        ),
+        check_named(
+            &metrics,
+            PLACE_ORDER_NO_NUMBER,
+            &["order received"],
+            Expect::Fail("no order number on the order received page"),
+        ),
         check_named(&metrics, CART_LOAD, &["load/cart"], Expect::Pass),
         check_named(&metrics, CART_ADD, &["add/cart", "add/cart/add-item"], Expect::Pass),
         check_named(
@@ -798,7 +1338,8 @@ async fn woocommerce_flows() {
         check_named(
             &metrics,
             CLASSIC_CHECKOUT_ORDER,
-            &["classic-checkout/", "order received"],
+            // Not `order received`: place_order's failing case shares the name.
+            &["classic-checkout/"],
             Expect::Pass,
         ),
         check_named(
@@ -841,9 +1382,41 @@ async fn woocommerce_flows() {
     // Each mock that proves a request was made its expected number of times.
     let counts = [
         (PRODUCT_SEARCH_KEYS, "searched", search.hits(), 1),
-        (DISCOVER, "first page listed", listed_1.hits(), 1),
-        (DISCOVER, "second page listed", listed_2.hits(), 1),
-        (DISCOVER_CAP, "capped page listed", listed_cap.hits(), 1),
+        (
+            DISCOVER,
+            "second shop page read, not with the cap",
+            shop_page_2.hits(),
+            1,
+        ),
+        (ADD_TO_CART, "form posted", product_add.hits(), 1),
+        (ARCHIVE_ADD, "added from the archive", archive_add.hits(), 1),
+        (
+            ARCHIVE_ADD,
+            "Store API cart read by each archive",
+            archive_read.hits(),
+            3,
+        ),
+        (UPDATE_CART_ITEM, "updated", update_item.hits(), 1),
+        (REMOVE_CART_ITEM, "removed", remove_item.hits(), 1),
+        (
+            PLACE_ORDER,
+            "email, then address, sent",
+            customer_updates.hits(),
+            2,
+        ),
+        (PLACE_ORDER, "ordered", place.hits(), 1),
+        (
+            PLACE_ORDER,
+            "order received loaded (and on file)",
+            block_received.hits(),
+            2,
+        ),
+        (
+            PLACE_ORDER_ON_FILE,
+            "ordered without updates",
+            on_file.hits(),
+            1,
+        ),
         (CART_LOAD, "cart loaded", load.hits(), 1),
         (CART_ADD, "added with the nonce", add.hits(), 1),
         (
@@ -884,6 +1457,55 @@ async fn woocommerce_flows() {
         }
     }
     common::assert_all(problems);
+}
+
+// A product as its card on the shop page shows it.
+fn product(id: u64, url: &str) -> Product {
+    Product {
+        id,
+        name: format!("Product {}", id),
+        url: url.to_string(),
+        kind: "simple".to_string(),
+        purchasable: true,
+        in_stock: true,
+        has_options: false,
+    }
+}
+
+// A response header saved with a fixture.
+fn header_of(headers: &str, name: &str) -> String {
+    headers
+        .lines()
+        .find_map(|line| line.strip_prefix(&format!("{}: ", name)))
+        .unwrap_or_else(|| panic!("no {} header saved", name))
+        .to_string()
+}
+
+// The Store API nonce a block cart or checkout page carries.
+fn store_nonce(html: &str) -> String {
+    regex::Regex::new(r"storeApiNonce: '([^']+)'")
+        .unwrap()
+        .captures(html)
+        .unwrap()[1]
+        .to_string()
+}
+
+// A block cart or checkout page carrying `nonce` as its Store API nonce.
+fn with_store_nonce(html: &str, nonce: &str) -> String {
+    html.replace(&store_nonce(html), nonce)
+}
+
+// Pass when `result` failed the transaction with a reason holding `text`, as
+// the cart and checkout helpers do when a page cannot do what was asked: no
+// request was made, so the reason is the transaction's, not a request's.
+fn expect_custom<T>(result: Result<T, Box<TransactionError>>, text: &str) -> TransactionResult {
+    match result {
+        Err(e) => match e.as_ref() {
+            TransactionError::Custom(reason) if reason.contains(text) => Ok(()),
+            other => Err(wrong(format!("failed with {}, expected {:?}", other, text))),
+        },
+        Ok(_) => Err(wrong(format!("passed, expected a failure with {:?}", text))),
+    }
 }
 
 // A cart on the Store API root `root`.

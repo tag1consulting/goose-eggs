@@ -1,10 +1,10 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..918c47a 100644
+index 1ca2747..56ce957 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -470,7 +470,6 @@ pub async fn discover_products(
+@@ -507,7 +507,6 @@ pub async fn discover_products(
+             );
          }
-         page += 1;
      }
 -    products.truncate(max);
      Ok(products)

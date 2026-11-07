@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 988f803..265949e 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -199,7 +199,7 @@ pub(crate) async fn background_requests(
+ ) -> Result<Option<String>, Box<TransactionError>> {
+     preferences(user, html).await?;
+     compression_test(user, html).await?;
+-    if html.contains(r#"data-wp-interactive="woocommerce/product-button""#) {
++    if html.contains("never-on-a-page") {
+         let path = format!("{}wc/store/v1/cart", rest_root(html));
+         let name = path.trim_start_matches('/').to_string();
+         let goose = crate::wordpress::get_named(user, &path, &name).await?;

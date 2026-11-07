@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..39b42b4 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2194,7 +2194,7 @@ pub async fn place_order(
+         .into_iter()
+         .flatten()
+         .any(|(name, value)| name != "email" && value.as_str() != on_file[name].as_str());
+-    if rest_differs {
++    if !rest_differs {
+         store_batch(
+             user,
+             shop,

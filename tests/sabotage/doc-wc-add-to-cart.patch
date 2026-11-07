@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..77bc6ce 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1540,7 +1540,7 @@ fn add_to_cart_form(html: &str) -> Option<(String, String)> {
+         .find_iter(html)
+         .find(|form| {
+             attribute(form.as_str(), "class")
+-                .is_some_and(|c| c.split_whitespace().any(|c| c == "cart"))
++                .is_some_and(|c| c.split_whitespace().any(|c| c == "cart-form"))
+         })
+         .map(|form| {
+             let action = attribute(form.as_str(), "action").unwrap_or_default();

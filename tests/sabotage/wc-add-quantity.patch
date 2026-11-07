@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..462eee0 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1641,7 +1641,7 @@ pub async fn add_to_cart(
+     let mut params: Vec<(String, String)> = form_controls(&form)
+         .into_iter()
+         .map(|(name, value)| {
+-            if name == "quantity" {
++            if name == "qty" {
+                 (name, quantity.to_string())
+             } else {
+                 (name, value)

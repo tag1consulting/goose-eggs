@@ -135,7 +135,8 @@ impl<'a> ShopBuilder<'a> {
         self
     }
 
-    /// The cart page, used by the classic flows.
+    /// The cart page: the block cart [`cart_page`] loads, or the classic cart
+    /// the classic flows use.
     ///
     /// Defaults to `cart/`.
     ///
@@ -153,7 +154,8 @@ impl<'a> ShopBuilder<'a> {
         self
     }
 
-    /// The checkout page, used by [`classic_checkout`].
+    /// The checkout page: the block checkout [`checkout_page`] loads, or the
+    /// classic checkout [`classic_checkout`] uses.
     ///
     /// Defaults to `checkout/`.
     ///
@@ -207,7 +209,8 @@ impl<'a> ShopBuilder<'a> {
         self
     }
 
-    /// The Store API root.
+    /// The Store API root, where the block cart and checkout send their
+    /// requests, and [`StoreApiCart`] sends its own.
     ///
     /// Defaults to `wp-json/wc/store/v1/`.
     ///
@@ -217,8 +220,8 @@ impl<'a> ShopBuilder<'a> {
     ///
     /// let _shop = Shop::builder().store_api("api/wc/store/v1/").build();
     /// # mod support { include!("../tests/doc/woocommerce.rs"); }
-    /// # let server = support::store_api_site("api/wc/store/v1/");
-    /// # support::discover_products("ShopBuilder::store_api", &server, &_shop);
+    /// # let server = support::cart_page_site_at("cart/", "api/wc/store/v1/");
+    /// # support::update_cart_item("ShopBuilder::store_api", &server, &_shop);
     /// ```
     pub fn store_api(mut self, store_api: &'a str) -> Self {
         self.store_api = store_api;
@@ -629,8 +632,16 @@ pub struct CartItem {
     pub quantity: u64,
 }
 
-/// A user's cart through the Store API, the API WooCommerce's block cart and
-/// checkout use.
+/// A user's cart driven straight through the Store API, as a headless storefront
+/// (a separate front end on WooCommerce's API) drives it.
+///
+/// This is not what a browser on a standard theme does. A shopper's browser
+/// loads the product page, the cart page and the checkout page, and the Store
+/// API requests it sends are the few those pages' scripts send, with the nonce
+/// the page carries: [`add_to_cart`], [`cart_page`], [`update_cart_item`],
+/// [`remove_cart_item`], [`checkout_page`] and [`place_order`] do that. Use
+/// `StoreApiCart` only to load test a headless storefront's use of the API on
+/// purpose; it skips every page a browser on the shop would load.
 ///
 /// Store API writes must send back the `Nonce` header the API last answered
 /// with, along with the session cookie; the cart keeps it, refreshes it from every
@@ -1096,8 +1107,8 @@ impl<'a> Checkout<'a> {
     }
 }
 
-/// Used to build a [`Checkout`], which [`StoreApiCart::checkout`] and
-/// [`classic_checkout`] take.
+/// Used to build a [`Checkout`], which [`place_order`], [`classic_checkout`] and
+/// [`StoreApiCart::checkout`] take.
 ///
 /// The default is a complete US address and Cash on delivery (`cod`), which
 /// needs no outside service; the gateway must be enabled in the shop.
@@ -1473,7 +1484,8 @@ pub async fn my_account_log_in(
     let (headers, html) = read_response(goose).await;
     if html.contains("woocommerce-MyAccount-navigation") && !html.contains("woocommerce-form-login")
     {
-        crate::load_static_elements(user, &html).await;
+        crate::page::load_assets(user, &request.final_url, &html).await;
+        crate::page::background_requests(user, &html).await?;
         return Ok(html);
     }
     let reason = error_notice(&html).unwrap_or_else(|| "not logged in".to_string());
@@ -1519,13 +1531,759 @@ pub async fn my_account_orders(
     load_page(user, goose, Some(&account)).await
 }
 
+// The form WooCommerce writes on a product page for adding it to the cart,
+// `<form class="cart">`: its action and contents.
+fn add_to_cart_form(html: &str) -> Option<(String, String)> {
+    let end = Regex::new(r"(?i)</form\s*>").unwrap();
+    Regex::new(r"(?is)<form\b[^>]*>")
+        .unwrap()
+        .find_iter(html)
+        .find(|form| {
+            attribute(form.as_str(), "class")
+                .is_some_and(|c| c.split_whitespace().any(|c| c == "cart"))
+        })
+        .map(|form| {
+            let action = attribute(form.as_str(), "action").unwrap_or_default();
+            let rest = &html[form.end()..];
+            let contents = end.find(rest).map_or(rest, |close| &rest[..close.start()]);
+            (action, contents.to_string())
+        })
+}
+
+/// Add a product to the cart from its page, as a shopper does: load the
+/// product's page (with its assets and the Store API cart read its scripts
+/// make), then submit its add to cart form, `<form class="cart">`, with
+/// `quantity` and the Add to cart button's `add-to-cart` value, to the form's
+/// action, the product's own URL. WooCommerce answers with the product page
+/// again, showing an "added to your cart" notice; it is loaded the same way.
+///
+/// Fails when the product page has no add to cart form (the product is out of
+/// stock, or not sold), the form needs a choice first (a variable product's
+/// `variations_form`), or WooCommerce shows an error notice instead of the
+/// success notice, which the failure names (for example not enough stock).
+/// The requests are named `product page` and `add to cart`, so every product
+/// shares their lines in the metrics. Returns the page WooCommerce answered with.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{add_to_cart, Product};
+///
+/// transaction!(add);
+///
+/// async fn add(user: &mut GooseUser) -> TransactionResult {
+///     // A product as discover_products reads it from the shop page.
+///     let beanie = Product {
+///         id: 14,
+///         name: "Beanie".to_string(),
+///         url: "/product/beanie/".to_string(),
+///         kind: "simple".to_string(),
+///         purchasable: true,
+///         in_stock: true,
+///         has_options: false,
+///     };
+///     let _page = add_to_cart(user, &beanie, 2).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::add_to_cart_site("/product/beanie/", 14, 2);
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(add(&mut user));
+/// # assert!(result.is_ok(), "doc example add_to_cart: {}", support::failure(&result));
+/// # assert_eq!(support::adds(&server), 1, "doc example add_to_cart: forms submitted");
+/// ```
+pub async fn add_to_cart(
+    user: &mut GooseUser,
+    product: &Product,
+    quantity: u64,
+) -> Result<String, Box<TransactionError>> {
+    let validate = crate::Validate::builder().text("single-product").build();
+    let goose = get_named(user, &product.url, "product page").await?;
+    let mut request = goose.request.clone();
+    let page = load_page(user, goose, Some(&validate)).await?;
+    let (action, form) = match add_to_cart_form(&page) {
+        Some(form) => form,
+        None => {
+            let stock = Regex::new(r#"(?is)<p\b[^>]*class="[^"]*\bstock\b[^"]*"[^>]*>(.*?)</p>"#)
+                .unwrap()
+                .captures(&page)
+                .map(|c| plain_text(&c[1]))
+                .unwrap_or_else(|| "not sold".to_string());
+            return fail(
+                user,
+                &format!("{}: no add to cart form on page: {}", product.url, stock),
+                &mut request,
+                None,
+                Some(&page),
+            );
+        }
+    };
+    let button = Regex::new(r"(?is)<button\b[^>]*>")
+        .unwrap()
+        .find_iter(&form)
+        .map(|b| b.as_str().to_string())
+        .find(|b| attribute(b, "name").as_deref() == Some("add-to-cart"));
+    let value = match button.and_then(|b| attribute(&b, "value")) {
+        Some(value) if !form.contains("variation_id") => value,
+        _ => {
+            return fail(
+                user,
+                &format!(
+                    "{}: the add to cart form needs a choice first (a variable product?)",
+                    product.url
+                ),
+                &mut request,
+                None,
+                Some(&page),
+            )
+        }
+    };
+    let mut params: Vec<(String, String)> = form_controls(&form)
+        .into_iter()
+        .map(|(name, value)| {
+            if name == "quantity" {
+                (name, quantity.to_string())
+            } else {
+                (name, value)
+            }
+        })
+        .collect();
+    params.push(("add-to-cart".to_string(), value));
+    let action = if action.is_empty() {
+        product.url.clone()
+    } else {
+        site_path(&action)
+    };
+    let builder = user
+        .get_request_builder(&GooseMethod::Post, &action)?
+        .form(&params);
+    let request = GooseRequest::builder()
+        .method(GooseMethod::Post)
+        .path(action.as_str())
+        .name("add to cart")
+        .set_request_builder(builder)
+        .build();
+    let goose = user.request(request).await?;
+    expect_success_notice(user, goose, "not added to cart").await
+}
+
+/// Add a product to the cart from a product archive (the shop page, or a
+/// category's), as a shopper does with the Add to cart button on its card:
+/// load the archive (with its assets and the Store API cart read its scripts
+/// make, whose `Nonce` header the button sends back), then send what the
+/// button's script sends, one `cart/add-item` of one product in a Store API
+/// `batch` POST.
+///
+/// Fails when the product has no Add to cart button on the archive (it is not
+/// on that page, or needs a choice first), the archive's cart read gave no
+/// nonce, or WooCommerce refuses the item, naming its error. The requests are
+/// named `product archive` and `<store_api>batch`. Returns the cart, as JSON.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{add_to_cart_from_archive, Product, Shop};
+///
+/// transaction!(add);
+///
+/// async fn add(user: &mut GooseUser) -> TransactionResult {
+///     let hoodie = Product {
+///         id: 12,
+///         name: "Hoodie with Logo".to_string(),
+///         url: "/product/hoodie-with-logo/".to_string(),
+///         kind: "simple".to_string(),
+///         purchasable: true,
+///         in_stock: true,
+///         has_options: false,
+///     };
+///     let cart = add_to_cart_from_archive(user, &Shop::default(), "shop/", &hoodie).await?;
+///     assert!(cart["items"].is_array());
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::archive_add_site("shop/", 12);
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(add(&mut user));
+/// # assert!(result.is_ok(), "doc example add_to_cart_from_archive: {}", support::failure(&result));
+/// # assert_eq!(support::adds(&server), 1, "doc example add_to_cart_from_archive: items added");
+/// ```
+pub async fn add_to_cart_from_archive(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+    archive: &str,
+    product: &Product,
+) -> Result<serde_json::Value, Box<TransactionError>> {
+    let goose = get_named(user, archive, "product archive").await?;
+    let mut request = goose.request.clone();
+    let page = crate::page::open(user, goose, None).await?;
+    let button = format!(r#"data-product_id="{}""#, product.id);
+    let direct = product_cards(&page.html)
+        .iter()
+        .any(|p| p.id == product.id && !p.has_options)
+        && page.html.contains(&button);
+    let nonce = match (direct, page.store_api_nonce) {
+        (true, Some(nonce)) => nonce,
+        (false, _) => {
+            return fail(
+                user,
+                &format!(
+                    "{}: product {} has no Add to cart button on the page",
+                    archive, product.id
+                ),
+                &mut request,
+                None,
+                Some(&page.html),
+            )
+        }
+        (true, None) => {
+            return fail(
+                user,
+                &format!("{}: the page's cart read gave no Store API nonce", archive),
+                &mut request,
+                None,
+                Some(&page.html),
+            )
+        }
+    };
+    let body = serde_json::json!({ "requests": [{
+        "path": "/wc/store/v1/cart/add-item",
+        "method": "POST",
+        "headers": { "Nonce": nonce, "Content-Type": "application/json" },
+        "body": { "id": product.id, "quantity": 1 },
+    }]});
+    let path = format!("{}batch", shop.store_api);
+    let goose = send_json(
+        user,
+        GooseMethod::Post,
+        &path,
+        &path,
+        &[("Nonce", nonce.as_str())],
+        Some(&body),
+    )
+    .await?;
+    batch_response(user, goose, &path).await
+}
+
+// The one response in a Store API batch answer, failing when the batch or the
+// request in it failed; WooCommerce's error code and message name the failure.
+async fn batch_response(
+    user: &mut GooseUser,
+    goose: goose::goose::GooseResponse,
+    path: &str,
+) -> Result<serde_json::Value, Box<TransactionError>> {
+    let mut request = goose.request.clone();
+    let (headers, json) = json_response(user, goose).await?;
+    let response = &json["responses"][0];
+    let status = response["status"].as_u64().unwrap_or(0);
+    if (200..300).contains(&status) {
+        return Ok(response["body"].clone());
+    }
+    fail(
+        user,
+        &format!(
+            "{}: {} {}",
+            path,
+            status,
+            crate::wordpress::rest_error(&response["body"])
+        ),
+        &mut request,
+        Some(&headers),
+        Some(&json.to_string()),
+    )
+}
+
+/// Load the cart page, as a shopper viewing the cart does: the page and its
+/// assets. WooCommerce's block cart preloads the cart into the page, so its
+/// scripts make no request on opening.
+///
+/// The request is named `cart page`. Returns the page, which
+/// [`update_cart_item`] and [`remove_cart_item`] act on.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{cart_page, Shop};
+///
+/// transaction!(view_cart);
+///
+/// async fn view_cart(user: &mut GooseUser) -> TransactionResult {
+///     let _cart = cart_page(user, &Shop::default()).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::cart_page_site("cart/");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(view_cart(&mut user));
+/// # assert!(result.is_ok(), "doc example cart_page: {}", support::failure(&result));
+/// ```
+pub async fn cart_page(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+) -> Result<String, Box<TransactionError>> {
+    let validate = crate::Validate::builder().text("woocommerce-cart").build();
+    let goose = get_named(user, shop.cart, "cart page").await?;
+    load_page(user, goose, Some(&validate)).await
+}
+
+// What a block cart or checkout page gives its scripts: the Store API nonce,
+// the REST nonce and the cart it preloads.
+struct StorePage {
+    nonce: String,
+    rest_nonce: Option<String>,
+    cart: serde_json::Value,
+}
+
+// Read the Store API nonce and the preloaded cart from a block cart or checkout
+// page, failing on `request` when the page has neither.
+fn store_page(html: &str) -> Result<StorePage, String> {
+    let nonce = Regex::new(r#"storeApiNonce\s*:\s*['"]([^'"]+)['"]"#)
+        .unwrap()
+        .captures(html)
+        .map(|c| c[1].to_string());
+    let cart = crate::page::preloaded(html)
+        .get("/wc/store/v1/cart")
+        .map(|cart| cart["body"].clone());
+    match (nonce, cart) {
+        (Some(nonce), Some(cart)) => Ok(StorePage {
+            nonce,
+            rest_nonce: get_rest_nonce(html),
+            cart,
+        }),
+        (None, _) => Err("no Store API nonce on the page".to_string()),
+        (_, None) => Err("no preloaded cart on the page".to_string()),
+    }
+}
+
+// The headers the block cart and checkout send with every Store API request.
+fn store_headers(page: &StorePage) -> Vec<(&str, &str)> {
+    let mut headers = vec![("Nonce", page.nonce.as_str())];
+    if let Some(rest_nonce) = page.rest_nonce.as_deref() {
+        headers.push(("X-WP-Nonce", rest_nonce));
+    }
+    headers
+}
+
+// The cart line holding `product_id`, from a cart as the Store API returns it.
+fn cart_line(cart: &serde_json::Value, product_id: u64) -> Option<String> {
+    cart["items"]
+        .as_array()?
+        .iter()
+        .find(|item| item["id"].as_u64() == Some(product_id))
+        .and_then(|item| item["key"].as_str())
+        .map(str::to_string)
+}
+
+// Fail the transaction on a page that cannot do what was asked of it. The
+// page's request was made earlier, by another call, so no request is failed:
+// the transaction fails with the reason, which the debug log also gets.
+fn page_fail<T>(
+    user: &mut GooseUser,
+    page_path: &str,
+    reason: &str,
+    html: &str,
+) -> Result<T, Box<TransactionError>> {
+    let reason = format!("{}: {}", page_path, reason);
+    log::warn!("{}", reason);
+    user.log_debug(&reason, None, None, Some(html))?;
+    Err(Box::new(TransactionError::Custom(reason)))
+}
+
+/// Change the quantity of a product's line on a loaded cart page, as the cart's
+/// own quantity controls do: a Store API `cart/update-item` POST, `?_locale=site`,
+/// with the line's key from the cart the page preloads and the page's Store API
+/// and REST nonces.
+///
+/// `cart` is the page [`cart_page`] returned. Fails when the page has no Store
+/// API nonce or preloaded cart (it is not WooCommerce's block cart), the
+/// product is not in the cart, or WooCommerce refuses the change, naming its
+/// error. The request is named `<store_api>cart/update-item`. Returns the
+/// cart, as JSON.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{cart_page, update_cart_item, Shop};
+///
+/// transaction!(buy_more);
+///
+/// async fn buy_more(user: &mut GooseUser) -> TransactionResult {
+///     let shop = Shop::default();
+///     let cart = cart_page(user, &shop).await?;
+///     let updated = update_cart_item(user, &shop, &cart, 14, 2).await?;
+///     assert_eq!(updated["items"][0]["quantity"], 2);
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::cart_page_site("cart/");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(buy_more(&mut user));
+/// # assert!(result.is_ok(), "doc example update_cart_item: {}", support::failure(&result));
+/// ```
+pub async fn update_cart_item(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+    cart: &str,
+    product_id: u64,
+    quantity: u64,
+) -> Result<serde_json::Value, Box<TransactionError>> {
+    let page = match store_page(cart) {
+        Ok(page) => page,
+        Err(reason) => return page_fail(user, shop.cart, &reason, cart),
+    };
+    let key = match cart_line(&page.cart, product_id) {
+        Some(key) => key,
+        None => {
+            let reason = format!("product {} is not in the cart", product_id);
+            return page_fail(user, shop.cart, &reason, cart);
+        }
+    };
+    let path = format!("{}cart/update-item?_locale=site", shop.store_api);
+    let name = format!("{}cart/update-item", shop.store_api);
+    let body = serde_json::json!({ "key": key, "quantity": quantity });
+    let goose = send_json(
+        user,
+        GooseMethod::Post,
+        &path,
+        &name,
+        &store_headers(&page),
+        Some(&body),
+    )
+    .await?;
+    json_response(user, goose).await.map(|(_, json)| json)
+}
+
+/// Remove a product's line on a loaded cart page, as the cart's own remove
+/// control does: a Store API `batch` POST, `?_locale=site`, holding one
+/// `cart/remove-item` with the line's key, and the page's nonces.
+///
+/// `cart` is the page [`cart_page`] returned. Fails as [`update_cart_item`]
+/// does. The request is named `<store_api>batch`. Returns the cart, as JSON.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{cart_page, remove_cart_item, Shop};
+///
+/// transaction!(change_mind);
+///
+/// async fn change_mind(user: &mut GooseUser) -> TransactionResult {
+///     let shop = Shop::default();
+///     let cart = cart_page(user, &shop).await?;
+///     let _cart = remove_cart_item(user, &shop, &cart, 14).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::cart_page_site("cart/");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(change_mind(&mut user));
+/// # assert!(result.is_ok(), "doc example remove_cart_item: {}", support::failure(&result));
+/// ```
+pub async fn remove_cart_item(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+    cart: &str,
+    product_id: u64,
+) -> Result<serde_json::Value, Box<TransactionError>> {
+    let page = match store_page(cart) {
+        Ok(page) => page,
+        Err(reason) => return page_fail(user, shop.cart, &reason, cart),
+    };
+    let key = match cart_line(&page.cart, product_id) {
+        Some(key) => key,
+        None => {
+            let reason = format!("product {} is not in the cart", product_id);
+            return page_fail(user, shop.cart, &reason, cart);
+        }
+    };
+    let body = serde_json::json!({ "requests": [{
+        "path": "/wc/store/v1/cart/remove-item",
+        "data": { "key": key },
+        "method": "POST",
+        "cache": "no-store",
+        "body": { "key": key },
+        "headers": { "Nonce": page.nonce },
+    }]});
+    store_batch(user, shop, &page, &body).await
+}
+
+// Send a Store API batch from a block cart or checkout page, as its scripts do.
+async fn store_batch(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+    page: &StorePage,
+    body: &serde_json::Value,
+) -> Result<serde_json::Value, Box<TransactionError>> {
+    let path = format!("{}batch?_locale=site", shop.store_api);
+    let name = format!("{}batch", shop.store_api);
+    let goose = send_json(
+        user,
+        GooseMethod::Post,
+        &path,
+        &name,
+        &store_headers(page),
+        Some(body),
+    )
+    .await?;
+    batch_response(user, goose, &name).await
+}
+
+/// Load the checkout page, as a shopper going to checkout does: the page and
+/// its assets. WooCommerce's block checkout preloads the cart and the
+/// customer's addresses into the page, so its scripts make no request on
+/// opening.
+///
+/// The request is named `checkout page`. Returns the page, which
+/// [`place_order`] acts on.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{checkout_page, Shop};
+///
+/// transaction!(go_to_checkout);
+///
+/// async fn go_to_checkout(user: &mut GooseUser) -> TransactionResult {
+///     let _checkout = checkout_page(user, &Shop::default()).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::checkout_page_site("checkout/");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(go_to_checkout(&mut user));
+/// # assert!(result.is_ok(), "doc example checkout_page: {}", support::failure(&result));
+/// ```
+pub async fn checkout_page(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+) -> Result<String, Box<TransactionError>> {
+    let validate = crate::Validate::builder()
+        .text("woocommerce-checkout")
+        .build();
+    let goose = get_named(user, shop.checkout, "checkout page").await?;
+    load_page(user, goose, Some(&validate)).await
+}
+
+// The order number an order received page shows: the block theme's order
+// summary ("Order #:") or the classic overview ("Order number:").
+pub(crate) fn order_number(html: &str) -> Option<String> {
+    let patterns = [
+        r#"(?s)order-confirmation-summary-list-item__key">[^<]*</span>\s*<span[^>]*__value">\s*([^<\s]+)\s*<"#,
+        r#"(?s)woocommerce-order-overview__order[^"]*"[^>]*>.*?<strong>\s*([^<\s]+)\s*</strong>"#,
+    ];
+    patterns.iter().find_map(|pattern| {
+        Regex::new(pattern)
+            .unwrap()
+            .captures(html)
+            .map(|c| plain_text(&c[1]))
+            .filter(|n| !n.is_empty())
+    })
+}
+
+/// Place the order on a loaded checkout page, as a shopper does on
+/// WooCommerce's block checkout: type in the address from `checkout` and click
+/// Place order.
+///
+/// The checkout's scripts save each change to the customer as it is typed, as
+/// a Store API `batch` POST holding a `cart/update-customer`: one when the
+/// email address differs from what the page preloaded, one when the rest of
+/// the address does (the shipping address is the billing address). A
+/// returning customer whose address is on file sends neither. Place order is
+/// then a Store API `checkout` POST of the addresses, the payment method and
+/// the cart's total, every request with the page's Store API and REST nonces
+/// and `?_locale=site`. The order received page WooCommerce sends the browser
+/// to is then loaded, with its assets.
+///
+/// `checkout_page` is the page [`checkout_page`] returned. Fails when the page
+/// has no Store API nonce or preloaded cart, the cart is empty, WooCommerce
+/// refuses the checkout (a 400, such as `woocommerce_rest_invalid_address`, or
+/// a payment that did not succeed), or the order received page shows no order
+/// number. The requests are named `<store_api>batch`, `<store_api>checkout` and
+/// `order received`. Returns the order received page.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::woocommerce::{checkout_page, place_order, Checkout, Shop};
+///
+/// transaction!(buy);
+///
+/// async fn buy(user: &mut GooseUser) -> TransactionResult {
+///     let shop = Shop::default();
+///     let page = checkout_page(user, &shop).await?;
+///     let _received = place_order(user, &shop, &page, &Checkout::builder().build()).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/woocommerce.rs"); }
+/// # let server = support::place_order_site();
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(buy(&mut user));
+/// # assert!(result.is_ok(), "doc example place_order: {}", support::failure(&result));
+/// # assert_eq!(support::checkouts(&server), 1, "doc example place_order: orders placed");
+/// ```
+pub async fn place_order(
+    user: &mut GooseUser,
+    shop: &Shop<'_>,
+    checkout_page: &str,
+    checkout: &Checkout<'_>,
+) -> Result<String, Box<TransactionError>> {
+    let page = match store_page(checkout_page) {
+        Ok(page) => page,
+        Err(reason) => return page_fail(user, shop.checkout, &reason, checkout_page),
+    };
+    if page.cart["items"]
+        .as_array()
+        .is_none_or(|items| items.is_empty())
+    {
+        return page_fail(user, shop.checkout, "the cart is empty", checkout_page);
+    }
+
+    // The address as the page has it, and as the shopper types it in.
+    let on_file = page.cart["billing_address"].clone();
+    let field = |address: &serde_json::Value, name: &str| {
+        address[name].as_str().unwrap_or_default().to_string()
+    };
+    let mut billing = serde_json::Map::new();
+    for name in [
+        "first_name",
+        "last_name",
+        "company",
+        "address_1",
+        "address_2",
+        "city",
+        "state",
+        "postcode",
+        "country",
+        "email",
+        "phone",
+    ] {
+        let value = checkout
+            .billing(name)
+            .map(str::to_string)
+            .unwrap_or_else(|| field(&on_file, name));
+        billing.insert(name.to_string(), value.into());
+    }
+    let billing = serde_json::Value::Object(billing);
+    let mut shipping = billing.clone();
+    if let Some(shipping) = shipping.as_object_mut() {
+        shipping.remove("email");
+    }
+
+    let update = |data: serde_json::Value| {
+        serde_json::json!({ "requests": [{
+            "path": "/wc/store/v1/cart/update-customer",
+            "method": "POST",
+            "data": data,
+            "cache": "no-store",
+            "body": data,
+            "headers": { "Nonce": page.nonce },
+        }]})
+    };
+    if field(&billing, "email") != field(&on_file, "email") {
+        let mut typed = on_file.clone();
+        typed["email"] = billing["email"].clone();
+        store_batch(
+            user,
+            shop,
+            &page,
+            &update(serde_json::json!({ "billing_address": typed })),
+        )
+        .await?;
+    }
+    let rest_differs = billing
+        .as_object()
+        .into_iter()
+        .flatten()
+        .any(|(name, value)| name != "email" && value.as_str() != on_file[name].as_str());
+    if rest_differs {
+        store_batch(
+            user,
+            shop,
+            &page,
+            &update(serde_json::json!({
+                "billing_address": billing,
+                "shipping_address": shipping,
+            })),
+        )
+        .await?;
+    }
+
+    let body = serde_json::json!({
+        "additional_fields": {},
+        "billing_address": billing,
+        "create_account": false,
+        "customer_note": "",
+        "customer_password": "",
+        "shipping_address": shipping,
+        "expected_total": page.cart["totals"]["total_price"],
+        "payment_method": checkout.payment_method,
+        "payment_data": [{
+            "key": format!("wc-{}-new-payment-method", checkout.payment_method),
+            "value": false,
+        }],
+    });
+    let path = format!("{}checkout?_locale=site", shop.store_api);
+    let name = format!("{}checkout", shop.store_api);
+    let goose = send_json(
+        user,
+        GooseMethod::Post,
+        &path,
+        &name,
+        &store_headers(&page),
+        Some(&body),
+    )
+    .await?;
+    let mut request = goose.request.clone();
+    let (headers, order) = json_response(user, goose).await?;
+    let status = order["payment_result"]["payment_status"]
+        .as_str()
+        .unwrap_or("none");
+    let redirect = order["payment_result"]["redirect_url"].as_str();
+    let redirect = match redirect {
+        Some(redirect)
+            if order["order_id"].as_u64().is_some() && matches!(status, "success" | "pending") =>
+        {
+            site_path(redirect)
+        }
+        _ => {
+            return fail(
+                user,
+                &format!("{}: order not placed: payment {}", name, status),
+                &mut request,
+                Some(&headers),
+                Some(&order.to_string()),
+            )
+        }
+    };
+    let goose = get_named(user, &redirect, "order received").await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, None).await?;
+    if order_number(&html).is_none() {
+        return fail(
+            user,
+            &format!("{}: no order number on the order received page", redirect),
+            &mut request,
+            None,
+            Some(&html),
+        );
+    }
+    Ok(html)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     // Pages captured from the WooCommerce demo shop by
     // examples/wordpress-sites/capture-fixtures.sh.
-    const PRODUCTS: &str = include_str!("../tests/fixtures/woocommerce/store-products.json");
+    const SHOP: &str = include_str!("../tests/fixtures/woocommerce/shop-block.html");
+    const SHOP_PAGE_2: &str = include_str!("../tests/fixtures/woocommerce/shop-block-page-2.html");
+    const CLASSIC_SHOP: &str = include_str!("../tests/fixtures/woocommerce/shop.html");
+    const ORDER_RECEIVED: &str =
+        include_str!("../tests/fixtures/woocommerce/order-received-block.html");
+    const ORDER_RECEIVED_CLASSIC: &str =
+        include_str!("../tests/fixtures/woocommerce/order-received.html");
+    const ORDER_RECEIVED_WRONG_KEY: &str =
+        include_str!("../tests/fixtures/woocommerce/order-received-wrong-key.html");
     const CLASSIC_ADD: &str =
         include_str!("../tests/fixtures/woocommerce/classic-add-to-cart.html");
     const CLASSIC_ADD_INVALID: &str =
@@ -1550,48 +2308,77 @@ mod tests {
     }
 
     #[test]
-    fn parse_product_cases() {
-        let listed: serde_json::Value = serde_json::from_str(PRODUCTS).unwrap();
-        let products: Vec<Product> = listed
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter_map(parse_product)
-            .collect();
-        assert_eq!(products.len(), 5, "parse_product case count");
+    fn product_cards_cases() {
+        let products = product_cards(SHOP);
         assert_eq!(
-            products[2],
-            Product {
-                id: 31,
-                name: "Beanie with Logo".to_string(),
-                url: "/product/beanie-with-logo/".to_string(),
+            products.len(),
+            16,
+            "product_cards case block shop page count"
+        );
+        let beanie = products.iter().find(|p| p.id == 14).expect("the beanie");
+        assert_eq!(
+            beanie,
+            &Product {
+                id: 14,
+                name: "Beanie".to_string(),
+                url: "/product/beanie/".to_string(),
                 kind: "simple".to_string(),
                 purchasable: true,
                 in_stock: true,
                 has_options: false,
             },
-            "parse_product case simple product"
+            "product_cards case simple product"
         );
-        assert_eq!(products[0].kind, "external", "parse_product case external");
+        let vneck = products.iter().find(|p| p.id == 10).expect("the v-neck");
+        assert_eq!(
+            (vneck.kind.as_str(), vneck.has_options),
+            ("variable", true),
+            "product_cards case a card with options"
+        );
+        let external = product_cards(SHOP_PAGE_2)
+            .into_iter()
+            .find(|p| p.kind == "external")
+            .expect("the external product");
         assert!(
-            !products[0].purchasable,
-            "parse_product case external not purchasable"
+            !external.purchasable && !external.has_options,
+            "product_cards case external: {:?}",
+            external
+        );
+        // A classic theme's product loop.
+        let classic = product_cards(CLASSIC_SHOP);
+        assert!(
+            classic.iter().any(|p| p.can_add_to_cart()),
+            "product_cards case classic loop: {:?}",
+            classic
+        );
+        let card = r#"<ul><li class="product type-product post-7 outofstock product-type-simple"><a href="https://example.com/p/"><h2>Gone</h2></a></li></ul>"#;
+        assert_eq!(
+            product_cards(card)
+                .first()
+                .map(|p| (p.id, p.in_stock, p.has_options, p.url.as_str())),
+            Some((7, false, false, "/p/")),
+            "product_cards case out of stock"
+        );
+        assert!(
+            product_cards("<ul><li class=\"menu-item\">x</li></ul>").is_empty(),
+            "product_cards case no products"
+        );
+    }
+
+    #[test]
+    fn order_number_cases() {
+        assert!(
+            order_number(ORDER_RECEIVED).is_some_and(|n| n.parse::<u64>().is_ok()),
+            "order_number case block order summary"
+        );
+        assert!(
+            order_number(ORDER_RECEIVED_CLASSIC).is_some(),
+            "order_number case classic overview"
         );
         assert_eq!(
-            parse_product(&serde_json::json!({"id": 1, "permalink": "https://e.com/p/"}))
-                .map(|p| (p.url, p.purchasable)),
-            Some(("/p/".to_string(), false)),
-            "parse_product case sparse"
-        );
-        assert_eq!(
-            parse_product(&serde_json::json!({"id": 1})),
+            order_number(ORDER_RECEIVED_WRONG_KEY),
             None,
-            "parse_product case no permalink"
-        );
-        assert_eq!(
-            parse_product(&serde_json::json!({"permalink": "/p/"})),
-            None,
-            "parse_product case no id"
+            "order_number case wrong order key"
         );
     }
 

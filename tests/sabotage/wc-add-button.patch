@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..b79b554 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1648,7 +1648,7 @@ pub async fn add_to_cart(
+             }
+         })
+         .collect();
+-    params.push(("add-to-cart".to_string(), value));
++    params.push(("add-to-cart".to_string(), value.replace('1', "")));
+     let action = if action.is_empty() {
+         product.url.clone()
+     } else {

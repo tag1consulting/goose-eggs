@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..68f7f36 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1775,7 +1775,7 @@ async fn batch_response(
+     let (headers, json) = json_response(user, goose).await?;
+     let response = &json["responses"][0];
+     let status = response["status"].as_u64().unwrap_or(0);
+-    if (200..300).contains(&status) {
++    if (200..500).contains(&status) {
+         return Ok(response["body"].clone());
+     }
+     fail(
