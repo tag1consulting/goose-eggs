@@ -1,14 +1,23 @@
 //! Functionality that's specific to WooCommerce.
 //!
-//! The helpers here drive any WooCommerce shop: browsing its shop, products and
-//! search, the Store API cart and checkout that WooCommerce's block cart and
-//! checkout use, the classic shortcode cart and checkout, and My Account. They
-//! build on [`crate::wordpress`]. None of them assume a product, a theme or a
-//! page path beyond WooCommerce's defaults, which [`ShopBuilder`] changes.
+//! The helpers here drive any WooCommerce shop the way a shopper's browser does:
+//! browsing its shop, products and search, adding to the cart from a product
+//! page or the shop page, the block cart and checkout, the classic shortcode
+//! cart and checkout, and My Account. Each loads the pages a browser loads, with
+//! their static assets, and sends only the background requests those pages'
+//! own scripts send, with the nonces the pages carry; what a browser requests
+//! for each action is recorded under `tests/fixtures/browser/` in the
+//! repository. They build on [`crate::wordpress`]. None of them assume a
+//! product, a theme or a page path beyond WooCommerce's defaults, which
+//! [`ShopBuilder`] changes.
+//!
+//! [`StoreApiCart`] is the exception: it drives the Store API directly, as a
+//! headless storefront does, for load testing one on purpose.
 
 use crate::wordpress::{
-    fail, form_controls, get_form, get_form_by_class, get_named, header_value, json_response,
-    load_page, plain_text, query_encode, read_response, request_ok, send_json, site_path,
+    attribute, fail, form_controls, get_form, get_form_by_class, get_named, get_rest_nonce,
+    header_value, json_response, load_page, pagination_links, plain_text, query_encode,
+    read_response, request_ok, send_json, site_path,
 };
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -352,7 +361,7 @@ pub async fn product_search(
     load_page(user, goose, validate).await
 }
 
-/// A product, as the Store API lists it.
+// A product, as its card on the shop page shows it (see [`discover_products`]).
 ///
 /// # Example
 /// ```rust
@@ -414,11 +423,23 @@ impl Product {
     }
 }
 
-/// Find a shop's products through the Store API, up to `max`, following
-/// `X-WP-TotalPages` 100 at a time.
+/// Find a shop's products as a shopper browsing it does: load the shop page and
+/// each page its pagination links to, and read every product card on them, up
+/// to `max` products.
 ///
-/// Discovery makes several requests, so run it once per load test and share the
-/// result, as with [`crate::wordpress::discover`].
+/// A card is the `<li>` WooCommerce writes for a product, in a block theme's
+/// product collection or a classic theme's product loop. Each [`Product`] is
+/// read from its card: the ID from its `post-<id>` class, the page and name
+/// from its link and title, the type from its `product-type-<type>` class,
+/// whether it is purchasable and in stock from its `purchasable` and
+/// `instock` (or `onbackorder`) classes, and whether it needs a choice first
+/// from its button: a card whose button adds to the cart directly carries
+/// `ajax_add_to_cart`; one that needs options links to the product instead.
+///
+/// The pages are loaded without their assets, each named `discover products`.
+/// Fails when the shop page cannot be loaded, or shows no product cards (the
+/// shop is empty, or is not at [`ShopBuilder::shop`]). Run it once per load test and
+/// share the result, as with [`crate::wordpress::discover`].
 ///
 /// # Example
 /// ```rust
@@ -434,7 +455,7 @@ impl Product {
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/woocommerce.rs"); }
-/// # let server = support::store_api_site("wp-json/wc/store/v1/");
+/// # let server = support::shop_site("shop/");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(find_products(&mut user));
 /// # assert!(result.is_ok(), "doc example discover_products: {}", support::failure(&result));
@@ -444,49 +465,119 @@ pub async fn discover_products(
     shop: &Shop<'_>,
     max: usize,
 ) -> Result<Vec<Product>, Box<TransactionError>> {
-    let name = format!("{}products", shop.store_api);
-    let mut products = Vec::new();
-    // One page size throughout, so the pages line up.
-    let per_page = max.min(100);
-    let mut page = 1;
-    while products.len() < max {
-        let path = format!(
-            "{}products?per_page={}&page={}",
-            shop.store_api, per_page, page
-        );
-        let goose = get_named(user, &path, &name).await?;
-        let (headers, json) = json_response(user, goose).await?;
-        let listed = json.as_array().cloned().unwrap_or_default();
-        for item in &listed {
-            if let Some(product) = parse_product(item) {
+    let mut products: Vec<Product> = Vec::new();
+    let start = site_path(&user.build_url(shop.shop)?);
+    let mut queue = std::collections::VecDeque::from([start.clone()]);
+    let mut seen = std::collections::HashSet::from([start]);
+    let mut first: Option<(GooseRequestMetric, String)> = None;
+    while let Some(path) = queue.pop_front() {
+        if products.len() >= max {
+            break;
+        }
+        let goose = get_named(user, &path, "discover products").await?;
+        request_ok(&goose)?;
+        let request = goose.request.clone();
+        let page_url = goose.request.final_url.to_string();
+        let (_, html) = read_response(goose).await;
+        if first.is_none() {
+            first = Some((request, html.clone()));
+        }
+        for product in product_cards(&html) {
+            if !products.iter().any(|p| p.id == product.id) {
                 products.push(product);
             }
         }
-        let pages = header_value(&headers, "X-WP-TotalPages")
-            .and_then(|p| p.parse::<usize>().ok())
-            .unwrap_or(1);
-        if listed.is_empty() || page >= pages {
-            break;
+        for link in pagination_links(user, &page_url, &html) {
+            if seen.insert(link.clone()) {
+                queue.push_back(link);
+            }
         }
-        page += 1;
+    }
+    if products.is_empty() {
+        if let Some((mut request, html)) = first {
+            return fail(
+                user,
+                &format!("{}: no product cards on the shop page", shop.shop),
+                &mut request,
+                None,
+                Some(&html),
+            );
+        }
     }
     products.truncate(max);
     Ok(products)
 }
 
-// A product from a Store API product listing.
-fn parse_product(item: &serde_json::Value) -> Option<Product> {
-    let text = |key: &str| item.get(key).and_then(|v| v.as_str()).map(str::to_string);
-    let flag = |key: &str| item.get(key).and_then(|v| v.as_bool()).unwrap_or(false);
-    Some(Product {
-        id: item.get("id")?.as_u64()?,
-        name: text("name").unwrap_or_default(),
-        url: site_path(&text("permalink")?),
-        kind: text("type").unwrap_or_default(),
-        purchasable: flag("is_purchasable"),
-        in_stock: flag("is_in_stock"),
-        has_options: flag("has_options"),
-    })
+// The products on a page, one from each product card, in page order.
+pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+    let item = Regex::new(r"(?is)<li\b[^>]*>").unwrap();
+    let starts: Vec<(usize, String)> = item
+        .find_iter(html)
+        .filter_map(|m| {
+            let class = attribute(m.as_str(), "class")?;
+            class
+                .split_whitespace()
+                .any(|c| c == "type-product")
+                .then(|| (m.start(), class))
+        })
+        .collect();
+    let post = Regex::new(r"^post-(\d+)$").unwrap();
+    let heading = Regex::new(r"(?is)<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>").unwrap();
+    let mut products = Vec::new();
+    for (n, (start, class)) in starts.iter().enumerate() {
+        let end = starts.get(n + 1).map_or(html.len(), |(next, _)| *next);
+        let card = &html[*start..end];
+        let card = match card.find("</ul") {
+            Some(list_end) => &card[..list_end],
+            None => card,
+        };
+        let classes: Vec<&str> = class.split_whitespace().collect();
+        let has = |name: &str| classes.contains(&name);
+        let id = classes
+            .iter()
+            .find_map(|c| post.captures(c).and_then(|c| c[1].parse::<u64>().ok()));
+        let url = tag_regex_a()
+            .find_iter(card)
+            .find_map(|a| attribute(a.as_str(), "href"));
+        let (id, url) = match (id, url) {
+            (Some(id), Some(url)) => (id, site_path(&url)),
+            _ => continue,
+        };
+        let name = heading
+            .captures(card)
+            .map(|c| plain_text(&c[1]))
+            .unwrap_or_default();
+        let kind = classes
+            .iter()
+            .find_map(|c| c.strip_prefix("product-type-"))
+            .unwrap_or_default()
+            .to_string();
+        let purchasable = has("purchasable");
+        let in_stock = has("instock") || has("onbackorder");
+        let direct = tag_regex_a()
+            .find_iter(card)
+            .chain(button_regex().find_iter(card))
+            .filter_map(|tag| attribute(tag.as_str(), "class"))
+            .any(|class| class.split_whitespace().any(|c| c == "ajax_add_to_cart"));
+        products.push(Product {
+            id,
+            name,
+            url,
+            kind,
+            purchasable,
+            in_stock,
+            has_options: purchasable && in_stock && !direct,
+        });
+    }
+    products
+}
+
+fn tag_regex_a() -> Regex {
+    Regex::new(r"(?is)<a\b[^>]*>").unwrap()
+}
+
+fn button_regex() -> Regex {
+    Regex::new(r"(?is)<button\b[^>]*>").unwrap()
 }
 
 /// A product that [`Product::can_add_to_cart`], picked at random; `None` when
