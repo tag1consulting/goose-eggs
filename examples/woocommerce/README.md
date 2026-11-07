@@ -1,6 +1,6 @@
 # Overview
 
-A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wordpress` helpers. It runs against any WooCommerce shop on WooCommerce's default pages and the default block cart and checkout, and makes the requests a shopper's browser makes: the pages, their static assets, and only the background requests those pages' own scripts send. It learns the shop's products from the product cards on its shop pages, and its category archives by browsing the shop from its home page, once, when the first user starts, so nothing about the catalog is hard coded.
+A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wordpress` helpers. It runs against any WooCommerce shop on WooCommerce's default pages and the default block cart and checkout, and makes the requests a shopper's browser makes: the pages, their static assets, and only the background requests those pages' own scripts send. It learns the shop's products from the product cards on its shop pages, and its category archives by browsing the shop from its home page, so nothing about the catalog is hard coded. It does that once, before the load test starts, as its `test_start` transaction: Goose runs it on a user of its own before any user starts, so the crawl is in neither the metrics nor the request log, and every user starts with the catalog in hand. If the crawl fails, every user fails its first transaction (`catalog`) with the reason and the load test stops.
 
 It has three kinds of users:
 
@@ -50,26 +50,36 @@ The classic flows (`classic_add_to_cart`, `classic_update_cart`, `classic_checko
 
 ## The wordpress helpers
 
-`goose_eggs::wordpress` drives any WordPress site the same way. `examples/wordpress-sites/theme-test-data/setup.sh start` brings up WordPress with the theme unit test data (posts, pages, categories, tags and comments of every shape) on port 18081, with an `editor` account (`editor-password`). A load test of it reads the site's real URLs once, then requests them at random, comments, searches and edits:
+`goose_eggs::wordpress` drives any WordPress site the same way. `examples/wordpress-sites/theme-test-data/setup.sh start` brings up WordPress with the theme unit test data (posts, pages, categories, tags and comments of every shape) on port 18081, with an `editor` account (`editor-password`). A load test of it reads the site's real URLs once, before it starts, then requests them at random, comments, searches and edits:
 
 ```rust
 use goose::prelude::*;
 use goose_eggs::wordpress::{self, Comment, Discover, Login, Post, SearchParams, SiteContent};
 use std::sync::OnceLock;
 
-static CONTENT: OnceLock<SiteContent> = OnceLock::new();
+static CONTENT: OnceLock<Result<SiteContent, String>> = OnceLock::new();
 
+// Registered with `GooseAttack::test_start(transaction!(find_content))`: Goose runs
+// it once, before any user starts, and does not measure it.
+async fn find_content(user: &mut GooseUser) -> TransactionResult {
+    let found = wordpress::discover(user, &Discover::builder().build()).await;
+    let _ = CONTENT.set(found.map_err(|error| error.to_string()));
+    Ok(())
+}
+
+// Each user's on start transaction.
 async fn start(user: &mut GooseUser) -> TransactionResult {
-    if CONTENT.get().is_none() {
-        let _ = CONTENT.set(wordpress::discover(user, &Discover::builder().build()).await?);
-    }
     let login = Login::builder().username("editor").password("editor-password").build();
     wordpress::log_in(user, &login).await?;
     Ok(())
 }
 
 async fn read_and_comment(user: &mut GooseUser) -> TransactionResult {
-    let post = CONTENT.get().and_then(|c| c.random("post")).unwrap_or("/");
+    let post = match CONTENT.get() {
+        Some(Ok(content)) => content.random("post").unwrap_or("/"),
+        Some(Err(error)) => return Err(Box::new(TransactionError::Custom(error.clone()))),
+        None => return Err(Box::new(TransactionError::Custom("no content".to_string()))),
+    };
     let comment = Comment::builder().post_url(post).build();
     wordpress::post_comment(user, &comment).await?;
     Ok(())

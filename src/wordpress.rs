@@ -2534,9 +2534,17 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
 ///
 /// Discovery loads only the pages, without their assets, each named `discover`.
 /// It reads no sitemap unless [`DiscoverBuilder::sitemap`] asks for one, and no
-/// JSON API, so it works on a site that locks those down. It makes many
-/// requests, so run it once per load test and share the result, for example in
-/// a [`std::sync::OnceLock`] filled by the first user to start.
+/// JSON API, so it works on a site that locks those down.
+///
+/// It makes many requests, so run it once, before the load test: register it
+/// with [`GooseAttack::test_start`](goose::GooseAttack::test_start). Goose runs
+/// that transaction once, on a user of its own, before any user starts, so its
+/// requests are in neither the metrics nor the request log, and no user waits on
+/// it. Keep what it finds in a [`std::sync::OnceLock`] the users read. Goose
+/// ignores what a `test_start` transaction returns, so keep a failure there too
+/// and fail the users with it (the WooCommerce example also stops the load test
+/// with `goose::trigger_killswitch`). Called in a user's transaction instead,
+/// it is measured with the load, and every other user waits on it.
 ///
 /// # Example
 /// ```rust
@@ -2544,21 +2552,27 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
 /// use goose_eggs::wordpress::{discover, Discover, SiteContent};
 /// use std::sync::OnceLock;
 ///
-/// static CONTENT: OnceLock<SiteContent> = OnceLock::new();
+/// static CONTENT: OnceLock<Result<SiteContent, String>> = OnceLock::new();
 ///
-/// transaction!(find_content).set_on_start();
-/// transaction!(read_a_post);
+/// fn load_test(attack: GooseAttack) -> GooseAttack {
+///     attack
+///         .test_start(transaction!(find_content))
+///         .register_scenario(scenario!("Reader").register_transaction(transaction!(read_a_post)))
+/// }
 ///
 /// async fn find_content(user: &mut GooseUser) -> TransactionResult {
-///     if CONTENT.get().is_none() {
-///         let content = discover(user, &Discover::builder().build()).await?;
-///         let _ = CONTENT.set(content);
-///     }
+///     let found = discover(user, &Discover::builder().build()).await;
+///     let _ = CONTENT.set(found.map_err(|error| error.to_string()));
 ///     Ok(())
 /// }
 ///
 /// async fn read_a_post(user: &mut GooseUser) -> TransactionResult {
-///     if let Some(post) = CONTENT.get().and_then(|c| c.random("post")) {
+///     let content = match CONTENT.get() {
+///         Some(Ok(content)) => content,
+///         Some(Err(error)) => return Err(Box::new(TransactionError::Custom(error.clone()))),
+///         None => return Err(Box::new(TransactionError::Custom("no content".to_string()))),
+///     };
+///     if let Some(post) = content.random("post") {
 ///         let _goose = user.get_named(post, "post").await?;
 ///     }
 ///     Ok(())
@@ -2568,7 +2582,7 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(async { find_content(&mut user).await?; read_a_post(&mut user).await });
 /// # assert!(result.is_ok(), "doc example discover: {}", support::failure(&result));
-/// # assert_eq!(CONTENT.get().map(|c| c.posts().len()), Some(2), "doc example discover: posts");
+/// # assert_eq!(CONTENT.get().and_then(|c| c.as_ref().ok()).map(|c| c.posts().len()), Some(2), "doc example discover: posts");
 /// ```
 pub async fn discover(
     user: &mut GooseUser,

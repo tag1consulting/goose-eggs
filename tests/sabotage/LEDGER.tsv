@@ -354,7 +354,7 @@ doc-wp-discover-builder.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder 
 doc-wp-discover-sitemap.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::sitemap (line 2318)	doc example DiscoverBuilder::sitemap	wordpress::DiscoverBuilder
 doc-wp-discover-max-per-kind.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::max_per_kind (line 2338)	doc example DiscoverBuilder::max_per_kind: posts	wordpress::DiscoverBuilder
 doc-wp-discover-build.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::build (line 2355)	doc example DiscoverBuilder::build: categories	wordpress::DiscoverBuilder
-doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2542)	doc example discover: posts	wordpress::discover
+doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2550)	doc example discover: posts	wordpress::discover
 doc-wc-shop.patch	doc	src/woocommerce.rs - woocommerce::Shop (line 31)	doc example Shop	woocommerce::Shop
 doc-wc-shop-builder-fn.patch	doc	src/woocommerce.rs - woocommerce::Shop<'a>::builder (line 52)	doc example Shop::builder	woocommerce::Shop,woocommerce::ShopBuilder
 doc-wc-shop-default.patch	doc	src/woocommerce.rs - woocommerce::Shop<'_>::default (line 68)	doc example Shop::default	woocommerce::Shop
@@ -371,33 +371,33 @@ doc-wc-product-page.patch	doc	src/woocommerce.rs - woocommerce::product_page (li
 doc-wc-product-search.patch	doc	src/woocommerce.rs - woocommerce::product_search (line 340)	doc example product_search	woocommerce::product_search
 doc-wc-product.patch	doc	src/woocommerce.rs - woocommerce::Product (line 370)	assertion failed: product.can_add_to_cart()	woocommerce::Product
 doc-wc-can-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::Product::can_add_to_cart (line 406)	assertion failed: !product.can_add_to_cart()	woocommerce::Product
-doc-wc-discover-products.patch	doc	src/woocommerce.rs - woocommerce::discover_products (line 448)	a product to buy	woocommerce::discover_products
-doc-wc-random-product.patch	doc	src/woocommerce.rs - woocommerce::random_product (line 590)	right: Some(31)	woocommerce::random_product
-doc-wc-cart-item.patch	doc	src/woocommerce.rs - woocommerce::CartItem (line 614)	right: "c16a5320fa475530d9583c34fd356ef5"	woocommerce::CartItem
-doc-wc-store-api-cart.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart (line 657)	doc example StoreApiCart: items	woocommerce::StoreApiCart
-doc-wc-cart-new.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::new (line 691)	right: None	woocommerce::StoreApiCart
-doc-wc-cart-use-cart-token.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::use_cart_token (line 718)	doc example StoreApiCart::use_cart_token	woocommerce::StoreApiCart
-doc-wc-cart-nonce.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::nonce (line 735)	left: None	woocommerce::StoreApiCart
-doc-wc-cart-token.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::cart_token (line 752)	assertion failed: cart.cart_token()	woocommerce::StoreApiCart
-doc-wc-cart-items.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::items (line 768)	right: 2	woocommerce::StoreApiCart,woocommerce::CartItem
-doc-wc-cart-load.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::load (line 835)	doc example load	woocommerce::StoreApiCart
-doc-wc-cart-add-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::add_item (line 872)	doc example add_item	woocommerce::StoreApiCart
-doc-wc-cart-update-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::update_item (line 907)	doc example update_item	woocommerce::StoreApiCart
-doc-wc-cart-remove-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::remove_item (line 945)	doc example remove_item	woocommerce::StoreApiCart
-doc-wc-cart-checkout.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::checkout (line 984)	doc example checkout	woocommerce::StoreApiCart
-doc-wc-checkout.patch	doc	src/woocommerce.rs - woocommerce::Checkout (line 1052)	right: "cod"	woocommerce::Checkout
-doc-wc-checkout-builder-fn.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::builder (line 1067)	right: Some("94105")	woocommerce::Checkout,woocommerce::CheckoutBuilder
-doc-wc-checkout-billing.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::billing (line 1082)	right: Some("US")	woocommerce::Checkout
-doc-wc-checkout-payment-method.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::payment_method (line 1099)	right: "cheque"	woocommerce::Checkout
-doc-wc-checkout-builder.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder (line 1117)	right: Some("Ada")	woocommerce::CheckoutBuilder
-doc-wc-checkout-builder-billing.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::billing (line 1157)	right: Some("Austin")	woocommerce::CheckoutBuilder
-doc-wc-checkout-builder-payment-method.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::payment_method (line 1177)	right: "bacs"	woocommerce::CheckoutBuilder
-doc-wc-checkout-build.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::build (line 1191)	right: Some("goose@example.com")	woocommerce::CheckoutBuilder
-doc-wc-classic-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_add_to_cart (line 1252)	doc example classic_add_to_cart	woocommerce::classic_add_to_cart
-doc-wc-classic-update-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_update_cart (line 1287)	doc example classic_update_cart	woocommerce::classic_update_cart
-doc-wc-classic-checkout.patch	doc	src/woocommerce.rs - woocommerce::classic_checkout (line 1352)	doc example classic_checkout	woocommerce::classic_checkout
-doc-wc-my-account-log-in.patch	doc	src/woocommerce.rs - woocommerce::my_account_log_in (line 1429)	doc example my_account_log_in	woocommerce::my_account_log_in
-doc-wc-my-account-orders.patch	doc	src/woocommerce.rs - woocommerce::my_account_orders (line 1504)	doc example my_account_orders	woocommerce::my_account_orders
+doc-wc-discover-products.patch	doc	src/woocommerce.rs - woocommerce::discover_products (line 452)	a product to buy	woocommerce::discover_products
+doc-wc-random-product.patch	doc	src/woocommerce.rs - woocommerce::random_product (line 615)	right: Some(31)	woocommerce::random_product
+doc-wc-cart-item.patch	doc	src/woocommerce.rs - woocommerce::CartItem (line 639)	right: "c16a5320fa475530d9583c34fd356ef5"	woocommerce::CartItem
+doc-wc-store-api-cart.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart (line 682)	doc example StoreApiCart: items	woocommerce::StoreApiCart
+doc-wc-cart-new.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::new (line 716)	right: None	woocommerce::StoreApiCart
+doc-wc-cart-use-cart-token.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::use_cart_token (line 743)	doc example StoreApiCart::use_cart_token	woocommerce::StoreApiCart
+doc-wc-cart-nonce.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::nonce (line 760)	left: None	woocommerce::StoreApiCart
+doc-wc-cart-token.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::cart_token (line 777)	assertion failed: cart.cart_token()	woocommerce::StoreApiCart
+doc-wc-cart-items.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::items (line 793)	right: 2	woocommerce::StoreApiCart,woocommerce::CartItem
+doc-wc-cart-load.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::load (line 860)	doc example load	woocommerce::StoreApiCart
+doc-wc-cart-add-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::add_item (line 897)	doc example add_item	woocommerce::StoreApiCart
+doc-wc-cart-update-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::update_item (line 932)	doc example update_item	woocommerce::StoreApiCart
+doc-wc-cart-remove-item.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::remove_item (line 970)	doc example remove_item	woocommerce::StoreApiCart
+doc-wc-cart-checkout.patch	doc	src/woocommerce.rs - woocommerce::StoreApiCart::checkout (line 1009)	doc example checkout	woocommerce::StoreApiCart
+doc-wc-checkout.patch	doc	src/woocommerce.rs - woocommerce::Checkout (line 1077)	right: "cod"	woocommerce::Checkout
+doc-wc-checkout-builder-fn.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::builder (line 1092)	right: Some("94105")	woocommerce::Checkout,woocommerce::CheckoutBuilder
+doc-wc-checkout-billing.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::billing (line 1107)	right: Some("US")	woocommerce::Checkout
+doc-wc-checkout-payment-method.patch	doc	src/woocommerce.rs - woocommerce::Checkout<'a>::payment_method (line 1124)	right: "cheque"	woocommerce::Checkout
+doc-wc-checkout-builder.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder (line 1142)	right: Some("Ada")	woocommerce::CheckoutBuilder
+doc-wc-checkout-builder-billing.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::billing (line 1182)	right: Some("Austin")	woocommerce::CheckoutBuilder
+doc-wc-checkout-builder-payment-method.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::payment_method (line 1202)	right: "bacs"	woocommerce::CheckoutBuilder
+doc-wc-checkout-build.patch	doc	src/woocommerce.rs - woocommerce::CheckoutBuilder<'a>::build (line 1216)	right: Some("goose@example.com")	woocommerce::CheckoutBuilder
+doc-wc-classic-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_add_to_cart (line 1277)	doc example classic_add_to_cart	woocommerce::classic_add_to_cart
+doc-wc-classic-update-cart.patch	doc	src/woocommerce.rs - woocommerce::classic_update_cart (line 1312)	doc example classic_update_cart	woocommerce::classic_update_cart
+doc-wc-classic-checkout.patch	doc	src/woocommerce.rs - woocommerce::classic_checkout (line 1377)	doc example classic_checkout	woocommerce::classic_checkout
+doc-wc-my-account-log-in.patch	doc	src/woocommerce.rs - woocommerce::my_account_log_in (line 1454)	doc example my_account_log_in	woocommerce::my_account_log_in
+doc-wc-my-account-orders.patch	doc	src/woocommerce.rs - woocommerce::my_account_orders (line 1529)	doc example my_account_orders	woocommerce::my_account_orders
 wc-example-shared-account.patch	woocommerce_example	credentials_cases	credentials case first user	woocommerce example credentials
 wc-example-account-wraps.patch	woocommerce_example	credentials_cases	credentials case per user	woocommerce example credentials
 wp-post-default-url.patch	lib	wordpress::tests::post_builder_defaults	Post default url	wordpress::PostBuilder,wordpress::Post
@@ -490,13 +490,13 @@ wc-place-total.patch	woocommerce	woocommerce_flows	behaviour place_order sends t
 wc-place-order-number.patch	woocommerce	woocommerce_flows	behaviour place_order fails without an order number	woocommerce::place_order
 wc-order-number-block.patch	lib	woocommerce::tests::order_number_cases	order_number case block order summary	woocommerce::place_order
 wc-order-number-classic.patch	lib	woocommerce::tests::order_number_cases	order_number case classic overview	woocommerce::classic_checkout
-doc-wc-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart (line 1564)	doc example add_to_cart	woocommerce::add_to_cart
-doc-wc-add-to-cart-from-archive.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart_from_archive (line 1677)	doc example add_to_cart_from_archive	woocommerce::add_to_cart_from_archive
-doc-wc-cart-page.patch	doc	src/woocommerce.rs - woocommerce::cart_page (line 1797)	doc example cart_page	woocommerce::cart_page
-doc-wc-checkout-page.patch	doc	src/woocommerce.rs - woocommerce::checkout_page (line 2032)	doc example checkout_page	woocommerce::checkout_page
-doc-wc-place-order.patch	doc	src/woocommerce.rs - woocommerce::place_order (line 2096)	doc example place_order	woocommerce::place_order
-doc-wc-remove-cart-item.patch	doc	src/woocommerce.rs - woocommerce::remove_cart_item (line 1956)	doc example remove_cart_item	woocommerce::remove_cart_item
-doc-wc-update-cart-item.patch	doc	src/woocommerce.rs - woocommerce::update_cart_item (line 1896)	doc example update_cart_item	woocommerce::update_cart_item
+doc-wc-add-to-cart.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart (line 1589)	doc example add_to_cart	woocommerce::add_to_cart
+doc-wc-add-to-cart-from-archive.patch	doc	src/woocommerce.rs - woocommerce::add_to_cart_from_archive (line 1702)	doc example add_to_cart_from_archive	woocommerce::add_to_cart_from_archive
+doc-wc-cart-page.patch	doc	src/woocommerce.rs - woocommerce::cart_page (line 1822)	doc example cart_page	woocommerce::cart_page
+doc-wc-checkout-page.patch	doc	src/woocommerce.rs - woocommerce::checkout_page (line 2057)	doc example checkout_page	woocommerce::checkout_page
+doc-wc-place-order.patch	doc	src/woocommerce.rs - woocommerce::place_order (line 2121)	doc example place_order	woocommerce::place_order
+doc-wc-remove-cart-item.patch	doc	src/woocommerce.rs - woocommerce::remove_cart_item (line 1981)	doc example remove_cart_item	woocommerce::remove_cart_item
+doc-wc-update-cart-item.patch	doc	src/woocommerce.rs - woocommerce::update_cart_item (line 1921)	doc example update_cart_item	woocommerce::update_cart_item
 doc-wp-discover-home.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::home (line 2295)	doc example DiscoverBuilder::home: posts	wordpress::DiscoverBuilder
 doc-wp-view-page.patch	doc	src/wordpress.rs - wordpress::view_page (line 1078)	doc example view_page: assets loaded	wordpress::view_page
 doc-wp-post-type.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::post_type (line 1743)	doc example PostBuilder::post_type	wordpress::PostBuilder,wordpress::create_post

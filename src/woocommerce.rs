@@ -441,20 +441,42 @@ impl Product {
 ///
 /// The pages are loaded without their assets, each named `discover products`.
 /// Fails when the shop page cannot be loaded, or shows no product cards (the
-/// shop is empty, or is not at [`ShopBuilder::shop`]). Run it once per load test and
-/// share the result, as with [`crate::wordpress::discover`].
+/// shop is empty, or is not at [`ShopBuilder::shop`]).
+///
+/// Run it once, before the load test, as [`crate::wordpress::discover`] says:
+/// registered with [`GooseAttack::test_start`](goose::GooseAttack::test_start),
+/// its requests are not measured and no user waits on it. Keep what it finds,
+/// or why it failed, in a [`std::sync::OnceLock`] the users read.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::woocommerce::{discover_products, random_product, Shop};
+/// use goose_eggs::woocommerce::{discover_products, random_product, Product, Shop};
+/// use std::sync::OnceLock;
 ///
-/// transaction!(find_products).set_on_start();
+/// static PRODUCTS: OnceLock<Result<Vec<Product>, String>> = OnceLock::new();
+///
+/// fn load_test(attack: GooseAttack) -> GooseAttack {
+///     attack
+///         .test_start(transaction!(find_products))
+///         .register_scenario(scenario!("Shopper").register_transaction(transaction!(view_a_product)))
+/// }
 ///
 /// async fn find_products(user: &mut GooseUser) -> TransactionResult {
-///     let products = discover_products(user, &Shop::default(), 500).await?;
-///     let product = random_product(&products).expect("a product to buy");
-///     assert!(product.can_add_to_cart());
+///     let found = discover_products(user, &Shop::default(), 500).await;
+///     let _ = PRODUCTS.set(found.map_err(|error| error.to_string()));
+///     Ok(())
+/// }
+///
+/// async fn view_a_product(user: &mut GooseUser) -> TransactionResult {
+///     let products = match PRODUCTS.get() {
+///         Some(Ok(products)) => products,
+///         Some(Err(error)) => return Err(Box::new(TransactionError::Custom(error.clone()))),
+///         None => return Err(Box::new(TransactionError::Custom("no products".to_string()))),
+///     };
+///     if let Some(product) = random_product(products) {
+///         let _goose = user.get_named(&product.url, "product").await?;
+///     }
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/woocommerce.rs"); }
@@ -462,6 +484,9 @@ impl Product {
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(find_products(&mut user));
 /// # assert!(result.is_ok(), "doc example discover_products: {}", support::failure(&result));
+/// # let products = PRODUCTS.get().and_then(|p| p.as_ref().ok()).expect("doc example discover_products: products");
+/// # let product = random_product(products).expect("a product to buy");
+/// # assert!(product.can_add_to_cart(), "doc example discover_products: can_add_to_cart");
 /// ```
 pub async fn discover_products(
     user: &mut GooseUser,
