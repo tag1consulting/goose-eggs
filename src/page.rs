@@ -434,11 +434,16 @@ mod tests {
         );
         let found = preloaded(html);
         assert_eq!(
-            found["/wp/v2/posts/1?context=edit"]["body"]["id"], 1,
+            found
+                .get("/wp/v2/posts/1?context=edit")
+                .map(|r| r["body"]["id"].clone()),
+            Some(serde_json::json!(1)),
             "preloaded case plain json"
         );
         assert!(
-            found["/wc/store/v1/cart"]["body"]["items"].is_array(),
+            found
+                .get("/wc/store/v1/cart")
+                .is_some_and(|r| r["body"]["items"].is_array()),
             "preloaded case encoded json"
         );
         assert!(preloaded("<html></html>").is_empty(), "preloaded case none");

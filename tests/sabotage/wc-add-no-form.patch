@@ -1,13 +1,13 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 32d02c0..6cb3869 100644
+index a3c30dd..017b373 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1599,7 +1599,7 @@ pub async fn add_to_cart(
+@@ -1597,7 +1597,7 @@ pub async fn add_to_cart(
+     let goose = get_named(user, &product.url, "product page").await?;
+     let mut request = goose.request.clone();
      let page = load_page(user, goose, Some(&validate)).await?;
-     let (action, form) = match add_to_cart_form(&page) {
+-    let (action, form) = match add_to_cart_form(&page) {
++    let (action, form) = match add_to_cart_form(&page).or(Some((String::new(), String::new()))) {
          Some(form) => form,
--        None => {
-+        None if false => {
+         None => {
              let stock = regex(r#"(?is)<p\b[^>]*class="[^"]*\bstock\b[^"]*"[^>]*>(.*?)</p>"#)
-                 .captures(&page)
-                 .map(|c| plain_text(&c[1]))

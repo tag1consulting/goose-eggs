@@ -2272,8 +2272,6 @@ mod tests {
     const CLASSIC_SHOP: &str = include_str!("../tests/fixtures/woocommerce/shop.html");
     const ORDER_RECEIVED: &str =
         include_str!("../tests/fixtures/woocommerce/order-received-block.html");
-    const ORDER_RECEIVED_CLASSIC: &str =
-        include_str!("../tests/fixtures/woocommerce/order-received.html");
     const ORDER_RECEIVED_WRONG_KEY: &str =
         include_str!("../tests/fixtures/woocommerce/order-received-wrong-key.html");
     const CLASSIC_ADD: &str =
@@ -2363,8 +2361,12 @@ mod tests {
             order_number(ORDER_RECEIVED).is_some_and(|n| n.parse::<u64>().is_ok()),
             "order_number case block order summary"
         );
-        assert!(
-            order_number(ORDER_RECEIVED_CLASSIC).is_some(),
+        assert_eq!(
+            order_number(
+                r#"<ul class="woocommerce-order-overview"><li class="woocommerce-order-overview__order order">Order number: <strong>63</strong></li></ul>"#
+            )
+            .as_deref(),
+            Some("63"),
             "order_number case classic overview"
         );
         assert_eq!(

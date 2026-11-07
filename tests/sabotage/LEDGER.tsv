@@ -440,7 +440,7 @@ wp-crawl-nofollow.patch	wordpress	wordpress_flows	behaviour discover browses nav
 wp-crawl-singular.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination: links a crawl skips loaded	wordpress::discover
 wp-crawl-main.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination	wordpress::discover
 wp-crawl-nav.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination	wordpress::discover
-wp-crawl-pagination.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination	wordpress::discover
+wp-crawl-pagination.patch	wordpress	wordpress_flows	behaviour discover loads at most ten pages per max_per_kind: endless pages loaded	wordpress::discover
 wp-crawl-skip-admin.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination: links a crawl skips loaded	wordpress::discover
 wp-crawl-skip-feed.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination: links a crawl skips loaded	wordpress::discover
 wp-crawl-comments.patch	wordpress	wordpress_flows	behaviour discover browses navigation, listings and pagination: links a crawl skips loaded	wordpress::discover
@@ -457,7 +457,7 @@ wp-discover-default-home.patch	lib	wordpress::tests::discover_builder_defaults	D
 wc-cards-purchasable.patch	lib	woocommerce::tests::product_cards_cases	product_cards case external	woocommerce::discover_products,woocommerce::Product
 wc-cards-stock.patch	lib	woocommerce::tests::product_cards_cases	product_cards case out of stock	woocommerce::discover_products,woocommerce::Product
 wc-cards-direct.patch	lib	woocommerce::tests::product_cards_cases	product_cards case a card with options	woocommerce::discover_products,woocommerce::Product,woocommerce::random_product
-wc-cards-id.patch	lib	woocommerce::tests::product_cards_cases	product_cards case simple product	woocommerce::discover_products,woocommerce::Product
+wc-cards-id.patch	lib	woocommerce::tests::product_cards_cases	the beanie	woocommerce::discover_products,woocommerce::Product
 wc-cards-name.patch	lib	woocommerce::tests::product_cards_cases	product_cards case simple product	woocommerce::discover_products,woocommerce::Product
 wc-cards-kind.patch	lib	woocommerce::tests::product_cards_cases	product_cards case simple product	woocommerce::discover_products,woocommerce::Product
 wc-cards-url.patch	lib	woocommerce::tests::product_cards_cases	product_cards case out of stock	woocommerce::discover_products,woocommerce::Product

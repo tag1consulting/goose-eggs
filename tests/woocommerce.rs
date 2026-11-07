@@ -294,8 +294,8 @@ async fn woocommerce_flows() {
     page(&server, "gone/cap/", 200, PRODUCT_OUT_OF_STOCK);
     page(&server, "refused/beanie/", 200, PRODUCT_BLOCK);
     let options = PRODUCT_BLOCK.replacen(
-        r#"name="add-to-cart""#,
-        r#"name="add-to-cart" data-x="1"><input type="hidden" name="variation_id" value="0""#,
+        r#"<button type="submit" name="add-to-cart""#,
+        r#"<input type="hidden" name="variation_id" value="0" /><button type="submit" name="add-to-cart""#,
         1,
     );
     page(&server, "options/v-neck/", 200, &options);
