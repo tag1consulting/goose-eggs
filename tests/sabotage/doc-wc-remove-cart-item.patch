@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 32d02c0..ef97873 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1830,7 +1830,7 @@ struct StorePage {
+ // Read the Store API nonce and the preloaded cart from a block cart or checkout
+ // page, failing on `request` when the page has neither.
+ fn store_page(html: &str) -> Result<StorePage, String> {
+-    let nonce = regex(r#"storeApiNonce\s*:\s*['"]([^'"]+)['"]"#)
++    let nonce = regex(r#"storeApiNonces\s*:\s*['"]([^'"]+)['"]"#)
+         .captures(html)
+         .map(|c| c[1].to_string());
+     let cart = crate::page::preloaded(html)

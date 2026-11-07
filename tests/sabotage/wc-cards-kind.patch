@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..8c3531a 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -552,7 +552,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+             .unwrap_or_default();
+         let kind = classes
+             .iter()
+-            .find_map(|c| c.strip_prefix("product-type-"))
++            .find_map(|c| c.strip_prefix("product_type_"))
+             .unwrap_or_default()
+             .to_string();
+         let purchasable = has("purchasable");

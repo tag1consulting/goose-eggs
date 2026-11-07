@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..d89fa35 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1912,7 +1912,7 @@ async fn save_post(
+     let goose = get_named(user, &link, "post view").await?;
+     let mut request = goose.request.clone();
+     let html = load_page(user, goose, None).await?;
+-    if !title.is_empty() && !html.contains(&title) {
++    if title.is_empty() && !html.contains(&title) {
+         return fail(
+             user,
+             &format!(

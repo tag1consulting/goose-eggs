@@ -1,6 +1,6 @@
 [package]
 name = "goose-eggs"
-version = "0.7.1-dev"
+version = "0.8.0-dev"
 authors = ["Jeremy Andrews <jeremy@tag1.com>"]
 edition = "2018"
 description = "Helpful in writing Goose load tests."
@@ -32,3 +32,8 @@ httpmock = "0.7"
 [[test]]
 name = "wordpress_site"
 path = "tests/sites/wordpress.rs"
+
+# Needs the demo sites; compares every helper's requests with a browser's.
+[[test]]
+name = "parity_site"
+path = "tests/sites/parity.rs"

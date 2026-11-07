@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 307c5c3..0e5192c 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -246,7 +246,7 @@ async fn preferences(user: &mut GooseUser, html: &str) -> Result<(), Box<Transac
+ 
+ // WordPress's compression test, as the inline script on admin pages runs it.
+ async fn compression_test(user: &mut GooseUser, html: &str) -> Result<(), Box<TransactionError>> {
+-    if !html.contains("testCompression.check()") {
++    if !html.contains("testCompression.check()") || html.contains("compressionNonce") {
+         return Ok(());
+     }
+     let nonce = match regex(r#"var compressionNonce\s*=\s*["']([^"']+)["']"#).captures(html) {

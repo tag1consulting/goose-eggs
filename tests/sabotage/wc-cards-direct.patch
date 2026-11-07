@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..c1c1636 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -561,7 +561,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+             .find_iter(card)
+             .chain(button_regex().find_iter(card))
+             .filter_map(|tag| attribute(tag.as_str(), "class"))
+-            .any(|class| class.split_whitespace().any(|c| c == "ajax_add_to_cart"));
++            .any(|class| class.split_whitespace().any(|c| c == "add_to_cart_button"));
+         products.push(Product {
+             id,
+             name,

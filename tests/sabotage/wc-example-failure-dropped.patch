@@ -1,0 +1,15 @@
+diff --git a/examples/woocommerce/common.rs b/examples/woocommerce/common.rs
+index c1df68c..27cd720 100644
+--- a/examples/woocommerce/common.rs
++++ b/examples/woocommerce/common.rs
+@@ -39,7 +39,9 @@ pub async fn discover_catalog(user: &mut GooseUser) -> TransactionResult {
+     }
+     // A Controller that starts the load test again runs this again: the first
+     // catalog is kept.
+-    let _ = CATALOG.set(found);
++    if let Ok(catalog) = found {
++        let _ = CATALOG.set(Ok(catalog));
++    }
+     // Goose ignores this result; returned for a Goose that reads it. The
+     // killswitch waits for the users: each reports the failure first.
+     match CATALOG.get() {

@@ -1,0 +1,12 @@
+diff --git a/examples/woocommerce/common.rs b/examples/woocommerce/common.rs
+index c1df68c..b3de5f0 100644
+--- a/examples/woocommerce/common.rs
++++ b/examples/woocommerce/common.rs
+@@ -81,7 +81,6 @@ pub fn catalog() -> Result<&'static Catalog, Box<TransactionError>> {
+         Some(Err(error)) => error.as_str(),
+         None => "no catalog: discover_catalog runs as the load test's test_start",
+     };
+-    goose::trigger_killswitch(error);
+     Err(Box::new(TransactionError::Custom(error.to_string())))
+ }
+ 

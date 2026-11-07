@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..1d1c259 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1939,7 +1939,7 @@ pub async fn update_cart_item(
+     };
+     let path = format!("{}cart/update-item?_locale=site", shop.store_api);
+     let name = format!("{}cart/update-item", shop.store_api);
+-    let body = serde_json::json!({ "key": key, "quantity": quantity });
++    let body = serde_json::json!({ "key": key, "quantity": quantity + 1 });
+     let goose = send_json(
+         user,
+         GooseMethod::Post,

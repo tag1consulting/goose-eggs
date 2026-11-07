@@ -1,12 +1,16 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..01c0014 100644
+index 99cd8aa..0d9bf27 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -262,7 +262,6 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
+@@ -287,10 +287,7 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
+ /// assert_eq!(get_rest_nonce(html).as_deref(), Some("d7e5418ef8"));
+ /// ```
  pub fn get_rest_nonce(html: &str) -> Option<String> {
-     let patterns = [
-         r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
+-    let patterns = [
+-        r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
 -        r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
-     ];
+-    ];
++    let patterns = [r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#];
      for pattern in patterns {
-         if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+         if let Some(capture) = regex(pattern).captures(html) {
+             return Some(capture[1].to_string());

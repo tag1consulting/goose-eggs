@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..59346b3 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -520,7 +520,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+             let class = attribute(m.as_str(), "class")?;
+             class
+                 .split_whitespace()
+-                .any(|c| c == "type-product")
++                .any(|c| c == "type-products")
+                 .then(|| (m.start(), class))
+         })
+         .collect();

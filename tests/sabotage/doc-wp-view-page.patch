@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..6ad05d0 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -144,7 +144,7 @@ pub(crate) fn same_site(user: &GooseUser, url: &str) -> bool {
+ /// lists them, named `static asset: <kind>` as the `goose-eggs` asset loader
+ /// names them. `page_url` resolves relative URLs.
+ pub(crate) async fn load_assets(user: &mut GooseUser, page_url: &str, html: &str) {
+-    for (url, kind) in page_assets(html) {
++    for (url, kind) in page_assets(html).into_iter().take(0) {
+         if !same_site(user, &url) {
+             continue;
+         }

@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..866e364 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1978,7 +1978,6 @@ pub async fn create_post(
+     body.insert("id".to_string(), editor.id.into());
+     body.insert("title".to_string(), "".into());
+     body.insert("content".to_string(), "".into());
+-    body.insert("status".to_string(), "draft".into());
+     body.extend(post.fields.clone());
+     save_post(user, &editor, body, post).await
+ }

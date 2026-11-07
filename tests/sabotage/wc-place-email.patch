@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..6c8de13 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2178,7 +2178,7 @@ pub async fn place_order(
+             "headers": { "Nonce": page.nonce },
+         }]})
+     };
+-    if field(&billing, "email") != field(&on_file, "email") {
++    if field(&billing, "email") == field(&on_file, "nothing") {
+         let mut typed = on_file.clone();
+         typed["email"] = billing["email"].clone();
+         store_batch(

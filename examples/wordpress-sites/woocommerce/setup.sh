@@ -105,7 +105,9 @@ start() {
         curl -sf "http://localhost:${PORT}/shop/" >/dev/null && break
         sleep 1
     done
-    curl -sf "http://localhost:${PORT}/wp-json/wc/store/v1/products" >/dev/null || {
+    # Read the page first: grep -q stopping early would fail curl under pipefail.
+    shop=$(curl -sf "http://localhost:${PORT}/shop/" || true)
+    grep -q 'type-product' <<<"$shop" || {
         echo "woocommerce: the shop is not answering on port ${PORT}" >&2
         exit 1
     }

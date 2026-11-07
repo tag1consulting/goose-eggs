@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..97da63c 100644
+index 1ca2747..ee0cb92 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1425,7 +1425,8 @@ pub async fn my_account_orders(
+@@ -1528,7 +1528,8 @@ pub async fn my_account_orders(
          .text("woocommerce-MyAccount-navigation")
          .build();
      let goose = user.get(shop.orders).await?;
@@ -11,4 +11,4 @@ index 8b1c271..97da63c 100644
 +    load_page(user, goose, None).await
  }
  
- #[cfg(test)]
+ // The form WooCommerce writes on a product page for adding it to the cart,

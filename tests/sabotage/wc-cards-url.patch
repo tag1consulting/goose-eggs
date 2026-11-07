@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..12cae14 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -543,7 +543,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+             .find_iter(card)
+             .find_map(|a| attribute(a.as_str(), "href"));
+         let (id, url) = match (id, url) {
+-            (Some(id), Some(url)) => (id, site_path(&url)),
++            (Some(id), Some(url)) => (id, url),
+             _ => continue,
+         };
+         let name = heading

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Run the WooCommerce example against the WooCommerce demo shop and fail on any
-# request or transaction error, then check that the run placed orders. The
-# `woocommerce` CI job runs this script unchanged.
+# Run the WooCommerce parity test, then the WooCommerce example against the
+# WooCommerce demo shop, failing on any request or transaction error, then check
+# that the run placed orders. The `woocommerce` CI job runs this script
+# unchanged.
 #
 #   scripts/woocommerce.sh                             # starts the shop, runs, leaves it up
 #   WOOCOMMERCE_SITE_RUNNING=1 scripts/woocommerce.sh  # reuse a shop already started
@@ -28,6 +29,10 @@ fi
 orders() {
     PORT=$PORT "$SITE" wp wc shop_order list --user="$ADMIN_USERNAME" --status=any --format=count 2>/dev/null
 }
+# First, every WooCommerce helper's requests against a browser's (tests/sites/parity.rs).
+WOOCOMMERCE_SITE="http://localhost:${PORT}" \
+    cargo test --all-features --test parity_site woocommerce_parity -- --nocapture
+
 orders_before=$(orders)
 
 REPORT_DIR=$(mktemp -d)

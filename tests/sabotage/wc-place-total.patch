@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index a3c30dd..71fb0e9 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2206,7 +2206,7 @@ pub async fn place_order(
+         "customer_note": "",
+         "customer_password": "",
+         "shipping_address": shipping,
+-        "expected_total": page.cart["totals"]["total_price"],
++        "expected_total": serde_json::Value::Null,
+         "payment_method": checkout.payment_method,
+         "payment_data": [{
+             "key": format!("wc-{}-new-payment-method", checkout.payment_method),

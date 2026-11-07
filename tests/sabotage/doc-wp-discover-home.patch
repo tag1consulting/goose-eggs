@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..5bb3519 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2616,7 +2616,7 @@ pub async fn discover(
+         }
+     }
+ 
+-    let home = site_path(&user.build_url(discover.home)?);
++    let home = site_path(&user.build_url("")?);
+     let mut queue = std::collections::VecDeque::from([home.clone()]);
+     seen.insert(home);
+     let mut loaded = 0;

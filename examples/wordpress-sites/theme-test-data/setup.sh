@@ -37,6 +37,13 @@ start() {
         --admin_email=admin@example.com --skip-email
     wp user create "$EDITOR_USERNAME" editor@example.com --role=editor \
         --user_pass="$EDITOR_PASSWORD"
+    # The editor's block editor preferences, saved as the editor's first visit
+    # saves them (closing the welcome guide), so every run starts where the
+    # browser recordings in tests/fixtures/browser did: with preferences saved,
+    # admin pages do not read them back from the REST API.
+    wp user meta update "$EDITOR_USERNAME" wp_persisted_preferences \
+        '{"core":{"isComplementaryAreaVisible":false},"_modified":"2026-11-07T08:10:12.377Z","core/edit-post":{"welcomeGuide":false}}' \
+        --format=json
     wp rewrite structure '/%postname%/' --hard
     wp plugin install wordpress-importer --version="$IMPORTER_VERSION" --activate
     # Attachments are skipped: importing them downloads every image from

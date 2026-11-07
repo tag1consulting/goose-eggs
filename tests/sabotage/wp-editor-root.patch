@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 988f803..5470313 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -216,7 +216,7 @@ pub(crate) fn api_fetch_root(html: &str) -> String {
+     Regex::new(r#"createRootURLMiddleware\(\s*["']([^"']+)["']"#)
+         .unwrap()
+         .captures(html)
+-        .map(|c| crate::wordpress::site_path(&c[1].replace("\\/", "/")))
++        .map(|_| "/".to_string())
+         .unwrap_or_else(|| rest_root(html))
+ }
+ 

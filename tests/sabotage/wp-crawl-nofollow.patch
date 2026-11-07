@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..a0446d4 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2446,9 +2446,6 @@ pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<S
+         let rel = attribute(tag, "rel")
+             .unwrap_or_default()
+             .to_ascii_lowercase();
+-        if rel.split_whitespace().any(|r| r == "nofollow") {
+-            return;
+-        }
+         if let Some(href) = attribute(tag, "href") {
+             if let Some(link) = crawl_link(user, page_url, &href) {
+                 if !links.contains(&link) {

@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..e125545 100644
+index b9ea9ff..f513db0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1689,7 +1689,7 @@ async fn save_post(
-         GooseMethod::Post,
-         path,
-         name,
--        &[("X-WP-Nonce", nonce)],
-+        &[("X-WP-Nonce", "")],
-         Some(&body),
-     )
-     .await?;
+@@ -1957,7 +1957,7 @@ pub async fn create_post(
+     post: &Post<'_>,
+ ) -> Result<serde_json::Value, Box<TransactionError>> {
+     let path = match post.post_type {
+-        "post" => "wp-admin/post-new.php".to_string(),
++        "post" => "wp-admin/post-new.phpx".to_string(),
+         post_type => format!(
+             "wp-admin/post-new.php?post_type={}",
+             query_encode(post_type)

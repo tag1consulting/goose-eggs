@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..ba7dbf0 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2629,7 +2629,7 @@ pub async fn discover(
+         let page_url = goose.request.final_url.to_string();
+         if !goose.request.success {
+             // A broken link: Goose recorded it; the crawl goes on.
+-            continue;
++            break;
+         }
+         let (_, html) = read_response(goose).await;
+         if let Some(kind) = page_kind(&html) {

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..1a4e8cc 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1664,7 +1664,7 @@ pub async fn add_to_cart(
+         .set_request_builder(builder)
+         .build();
+     let goose = user.request(request).await?;
+-    expect_success_notice(user, goose, "not added to cart").await
++    load_page(user, goose, None).await
+ }
+ 
+ /// Add a product to the cart from a product archive (the shop page, or a

@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 307c5c3..2ea0940 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -32,7 +32,7 @@ fn live_markup(html: &str) -> String {
+     );
+     hidden
+         .replace_all(html, |c: &regex::Captures| match c.get(1) {
+-            Some(open) => format!("{}</script>", open.as_str()),
++            Some(_) => c[0].to_string(),
+             None => " ".to_string(),
+         })
+         .into_owned()

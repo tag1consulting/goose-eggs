@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..271ae67 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1719,7 +1719,7 @@ pub async fn add_to_cart_from_archive(
+     let button = format!(r#"data-product_id="{}""#, product.id);
+     let direct = product_cards(&page.html)
+         .iter()
+-        .any(|p| p.id == product.id && !p.has_options)
++        .any(|p| p.id == product.id)
+         && page.html.contains(&button);
+     let nonce = match (direct, page.store_api_nonce) {
+         (true, Some(nonce)) => nonce,

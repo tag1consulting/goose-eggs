@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.8.0-dev
+ - **API change**: `wordpress::discover` browses the site as a visitor does: from the home page through its navigation, pagination and the post and term links of its listings, filing each page by its body classes (`single-<type>`, `page`, `category`, `tag`, `tax-<taxonomy>`, `author`), up to `max_per_kind` of each kind and ten times that many pages; it no longer reads the REST API, and reads the core sitemap only when asked
+ - **API change**: `wordpress::DiscoverBuilder` loses `rest` and `rest_kinds`; `sitemap` is an opt in seed (no sitemap by default, was `wp-sitemap.xml`); `home` sets where the crawl starts
+ - **API change**: `woocommerce::discover_products` reads the product cards on the shop page and every page its pagination links to (block product collections and classic loops), filling each `Product` from its card, and fails on a shop with no cards; it no longer reads the Store API
+ - **API change**: `wordpress::create_post` and `wordpress::update_post` open the block editor page (`wp-admin/post-new.php`, or `post.php?post=<id>&action=edit`) with its assets and the reads its scripts make on opening, take the post ID and REST nonce from the page, save as the editor's buttons do (`?_locale=user`, `X-HTTP-Method-Override: PUT`), then load the post's page and check its title; they no longer take a nonce
+ - **API change**: `wordpress::PostBuilder` gains `post_type`, which picks the editor page
+ - every helper that loads a page now loads the static assets a browser loads (scripts, stylesheets in single or double quotes, preload, modulepreload and prefetch links, images that are not lazy loaded) and sends the background requests the page's own scripts send: WordPress's compression test on admin pages, and the Store API cart read under WooCommerce's product buttons
+ - add `wordpress::view_page`: any page, with its assets and background requests
+ - add `woocommerce::add_to_cart`: a product's page, then its add to cart form
+ - add `woocommerce::add_to_cart_from_archive`: a product archive, then its Add to cart button's Store API batch, with the nonce the page's cart read answered with
+ - add `woocommerce::cart_page`: the block cart, which preloads its cart
+ - add `woocommerce::update_cart_item`: a cart line's quantity control, with the cart page's nonces
+ - add `woocommerce::remove_cart_item`: a cart line's remove control, with the cart page's nonces
+ - add `woocommerce::checkout_page`: the block checkout, which preloads its cart and addresses
+ - add `woocommerce::place_order`: the block checkout's address updates, its order, and the order received page, failing without an order number
+ - `woocommerce::StoreApiCart` is documented as what a headless storefront does, not a browser on a standard theme; no example or helper uses it
+ - the `woocommerce` example buys as a browser does: product pages and their add to cart forms, the cart page, the checkout page and its order; a returning customer checks out with the address on file; the catalog is found once, from the shop's pages
+ - the `woocommerce` example finds its catalog before the load test, as its `test_start` transaction, so the crawl is in neither the metrics nor the request log and no user waits on it (one user crawled inside the measured run while the rest waited, then all were released at once, which skewed `shop/` and `my-account/` for the run's first seconds); a failed crawl fails every user's first transaction (`catalog`) with the reason and stops the load test; the dev dependency on tokio's `sync` feature is dropped
+ - the docs of `wordpress::discover` and `woocommerce::discover_products`, and the WordPress load test in the example's README, run discovery with `GooseAttack::test_start` and keep the result, or the failure, in a `std::sync::OnceLock`
+ - `tests/fixtures/browser/`: what headless Chromium requests for each WordPress and WooCommerce action on the demo sites, as HARs with a per action table, recorded by `scripts/browser-capture` (Playwright, for capture only)
+ - parity tests (`tests/sites/parity.rs`, run by the `wordpress` and `woocommerce` CI jobs): each helper against a demo site, its pages and background requests in order and its assets as a set compared with its action's HAR, any extra or missing request failing
+
 ## 0.7.1-dev
  - fix the `woocommerce` example's returning customers failing at 100 users: they all logged in to one account, whose single cart and list of login sessions they shared, so one checkout emptied the cart another was checking out (`409 Conflict`) and simultaneous logins dropped each other's sessions (My Account served logged out); each user now logs in as its own `customer1` to `customerN`, which `setup.sh` creates (`CUSTOMER_COUNT`, default 100), `CUSTOMER_USERNAME` still names one account for every user, and the `woocommerce` CI job runs 30 users so three returning customers run at once
 

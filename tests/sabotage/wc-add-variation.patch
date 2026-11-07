@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..920cb28 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1624,7 +1624,7 @@ pub async fn add_to_cart(
+         .map(|b| b.as_str().to_string())
+         .find(|b| attribute(b, "name").as_deref() == Some("add-to-cart"));
+     let value = match button.and_then(|b| attribute(&b, "value")) {
+-        Some(value) if !form.contains("variation_id") => value,
++        Some(value) if !form.contains("variation_ids") => value,
+         _ => {
+             return fail(
+                 user,

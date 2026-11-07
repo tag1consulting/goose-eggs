@@ -1,12 +1,12 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..3f68d50 100644
+index b9ea9ff..e550595 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2064,7 +2064,7 @@ impl<'a> DiscoverBuilder<'a> {
-     /// # assert!(!content.posts().is_empty(), "doc example DiscoverBuilder::sitemap: posts");
+@@ -2318,7 +2318,7 @@ impl<'a> DiscoverBuilder<'a> {
+     /// # assert_eq!(content.posts().len(), 5, "doc example DiscoverBuilder::sitemap: posts");
      /// ```
      pub fn sitemap(mut self, sitemap: &'a str) -> Self {
--        self.sitemap = sitemap;
+-        self.sitemap = Some(sitemap);
 +        let _ = sitemap;
          self
      }

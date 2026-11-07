@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..9fac0ec 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2059,7 +2059,7 @@ pub async fn checkout_page(
+     let validate = crate::Validate::builder()
+         .text("woocommerce-checkout")
+         .build();
+-    let goose = get_named(user, shop.checkout, "checkout page").await?;
++    let goose = get_named(user, shop.cart, "checkout page").await?;
+     load_page(user, goose, Some(&validate)).await
+ }
+ 

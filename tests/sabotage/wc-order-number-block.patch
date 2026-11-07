@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 1ca2747..26c9182 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -2067,7 +2067,7 @@ pub async fn checkout_page(
+ // summary ("Order #:") or the classic overview ("Order number:").
+ pub(crate) fn order_number(html: &str) -> Option<String> {
+     let patterns = [
+-        r#"(?s)order-confirmation-summary-list-item__key">[^<]*</span>\s*<span[^>]*__value">\s*([^<\s]+)\s*<"#,
++        r#"(?s)order-confirmation-summary-list-item__keys">[^<]*</span>\s*<span[^>]*__value">\s*([^<\s]+)\s*<"#,
+         r#"(?s)woocommerce-order-overview__order[^"]*"[^>]*>.*?<strong>\s*([^<\s]+)\s*</strong>"#,
+     ];
+     patterns.iter().find_map(|pattern| {

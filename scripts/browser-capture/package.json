@@ -1,0 +1,16 @@
+{
+  "name": "goose-eggs-browser-capture",
+  "private": true,
+  "description": "Records what a real browser requests on the demo WordPress and WooCommerce sites, as HARs under tests/fixtures/browser/. Fixture capture only: never a dependency of the crate or of cargo test.",
+  "type": "module",
+  "scripts": {
+    "capture": "tsx capture.ts",
+    "fixtures": "tsx fixtures.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "playwright": "1.65.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

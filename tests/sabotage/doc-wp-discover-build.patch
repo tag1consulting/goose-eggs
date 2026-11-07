@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..32733b5 100644
+index b9ea9ff..2d0daf1 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2153,7 +2153,7 @@ impl<'a> DiscoverBuilder<'a> {
-             sitemap,
-             rest,
-             rest_kinds,
--            max_per_kind,
-+            max_per_kind: 0,
-         }
+@@ -2394,7 +2394,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+     if has("page") && classes.iter().any(|c| c.starts_with("page-id-")) {
+         return Some("page".to_string());
      }
- }
+-    if has("category") {
++    if has("categories") {
+         return Some("category".to_string());
+     }
+     if has("tag") {

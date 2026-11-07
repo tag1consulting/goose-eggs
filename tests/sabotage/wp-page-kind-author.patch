@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..4db6916 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2413,7 +2413,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+         return Some(taxonomy.to_string());
+     }
+     if has("author") {
+-        return Some("user".to_string());
++        return Some("author".to_string());
+     }
+     None
+ }

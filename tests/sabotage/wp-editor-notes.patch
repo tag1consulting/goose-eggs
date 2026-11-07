@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index b9ea9ff..0912a25 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1810,7 +1810,7 @@ async fn open_editor(
+     };
+     let root = crate::page::api_fetch_root(&html);
+     let mut reads: Vec<(String, &str)> = Vec::new();
+-    if html.contains(r#""notes":true"#) {
++    if !html.contains(r#""notes":true"#) {
+         reads.push((
+             format!(
+                 "{}wp/v2/comments?context=edit&post={}&type=note&status=all&per_page=100&_locale=user",

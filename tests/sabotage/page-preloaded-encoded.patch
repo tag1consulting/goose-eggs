@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..5e5a9b9 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -312,7 +312,7 @@ pub(crate) fn preloaded(html: &str) -> serde_json::Map<String, serde_json::Value
+         r"createPreloadingMiddleware\(\s*JSON\.parse\(\s*decodeURIComponent\(\s*'([^']*)'",
+     )
+     .unwrap();
+-    for c in encoded.captures_iter(html) {
++    for c in encoded.captures_iter(html).take(0) {
+         if let Ok(serde_json::Value::Object(map)) =
+             serde_json::from_str::<serde_json::Value>(&percent_decode(&c[1]))
+         {

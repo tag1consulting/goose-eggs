@@ -1,11 +1,11 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..0fda4ff 100644
+index bd2687a..a7527e3 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2045,7 +2045,7 @@ impl<'a> DiscoverBuilder<'a> {
-                 ("tags", "post_tag"),
-             ],
-             // Defaults to 100 URLs of each kind, one REST page each.
+@@ -2285,7 +2285,7 @@ impl<'a> DiscoverBuilder<'a> {
+             // Defaults to no sitemap: a visitor never reads one.
+             sitemap: None,
+             // Defaults to 100 URLs of each kind.
 -            max_per_kind: 100,
 +            max_per_kind: 50,
          }

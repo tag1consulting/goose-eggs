@@ -1,0 +1,14 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..405246c 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -97,8 +97,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
+                 }
+             }
+             _ => {
+-                let lazy =
+-                    attribute(tag, "loading").is_some_and(|l| l.eq_ignore_ascii_case("lazy"));
++                let lazy = false;
+                 match attribute(tag, "src") {
+                     Some(src) if !lazy && !src.is_empty() && !src.starts_with("data:") => {
+                         Some((src, "img"))

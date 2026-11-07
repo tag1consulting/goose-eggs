@@ -1,9 +1,20 @@
 //! Functionality that's specific to WordPress.
 //!
-//! The helpers here drive any WordPress site through what WordPress itself
-//! serves: the log in form at `wp-login.php`, the comment form, the search at
-//! `?s=`, the core sitemap and the REST API. None of them assume a theme or any
-//! content; every path is configurable on its builder.
+//! The helpers here drive any WordPress site the way a visitor's or an editor's
+//! browser does: through its pages, the log in form at `wp-login.php`, the
+//! comment form, the search at `?s=`, and the block editor. Each loads the pages
+//! a browser loads, with their static assets, and sends only the background
+//! requests those pages' own scripts send, with the nonces the pages carry; what
+//! a browser requests for each action is recorded under `tests/fixtures/browser/`
+//! in the repository. None of them read a JSON API a visitor's browser would not
+//! call, and none assume a theme or any content; every path is configurable on
+//! its builder.
+//!
+//! WordPress serves some pages by the browser it sees: the block editor leaves
+//! out the classic editor's TinyMCE for a `User-Agent` it does not know, such as
+//! Goose's own. To load what a browser loads there, give Goose a browser's
+//! `User-Agent` with `GooseAttack::set_client_builder_with_cookies` and
+//! `goose::client::GooseClientBuilder::user_agent`.
 
 use goose::goose::GooseResponse;
 use goose::metrics::GooseRequestMetric;
@@ -13,19 +24,36 @@ use rand::seq::IndexedRandom;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
 
+// A compiled regular expression for `pattern`, compiled once per thread: page
+// parsing runs patterns per tag and per link, and compiling each every time
+// made a load test spend seconds of CPU between a user's requests.
+pub(crate) fn regex(pattern: &str) -> Regex {
+    thread_local! {
+        static CACHE: std::cell::RefCell<HashMap<String, Regex>> = Default::default();
+    }
+    CACHE.with(|cache| {
+        let mut cache = cache.borrow_mut();
+        if let Some(compiled) = cache.get(pattern) {
+            return compiled.clone();
+        }
+        let compiled = Regex::new(pattern).unwrap();
+        cache.insert(pattern.to_string(), compiled.clone());
+        compiled
+    })
+}
+
 // Matches one opening tag of the named element, across lines.
 fn tag_regex(tag: &str) -> Regex {
-    Regex::new(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag))).unwrap()
+    regex(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag)))
 }
 
 // The decoded value of `name` in an opening tag, with the value in double,
 // single or no quotes; `Some("")` for an attribute without a value.
 pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    let re = Regex::new(&format!(
+    let re = regex(&format!(
         r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
         regex::escape(name)
-    ))
-    .unwrap();
+    ));
     let capture = re.captures(tag)?;
     let value = capture
         .get(1)
@@ -38,8 +66,8 @@ pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
 pub(crate) fn plain_text(html: &str) -> String {
-    let hidden = Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap();
-    let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
+    let hidden = regex(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>");
+    let tags = regex(r"(?s)<[^>]*>");
     let text = hidden.replace_all(html, " ");
     let text = tags.replace_all(&text, " ");
     html_escape::decode_html_entities(&text)
@@ -86,7 +114,7 @@ pub(crate) fn get_form_by_class(html: &str, class: &str) -> String {
 
 // The contents of the first form whose opening tag matches.
 fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
-    let end = Regex::new(r"(?i)</form\s*>").unwrap();
+    let end = regex(r"(?i)</form\s*>");
     for form in tag_regex("form").find_iter(html) {
         if matches(form.as_str()) {
             let rest = &html[form.end()..];
@@ -106,10 +134,9 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
 /// buttons; every textarea; every select, with its selected option or its first.
 pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
     let mut controls = Vec::new();
-    let control = Regex::new(
+    let control = regex(
         r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
-    )
-    .unwrap();
+    );
     let option = tag_regex("option");
     for m in control.find_iter(form) {
         let html = m.as_str();
@@ -265,7 +292,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
         r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
     ];
     for pattern in patterns {
-        if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+        if let Some(capture) = regex(pattern).captures(html) {
             return Some(capture[1].to_string());
         }
     }
@@ -287,8 +314,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
 /// );
 /// ```
 pub fn get_log_out_url(html: &str) -> Option<String> {
-    let re =
-        Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
+    let re = regex(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#);
     match re.captures(html) {
         Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
         None => {
@@ -325,15 +351,16 @@ pub(crate) fn request_ok(goose: &GooseResponse) -> Result<(), Box<TransactionErr
     }
 }
 
-// Validate a page and load its static assets, failing first if the request failed.
+// Validate a page, load its static assets and send the background requests its
+// scripts send on opening, as a browser does, failing first if the request failed.
 pub(crate) async fn load_page(
     user: &mut GooseUser,
     goose: GooseResponse,
     validate: Option<&crate::Validate<'_>>,
 ) -> Result<String, Box<TransactionError>> {
-    request_ok(&goose)?;
-    let none = crate::Validate::none();
-    crate::validate_and_load_static_assets(user, goose, validate.unwrap_or(&none)).await
+    crate::page::open(user, goose, validate)
+        .await
+        .map(|page| page.html)
 }
 
 // GET `path`, recorded under `name`.
@@ -768,8 +795,7 @@ pub async fn log_in(
         read_response(goose).await.1
     };
     if !request.redirected || html.contains(r#"id="login_error""#) {
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
+        let error = regex(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
             .captures(&html)
             .map(|c| plain_text(&c[1]))
             .unwrap_or_else(|| "not redirected".to_string());
@@ -1036,6 +1062,44 @@ impl<'a> SearchParamsBuilder<'a> {
             results_page_validation,
         }
     }
+}
+
+/// Load any page of the site as a visitor's browser does: the page, the static
+/// assets its markup asks for (its scripts, stylesheets, preloads and the
+/// images that are not lazy loaded), and the background requests its own
+/// scripts send when it opens (WordPress's compression test on admin pages,
+/// the Store API cart read under WooCommerce's product buttons).
+///
+/// The request is named `name`, so that many pages of one kind (every post, say)
+/// share one line in the metrics. Fails on an error status and on `validate`.
+/// Returns the page.
+///
+/// # Example
+/// ```rust
+/// use goose::prelude::*;
+/// use goose_eggs::wordpress::view_page;
+///
+/// transaction!(read);
+///
+/// async fn read(user: &mut GooseUser) -> TransactionResult {
+///     let _post = view_page(user, "hello-world/", "post", None).await?;
+///     Ok(())
+/// }
+/// # mod support { include!("../tests/doc/wordpress.rs"); }
+/// # let server = support::page_site("hello-world/");
+/// # let mut user = support::user(&server);
+/// # let result = support::block_on(read(&mut user));
+/// # assert!(result.is_ok(), "doc example view_page: {}", support::failure(&result));
+/// # assert!(support::assets_loaded(&server) > 0, "doc example view_page: assets loaded");
+/// ```
+pub async fn view_page(
+    user: &mut GooseUser,
+    path: &str,
+    name: &str,
+    validate: Option<&crate::Validate<'_>>,
+) -> Result<String, Box<TransactionError>> {
+    let goose = get_named(user, path, name).await?;
+    load_page(user, goose, validate).await
 }
 
 /// Search a WordPress website, the way its search form does: a GET of
@@ -1484,8 +1548,7 @@ pub async fn post_comment(
     // 200 error page for an empty comment. WordPress's page says which.
     let mut request = goose.request.clone();
     let (headers, html) = read_response(goose).await;
-    let reason = Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
-        .unwrap()
+    let reason = regex(r"(?s)<body[^>]*>(.*?)</body>")
         .captures(&html)
         .map(|c| plain_text(&c[1]))
         .unwrap_or_default();
@@ -1505,7 +1568,7 @@ pub async fn post_comment(
     )
 }
 
-/// The fields of a post to create or update through the REST API. For complete
+/// The fields of a post to create or update in the block editor. For complete
 /// documentation, refer to [`PostBuilder`].
 ///
 /// # Example
@@ -1514,13 +1577,15 @@ pub async fn post_comment(
 ///
 /// let post: Post = Post::builder().title("Draft").status("draft").build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Draft","status":"draft"}"#);
+/// # let server = support::editor_site("post", "Draft");
 /// # support::create_post("Post", &server, &post);
 /// ```
 #[derive(Clone, Debug)]
 pub struct Post<'a> {
-    // The REST route of the post type.
+    // The REST route of the post type, which the editor saves to.
     url: &'a str,
+    // The post type, which picks the editor page.
+    post_type: &'a str,
     // The fields to send, as the REST API names them.
     fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -1533,7 +1598,7 @@ impl<'a> Post<'a> {
     ///
     /// let _post = Post::builder().title("A new title").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"A new title"}"#);
+    /// # let server = support::editor_site("post", "A new title");
     /// # support::create_post("Post::builder", &server, &_post);
     /// ```
     pub fn builder() -> PostBuilder<'a> {
@@ -1555,11 +1620,12 @@ impl<'a> Post<'a> {
 ///     .status("publish")
 ///     .build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Load testing","content":"<p>Written by Goose.</p>","status":"publish"}"#);
+/// # let server = support::editor_site_saving("post", "Load testing", r#"{"title":"Load testing","content":"<p>Written by Goose.</p>","status":"publish"}"#);
 /// # support::create_post("PostBuilder", &server, &_post);
 /// ```
 pub struct PostBuilder<'a> {
     url: &'a str,
+    post_type: &'a str,
     fields: serde_json::Map<String, serde_json::Value>,
 }
 impl<'a> PostBuilder<'a> {
@@ -1568,6 +1634,8 @@ impl<'a> PostBuilder<'a> {
         Self {
             // Defaults to the core posts route.
             url: "wp-json/wp/v2/posts",
+            // Defaults to a post.
+            post_type: "post",
             // Defaults to sending no fields.
             fields: serde_json::Map::new(),
         }
@@ -1581,7 +1649,7 @@ impl<'a> PostBuilder<'a> {
     ///
     /// let _post = Post::builder().title("Hello").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Hello"}"#);
+    /// # let server = support::editor_site_saving("post", "Hello", r#"{"title":"Hello"}"#);
     /// # support::create_post("PostBuilder::title", &server, &_post);
     /// ```
     pub fn title(self, title: &str) -> Self {
@@ -1595,10 +1663,11 @@ impl<'a> PostBuilder<'a> {
     /// use goose_eggs::wordpress::Post;
     ///
     /// let _post = Post::builder()
+    ///     .title("Hi")
     ///     .content("<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->")
     ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"content":"<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->"}"#);
+    /// # let server = support::editor_site_saving("post", "Hi", r#"{"content":"<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->"}"#);
     /// # support::create_post("PostBuilder::content", &server, &_post);
     /// ```
     pub fn content(self, content: &str) -> Self {
@@ -1607,15 +1676,16 @@ impl<'a> PostBuilder<'a> {
 
     /// The post's status: `draft`, `publish`, `pending`, `private` or `future`.
     ///
-    /// WordPress makes a new post a `draft` when no status is sent.
+    /// [`create_post`] saves a `draft`, as the editor's Save draft button does,
+    /// when no status is set.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::wordpress::Post;
     ///
-    /// let _post = Post::builder().status("publish").build();
+    /// let _post = Post::builder().title("Out now").status("publish").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"status":"publish"}"#);
+    /// # let server = support::editor_site_saving("post", "Out now", r#"{"status":"publish"}"#);
     /// # support::create_post("PostBuilder::status", &server, &_post);
     /// ```
     pub fn status(self, status: &str) -> Self {
@@ -1629,10 +1699,11 @@ impl<'a> PostBuilder<'a> {
     /// use goose_eggs::wordpress::Post;
     ///
     /// let _post = Post::builder()
+    ///     .title("Filed")
     ///     .field("categories", serde_json::json!([1, 3]))
     ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"categories":[1,3]}"#);
+    /// # let server = support::editor_site_saving("post", "Filed", r#"{"categories":[1,3]}"#);
     /// # support::create_post("PostBuilder::field", &server, &_post);
     /// ```
     pub fn field(mut self, name: &str, value: serde_json::Value) -> Self {
@@ -1640,21 +1711,49 @@ impl<'a> PostBuilder<'a> {
         self
     }
 
-    /// The REST route of the post type.
+    /// The REST route of the post type, which the editor saves the post to.
     ///
-    /// Defaults to `wp-json/wp/v2/posts`; pages are at `wp-json/wp/v2/pages`.
+    /// Defaults to `wp-json/wp/v2/posts`; pages are at `wp-json/wp/v2/pages`,
+    /// along with [`PostBuilder::post_type`] `page`.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::wordpress::Post;
     ///
-    /// let _page = Post::builder().url("wp-json/wp/v2/pages").title("About").build();
+    /// let _page = Post::builder()
+    ///     .post_type("page")
+    ///     .url("wp-json/wp/v2/pages")
+    ///     .title("About")
+    ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/pages", r#"{"title":"About"}"#);
+    /// # let server = support::editor_site("page", "About");
     /// # support::create_post("PostBuilder::url", &server, &_page);
     /// ```
     pub fn url(mut self, url: &'a str) -> Self {
         self.url = url;
+        self
+    }
+
+    /// The post type, which picks the editor page [`create_post`] opens:
+    /// `wp-admin/post-new.php`, with `?post_type=<type>` for any type but `post`.
+    ///
+    /// Defaults to `post`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::wordpress::Post;
+    ///
+    /// let _page = Post::builder()
+    ///     .post_type("page")
+    ///     .url("wp-json/wp/v2/pages")
+    ///     .title("Contact")
+    ///     .build();
+    /// # mod support { include!("../tests/doc/wordpress.rs"); }
+    /// # let server = support::editor_site("page", "Contact");
+    /// # support::create_post("PostBuilder::post_type", &server, &_page);
+    /// ```
+    pub fn post_type(mut self, post_type: &'a str) -> Self {
+        self.post_type = post_type;
         self
     }
 
@@ -1666,74 +1765,201 @@ impl<'a> PostBuilder<'a> {
     ///
     /// let _post = Post::builder().title("Built").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Built"}"#);
+    /// # let server = support::editor_site("post", "Built");
     /// # support::create_post("PostBuilder::build", &server, &_post);
     /// ```
     pub fn build(self) -> Post<'a> {
-        let Self { url, fields } = self;
-        Post { url, fields }
+        let Self {
+            url,
+            post_type,
+            fields,
+        } = self;
+        Post {
+            url,
+            post_type,
+            fields,
+        }
     }
 }
 
-// Send a post's fields with the REST nonce, and check WordPress answered with a post.
-async fn save_post(
+// An editor page as it opened: its HTML, the post's ID and the REST nonce.
+struct Editor {
+    html: String,
+    id: u64,
+    nonce: String,
+}
+
+// Open a block editor page with its assets and the reads its scripts make on
+// opening: the post's notes (where the post type supports them) and, for a new
+// post, the patterns its start page offers.
+async fn open_editor(
     user: &mut GooseUser,
-    nonce: &str,
     path: &str,
     name: &str,
+    new: bool,
+) -> Result<Editor, Box<TransactionError>> {
+    let validate = crate::Validate::builder().text("post_ID").build();
+    let goose = get_named(user, path, name).await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, Some(&validate)).await?;
+    let id = get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok());
+    let nonce = get_rest_nonce(&html);
+    let (id, nonce) = match (id, nonce) {
+        (Some(id), Some(nonce)) => (id, nonce),
+        (id, _) => {
+            let missing = if id.is_none() {
+                "post ID"
+            } else {
+                "REST nonce"
+            };
+            return fail(
+                user,
+                &format!("{}: no {} on the editor page", path, missing),
+                &mut request,
+                None,
+                Some(&html),
+            );
+        }
+    };
+    let root = crate::page::api_fetch_root(&html);
+    let mut reads: Vec<(String, &str)> = Vec::new();
+    if html.contains(r#""notes":true"#) {
+        reads.push((
+            format!(
+                "{}wp/v2/comments?context=edit&post={}&type=note&status=all&per_page=100&_locale=user",
+                root, id
+            ),
+            "wp-json/wp/v2/comments?type=note",
+        ));
+    }
+    if new {
+        reads.push((
+            format!("{}wp/v2/block-patterns/patterns?_locale=user", root),
+            "wp-json/wp/v2/block-patterns/patterns",
+        ));
+        reads.push((
+            format!(
+                "{}wp/v2/blocks?context=edit&per_page=100&page=1&_locale=user",
+                root
+            ),
+            "wp-json/wp/v2/blocks",
+        ));
+        reads.push((
+            format!(
+                "{}wp/v2/wp_pattern_category?context=view&per_page=100&_fields=id%2Cname%2Cdescription%2Cslug&_locale=user",
+                root
+            ),
+            "wp-json/wp/v2/wp_pattern_category",
+        ));
+    }
+    for (path, name) in reads {
+        let goose = send_json(
+            user,
+            GooseMethod::Get,
+            &path,
+            name,
+            &[
+                ("X-WP-Nonce", nonce.as_str()),
+                ("Accept", "application/json, */*;q=0.1"),
+            ],
+            None,
+        )
+        .await?;
+        json_response(user, goose).await?;
+    }
+    Ok(Editor { html, id, nonce })
+}
+
+// Save the post as the editor's Save draft, Publish or Update button does, load
+// its page as a visitor (the editor, for a draft) and check it shows the title.
+async fn save_post(
+    user: &mut GooseUser,
+    editor: &Editor,
+    body: serde_json::Map<String, serde_json::Value>,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    let body = serde_json::Value::Object(post.fields.clone());
+    let route = post.url.trim_end_matches('/');
+    let path = format!("{}/{}?_locale=user", route, editor.id);
+    let name = format!("{}/{{id}}", route);
     let goose = send_json(
         user,
         GooseMethod::Post,
-        path,
-        name,
-        &[("X-WP-Nonce", nonce)],
-        Some(&body),
+        &path,
+        &name,
+        &[
+            ("X-HTTP-Method-Override", "PUT"),
+            ("X-WP-Nonce", editor.nonce.as_str()),
+            ("Accept", "application/json, */*;q=0.1"),
+        ],
+        Some(&serde_json::Value::Object(body)),
     )
     .await?;
     let mut request = goose.request.clone();
     let (headers, json) = json_response(user, goose).await?;
-    if json.get("id").and_then(|id| id.as_u64()).is_none() {
+    let link = json.get("link").and_then(|l| l.as_str());
+    let title = json
+        .get("title")
+        .and_then(|t| t.get("rendered"))
+        .and_then(|t| t.as_str());
+    let (link, title) = match (json.get("id").and_then(|id| id.as_u64()), link, title) {
+        (Some(_), Some(link), Some(title)) => (site_path(link), title.to_string()),
+        _ => {
+            return fail(
+                user,
+                &format!("{}: response has no post", path),
+                &mut request,
+                Some(&headers),
+                Some(&json.to_string()),
+            )
+        }
+    };
+    let goose = get_named(user, &link, "post view").await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, None).await?;
+    if !title.is_empty() && !html.contains(&title) {
         return fail(
             user,
-            &format!("{}: response has no post id", path),
+            &format!(
+                "{}: the saved title {:?} is not on the post's page",
+                link, title
+            ),
             &mut request,
-            Some(&headers),
-            Some(&json.to_string()),
+            None,
+            Some(&html),
         );
     }
     Ok(json)
 }
 
-/// Create a post through the REST API, as the block editor does: a POST of the
-/// post's fields as JSON, with the logged in user's REST nonce (see
-/// [`get_rest_nonce`]) in an `X-WP-Nonce` header.
+/// Create a post in the block editor, as an editor does: open
+/// `wp-admin/post-new.php` (which makes the new post) with its assets and the
+/// requests its scripts make on opening, take the post's ID and the REST nonce
+/// from the page, then save the post as the editor's Save draft (or, with a
+/// status, Publish) button does: a POST of the post's fields as JSON to its
+/// REST route, `?_locale=user`, with the nonce in `X-WP-Nonce`. Then load the
+/// post's page and check it shows the title.
 ///
-/// Fails when WordPress refuses, for example a 403 `rest_cookie_invalid_nonce`
-/// for a missing or stale nonce, or answers without a post. Returns the post
-/// WordPress created, as JSON.
+/// The user must be logged in with a role that writes posts. Fails when the
+/// editor page has no post ID or nonce, WordPress refuses the save (for example
+/// a 403 `rest_cookie_invalid_nonce`), or the post's page does not show its
+/// title. Returns the saved post, as JSON.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{create_post, get_rest_nonce, Post};
+/// use goose_eggs::wordpress::{create_post, Post};
 ///
 /// transaction!(write);
 ///
 /// async fn write(user: &mut GooseUser) -> TransactionResult {
-///     // Any admin page has the nonce; the editor would load post-new.php.
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
 ///     let post = Post::builder().title("Written by Goose").build();
-///     let created = create_post(user, &nonce, &post).await?;
+///     let created = create_post(user, &post).await?;
 ///     assert!(created["id"].as_u64().is_some());
 ///
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Written by Goose"}"#);
+/// # let server = support::editor_site("post", "Written by Goose");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(write(&mut user));
 /// # assert!(result.is_ok(), "doc example create_post: {}", support::failure(&result));
@@ -1741,36 +1967,53 @@ async fn save_post(
 /// ```
 pub async fn create_post(
     user: &mut GooseUser,
-    nonce: &str,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    save_post(user, nonce, post.url, post.url, post).await
+    let path = match post.post_type {
+        "post" => "wp-admin/post-new.php".to_string(),
+        post_type => format!(
+            "wp-admin/post-new.php?post_type={}",
+            query_encode(post_type)
+        ),
+    };
+    let editor = open_editor(user, &path, "wp-admin/post-new.php", true).await?;
+    // The editor sends the whole new post: its ID, title, content and status.
+    let mut body = serde_json::Map::new();
+    body.insert("id".to_string(), editor.id.into());
+    body.insert("title".to_string(), "".into());
+    body.insert("content".to_string(), "".into());
+    body.insert("status".to_string(), "draft".into());
+    body.extend(post.fields.clone());
+    save_post(user, &editor, body, post).await
 }
 
-/// Update a post through the REST API, as the block editor saves one: a POST of
-/// the changed fields as JSON to the post's route, with the REST nonce in an
-/// `X-WP-Nonce` header.
+/// Update a post in the block editor, as an editor does: open
+/// `wp-admin/post.php?post=<id>&action=edit` with its assets and the requests
+/// its scripts make on opening, take the REST nonce from the page, then save as
+/// the editor's Save (or Update) button does: a POST of the post's ID, the
+/// changed fields and its content to the post's REST route, `?_locale=user`,
+/// with the nonce in `X-WP-Nonce`. Then load the post's page and check it shows
+/// the title.
 ///
-/// The request is named `<route>/{id}`, so updates of every post share one line
-/// in the metrics. Fails as [`create_post`] does; returns the updated post.
+/// The requests are named `wp-admin/post.php?action=edit` and `<route>/{id}`, so
+/// updates of every post share their lines in the metrics. Fails as
+/// [`create_post`] does; returns the updated post.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{get_rest_nonce, update_post, Post};
+/// use goose_eggs::wordpress::{update_post, Post};
 ///
 /// transaction!(edit);
 ///
 /// async fn edit(user: &mut GooseUser) -> TransactionResult {
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
 ///     let post = Post::builder().title("Hello world!").build();
-///     let _updated = update_post(user, &nonce, 1, &post).await?;
+///     let _updated = update_post(user, 1, &post).await?;
 ///
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts/1", r#"{"title":"Hello world!"}"#);
+/// # let server = support::editor_site("post", "Hello world!");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(edit(&mut user));
 /// # assert!(result.is_ok(), "doc example update_post: {}", support::failure(&result));
@@ -1778,13 +2021,27 @@ pub async fn create_post(
 /// ```
 pub async fn update_post(
     user: &mut GooseUser,
-    nonce: &str,
     id: u64,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    let path = format!("{}/{}", post.url.trim_end_matches('/'), id);
-    let name = format!("{}/{{id}}", post.url.trim_end_matches('/'));
-    save_post(user, nonce, &path, &name, post).await
+    let path = format!("wp-admin/post.php?post={}&action=edit", id);
+    let editor = open_editor(user, &path, "wp-admin/post.php?action=edit", false).await?;
+    // The editor sends the post's ID, what changed, and the content as it holds
+    // it, which the page preloads.
+    let mut body = serde_json::Map::new();
+    body.insert("id".to_string(), editor.id.into());
+    body.extend(post.fields.clone());
+    if !body.contains_key("content") {
+        let preloaded = crate::page::preloaded(&editor.html);
+        let content = preloaded
+            .iter()
+            .find(|(route, _)| route.contains(&format!("/{}?", editor.id)))
+            .and_then(|(_, response)| response["body"]["content"]["raw"].as_str());
+        if let Some(content) = content {
+            body.insert("content".to_string(), content.into());
+        }
+    }
+    save_post(user, &editor, body, post).await
 }
 
 /// The URLs of a site's content, by kind, as [`discover`] found them.
@@ -1929,10 +2186,7 @@ impl SiteContent {
 
 // The path (and query) of a URL, so it is requested on the load test's host.
 pub(crate) fn site_path(url: &str) -> String {
-    match Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*")
-        .unwrap()
-        .find(url)
-    {
+    match regex(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*").find(url) {
         Some(origin) if origin.end() == url.len() => "/".to_string(),
         Some(origin) => url[origin.end()..].to_string(),
         None => url.to_string(),
@@ -1941,8 +2195,7 @@ pub(crate) fn site_path(url: &str) -> String {
 
 // Every <loc> in a sitemap, decoded.
 fn sitemap_locations(xml: &str) -> Vec<String> {
-    Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>")
-        .unwrap()
+    regex(r"(?s)<loc>\s*(.*?)\s*</loc>")
         .captures_iter(xml)
         .map(|c| html_escape::decode_html_entities(&c[1]).to_string())
         .collect()
@@ -1952,9 +2205,7 @@ fn sitemap_locations(xml: &str) -> Vec<String> {
 // wp-sitemap-posts-<post type>-<n>.xml, wp-sitemap-taxonomies-<taxonomy>-<n>.xml
 // or wp-sitemap-users-<n>.xml.
 fn sitemap_kind(url: &str) -> Option<String> {
-    let re =
-        Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
-            .unwrap();
+    let re = regex(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml");
     let capture = re.captures(url)?;
     Some(
         match capture.get(1) {
@@ -1965,7 +2216,7 @@ fn sitemap_kind(url: &str) -> Option<String> {
     )
 }
 
-/// Where [`discover`] reads a site's content from. For complete documentation,
+/// Where [`discover`] starts and how far it goes. For complete documentation,
 /// refer to [`DiscoverBuilder`].
 ///
 /// # Example
@@ -1974,18 +2225,16 @@ fn sitemap_kind(url: &str) -> Option<String> {
 ///
 /// let discover: Discover = Discover::builder().build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_list_site("wp-json/wp/v2/");
+/// # let server = support::crawl_site("");
 /// # let content = support::discover("Discover", &server, &discover);
 /// # assert_eq!(content.pages(), ["/about/"], "doc example Discover: pages");
 /// ```
 #[derive(Clone, Debug)]
 pub struct Discover<'a> {
-    // The path of the core sitemap index.
-    sitemap: &'a str,
-    // The REST API route that lists content, used when there is no sitemap.
-    rest: &'a str,
-    // The REST routes to list, with the kind each lists.
-    rest_kinds: &'a [(&'a str, &'a str)],
+    // The page the crawl starts from.
+    home: &'a str,
+    // The core sitemap index to read first, if any.
+    sitemap: Option<&'a str>,
     // At most this many URLs of each kind.
     max_per_kind: usize,
 }
@@ -1996,11 +2245,11 @@ impl<'a> Discover<'a> {
     /// ```rust
     /// use goose_eggs::wordpress::Discover;
     ///
-    /// let _discover = Discover::builder().max_per_kind(10).build();
+    /// let _discover = Discover::builder().max_per_kind(1).build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::sitemap_site("wp-sitemap.xml");
+    /// # let server = support::crawl_site("");
     /// # let content = support::discover("Discover::builder", &server, &_discover);
-    /// # assert_eq!(content.posts().len(), 10, "doc example Discover::builder: posts");
+    /// # assert_eq!(content.posts().len(), 1, "doc example Discover::builder: posts");
     /// ```
     pub fn builder() -> DiscoverBuilder<'a> {
         DiscoverBuilder::new()
@@ -2013,105 +2262,75 @@ impl<'a> Discover<'a> {
 /// ```rust
 /// use goose_eggs::wordpress::Discover;
 ///
-/// // A site with its sitemap at the default path, up to 50 URLs of each kind.
-/// let _discover = Discover::builder()
-///     .sitemap("wp-sitemap.xml")
-///     .max_per_kind(50)
-///     .build();
+/// // Crawl from the home page, up to 50 URLs of each kind.
+/// let _discover = Discover::builder().max_per_kind(50).build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::sitemap_site("wp-sitemap.xml");
+/// # let server = support::crawl_site("");
 /// # let content = support::discover("DiscoverBuilder", &server, &_discover);
-/// # assert_eq!(content.posts().len(), 50, "doc example DiscoverBuilder: posts");
+/// # assert_eq!(content.posts().len(), 2, "doc example DiscoverBuilder: posts");
 /// ```
 pub struct DiscoverBuilder<'a> {
-    sitemap: &'a str,
-    rest: &'a str,
-    rest_kinds: &'a [(&'a str, &'a str)],
+    home: &'a str,
+    sitemap: Option<&'a str>,
     max_per_kind: usize,
 }
 impl<'a> DiscoverBuilder<'a> {
     // Internally used when building to set defaults.
     fn new() -> Self {
         Self {
-            // Defaults to the core sitemap, WordPress 5.5 and later.
-            sitemap: "wp-sitemap.xml",
-            // Defaults to the core REST API.
-            rest: "wp-json/wp/v2/",
-            // Defaults to the core content the sitemap also lists.
-            rest_kinds: &[
-                ("posts", "post"),
-                ("pages", "page"),
-                ("categories", "category"),
-                ("tags", "post_tag"),
-            ],
-            // Defaults to 100 URLs of each kind, one REST page each.
+            // Defaults to the site's home page.
+            home: "",
+            // Defaults to no sitemap: a visitor never reads one.
+            sitemap: None,
+            // Defaults to 100 URLs of each kind.
             max_per_kind: 100,
         }
     }
 
-    /// The path of the core sitemap index.
+    /// The page the crawl starts from.
     ///
-    /// Defaults to `wp-sitemap.xml`.
+    /// Defaults to `""`, the home page.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::wordpress::Discover;
     ///
-    /// let _discover = Discover::builder().sitemap("blog/wp-sitemap.xml").build();
+    /// // A site installed under /blog/.
+    /// let _discover = Discover::builder().home("blog/").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::sitemap_site("blog/wp-sitemap.xml");
+    /// # let server = support::crawl_site("blog/");
+    /// # let content = support::discover("DiscoverBuilder::home", &server, &_discover);
+    /// # assert!(!content.posts().is_empty(), "doc example DiscoverBuilder::home: posts");
+    /// ```
+    pub fn home(mut self, home: &'a str) -> Self {
+        self.home = home;
+        self
+    }
+
+    /// Read this core sitemap index (WordPress 5.5 and later serve one at
+    /// `wp-sitemap.xml`) and its sub sitemaps first, each URL filed under the
+    /// kind its sub sitemap lists, then crawl for the rest.
+    ///
+    /// Defaults to no sitemap. A visitor never reads one, and a site may turn it
+    /// off; set it to seed a large site's discovery cheaply.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::wordpress::Discover;
+    ///
+    /// let _discover = Discover::builder().sitemap("wp-sitemap.xml").max_per_kind(5).build();
+    /// # mod support { include!("../tests/doc/wordpress.rs"); }
+    /// # let server = support::sitemap_site("wp-sitemap.xml");
     /// # let content = support::discover("DiscoverBuilder::sitemap", &server, &_discover);
-    /// # assert!(!content.posts().is_empty(), "doc example DiscoverBuilder::sitemap: posts");
+    /// # assert_eq!(content.posts().len(), 5, "doc example DiscoverBuilder::sitemap: posts");
     /// ```
     pub fn sitemap(mut self, sitemap: &'a str) -> Self {
-        self.sitemap = sitemap;
+        self.sitemap = Some(sitemap);
         self
     }
 
-    /// The REST API route [`discover`] lists content from when the site has no
-    /// sitemap (a plugin or the `wp_sitemaps_enabled` filter turned it off).
-    ///
-    /// Defaults to `wp-json/wp/v2/`.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::wordpress::Discover;
-    ///
-    /// // A site without pretty permalinks serves the REST API at ?rest_route=.
-    /// let _discover = Discover::builder().rest("api/wp/v2/").build();
-    /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_list_site("api/wp/v2/");
-    /// # let content = support::discover("DiscoverBuilder::rest", &server, &_discover);
-    /// # assert!(!content.posts().is_empty(), "doc example DiscoverBuilder::rest: posts");
-    /// ```
-    pub fn rest(mut self, rest: &'a str) -> Self {
-        self.rest = rest;
-        self
-    }
-
-    /// The REST routes to list when there is no sitemap, each with the kind of
-    /// content it lists, for example `&[("posts", "post"), ("products", "product")]`.
-    ///
-    /// Defaults to posts, pages, categories and tags.
-    ///
-    /// # Example
-    /// ```rust
-    /// use goose_eggs::wordpress::Discover;
-    ///
-    /// // Only posts.
-    /// let _discover = Discover::builder().rest_kinds(&[("posts", "post")]).build();
-    /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_list_site("wp-json/wp/v2/");
-    /// # let content = support::discover("DiscoverBuilder::rest_kinds", &server, &_discover);
-    /// # assert_eq!(content.kinds().collect::<Vec<_>>(), ["post"], "doc example DiscoverBuilder::rest_kinds: kinds");
-    /// ```
-    pub fn rest_kinds(mut self, rest_kinds: &'a [(&'a str, &'a str)]) -> Self {
-        self.rest_kinds = rest_kinds;
-        self
-    }
-
-    /// Read at most this many URLs of each kind, which bounds how many requests
-    /// discovery makes on a large site.
+    /// Keep at most this many URLs of each kind, which bounds how many pages
+    /// discovery loads on a large site: it loads at most ten times this many.
     ///
     /// Defaults to 100.
     ///
@@ -2119,11 +2338,11 @@ impl<'a> DiscoverBuilder<'a> {
     /// ```rust
     /// use goose_eggs::wordpress::Discover;
     ///
-    /// let _discover = Discover::builder().max_per_kind(5).build();
+    /// let _discover = Discover::builder().max_per_kind(1).build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::sitemap_site("wp-sitemap.xml");
+    /// # let server = support::crawl_site("");
     /// # let content = support::discover("DiscoverBuilder::max_per_kind", &server, &_discover);
-    /// # assert_eq!(content.posts().len(), 5, "doc example DiscoverBuilder::max_per_kind: posts");
+    /// # assert_eq!(content.posts().len(), 1, "doc example DiscoverBuilder::max_per_kind: posts");
     /// ```
     pub fn max_per_kind(mut self, max_per_kind: usize) -> Self {
         self.max_per_kind = max_per_kind;
@@ -2138,37 +2357,194 @@ impl<'a> DiscoverBuilder<'a> {
     ///
     /// let _discover = Discover::builder().build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::sitemap_site("wp-sitemap.xml");
+    /// # let server = support::crawl_site("");
     /// # let content = support::discover("DiscoverBuilder::build", &server, &_discover);
-    /// # assert!(!content.pages().is_empty(), "doc example DiscoverBuilder::build: pages");
+    /// # assert!(!content.categories().is_empty(), "doc example DiscoverBuilder::build: categories");
     /// ```
     pub fn build(self) -> Discover<'a> {
         let Self {
+            home,
             sitemap,
-            rest,
-            rest_kinds,
             max_per_kind,
         } = self;
         Discover {
+            home,
             sitemap,
-            rest,
-            rest_kinds,
             max_per_kind,
         }
     }
 }
 
-/// Find a site's content, so a load test can request its real URLs at random.
+// The classes of a page's <body>.
+pub(crate) fn body_classes(html: &str) -> Vec<String> {
+    tag_regex("body")
+        .find(html)
+        .and_then(|body| attribute(body.as_str(), "class"))
+        .map(|classes| classes.split_whitespace().map(str::to_string).collect())
+        .unwrap_or_default()
+}
+
+// The kind of content a page is, from the classes WordPress puts on its body:
+// a single post of a type (`single-<type>`), a page, a category, tag or other
+// taxonomy archive, or an author archive. None for a page of another kind (the
+// home page, a date archive, search results).
+pub(crate) fn page_kind(html: &str) -> Option<String> {
+    let classes = body_classes(html);
+    let has = |class: &str| classes.iter().any(|c| c == class);
+    if has("single") || classes.iter().any(|c| c.starts_with("postid-")) {
+        return classes
+            .iter()
+            .filter_map(|c| c.strip_prefix("single-"))
+            .find(|t| !t.starts_with("format-") && *t != "paged")
+            .map(str::to_string);
+    }
+    if has("page") && classes.iter().any(|c| c.starts_with("page-id-")) {
+        return Some("page".to_string());
+    }
+    if has("category") {
+        return Some("category".to_string());
+    }
+    if has("tag") {
+        return Some("post_tag".to_string());
+    }
+    if let Some(taxonomy) = classes.iter().find_map(|c| c.strip_prefix("tax-")) {
+        return Some(taxonomy.to_string());
+    }
+    if has("author") {
+        return Some("user".to_string());
+    }
+    None
+}
+
+// The same site links a crawl follows from a page, in page order: links in the
+// page's navigation, its pagination (`rel="next"` and the theme's page links),
+// the term links in its main content, and, on a page that lists content (any
+// page but a single post or page), every link in its main content. Links a visitor's crawl should not
+// take are left out: `rel="nofollow"` (WooCommerce's add to cart links among
+// them), feeds, comment links, admin and log in pages, the REST API and files.
+pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<String> {
+    let html = regex(r"(?is)<!--.*?-->|<script\b.*?</script\s*>").replace_all(html, " ");
+    let section = |tag: &str| -> Vec<String> {
+        regex(&format!(r"(?is)<{}\b.*?</{}\s*>", tag, tag))
+            .find_iter(&html)
+            .map(|m| m.as_str().to_string())
+            .collect()
+    };
+    let singular = body_classes(&html).iter().any(|c| {
+        c == "single" || c == "singular" || c.starts_with("postid-") || c.starts_with("page-id-")
+    });
+    let navigation = section("nav");
+    let main = section("main");
+    let anchor = tag_regex("a");
+    let mut links: Vec<String> = Vec::new();
+    let mut push = |tag: &str| {
+        let rel = attribute(tag, "rel")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if rel.split_whitespace().any(|r| r == "nofollow") {
+            return;
+        }
+        if let Some(href) = attribute(tag, "href") {
+            if let Some(link) = crawl_link(user, page_url, &href) {
+                if !links.contains(&link) {
+                    links.push(link);
+                }
+            }
+        }
+    };
+    for scope in &navigation {
+        for tag in anchor.find_iter(scope) {
+            push(tag.as_str());
+        }
+    }
+    // On a single post or page, only its term links (WordPress marks them
+    // `rel="tag"` or `rel="category tag"`); on a listing, every link.
+    for scope in &main {
+        for tag in anchor.find_iter(scope) {
+            let tag = tag.as_str();
+            let rel = attribute(tag, "rel").unwrap_or_default();
+            if !singular || rel.split_whitespace().any(|r| r == "tag") {
+                push(tag);
+            }
+        }
+    }
+    for link in pagination_links(user, page_url, &html) {
+        if !links.contains(&link) {
+            links.push(link);
+        }
+    }
+    links
+}
+
+// The pagination links on a page, anywhere in it: `rel="next"`, and the page
+// links classic themes (`page-numbers`) and block themes
+// (`wp-block-query-pagination-*`) write, as paths on the site.
+pub(crate) fn pagination_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<String> {
+    let mut links: Vec<String> = Vec::new();
+    for tag in tag_regex("a").find_iter(html) {
+        let tag = tag.as_str();
+        let rel = attribute(tag, "rel").unwrap_or_default();
+        let class = attribute(tag, "class").unwrap_or_default();
+        let paginates = rel.split_whitespace().any(|r| r == "next")
+            || class
+                .split_whitespace()
+                .any(|c| c == "page-numbers" || c.starts_with("wp-block-query-pagination"));
+        if let Some(link) = attribute(tag, "href")
+            .filter(|_| paginates)
+            .and_then(|href| crawl_link(user, page_url, &href))
+        {
+            if !links.contains(&link) {
+                links.push(link);
+            }
+        }
+    }
+    links
+}
+
+// A link as a path on the site to crawl, or None when it leaves the site or
+// is not content.
+fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
+    if href.starts_with('#')
+        || href.starts_with("mailto:")
+        || href.starts_with("tel:")
+        || href.starts_with("javascript:")
+        || !crate::page::same_site(user, href)
+    {
+        return None;
+    }
+    let url = crate::page::resolve(user, page_url, href);
+    let path = site_path(url.split('#').next().unwrap_or_default());
+    let skip = regex(
+        r"(?i)/(wp-admin|wp-login\.php|wp-json|wp-content|wp-includes|xmlrpc\.php|wp-comments-post\.php|feed|embed|trackback)(/|\?|$)|/comment-page-\d+|[?&](replytocom|s|add-to-cart|add_to_wishlist|share|orderby|feed|query-\d+-page)=|\.(xml|jpe?g|png|gif|webp|svg|pdf|zip|mp[34]|mov|css|js)(\?|$)",
+    );
+    if skip.is_match(&path) {
+        return None;
+    }
+    Some(path)
+}
+
+/// Find a site's content, so a load test can request its real URLs at random,
+/// by browsing it as a visitor does: from the home page, follow the links in
+/// each page's navigation and pagination, and, on pages that list content (the
+/// home page, archives), the post and term links in their main content. Each
+/// page is filed by its kind, which WordPress's body classes name
+/// (`single-<post type>`, `page`, `category`, `tag`, `tax-<taxonomy>`,
+/// `author`), keeping up to [`DiscoverBuilder::max_per_kind`] URLs of each
+/// kind and loading at most ten times as many pages in all.
 ///
-/// Reads the core sitemap index (WordPress 5.5 and later) and the sub sitemaps
-/// it lists, up to [`DiscoverBuilder::max_per_kind`] URLs of each kind. When the
-/// site has no sitemap, lists the content through the public REST API instead,
-/// up to 100 a page, following `X-WP-TotalPages`.
+/// Discovery loads only the pages, without their assets, each named `discover`.
+/// It reads no sitemap unless [`DiscoverBuilder::sitemap`] asks for one, and no
+/// JSON API, so it works on a site that locks those down.
 ///
-/// The sitemap index is requested outside Goose's metrics, so a site without one
-/// records no error; every other request is counted. Discovery makes several
-/// requests, so run it once per load test and share the result, for example in
-/// a [`std::sync::OnceLock`] filled by the first user to start.
+/// It makes many requests, so run it once, before the load test: register it
+/// with [`GooseAttack::test_start`](goose::GooseAttack::test_start). Goose runs
+/// that transaction once, on a user of its own, before any user starts, so its
+/// requests are in neither the metrics nor the request log, and no user waits on
+/// it. Keep what it finds in a [`std::sync::OnceLock`] the users read. Goose
+/// ignores what a `test_start` transaction returns, so keep a failure there too
+/// and fail the users with it (the WooCommerce example also stops the load test
+/// with `goose::trigger_killswitch`). Called in a user's transaction instead,
+/// it is measured with the load, and every other user waits on it.
 ///
 /// # Example
 /// ```rust
@@ -2176,31 +2552,37 @@ impl<'a> DiscoverBuilder<'a> {
 /// use goose_eggs::wordpress::{discover, Discover, SiteContent};
 /// use std::sync::OnceLock;
 ///
-/// static CONTENT: OnceLock<SiteContent> = OnceLock::new();
+/// static CONTENT: OnceLock<Result<SiteContent, String>> = OnceLock::new();
 ///
-/// transaction!(find_content).set_on_start();
-/// transaction!(read_a_post);
+/// fn load_test(attack: GooseAttack) -> GooseAttack {
+///     attack
+///         .test_start(transaction!(find_content))
+///         .register_scenario(scenario!("Reader").register_transaction(transaction!(read_a_post)))
+/// }
 ///
 /// async fn find_content(user: &mut GooseUser) -> TransactionResult {
-///     if CONTENT.get().is_none() {
-///         let content = discover(user, &Discover::builder().build()).await?;
-///         let _ = CONTENT.set(content);
-///     }
+///     let found = discover(user, &Discover::builder().build()).await;
+///     let _ = CONTENT.set(found.map_err(|error| error.to_string()));
 ///     Ok(())
 /// }
 ///
 /// async fn read_a_post(user: &mut GooseUser) -> TransactionResult {
-///     if let Some(post) = CONTENT.get().and_then(|c| c.random("post")) {
+///     let content = match CONTENT.get() {
+///         Some(Ok(content)) => content,
+///         Some(Err(error)) => return Err(Box::new(TransactionError::Custom(error.clone()))),
+///         None => return Err(Box::new(TransactionError::Custom("no content".to_string()))),
+///     };
+///     if let Some(post) = content.random("post") {
 ///         let _goose = user.get_named(post, "post").await?;
 ///     }
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::sitemap_site("wp-sitemap.xml");
+/// # let server = support::crawl_site("");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(async { find_content(&mut user).await?; read_a_post(&mut user).await });
 /// # assert!(result.is_ok(), "doc example discover: {}", support::failure(&result));
-/// # assert_eq!(CONTENT.get().map(|c| c.posts().len()), Some(57), "doc example discover: posts");
+/// # assert_eq!(CONTENT.get().and_then(|c| c.as_ref().ok()).map(|c| c.posts().len()), Some(2), "doc example discover: posts");
 /// ```
 pub async fn discover(
     user: &mut GooseUser,
@@ -2208,20 +2590,20 @@ pub async fn discover(
 ) -> Result<SiteContent, Box<TransactionError>> {
     let mut content = SiteContent::default();
     let cap = discover.max_per_kind;
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
 
-    // The sitemap index, read without a metric so its absence is no error.
-    let url = user.build_url(discover.sitemap)?;
-    let index = match user.client.get(&url).send().await {
-        Ok(response) if response.status().is_success() => response
-            .text()
-            .await
-            .ok()
-            .filter(|xml| xml.contains("<sitemapindex")),
-        _ => None,
-    };
-
-    if let Some(index) = index {
-        for sitemap in sitemap_locations(&index) {
+    if let Some(sitemap) = discover.sitemap {
+        // The sitemap index, read without a metric so its absence is no error.
+        let url = user.build_url(sitemap)?;
+        let index = match user.client.get(&url).send().await {
+            Ok(response) if response.status().is_success() => response
+                .text()
+                .await
+                .ok()
+                .filter(|xml| xml.contains("<sitemapindex")),
+            _ => None,
+        };
+        for sitemap in index.as_deref().map(sitemap_locations).unwrap_or_default() {
             let kind = match sitemap_kind(&sitemap) {
                 Some(kind) => kind,
                 None => continue,
@@ -2236,49 +2618,37 @@ pub async fn discover(
                 if content.urls(&kind).len() >= cap {
                     break;
                 }
+                seen.insert(site_path(&url));
                 content.add(&kind, url);
             }
         }
-        return Ok(content);
     }
 
-    // No sitemap: list each kind through the REST API, with one page size
-    // throughout so the pages line up.
-    let per_page = cap.min(100);
-    for (route, kind) in discover.rest_kinds {
-        let mut page = 1;
-        while content.urls(kind).len() < cap {
-            let path = format!(
-                "{}{}?per_page={}&page={}&_fields=link",
-                discover.rest, route, per_page, page
-            );
-            let name = format!("{}{}", discover.rest, route);
-            let goose = get_named(user, &path, &name).await?;
-            let (headers, json) = json_response(user, goose).await?;
-            let links: Vec<String> = json
-                .as_array()
-                .map(|items| {
-                    items
-                        .iter()
-                        .filter_map(|item| item.get("link").and_then(|l| l.as_str()))
-                        .map(str::to_string)
-                        .collect()
-                })
-                .unwrap_or_default();
-            let found = links.len();
-            for link in links {
-                if content.urls(kind).len() >= cap {
-                    break;
-                }
-                content.add(kind, link);
+    let home = site_path(&user.build_url(discover.home)?);
+    let mut queue = std::collections::VecDeque::from([home.clone()]);
+    seen.insert(home);
+    let mut loaded = 0;
+    while let Some(path) = queue.pop_front() {
+        if loaded >= cap.saturating_mul(10) {
+            break;
+        }
+        loaded += 1;
+        let goose = get_named(user, &path, "discover").await?;
+        let page_url = goose.request.final_url.to_string();
+        if !goose.request.success {
+            // A broken link: Goose recorded it; the crawl goes on.
+            continue;
+        }
+        let (_, html) = read_response(goose).await;
+        if let Some(kind) = page_kind(&html) {
+            if content.urls(&kind).len() < cap {
+                content.add(&kind, path.clone());
             }
-            let pages = header_value(&headers, "X-WP-TotalPages")
-                .and_then(|p| p.parse::<usize>().ok())
-                .unwrap_or(1);
-            if found == 0 || page >= pages {
-                break;
+        }
+        for link in crawl_links(user, &page_url, &html) {
+            if seen.insert(link.clone()) {
+                queue.push_back(link);
             }
-            page += 1;
         }
     }
     Ok(content)
@@ -2656,8 +3026,7 @@ mod tests {
             "Error: The password & more.",
             "plain_text case tags and entities"
         );
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
+        let error = regex(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
             .captures(LOGIN_FAILED)
             .map(|c| plain_text(&c[1]))
             .unwrap();
@@ -2832,6 +3201,7 @@ mod tests {
     fn post_builder_defaults() {
         let post = Post::builder().build();
         assert_eq!(post.url, "wp-json/wp/v2/posts", "Post default url");
+        assert_eq!(post.post_type, "post", "Post default post_type");
         assert!(post.fields.is_empty(), "Post default fields");
         let post = Post::builder().title("a").title("b").build();
         assert_eq!(
@@ -2842,23 +3212,68 @@ mod tests {
     }
 
     #[test]
+    fn page_kind_cases() {
+        let page =
+            |classes: &str| format!(r#"<html><body class="{}"><p>x</p></body></html>"#, classes);
+        // (case, body classes, expected kind)
+        let cases = [
+            (
+                "post",
+                "post-template-default single single-post postid-1 single-format-standard",
+                Some("post"),
+            ),
+            (
+                "post, format first",
+                "single single-format-gallery single-post postid-2",
+                Some("post"),
+            ),
+            (
+                "product",
+                "product-template-default single single-product postid-14",
+                Some("product"),
+            ),
+            ("page", "page-template-default page page-id-2", Some("page")),
+            (
+                "category",
+                "archive category category-news category-3",
+                Some("category"),
+            ),
+            ("tag", "archive tag tag-rust tag-4", Some("post_tag")),
+            (
+                "taxonomy",
+                "archive tax-product_cat term-accessories",
+                Some("product_cat"),
+            ),
+            (
+                "author",
+                "archive author author-admin author-1",
+                Some("user"),
+            ),
+            ("home", "home blog", None),
+            ("search", "search search-results", None),
+            ("no body", "", None),
+        ];
+        for (case, classes, expected) in cases {
+            assert_eq!(
+                page_kind(&page(classes)).as_deref(),
+                expected,
+                "page_kind case {}",
+                case
+            );
+        }
+    }
+
+    #[test]
     fn discover_builder_defaults() {
         let discover = Discover::builder().build();
-        assert_eq!(
-            discover.sitemap, "wp-sitemap.xml",
-            "Discover default sitemap"
-        );
-        assert_eq!(discover.rest, "wp-json/wp/v2/", "Discover default rest");
-        assert_eq!(
-            discover.rest_kinds,
-            [
-                ("posts", "post"),
-                ("pages", "page"),
-                ("categories", "category"),
-                ("tags", "post_tag"),
-            ],
-            "Discover default rest_kinds"
-        );
+        assert_eq!(discover.home, "", "Discover default home");
+        assert_eq!(discover.sitemap, None, "Discover default sitemap");
         assert_eq!(discover.max_per_kind, 100, "Discover default max_per_kind");
+        let discover = Discover::builder().sitemap("wp-sitemap.xml").build();
+        assert_eq!(
+            discover.sitemap,
+            Some("wp-sitemap.xml"),
+            "Discover sitemap is an opt in"
+        );
     }
 }

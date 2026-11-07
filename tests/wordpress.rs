@@ -28,8 +28,8 @@ const COMMENT_DUPLICATE: &str = include_str!("fixtures/wordpress/comment-duplica
 const COMMENT_FLOOD: &str = include_str!("fixtures/wordpress/comment-flood.html");
 const SITEMAP: &str = include_str!("fixtures/wordpress/sitemap.xml");
 const SITEMAP_POSTS: &str = include_str!("fixtures/wordpress/sitemap-posts-post-1.xml");
-const REST_POSTS: &str = include_str!("fixtures/wordpress/rest-posts.json");
-const REST_POST: &str = include_str!("fixtures/wordpress/rest-post-update.json");
+const EDITOR_NEW: &str = include_str!("fixtures/wordpress/editor-new.html");
+const EDITOR_EDIT: &str = include_str!("fixtures/wordpress/editor-edit.html");
 const REST_INVALID_NONCE: &str = include_str!("fixtures/wordpress/rest-invalid-nonce.json");
 
 const LOG_IN: &str = "log_in loads the form for the test cookie, then posts it";
@@ -58,17 +58,21 @@ const COMMENT_CLOSED: &str = "post_comment fails without a comment form";
 const COMMENT_NOT_ACCEPTED: &str = "post_comment fails when not redirected";
 const COMMENT_POST_VALIDATION: &str = "post_comment fails the post page validation";
 const COMMENT_COMMENTED_VALIDATION: &str = "post_comment fails the commented page validation";
-const CREATE_POST: &str = "create_post sends the nonce and fields";
-const UPDATE_POST: &str = "update_post sends the nonce and fields to the post";
-const REST_STALE_NONCE: &str = "update_post fails on a stale nonce";
-const REST_NO_ID: &str = "create_post fails without a post in the response";
-const REST_NOT_JSON: &str = "create_post fails on a response that is not JSON";
+const VIEW_PAGE: &str = "view_page loads a page with its assets";
+const VIEW_PAGE_VALIDATION: &str = "view_page fails its validation";
+const CREATE_POST: &str = "create_post opens the editor, then saves with its nonce and post ID";
+const UPDATE_POST: &str = "update_post opens the post's editor, then saves with its content";
+const EDITOR_STALE_NONCE: &str = "update_post fails on a stale nonce";
+const EDITOR_NO_POST: &str = "create_post fails without a post in the response";
+const EDITOR_NOT_JSON: &str = "create_post fails on a response that is not JSON";
+const EDITOR_NO_TITLE: &str = "create_post fails when the post's page lacks the title";
+const EDITOR_NO_NONCE: &str = "update_post fails on an editor page without a nonce";
+const DISCOVER_CRAWL: &str = "discover browses navigation, listings and pagination";
+const DISCOVER_CRAWL_CAP: &str = "discover keeps max_per_kind of each kind";
+const DISCOVER_PAGE_LIMIT: &str = "discover loads at most ten pages per max_per_kind";
 const DISCOVER_SITEMAP: &str = "discover reads the sitemap index and its sitemaps";
 const DISCOVER_CAP: &str = "discover stops at max_per_kind";
-const DISCOVER_REST: &str = "discover falls back to REST, following its pages";
-const DISCOVER_REST_CAP: &str = "discover asks REST for no more than max_per_kind";
 const DISCOVER_SITEMAP_STATUS: &str = "discover fails on a sitemap's error status";
-const DISCOVER_REST_STATUS: &str = "discover fails on a REST error status";
 
 // A transaction error for a wrong result.
 fn wrong(message: String) -> Box<TransactionError> {
@@ -217,31 +221,6 @@ fn mock_sitemap(server: &MockServer, path: &str) {
         when.method(GET).path(format!("/{}", path));
         then.status(200).body(index);
     });
-}
-
-// Answer a REST list of `route` at `page` with `links`, of `pages` pages.
-fn mock_rest_list<'a>(
-    server: &'a MockServer,
-    route: &str,
-    page: &str,
-    per_page: &str,
-    pages: &str,
-    status: u16,
-    links: &str,
-) -> Mock<'a> {
-    let links = links.to_string();
-    let pages = pages.to_string();
-    server.mock(|when, then| {
-        when.method(GET)
-            .path(format!("/{}", route))
-            .query_param("page", page)
-            .query_param("per_page", per_page)
-            .query_param("_fields", "link");
-        then.status(status)
-            .header("content-type", "application/json")
-            .header("X-WP-TotalPages", pages)
-            .body(links);
-    })
 }
 
 #[tokio::test]
@@ -464,26 +443,155 @@ async fn wordpress_flows() {
         mock_comment(&server, url, &anonymous_fields, any_comment, status, body);
     }
 
-    // REST.
+    // The preferences read on admin pages whose user has none saved, as the
+    // dashboard fixture's has not.
+    let preferences = server.mock(|when, then| {
+        when.method(GET)
+            .path("/wp-json/wp/v2/users/me")
+            .query_param("context", "edit")
+            .query_param("_locale", "user")
+            .header_exists("X-WP-Nonce");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(r#"{"id":1,"meta":{"persisted_preferences":[]}}"#);
+    });
+
+    // Any page, viewed.
+    page(&server, "viewpage/", 200, COMMENT_ANONYMOUS);
+
+    // The block editor: its pages, the reads its scripts make on opening,
+    // WordPress's compression test, and the saves.
+    let editor = |html: &str, nonce: Option<&str>| {
+        let middleware = regex::Regex::new(r#"createNonceMiddleware\( "[^"]+""#).unwrap();
+        let settings = regex::Regex::new(r#""nonce":"[^"]+""#).unwrap();
+        match nonce {
+            Some(nonce) => middleware
+                .replace_all(
+                    html,
+                    format!(r#"createNonceMiddleware( "{}""#, nonce).as_str(),
+                )
+                .to_string(),
+            None => settings
+                .replace_all(
+                    &middleware.replace_all(html, "createNonceMiddleware( x"),
+                    "",
+                )
+                .to_string(),
+        }
+    };
+    let new_editor = editor(EDITOR_NEW, Some("rest0nonce"));
+    server.mock(|when, then| {
+        when.method(GET).path("/wp-admin/post-new.php");
+        then.status(200).body(new_editor);
+    });
+    let edit_editor = editor(EDITOR_EDIT, Some("rest0nonce"));
+    server.mock(|when, then| {
+        when.method(GET)
+            .path("/wp-admin/post.php")
+            .query_param("post", "1")
+            .query_param("action", "edit");
+        then.status(200).body(edit_editor);
+    });
+    let no_nonce_editor = editor(EDITOR_EDIT, None);
+    server.mock(|when, then| {
+        when.method(GET)
+            .path("/wp-admin/post.php")
+            .query_param("post", "7");
+        then.status(200).body(no_nonce_editor);
+    });
+    // Counted by the editors' compression nonces, apart from the dashboard's.
+    let compression_nonce = |html: &str| {
+        regex::Regex::new(r#"var compressionNonce = "([^"]+)""#)
+            .unwrap()
+            .captures(html)
+            .unwrap()[1]
+            .to_string()
+    };
+    let compression: Vec<Mock> = [EDITOR_NEW, EDITOR_EDIT]
+        .iter()
+        .map(|html| {
+            let nonce = compression_nonce(html);
+            server.mock(|when, then| {
+                when.method(GET)
+                    .path("/wp-admin/admin-ajax.php")
+                    .query_param("action", "wp-compression-test")
+                    .query_param("_ajax_nonce", nonce);
+                then.status(200).body("-1");
+            })
+        })
+        .collect();
+    let notes = server.mock(|when, then| {
+        when.method(GET)
+            .path("/wp-json/wp/v2/comments")
+            .query_param("type", "note")
+            .header("X-WP-Nonce", "rest0nonce");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body("[]");
+    });
+    let patterns = server.mock(|when, then| {
+        when.method(GET)
+            .path_matches(
+                regex::Regex::new(
+                    r"^/wp-json/wp/v2/(block-patterns/patterns|blocks|wp_pattern_category)$",
+                )
+                .unwrap(),
+            )
+            .header("X-WP-Nonce", "rest0nonce");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body("[]");
+    });
+    let saved = |id: u64, view: &str, title: &str| {
+        serde_json::json!({ "id": id, "link": format!("http://example.com{}", view), "title": { "raw": title, "rendered": title } })
+            .to_string()
+    };
     let create = server.mock(|when, then| {
         when.method(POST)
-            .path("/create/wp-json/wp/v2/posts")
+            .path("/create/wp-json/wp/v2/posts/1841")
+            .query_param("_locale", "user")
             .header("X-WP-Nonce", "rest0nonce")
+            .header("X-HTTP-Method-Override", "PUT")
             .header("content-type", "application/json")
-            .json_body(serde_json::json!({"title": "Goose", "status": "draft"}));
-        then.status(201)
+            .json_body(
+                serde_json::json!({"id": 1841, "title": "Goose", "content": "", "status": "draft"}),
+            );
+        then.status(200)
             .header("content-type", "application/json")
-            .body(REST_POST);
+            .body(saved(1841, "/view/created/", "Goose"));
     });
     let update = server.mock(|when, then| {
         when.method(POST)
             .path("/update/wp-json/wp/v2/posts/1")
+            .query_param("_locale", "user")
             .header("X-WP-Nonce", "rest0nonce")
-            .json_body(serde_json::json!({"title": "Hello world!"}));
+            .json_body_partial(r#"{"id": 1, "title": "Hello world!"}"#)
+            .matches(|request| {
+                serde_json::from_slice::<serde_json::Value>(
+                    request.body.as_deref().unwrap_or_default(),
+                )
+                .ok()
+                .and_then(|body| {
+                    body["content"]
+                        .as_str()
+                        .map(|c| c.contains("Welcome to WordPress"))
+                })
+                .unwrap_or(false)
+            });
         then.status(200)
             .header("content-type", "application/json")
-            .body(REST_POST);
+            .body(saved(1, "/view/updated/", "Hello world!"));
     });
+    for (view, title) in [
+        ("/view/created/", "Goose"),
+        ("/view/updated/", "Hello world!"),
+    ] {
+        let html = format!("<html><body><h1>{}</h1></body></html>", title);
+        server.mock(|when, then| {
+            when.method(GET).path(view);
+            then.status(200).body(html);
+        });
+    }
     server.mock(|when, then| {
         when.method(POST).path("/stale/wp-json/wp/v2/posts/1");
         then.status(403)
@@ -491,18 +599,129 @@ async fn wordpress_flows() {
             .body(REST_INVALID_NONCE);
     });
     server.mock(|when, then| {
-        when.method(POST).path("/noid/wp-json/wp/v2/posts");
-        then.status(201)
+        when.method(POST).path("/noid/wp-json/wp/v2/posts/1841");
+        then.status(200)
+            .header("content-type", "application/json")
             .body(r#"{"code":"created","message":"but where?"}"#);
     });
     server.mock(|when, then| {
-        when.method(POST).path("/notjson/wp-json/wp/v2/posts");
+        when.method(POST).path("/notjson/wp-json/wp/v2/posts/1841");
         then.status(200).body("<html><body>Not JSON</body></html>");
     });
+    server.mock(|when, then| {
+        when.method(POST).path("/notitle/wp-json/wp/v2/posts/1841");
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(saved(1841, "/view/other/", "Goose"));
+    });
+    server.mock(|when, then| {
+        when.method(GET).path("/view/other/");
+        then.status(200)
+            .body("<html><body><h1>Another post</h1></body></html>");
+    });
 
-    // Discovery: the sitemap's sub sitemaps sit at the root, as the index lists them.
+    // Discovery by browsing: a small site, every kind of page and link once.
+    let body = |classes: &str, nav: &str, main: &str, rest: &str| {
+        format!(
+            r#"<html><head></head><body class="{}"><nav>{}</nav><main>{}</main>{}</body></html>"#,
+            classes, nav, main, rest
+        )
+    };
+    let crawl_pages = [
+        (
+            "/crawl/",
+            body(
+                "home blog",
+                r#"<a href="/crawl/about/">About</a><a href="/crawl/wp-admin/">Admin</a><a href="https://elsewhere.example/">Away</a>"#,
+                concat!(
+                    r#"<a href="/crawl/hello/">Hello</a><a href="http://"#,
+                    "HOST",
+                    r#"/crawl/second/">Second</a>"#,
+                    r#"<a href="/crawl/category/news/" rel="category tag">News</a>"#,
+                    r##"<a href="/crawl/hello/#comments">Comments</a>"##,
+                    r#"<a href="/crawl/nofollow/" rel="nofollow">Add</a><a href="/crawl/feed/">Feed</a>"#,
+                    r#"<!-- <a href="/crawl/commented/">x</a> -->"#,
+                ),
+                r#"<a class="page-numbers" href="/crawl/page/2/">2</a>"#,
+            ),
+        ),
+        (
+            "/crawl/page/2/",
+            body(
+                "home blog paged paged-2",
+                "",
+                r#"<a href="/crawl/broken/">Broken</a><a href="/crawl/third/">Third</a>"#,
+                "",
+            ),
+        ),
+        (
+            "/crawl/hello/",
+            body(
+                "post-template-default single single-post postid-1 single-format-standard",
+                "",
+                r#"<a href="/crawl/tag/rust/" rel="tag">rust</a><a href="/crawl/not-followed/">x</a>"#,
+                "",
+            ),
+        ),
+        (
+            "/crawl/second/",
+            body("single single-post postid-2", "", "", ""),
+        ),
+        (
+            "/crawl/third/",
+            body("single single-post postid-3", "", "", ""),
+        ),
+        (
+            "/crawl/about/",
+            body("page-template-default page page-id-2", "", "", ""),
+        ),
+        (
+            "/crawl/category/news/",
+            body(
+                "archive category category-news",
+                "",
+                r#"<a href="/crawl/hello/">Hello</a>"#,
+                "",
+            ),
+        ),
+        ("/crawl/tag/rust/", body("archive tag tag-rust", "", "", "")),
+    ];
+    let host = server.address().to_string();
+    for (path, html) in crawl_pages {
+        let html = html.replace("HOST", &host);
+        server.mock(|when, then| {
+            when.method(GET).path(path);
+            then.status(200).body(html);
+        });
+    }
+    let broken = page(&server, "crawl/broken/", 404, "Not found");
+    let not_followed = server.mock(|when, then| {
+        when.method(GET).path_matches(
+            regex::Regex::new(r"^/crawl/(not-followed|nofollow|wp-admin|feed|commented)/").unwrap(),
+        );
+        then.status(200).body("not to be crawled");
+    });
+    // An endless chain of pages, each paginating to the next.
+    let endless = server.mock(|when, then| {
+        when.method(GET)
+            .path_matches(regex::Regex::new(r"^/endless/").unwrap());
+        then.status(200).body(
+            r#"<html><body class="home blog"><a rel="next" href="next/">Next</a></body></html>"#,
+        );
+    });
+
+    // Discovery seeded from the sitemap: its sub sitemaps sit at the root, as
+    // the index lists them, and the home pages have no links.
     mock_sitemap(&server, "sitemap/wp-sitemap.xml");
     mock_sitemap(&server, "cap/wp-sitemap.xml");
+    for home in ["sitemap/", "cap/", "broken/"] {
+        page(
+            &server,
+            home,
+            200,
+            "<html><body class=\"home blog\"></body></html>",
+        );
+    }
     let sub_sitemap = |name: &str, body: String| {
         server.mock(|when, then| {
             when.method(GET).path(format!("/wp-sitemap-{}.xml", name));
@@ -538,72 +757,6 @@ async fn wordpress_flows() {
         when.method(GET).path("/broken/wp-sitemap-posts-post-1.xml");
         then.status(500).body("down");
     });
-    for prefix in ["rest", "restcap", "reststatus"] {
-        page(
-            &server,
-            &format!("{}/wp-sitemap.xml", prefix),
-            404,
-            "Not found",
-        );
-    }
-    let second_page: String = format!(
-        "[{}]",
-        (0..5)
-            .map(|i| format!(r#"{{"link":"http://example.com/more-{}/"}}"#, i))
-            .collect::<Vec<_>>()
-            .join(",")
-    );
-    let rest_page_1 = mock_rest_list(
-        &server,
-        "rest/wp-json/wp/v2/posts",
-        "1",
-        "100",
-        "2",
-        200,
-        REST_POSTS,
-    );
-    let rest_page_2 = mock_rest_list(
-        &server,
-        "rest/wp-json/wp/v2/posts",
-        "2",
-        "100",
-        "2",
-        200,
-        &second_page,
-    );
-    for (route, links) in [
-        ("pages", r#"[{"link":"/about/"}]"#),
-        ("categories", r#"[]"#),
-        ("tags", r#"[{"link":"/tag/rust/"}]"#),
-    ] {
-        mock_rest_list(
-            &server,
-            &format!("rest/wp-json/wp/v2/{}", route),
-            "1",
-            "100",
-            "1",
-            200,
-            links,
-        );
-    }
-    let rest_cap = mock_rest_list(
-        &server,
-        "restcap/wp-json/wp/v2/posts",
-        "1",
-        "4",
-        "3",
-        200,
-        REST_POSTS,
-    );
-    mock_rest_list(
-        &server,
-        "reststatus/wp-json/wp/v2/posts",
-        "1",
-        "100",
-        "1",
-        401,
-        r#"{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that."}"#,
-    );
 
     let metrics = run(
         &server.base_url(),
@@ -771,15 +924,33 @@ async fn wordpress_flows() {
                     comment_on(user, "commentedvalidation/", None, Some(&validate)).await
                 })
             }),
+            transaction(VIEW_PAGE, |user| {
+                Box::pin(async move {
+                    let validate = Validate::builder().text("commentform").build();
+                    let html =
+                        wordpress::view_page(user, "viewpage/", "view", Some(&validate)).await?;
+                    if !html.contains("comment_post_ID") {
+                        return Err(wrong("not the page".to_string()));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(VIEW_PAGE_VALIDATION, |user| {
+                Box::pin(async move {
+                    let validate = Validate::builder().title("Another post").build();
+                    wordpress::view_page(user, "viewpage/", "view invalid", Some(&validate))
+                        .await?;
+                    Ok(())
+                })
+            }),
             transaction(CREATE_POST, |user| {
                 Box::pin(async move {
                     let post = Post::builder()
                         .url("create/wp-json/wp/v2/posts")
                         .title("Goose")
-                        .status("draft")
                         .build();
-                    let created = wordpress::create_post(user, "rest0nonce", &post).await?;
-                    if created["id"] != 1 {
+                    let created = wordpress::create_post(user, &post).await?;
+                    if created["id"] != 1841 {
                         return Err(wrong(format!("created {}", created["id"])));
                     }
                     Ok(())
@@ -791,37 +962,98 @@ async fn wordpress_flows() {
                         .url("update/wp-json/wp/v2/posts/")
                         .title("Hello world!")
                         .build();
-                    wordpress::update_post(user, "rest0nonce", 1, &post).await?;
+                    wordpress::update_post(user, 1, &post).await?;
                     Ok(())
                 })
             }),
-            transaction(REST_STALE_NONCE, |user| {
+            transaction(EDITOR_STALE_NONCE, |user| {
                 Box::pin(async move {
                     let post = Post::builder()
                         .url("stale/wp-json/wp/v2/posts")
                         .title("x")
                         .build();
-                    wordpress::update_post(user, "0000000000", 1, &post).await?;
+                    wordpress::update_post(user, 1, &post).await?;
                     Ok(())
                 })
             }),
-            transaction(REST_NO_ID, |user| {
+            transaction(EDITOR_NO_POST, |user| {
                 Box::pin(async move {
                     let post = Post::builder().url("noid/wp-json/wp/v2/posts").build();
-                    wordpress::create_post(user, "rest0nonce", &post).await?;
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
-            transaction(REST_NOT_JSON, |user| {
+            transaction(EDITOR_NOT_JSON, |user| {
                 Box::pin(async move {
                     let post = Post::builder().url("notjson/wp-json/wp/v2/posts").build();
-                    wordpress::create_post(user, "rest0nonce", &post).await?;
+                    wordpress::create_post(user, &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_NO_TITLE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder()
+                        .url("notitle/wp-json/wp/v2/posts")
+                        .title("Goose")
+                        .build();
+                    wordpress::create_post(user, &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_NO_NONCE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder().title("x").build();
+                    wordpress::update_post(user, 7, &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(DISCOVER_CRAWL, |user| {
+                Box::pin(async move {
+                    let discover = Discover::builder().home("crawl/").build();
+                    let content = wordpress::discover(user, &discover).await?;
+                    let found: Vec<(String, Vec<String>)> = content
+                        .kinds()
+                        .map(|k| (k.to_string(), content.urls(k).to_vec()))
+                        .collect();
+                    let expected: Vec<(String, Vec<String>)> = [
+                        ("category", vec!["/crawl/category/news/"]),
+                        ("page", vec!["/crawl/about/"]),
+                        (
+                            "post",
+                            vec!["/crawl/hello/", "/crawl/second/", "/crawl/third/"],
+                        ),
+                        ("post_tag", vec!["/crawl/tag/rust/"]),
+                    ]
+                    .iter()
+                    .map(|(k, urls)| (k.to_string(), urls.iter().map(|u| u.to_string()).collect()))
+                    .collect();
+                    if found != expected {
+                        return Err(wrong(format!("found {:?}", found)));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(DISCOVER_CRAWL_CAP, |user| {
+                Box::pin(async move {
+                    let discover = Discover::builder().home("crawl/").max_per_kind(1).build();
+                    let content = wordpress::discover(user, &discover).await?;
+                    if content.posts() != ["/crawl/hello/"] {
+                        return Err(wrong(format!("found {:?}", content)));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(DISCOVER_PAGE_LIMIT, |user| {
+                Box::pin(async move {
+                    let discover = Discover::builder().home("endless/").max_per_kind(2).build();
+                    wordpress::discover(user, &discover).await?;
                     Ok(())
                 })
             }),
             transaction(DISCOVER_SITEMAP, |user| {
                 Box::pin(async move {
                     let discover = Discover::builder()
+                        .home("sitemap/")
                         .sitemap("sitemap/wp-sitemap.xml")
                         .build();
                     let content = wordpress::discover(user, &discover).await?;
@@ -849,6 +1081,7 @@ async fn wordpress_flows() {
             transaction(DISCOVER_CAP, |user| {
                 Box::pin(async move {
                     let discover = Discover::builder()
+                        .home("cap/")
                         .sitemap("cap/wp-sitemap.xml")
                         .max_per_kind(2)
                         .build();
@@ -861,53 +1094,11 @@ async fn wordpress_flows() {
                     Ok(())
                 })
             }),
-            transaction(DISCOVER_REST, |user| {
-                Box::pin(async move {
-                    let discover = Discover::builder()
-                        .sitemap("rest/wp-sitemap.xml")
-                        .rest("rest/wp-json/wp/v2/")
-                        .build();
-                    let content = wordpress::discover(user, &discover).await?;
-                    if content.posts().len() != 15
-                        || content.posts()[0] != "/hello-world/"
-                        || content.posts()[14] != "/more-4/"
-                        || content.pages() != ["/about/"]
-                        || !content.categories().is_empty()
-                        || content.tags() != ["/tag/rust/"]
-                    {
-                        return Err(wrong(format!("found {:?}", content)));
-                    }
-                    Ok(())
-                })
-            }),
-            transaction(DISCOVER_REST_CAP, |user| {
-                Box::pin(async move {
-                    let discover = Discover::builder()
-                        .sitemap("restcap/wp-sitemap.xml")
-                        .rest("restcap/wp-json/wp/v2/")
-                        .rest_kinds(&[("posts", "post")])
-                        .max_per_kind(4)
-                        .build();
-                    let content = wordpress::discover(user, &discover).await?;
-                    // The mock sends 10 links for 4 asked; the cap still holds.
-                    if content.posts().len() != 4 {
-                        return Err(wrong(format!("found {:?}", content)));
-                    }
-                    Ok(())
-                })
-            }),
             transaction(DISCOVER_SITEMAP_STATUS, |user| {
                 Box::pin(async move {
-                    let discover = Discover::builder().sitemap("broken/wp-sitemap.xml").build();
-                    wordpress::discover(user, &discover).await?;
-                    Ok(())
-                })
-            }),
-            transaction(DISCOVER_REST_STATUS, |user| {
-                Box::pin(async move {
                     let discover = Discover::builder()
-                        .sitemap("reststatus/wp-sitemap.xml")
-                        .rest("reststatus/wp-json/wp/v2/")
+                        .home("broken/")
+                        .sitemap("broken/wp-sitemap.xml")
                         .build();
                     wordpress::discover(user, &discover).await?;
                     Ok(())
@@ -1027,46 +1218,66 @@ async fn wordpress_flows() {
             &["commentedvalidation/wp-comments-post.php"],
             Expect::Fail("title not found: Another post"),
         ),
-        check_named(&metrics, CREATE_POST, &["create/wp-json/wp/v2/posts"], Expect::Pass),
-        check_named(&metrics, UPDATE_POST, &["update/wp-json/wp/v2/posts/{id}"], Expect::Pass),
+        check_named(&metrics, VIEW_PAGE, &["view"], Expect::Pass),
         check_named(
             &metrics,
-            REST_STALE_NONCE,
+            VIEW_PAGE_VALIDATION,
+            &["view invalid"],
+            Expect::Fail("title not found: Another post"),
+        ),
+        check_named(
+            &metrics,
+            CREATE_POST,
+            &["wp-admin/post-new.php", "create/wp-json/wp/v2/posts/{id}"],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
+            UPDATE_POST,
+            &["update/wp-json/wp/v2/posts/{id}"],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
+            EDITOR_STALE_NONCE,
             &["stale/wp-json/wp/v2/posts/{id}"],
             Expect::Fail("403"),
         ),
         check_named(
             &metrics,
-            REST_NO_ID,
-            &["noid/wp-json/wp/v2/posts"],
-            Expect::Fail("response has no post id"),
+            EDITOR_NO_POST,
+            &["noid/wp-json/wp/v2/posts/{id}"],
+            Expect::Fail("response has no post"),
         ),
         check_named(
             &metrics,
-            REST_NOT_JSON,
-            &["notjson/wp-json/wp/v2/posts"],
+            EDITOR_NOT_JSON,
+            &["notjson/wp-json/wp/v2/posts/{id}"],
             Expect::Fail("response is not JSON"),
         ),
-        check_named(&metrics, DISCOVER_SITEMAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
-        check_named(&metrics, DISCOVER_CAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
         check_named(
             &metrics,
-            DISCOVER_REST,
-            &["rest/wp-sitemap.xml", "rest/wp-json/wp/v2/posts"],
-            Expect::Pass,
+            EDITOR_NO_TITLE,
+            &["post view"],
+            Expect::Fail("is not on the post's page"),
         ),
-        check_named(&metrics, DISCOVER_REST_CAP, &["restcap/wp-json/wp/v2/posts"], Expect::Pass),
+        check_named(
+            &metrics,
+            EDITOR_NO_NONCE,
+            &["wp-admin/post.php?action=edit"],
+            Expect::Fail("no REST nonce on the editor page"),
+        ),
+        // The crawl's broken link is recorded under `discover`, and passes.
+        check_named(&metrics, DISCOVER_CRAWL, &[], Expect::Pass),
+        check_named(&metrics, DISCOVER_CRAWL_CAP, &[], Expect::Pass),
+        check_named(&metrics, DISCOVER_PAGE_LIMIT, &[], Expect::Pass),
+        check_named(&metrics, DISCOVER_SITEMAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
+        check_named(&metrics, DISCOVER_CAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
         check_named(
             &metrics,
             DISCOVER_SITEMAP_STATUS,
             &["/broken/wp-sitemap-posts-post-1.xml"],
             Expect::Fail("500"),
-        ),
-        check_named(
-            &metrics,
-            DISCOVER_REST_STATUS,
-            &["reststatus/wp-json/wp/v2/posts"],
-            Expect::Fail("401"),
         ),
     ]
     .into_iter()
@@ -1093,26 +1304,58 @@ async fn wordpress_flows() {
             1,
         ),
         (COMMENT_CUSTOM, "commented", comment_custom.hits(), 1),
+        // The dashboards that open: log in, at a custom path, and both log outs'.
+        (
+            LOG_IN,
+            "preferences read on the dashboard",
+            preferences.hits(),
+            4,
+        ),
         (CREATE_POST, "created", create.hits(), 1),
         (UPDATE_POST, "updated", update.hits(), 1),
+        // Every editor opened (create, update, stale, no post, not JSON, no
+        // title, no nonce) runs the compression test: 1, 2, then no.
+        (
+            CREATE_POST,
+            "compression tests sent",
+            compression.iter().map(|m| m.hits()).sum(),
+            21,
+        ),
+        (
+            CREATE_POST,
+            "notes read (not on the page without a nonce)",
+            notes.hits(),
+            6,
+        ),
+        (
+            CREATE_POST,
+            "patterns read for new posts",
+            patterns.hits(),
+            12,
+        ),
+        (
+            DISCOVER_CRAWL,
+            "broken link loaded (twice with the cap)",
+            broken.hits(),
+            2,
+        ),
+        (
+            DISCOVER_CRAWL,
+            "links a crawl skips loaded",
+            not_followed.hits(),
+            0,
+        ),
+        (
+            DISCOVER_PAGE_LIMIT,
+            "endless pages loaded",
+            endless.hits(),
+            20,
+        ),
         (
             DISCOVER_SITEMAP,
             "posts sitemap read (twice with the cap)",
             posts_sitemap.hits(),
             2,
-        ),
-        (DISCOVER_REST, "first REST page read", rest_page_1.hits(), 1),
-        (
-            DISCOVER_REST,
-            "second REST page read",
-            rest_page_2.hits(),
-            1,
-        ),
-        (
-            DISCOVER_REST_CAP,
-            "capped REST page read",
-            rest_cap.hits(),
-            1,
         ),
     ];
     for (behaviour, get) in &gets {
@@ -1137,17 +1380,6 @@ async fn wordpress_flows() {
                 behaviour, what, hits, expected
             ));
         }
-    }
-    // A site without a sitemap records no error for it.
-    if metrics
-        .errors
-        .values()
-        .any(|e| e.name.ends_with("wp-sitemap.xml"))
-    {
-        problems.push(format!(
-            "behaviour {}: the missing sitemap was recorded as an error",
-            DISCOVER_REST
-        ));
     }
     common::assert_all(problems);
 }

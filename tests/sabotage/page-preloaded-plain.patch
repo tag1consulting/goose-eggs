@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..1ec1e18 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -320,7 +320,7 @@ pub(crate) fn preloaded(html: &str) -> serde_json::Map<String, serde_json::Value
+         }
+     }
+     let start = Regex::new(r"createPreloadingMiddleware\(\s*\{").unwrap();
+-    for m in start.find_iter(html) {
++    for m in start.find_iter(html).take(0) {
+         let from = m.end() - 1;
+         let mut stream =
+             serde_json::Deserializer::from_str(&html[from..]).into_iter::<serde_json::Value>();
