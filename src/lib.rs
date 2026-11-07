@@ -18,6 +18,7 @@ use log::info;
 use regex::Regex;
 
 pub mod drupal;
+mod page;
 pub mod text;
 pub mod woocommerce;
 pub mod wordpress;
