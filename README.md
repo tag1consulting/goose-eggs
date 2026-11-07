@@ -29,26 +29,33 @@ Besides page validation and static asset loading, goose-eggs has modules for the
 
 ### WordPress
 
-`goose_eggs::wordpress` drives any WordPress site through what core serves:
+`goose_eggs::wordpress` drives any WordPress site the way a visitor's or an editor's browser does: each helper loads the pages a browser loads, with the static assets their markup names, and sends only the background requests those pages' own scripts send, as recorded from headless Chromium in [`tests/fixtures/browser`](tests/fixtures/browser/README.md):
+
+- `view_page`: any page, with its assets and background requests
 
 - `Login` and `log_in`, `log_out`: the log in form with WordPress's test cookie, and the nonce in the log out link
 - `SearchParams` and `search`: `?s=`, optionally limited to a post type
 - `Comment` and `post_comment`: the comment form, as an anonymous or logged in user, with random text by default so WordPress's duplicate check passes
-- `Post`, `create_post` and `update_post`: the REST API, as the block editor saves, with the nonce from `get_rest_nonce`
-- `Discover`, `discover` and `SiteContent`: the site's real URLs by kind, from the core sitemap or the REST API, to request at random
+- `Post`, `create_post` and `update_post`: the block editor, opened with its assets and the reads its scripts make, then saved as its buttons save, with the nonce from the page
+- `Discover`, `discover` and `SiteContent`: the site's real URLs by kind, found by browsing its navigation, listings and pagination, to request at random
 - `get_form`, `get_form_value`, `get_form_values` and `get_nonce`: form parsing that reads attributes in any order, as WordPress writes them
 
 `examples/wordpress-sites/theme-test-data` brings up WordPress with the theme unit test data in Docker; [the WooCommerce example's README](examples/woocommerce/README.md#the-wordpress-helpers) shows the helpers driving it.
 
 ### WooCommerce
 
-`goose_eggs::woocommerce`, built on `wordpress`, drives any WooCommerce shop:
+`goose_eggs::woocommerce`, built on `wordpress`, drives any WooCommerce shop the same way:
 
-- `shop_page`, `product_page`, `product_search`, and `discover_products` with `random_product`, through the Store API
-- `StoreApiCart`: the cart and checkout WooCommerce's block cart and checkout use, keeping each user's Store API nonce, with a `Checkout` builder (Cash on delivery by default)
+- `shop_page`, `product_page`, `product_search`, and `discover_products` with `random_product`, reading the shop page's product cards
+- `add_to_cart` from a product page, `add_to_cart_from_archive` from the shop page's buttons
+- `cart_page`, `update_cart_item` and `remove_cart_item`: the block cart and its controls
+- `checkout_page` and `place_order`: the block checkout and its order, with a `Checkout` builder (Cash on delivery by default)
+- `StoreApiCart`: the Store API driven directly, as a headless storefront does, for load testing one on purpose; not what a browser on a standard theme does
 - `classic_add_to_cart`, `classic_update_cart` and `classic_checkout`: the shortcode cart and checkout
 - `my_account_log_in` and `my_account_orders`
 - `Shop`: where the shop's pages and Store API are, defaulting to WooCommerce's
+
+The `wordpress` and `woocommerce` CI jobs run a parity test, `tests/sites/parity.rs`, which compares every helper's requests against the browser's recording of the same action.
 
 The [WooCommerce example](examples/woocommerce) is a complete load test of a shop, and `examples/wordpress-sites/woocommerce` brings up the demo shop it runs against in Docker.
 
