@@ -501,3 +501,6 @@ doc-wp-discover-home.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>
 doc-wp-view-page.patch	doc	src/wordpress.rs - wordpress::view_page (line 1078)	doc example view_page: assets loaded	wordpress::view_page
 doc-wp-post-type.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::post_type (line 1743)	doc example PostBuilder::post_type	wordpress::PostBuilder,wordpress::create_post
 page-preferences.patch	wordpress	wordpress_flows	behaviour log_in loads the form for the test cookie, then posts it: preferences read on the dashboard	wordpress::log_in,wordpress::log_out
+wc-example-discover-per-user.patch	woocommerce_example	discovery_before_load_test	discovery case metrics	woocommerce example discovery
+wc-example-no-killswitch.patch	woocommerce_example_no_catalog	no_catalog_stops_the_run	no catalog case stopped	woocommerce example discovery
+wc-example-failure-dropped.patch	woocommerce_example_no_catalog	no_catalog_stops_the_run	no catalog case reported	woocommerce example discovery

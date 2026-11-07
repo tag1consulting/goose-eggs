@@ -4,16 +4,18 @@ use goose_eggs::wordpress::{self, SiteContent};
 use rand::prelude::{IndexedRandom, IteratorRandom};
 use rand::Rng;
 use std::env;
-use tokio::sync::OnceCell;
+use std::sync::OnceLock;
 
-/// What the shop sells and how its categories are reached, found once by the
-/// first user to start and shared by every user after.
+/// What the shop sells and how its categories are reached, found once before
+/// the load test starts and read by every user.
 pub struct Catalog {
     pub products: Vec<Product>,
     pub content: SiteContent,
 }
 
-static CATALOG: OnceCell<Catalog> = OnceCell::const_new();
+/// The catalog, or why it could not be found. Set once, by `discover_catalog`
+/// before any user starts, and only read after: no user ever waits on it.
+static CATALOG: OnceLock<Result<Catalog, String>> = OnceLock::new();
 
 /// The shop, on WooCommerce's default paths.
 pub fn shop() -> Shop<'static> {
@@ -21,42 +23,93 @@ pub fn shop() -> Shop<'static> {
 }
 
 /// Find the shop's products from the cards on its shop pages, and its category
-/// archives by browsing it from the home page, as a visitor would. The first
-/// user to start does it; every other user waits for that one.
+/// archives by browsing it from the home page, as a visitor would.
+///
+/// Registered with `GooseAttack::test_start`, so Goose runs it once, on a user
+/// of its own, before any user starts: its requests are in neither the metrics
+/// nor the request log, and every user starts with the catalog in hand. Goose
+/// ignores what a `test_start` transaction returns, so a failure is kept with
+/// the catalog, logged here, and reported by every user's `catalog_ready`.
 pub async fn discover_catalog(user: &mut GooseUser) -> TransactionResult {
-    CATALOG
-        .get_or_try_init(|| async {
-            let products = woocommerce::discover_products(user, &shop(), 500).await?;
-            let discover = wordpress::Discover::builder().max_per_kind(50).build();
-            let content = wordpress::discover(user, &discover).await?;
-            Ok::<_, Box<TransactionError>>(Catalog { products, content })
-        })
-        .await?;
-    Ok(())
+    let found = find_catalog(user)
+        .await
+        .map_err(|error| format!("discovering the catalog failed: {}", describe(&error)));
+    if let Err(error) = &found {
+        log::error!("{}", error);
+    }
+    // A Controller that starts the load test again runs this again: the first
+    // catalog is kept.
+    let _ = CATALOG.set(found);
+    // Goose ignores this result; returned for a Goose that reads it. The
+    // killswitch waits for the users: each reports the failure first.
+    match CATALOG.get() {
+        Some(Err(error)) => Err(Box::new(TransactionError::Custom(error.clone()))),
+        _ => Ok(()),
+    }
 }
 
-/// The shared catalog; discovery runs on start, before any of these is needed.
-pub fn catalog() -> &'static Catalog {
-    CATALOG.get().expect("the catalog is discovered on start")
+/// What went wrong, naming the failed request and its error.
+fn describe(error: &TransactionError) -> String {
+    match error {
+        TransactionError::RequestFailed { raw_request } => format!(
+            "{} {}: {}",
+            raw_request.raw.method, raw_request.name, raw_request.error
+        ),
+        error => error.to_string(),
+    }
+}
+
+async fn find_catalog(user: &mut GooseUser) -> Result<Catalog, Box<TransactionError>> {
+    let products = woocommerce::discover_products(user, &shop(), 500).await?;
+    let discover = wordpress::Discover::builder().max_per_kind(50).build();
+    let content = wordpress::discover(user, &discover).await?;
+    Ok(Catalog { products, content })
+}
+
+/// Each user's first transaction: fails, and stops the load test, when the
+/// catalog could not be found, so the run reports why at once instead of
+/// running without one.
+pub async fn catalog_ready(_user: &mut GooseUser) -> TransactionResult {
+    catalog().map(|_| ())
+}
+
+/// The catalog `discover_catalog` found. Without one, stops the load test and
+/// fails with the reason: every transaction starts here, so none runs without it.
+pub fn catalog() -> Result<&'static Catalog, Box<TransactionError>> {
+    let error = match CATALOG.get() {
+        Some(Ok(catalog)) => return Ok(catalog),
+        Some(Err(error)) => error.as_str(),
+        None => "no catalog: discover_catalog runs as the load test's test_start",
+    };
+    goose::trigger_killswitch(error);
+    Err(Box::new(TransactionError::Custom(error.to_string())))
 }
 
 /// A random product that can go in the cart.
-pub fn random_product() -> &'static Product {
-    woocommerce::random_product(&catalog().products).expect("the shop sells a simple product")
+pub fn random_product() -> Result<&'static Product, Box<TransactionError>> {
+    woocommerce::random_product(&catalog()?.products).ok_or_else(|| {
+        Box::new(TransactionError::Custom(
+            "the shop sells no simple product to add to the cart".to_string(),
+        ))
+    })
 }
 
 /// A word from a random product's name, to search for.
-pub fn random_search_word() -> String {
-    let product = catalog()
+pub fn random_search_word() -> Result<String, Box<TransactionError>> {
+    let product = catalog()?
         .products
         .choose(&mut rand::rng())
-        .expect("the shop has products");
-    product
+        .ok_or_else(|| {
+            Box::new(TransactionError::Custom(
+                "the shop has no products".to_string(),
+            ))
+        })?;
+    Ok(product
         .name
         .split_whitespace()
         .choose(&mut rand::rng())
         .unwrap_or("shirt")
-        .to_lowercase()
+        .to_lowercase())
 }
 
 /// This user's username and password: its own demo shop customer, unless
@@ -88,7 +141,7 @@ fn basket(user: &GooseUser) -> Basket {
 pub async fn fill_cart(user: &mut GooseUser) -> TransactionResult {
     let lines: usize = rand::rng().random_range(1..=3);
     for _ in 0..lines {
-        let product = random_product();
+        let product = random_product()?;
         let quantity = rand::rng().random_range(1..=2);
         woocommerce::add_to_cart(user, product, quantity).await?;
         let mut basket = basket(user);
@@ -114,6 +167,7 @@ pub fn on_file(user: &GooseUser) -> (String, String) {
 /// Check out this user's cart with Cash on delivery, as a shopper does: go to
 /// checkout, then place the order. A cart that is empty is filled first.
 pub async fn check_out(user: &mut GooseUser, returning: bool) -> TransactionResult {
+    catalog()?;
     if basket(user).lines == 0 {
         fill_cart(user).await?;
     }

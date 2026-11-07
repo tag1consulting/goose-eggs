@@ -1,0 +1,12 @@
+diff --git a/examples/woocommerce/common.rs b/examples/woocommerce/common.rs
+index c1df68c..ebabd4a 100644
+--- a/examples/woocommerce/common.rs
++++ b/examples/woocommerce/common.rs
+@@ -70,6 +70,7 @@ async fn find_catalog(user: &mut GooseUser) -> Result<Catalog, Box<TransactionEr
+ /// catalog could not be found, so the run reports why at once instead of
+ /// running without one.
+ pub async fn catalog_ready(_user: &mut GooseUser) -> TransactionResult {
++    find_catalog(_user).await?;
+     catalog().map(|_| ())
+ }
+ 
