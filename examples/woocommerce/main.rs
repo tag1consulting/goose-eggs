@@ -2,15 +2,16 @@ mod common;
 mod customer;
 
 use goose::prelude::*;
-use goose_eggs::woocommerce;
+use goose_eggs::{woocommerce, wordpress};
 use std::time::Duration;
 
 use crate::common::*;
 
 /// Defines the load test. Each scenario simulates a kind of shopper:
 ///  - Browsing shopper: the shop page, category archives, product pages and search
-///  - Buyer: browses products, puts one to three in the cart, views it, and
-///    sometimes checks out with Cash on delivery
+///  - Buyer: browses products, puts one to three in the cart from their pages,
+///    views the cart, and sometimes goes to checkout and places the order with
+///    Cash on delivery
 ///  - Returning customer: logs into My Account with its own account, checks
 ///    past orders, and buys
 #[tokio::main]
@@ -58,7 +59,7 @@ async fn main() -> Result<(), GooseError> {
                         .set_weight(2)?,
                 )
                 .register_transaction(transaction!(view_cart).set_name("view cart"))
-                .register_transaction(transaction!(check_out).set_name("checkout")),
+                .register_transaction(transaction!(buyer_check_out).set_name("checkout")),
         )
         .register_scenario(
             scenario!("Returning customer")
@@ -81,7 +82,7 @@ async fn main() -> Result<(), GooseError> {
                         .set_weight(2)?,
                 )
                 .register_transaction(transaction!(fill_cart).set_name("add to cart"))
-                .register_transaction(transaction!(check_out).set_name("checkout")),
+                .register_transaction(transaction!(customer_check_out).set_name("checkout")),
         )
         .set_default(GooseDefault::Host, "http://localhost:18082/")?
         .execute()
@@ -99,15 +100,10 @@ async fn shop_page(user: &mut GooseUser) -> TransactionResult {
 /// Load a random product category archive.
 async fn category_page(user: &mut GooseUser) -> TransactionResult {
     if let Some(category) = catalog().content.random("product_cat") {
-        let goose = user.get_named(category, "product category").await?;
-        goose_eggs::validate_and_load_static_assets(
-            user,
-            goose,
-            &goose_eggs::Validate::builder()
-                .text("tax-product_cat")
-                .build(),
-        )
-        .await?;
+        let validate = goose_eggs::Validate::builder()
+            .text("tax-product_cat")
+            .build();
+        wordpress::view_page(user, category, "product category", Some(&validate)).await?;
     }
     Ok(())
 }
@@ -125,19 +121,27 @@ async fn product_search(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
-/// Load this user's Store API cart.
+/// View the cart page.
 async fn view_cart(user: &mut GooseUser) -> TransactionResult {
-    let mut cart = take_cart(user);
-    let result = cart.load(user).await;
-    user.set_session_data(cart);
-    result.map(|_| ())
+    woocommerce::cart_page(user, &shop()).await?;
+    Ok(())
 }
 
-/// Log in as this user's customer, then load the cart for the customer's nonce.
+/// Check out as a new shopper, typing in an address.
+async fn buyer_check_out(user: &mut GooseUser) -> TransactionResult {
+    check_out(user, false).await
+}
+
+/// Check out as a returning customer, with the address on file.
+async fn customer_check_out(user: &mut GooseUser) -> TransactionResult {
+    check_out(user, true).await
+}
+
+/// Log in as this user's customer on My Account.
 async fn log_in(user: &mut GooseUser) -> TransactionResult {
     let (username, password) = customer(user);
     woocommerce::my_account_log_in(user, &shop(), &username, &password).await?;
-    view_cart(user).await
+    Ok(())
 }
 
 /// Load the customer's orders.

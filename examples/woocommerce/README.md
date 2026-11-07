@@ -1,12 +1,12 @@
 # Overview
 
-A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wordpress` helpers. It runs against any WooCommerce shop on WooCommerce's default pages and the default block cart and checkout: it learns the shop's products from the Store API and its category archives from WordPress's core sitemap when it starts, so nothing about the catalog is hard coded.
+A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wordpress` helpers. It runs against any WooCommerce shop on WooCommerce's default pages and the default block cart and checkout, and makes the requests a shopper's browser makes: the pages, their static assets, and only the background requests those pages' own scripts send. It learns the shop's products from the product cards on its shop pages, and its category archives by browsing the shop from its home page, once, when the first user starts, so nothing about the catalog is hard coded.
 
 It has three kinds of users:
 
 - **Browsing shopper** (weight 6): the shop page, product category archives, product pages, and product searches for words from product names.
-- **Buyer** (weight 3): browses products, puts one to three products in the cart through the Store API, views the cart, and checks out with Cash on delivery. The checkout transaction has the lowest weight, so most carts are abandoned, as in a real shop.
-- **Returning customer** (weight 1): logs into My Account with its own customer account when it starts, then views past orders, browses, and buys.
+- **Buyer** (weight 3): browses products, puts one to three products in the cart from their pages' add to cart forms, views the cart page, and goes to the checkout page and places the order with Cash on delivery. The checkout transaction has the lowest weight, so most carts are abandoned, as in a real shop.
+- **Returning customer** (weight 1): logs into My Account with its own customer account when it starts, then views past orders, browses, and buys, checking out with the address its account has on file.
 
 ## Running it locally
 
@@ -81,13 +81,13 @@ async fn search(user: &mut GooseUser) -> TransactionResult {
 }
 
 async fn edit(user: &mut GooseUser) -> TransactionResult {
-    let html = user.get("wp-admin/").await?.response?.text().await?;
-    let nonce = wordpress::get_rest_nonce(&html).unwrap_or_default();
-    let draft = wordpress::create_post(user, &nonce, &Post::builder().title("Draft").build()).await?;
+    // Open the block editor on a new post and save the draft, then open it again
+    // and update it, as an editor does; each takes its nonce from the editor page.
+    let draft = wordpress::create_post(user, &Post::builder().title("Draft").build()).await?;
     let id = draft["id"].as_u64().unwrap_or_default();
-    wordpress::update_post(user, &nonce, id, &Post::builder().title("Edited").build()).await?;
+    wordpress::update_post(user, id, &Post::builder().title("Edited").build()).await?;
     Ok(())
 }
 ```
 
-Some posts in the test data have comments closed, so a load test commenting on random posts sees `post_comment` fail on those; pick posts known to take comments, or count those failures as expected. WordPress also throttles comments from one address (a 429 within 15 seconds of the last one), which every anonymous Goose user shares; logged in editors are not throttled. `scripts/wordpress.sh`, the `wordpress` CI job, runs `tests/sites/wordpress.rs`, which drives every one of these helpers against the site.
+WordPress serves the block editor without the classic editor's TinyMCE to a `User-Agent` it does not know, such as Goose's; to load what a browser loads there, give Goose a browser's with `GooseAttack::set_client_builder_with_cookies(GooseClientBuilder::new().user_agent(...))`, as `tests/sites/parity.rs` does. Some posts in the test data have comments closed, so a load test commenting on random posts sees `post_comment` fail on those; pick posts known to take comments, or count those failures as expected. WordPress also throttles comments from one address (a 429 within 15 seconds of the last one), which every anonymous Goose user shares; logged in editors are not throttled. `scripts/wordpress.sh`, the `wordpress` CI job, runs `tests/sites/wordpress.rs`, which drives every one of these helpers against the site, and `tests/sites/parity.rs`, which compares their requests with a browser's.
