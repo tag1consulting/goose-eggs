@@ -1,12 +1,12 @@
-diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..2a54f31 100644
---- a/src/wordpress.rs
-+++ b/src/wordpress.rs
-@@ -331,7 +331,6 @@ pub(crate) async fn load_page(
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..9f36e41 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -269,7 +269,6 @@ pub(crate) async fn open(
      goose: GooseResponse,
      validate: Option<&crate::Validate<'_>>,
- ) -> Result<String, Box<TransactionError>> {
+ ) -> Result<LoadedPage, Box<TransactionError>> {
 -    request_ok(&goose)?;
+     let page_url = goose.request.final_url.to_string();
      let none = crate::Validate::none();
-     crate::validate_and_load_static_assets(user, goose, validate.unwrap_or(&none)).await
- }
+     let html = crate::validate_page(user, goose, validate.unwrap_or(&none)).await?;

@@ -42,6 +42,9 @@ ITEMS=(
     woocommerce::StoreApiCart woocommerce::Checkout woocommerce::CheckoutBuilder
     woocommerce::classic_add_to_cart woocommerce::classic_update_cart
     woocommerce::classic_checkout woocommerce::my_account_log_in woocommerce::my_account_orders
+    wordpress::view_page woocommerce::add_to_cart woocommerce::add_to_cart_from_archive
+    woocommerce::cart_page woocommerce::update_cart_item woocommerce::remove_cart_item
+    woocommerce::checkout_page woocommerce::place_order
 )
 
 cd "$(git rev-parse --show-toplevel)"

@@ -104,18 +104,12 @@ wordpress() {
         "$base/wp-login.php?action=logout&_wpnonce=0000000000"
     capture "$base" "$TMP/wp-gone" "$out/logged-out.html" "$base/wp-login.php?loggedout=true"
 
-    # Content discovery: the sitemap index, a sub sitemap, and a REST list with
-    # its paging headers.
+    # Content discovery's optional seed: the sitemap index and a sub sitemap.
     capture "$base" "$anon" "$out/sitemap.xml" "$base/wp-sitemap.xml"
     capture "$base" "$anon" "$out/sitemap-posts-post-1.xml" "$base/wp-sitemap-posts-post-1.xml"
-    capture "$base" "$anon" "$out/rest-posts.json" "$base/wp-json/wp/v2/posts?per_page=10&page=1&_fields=link"
-    save_headers "$out/rest-posts.json" X-WP-Total X-WP-TotalPages
 
-    # Editing through REST: an update with the dashboard's nonce, and a stale nonce.
-    local nonce
-    nonce=$(grep -o 'createNonceMiddleware( "[^"]*"' "$out/dashboard.html" | sed 's/.*"\(.*\)"/\1/')
-    capture "$base" "$jar" "$out/rest-post-update.json" -H "X-WP-Nonce: $nonce" \
-        -H 'Content-Type: application/json' -d '{"title":"Hello world!"}' "$base/wp-json/wp/v2/posts/1"
+    # The block editor's save with a stale nonce. The editor pages and their saves
+    # come from the browser recordings (scripts/browser-capture/fixtures.ts).
     capture "$base" "$jar" "$out/rest-invalid-nonce.json" -H "X-WP-Nonce: 0000000000" \
         -H 'Content-Type: application/json' -d '{"title":"Hello world!"}' "$base/wp-json/wp/v2/posts/1"
 
@@ -136,8 +130,6 @@ woocommerce() {
     capture "$base" "$jar" "$out/shop.html" "$base/shop/"
     capture "$base" "$jar" "$out/product.html" "$permalink"
     capture "$base" "$jar" "$out/product-search.html" "$base/?s=hoodie&post_type=product"
-    capture "$base" "$jar" "$out/store-products.json" "$base/wp-json/wc/store/v1/products?per_page=5&page=1"
-    save_headers "$out/store-products.json" X-WP-Total X-WP-TotalPages
 
     # The Store API cart: its nonce and token, adding an item, a product that
     # does not exist, one out of stock, then checkout with a bad address and a good one.

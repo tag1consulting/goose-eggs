@@ -1555,7 +1555,7 @@ pub async fn post_comment(
     )
 }
 
-/// The fields of a post to create or update through the REST API. For complete
+/// The fields of a post to create or update in the block editor. For complete
 /// documentation, refer to [`PostBuilder`].
 ///
 /// # Example
@@ -1564,13 +1564,15 @@ pub async fn post_comment(
 ///
 /// let post: Post = Post::builder().title("Draft").status("draft").build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Draft","status":"draft"}"#);
+/// # let server = support::editor_site("post", "Draft");
 /// # support::create_post("Post", &server, &post);
 /// ```
 #[derive(Clone, Debug)]
 pub struct Post<'a> {
-    // The REST route of the post type.
+    // The REST route of the post type, which the editor saves to.
     url: &'a str,
+    // The post type, which picks the editor page.
+    post_type: &'a str,
     // The fields to send, as the REST API names them.
     fields: serde_json::Map<String, serde_json::Value>,
 }
@@ -1583,7 +1585,7 @@ impl<'a> Post<'a> {
     ///
     /// let _post = Post::builder().title("A new title").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"A new title"}"#);
+    /// # let server = support::editor_site("post", "A new title");
     /// # support::create_post("Post::builder", &server, &_post);
     /// ```
     pub fn builder() -> PostBuilder<'a> {
@@ -1605,11 +1607,12 @@ impl<'a> Post<'a> {
 ///     .status("publish")
 ///     .build();
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Load testing","content":"<p>Written by Goose.</p>","status":"publish"}"#);
+/// # let server = support::editor_site_saving("post", "Load testing", r#"{"title":"Load testing","content":"<p>Written by Goose.</p>","status":"publish"}"#);
 /// # support::create_post("PostBuilder", &server, &_post);
 /// ```
 pub struct PostBuilder<'a> {
     url: &'a str,
+    post_type: &'a str,
     fields: serde_json::Map<String, serde_json::Value>,
 }
 impl<'a> PostBuilder<'a> {
@@ -1618,6 +1621,8 @@ impl<'a> PostBuilder<'a> {
         Self {
             // Defaults to the core posts route.
             url: "wp-json/wp/v2/posts",
+            // Defaults to a post.
+            post_type: "post",
             // Defaults to sending no fields.
             fields: serde_json::Map::new(),
         }
@@ -1631,7 +1636,7 @@ impl<'a> PostBuilder<'a> {
     ///
     /// let _post = Post::builder().title("Hello").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Hello"}"#);
+    /// # let server = support::editor_site_saving("post", "Hello", r#"{"title":"Hello"}"#);
     /// # support::create_post("PostBuilder::title", &server, &_post);
     /// ```
     pub fn title(self, title: &str) -> Self {
@@ -1645,10 +1650,11 @@ impl<'a> PostBuilder<'a> {
     /// use goose_eggs::wordpress::Post;
     ///
     /// let _post = Post::builder()
+    ///     .title("Hi")
     ///     .content("<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->")
     ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"content":"<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->"}"#);
+    /// # let server = support::editor_site_saving("post", "Hi", r#"{"content":"<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->"}"#);
     /// # support::create_post("PostBuilder::content", &server, &_post);
     /// ```
     pub fn content(self, content: &str) -> Self {
@@ -1657,15 +1663,16 @@ impl<'a> PostBuilder<'a> {
 
     /// The post's status: `draft`, `publish`, `pending`, `private` or `future`.
     ///
-    /// WordPress makes a new post a `draft` when no status is sent.
+    /// [`create_post`] saves a `draft`, as the editor's Save draft button does,
+    /// when no status is set.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::wordpress::Post;
     ///
-    /// let _post = Post::builder().status("publish").build();
+    /// let _post = Post::builder().title("Out now").status("publish").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"status":"publish"}"#);
+    /// # let server = support::editor_site_saving("post", "Out now", r#"{"status":"publish"}"#);
     /// # support::create_post("PostBuilder::status", &server, &_post);
     /// ```
     pub fn status(self, status: &str) -> Self {
@@ -1679,10 +1686,11 @@ impl<'a> PostBuilder<'a> {
     /// use goose_eggs::wordpress::Post;
     ///
     /// let _post = Post::builder()
+    ///     .title("Filed")
     ///     .field("categories", serde_json::json!([1, 3]))
     ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"categories":[1,3]}"#);
+    /// # let server = support::editor_site_saving("post", "Filed", r#"{"categories":[1,3]}"#);
     /// # support::create_post("PostBuilder::field", &server, &_post);
     /// ```
     pub fn field(mut self, name: &str, value: serde_json::Value) -> Self {
@@ -1690,21 +1698,49 @@ impl<'a> PostBuilder<'a> {
         self
     }
 
-    /// The REST route of the post type.
+    /// The REST route of the post type, which the editor saves the post to.
     ///
-    /// Defaults to `wp-json/wp/v2/posts`; pages are at `wp-json/wp/v2/pages`.
+    /// Defaults to `wp-json/wp/v2/posts`; pages are at `wp-json/wp/v2/pages`,
+    /// along with [`PostBuilder::post_type`] `page`.
     ///
     /// # Example
     /// ```rust
     /// use goose_eggs::wordpress::Post;
     ///
-    /// let _page = Post::builder().url("wp-json/wp/v2/pages").title("About").build();
+    /// let _page = Post::builder()
+    ///     .post_type("page")
+    ///     .url("wp-json/wp/v2/pages")
+    ///     .title("About")
+    ///     .build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/pages", r#"{"title":"About"}"#);
+    /// # let server = support::editor_site("page", "About");
     /// # support::create_post("PostBuilder::url", &server, &_page);
     /// ```
     pub fn url(mut self, url: &'a str) -> Self {
         self.url = url;
+        self
+    }
+
+    /// The post type, which picks the editor page [`create_post`] opens:
+    /// `wp-admin/post-new.php`, with `?post_type=<type>` for any type but `post`.
+    ///
+    /// Defaults to `post`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::wordpress::Post;
+    ///
+    /// let _page = Post::builder()
+    ///     .post_type("page")
+    ///     .url("wp-json/wp/v2/pages")
+    ///     .title("Contact")
+    ///     .build();
+    /// # mod support { include!("../tests/doc/wordpress.rs"); }
+    /// # let server = support::editor_site("page", "Contact");
+    /// # support::create_post("PostBuilder::post_type", &server, &_page);
+    /// ```
+    pub fn post_type(mut self, post_type: &'a str) -> Self {
+        self.post_type = post_type;
         self
     }
 
@@ -1716,74 +1752,201 @@ impl<'a> PostBuilder<'a> {
     ///
     /// let _post = Post::builder().title("Built").build();
     /// # mod support { include!("../tests/doc/wordpress.rs"); }
-    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Built"}"#);
+    /// # let server = support::editor_site("post", "Built");
     /// # support::create_post("PostBuilder::build", &server, &_post);
     /// ```
     pub fn build(self) -> Post<'a> {
-        let Self { url, fields } = self;
-        Post { url, fields }
+        let Self {
+            url,
+            post_type,
+            fields,
+        } = self;
+        Post {
+            url,
+            post_type,
+            fields,
+        }
     }
 }
 
-// Send a post's fields with the REST nonce, and check WordPress answered with a post.
-async fn save_post(
+// An editor page as it opened: its HTML, the post's ID and the REST nonce.
+struct Editor {
+    html: String,
+    id: u64,
+    nonce: String,
+}
+
+// Open a block editor page with its assets and the reads its scripts make on
+// opening: the post's notes (where the post type supports them) and, for a new
+// post, the patterns its start page offers.
+async fn open_editor(
     user: &mut GooseUser,
-    nonce: &str,
     path: &str,
     name: &str,
+    new: bool,
+) -> Result<Editor, Box<TransactionError>> {
+    let validate = crate::Validate::builder().text("post_ID").build();
+    let goose = get_named(user, path, name).await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, Some(&validate)).await?;
+    let id = get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok());
+    let nonce = get_rest_nonce(&html);
+    let (id, nonce) = match (id, nonce) {
+        (Some(id), Some(nonce)) => (id, nonce),
+        (id, _) => {
+            let missing = if id.is_none() {
+                "post ID"
+            } else {
+                "REST nonce"
+            };
+            return fail(
+                user,
+                &format!("{}: no {} on the editor page", path, missing),
+                &mut request,
+                None,
+                Some(&html),
+            );
+        }
+    };
+    let root = crate::page::api_fetch_root(&html);
+    let mut reads: Vec<(String, &str)> = Vec::new();
+    if html.contains(r#""notes":true"#) {
+        reads.push((
+            format!(
+                "{}wp/v2/comments?context=edit&post={}&type=note&status=all&per_page=100&_locale=user",
+                root, id
+            ),
+            "wp-json/wp/v2/comments?type=note",
+        ));
+    }
+    if new {
+        reads.push((
+            format!("{}wp/v2/block-patterns/patterns?_locale=user", root),
+            "wp-json/wp/v2/block-patterns/patterns",
+        ));
+        reads.push((
+            format!(
+                "{}wp/v2/blocks?context=edit&per_page=100&page=1&_locale=user",
+                root
+            ),
+            "wp-json/wp/v2/blocks",
+        ));
+        reads.push((
+            format!(
+                "{}wp/v2/wp_pattern_category?context=view&per_page=100&_fields=id%2Cname%2Cdescription%2Cslug&_locale=user",
+                root
+            ),
+            "wp-json/wp/v2/wp_pattern_category",
+        ));
+    }
+    for (path, name) in reads {
+        let goose = send_json(
+            user,
+            GooseMethod::Get,
+            &path,
+            name,
+            &[
+                ("X-WP-Nonce", nonce.as_str()),
+                ("Accept", "application/json, */*;q=0.1"),
+            ],
+            None,
+        )
+        .await?;
+        json_response(user, goose).await?;
+    }
+    Ok(Editor { html, id, nonce })
+}
+
+// Save the post as the editor's Save draft, Publish or Update button does, load
+// its page as a visitor (the editor, for a draft) and check it shows the title.
+async fn save_post(
+    user: &mut GooseUser,
+    editor: &Editor,
+    body: serde_json::Map<String, serde_json::Value>,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    let body = serde_json::Value::Object(post.fields.clone());
+    let route = post.url.trim_end_matches('/');
+    let path = format!("{}/{}?_locale=user", route, editor.id);
+    let name = format!("{}/{{id}}", route);
     let goose = send_json(
         user,
         GooseMethod::Post,
-        path,
-        name,
-        &[("X-WP-Nonce", nonce)],
-        Some(&body),
+        &path,
+        &name,
+        &[
+            ("X-HTTP-Method-Override", "PUT"),
+            ("X-WP-Nonce", editor.nonce.as_str()),
+            ("Accept", "application/json, */*;q=0.1"),
+        ],
+        Some(&serde_json::Value::Object(body)),
     )
     .await?;
     let mut request = goose.request.clone();
     let (headers, json) = json_response(user, goose).await?;
-    if json.get("id").and_then(|id| id.as_u64()).is_none() {
+    let link = json.get("link").and_then(|l| l.as_str());
+    let title = json
+        .get("title")
+        .and_then(|t| t.get("rendered"))
+        .and_then(|t| t.as_str());
+    let (link, title) = match (json.get("id").and_then(|id| id.as_u64()), link, title) {
+        (Some(_), Some(link), Some(title)) => (site_path(link), title.to_string()),
+        _ => {
+            return fail(
+                user,
+                &format!("{}: response has no post", path),
+                &mut request,
+                Some(&headers),
+                Some(&json.to_string()),
+            )
+        }
+    };
+    let goose = get_named(user, &link, "post view").await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, None).await?;
+    if !title.is_empty() && !html.contains(&title) {
         return fail(
             user,
-            &format!("{}: response has no post id", path),
+            &format!(
+                "{}: the saved title {:?} is not on the post's page",
+                link, title
+            ),
             &mut request,
-            Some(&headers),
-            Some(&json.to_string()),
+            None,
+            Some(&html),
         );
     }
     Ok(json)
 }
 
-/// Create a post through the REST API, as the block editor does: a POST of the
-/// post's fields as JSON, with the logged in user's REST nonce (see
-/// [`get_rest_nonce`]) in an `X-WP-Nonce` header.
+/// Create a post in the block editor, as an editor does: open
+/// `wp-admin/post-new.php` (which makes the new post) with its assets and the
+/// requests its scripts make on opening, take the post's ID and the REST nonce
+/// from the page, then save the post as the editor's Save draft (or, with a
+/// status, Publish) button does: a POST of the post's fields as JSON to its
+/// REST route, `?_locale=user`, with the nonce in `X-WP-Nonce`. Then load the
+/// post's page and check it shows the title.
 ///
-/// Fails when WordPress refuses, for example a 403 `rest_cookie_invalid_nonce`
-/// for a missing or stale nonce, or answers without a post. Returns the post
-/// WordPress created, as JSON.
+/// The user must be logged in with a role that writes posts. Fails when the
+/// editor page has no post ID or nonce, WordPress refuses the save (for example
+/// a 403 `rest_cookie_invalid_nonce`), or the post's page does not show its
+/// title. Returns the saved post, as JSON.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{create_post, get_rest_nonce, Post};
+/// use goose_eggs::wordpress::{create_post, Post};
 ///
 /// transaction!(write);
 ///
 /// async fn write(user: &mut GooseUser) -> TransactionResult {
-///     // Any admin page has the nonce; the editor would load post-new.php.
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
 ///     let post = Post::builder().title("Written by Goose").build();
-///     let created = create_post(user, &nonce, &post).await?;
+///     let created = create_post(user, &post).await?;
 ///     assert!(created["id"].as_u64().is_some());
 ///
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Written by Goose"}"#);
+/// # let server = support::editor_site("post", "Written by Goose");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(write(&mut user));
 /// # assert!(result.is_ok(), "doc example create_post: {}", support::failure(&result));
@@ -1791,36 +1954,53 @@ async fn save_post(
 /// ```
 pub async fn create_post(
     user: &mut GooseUser,
-    nonce: &str,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    save_post(user, nonce, post.url, post.url, post).await
+    let path = match post.post_type {
+        "post" => "wp-admin/post-new.php".to_string(),
+        post_type => format!(
+            "wp-admin/post-new.php?post_type={}",
+            query_encode(post_type)
+        ),
+    };
+    let editor = open_editor(user, &path, "wp-admin/post-new.php", true).await?;
+    // The editor sends the whole new post: its ID, title, content and status.
+    let mut body = serde_json::Map::new();
+    body.insert("id".to_string(), editor.id.into());
+    body.insert("title".to_string(), "".into());
+    body.insert("content".to_string(), "".into());
+    body.insert("status".to_string(), "draft".into());
+    body.extend(post.fields.clone());
+    save_post(user, &editor, body, post).await
 }
 
-/// Update a post through the REST API, as the block editor saves one: a POST of
-/// the changed fields as JSON to the post's route, with the REST nonce in an
-/// `X-WP-Nonce` header.
+/// Update a post in the block editor, as an editor does: open
+/// `wp-admin/post.php?post=<id>&action=edit` with its assets and the requests
+/// its scripts make on opening, take the REST nonce from the page, then save as
+/// the editor's Save (or Update) button does: a POST of the post's ID, the
+/// changed fields and its content to the post's REST route, `?_locale=user`,
+/// with the nonce in `X-WP-Nonce`. Then load the post's page and check it shows
+/// the title.
 ///
-/// The request is named `<route>/{id}`, so updates of every post share one line
-/// in the metrics. Fails as [`create_post`] does; returns the updated post.
+/// The requests are named `wp-admin/post.php?action=edit` and `<route>/{id}`, so
+/// updates of every post share their lines in the metrics. Fails as
+/// [`create_post`] does; returns the updated post.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{get_rest_nonce, update_post, Post};
+/// use goose_eggs::wordpress::{update_post, Post};
 ///
 /// transaction!(edit);
 ///
 /// async fn edit(user: &mut GooseUser) -> TransactionResult {
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
 ///     let post = Post::builder().title("Hello world!").build();
-///     let _updated = update_post(user, &nonce, 1, &post).await?;
+///     let _updated = update_post(user, 1, &post).await?;
 ///
 ///     Ok(())
 /// }
 /// # mod support { include!("../tests/doc/wordpress.rs"); }
-/// # let server = support::rest_site("wp-json/wp/v2/posts/1", r#"{"title":"Hello world!"}"#);
+/// # let server = support::editor_site("post", "Hello world!");
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(edit(&mut user));
 /// # assert!(result.is_ok(), "doc example update_post: {}", support::failure(&result));
@@ -1828,13 +2008,27 @@ pub async fn create_post(
 /// ```
 pub async fn update_post(
     user: &mut GooseUser,
-    nonce: &str,
     id: u64,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    let path = format!("{}/{}", post.url.trim_end_matches('/'), id);
-    let name = format!("{}/{{id}}", post.url.trim_end_matches('/'));
-    save_post(user, nonce, &path, &name, post).await
+    let path = format!("wp-admin/post.php?post={}&action=edit", id);
+    let editor = open_editor(user, &path, "wp-admin/post.php?action=edit", false).await?;
+    // The editor sends the post's ID, what changed, and the content as it holds
+    // it, which the page preloads.
+    let mut body = serde_json::Map::new();
+    body.insert("id".to_string(), editor.id.into());
+    body.extend(post.fields.clone());
+    if !body.contains_key("content") {
+        let preloaded = crate::page::preloaded(&editor.html);
+        let content = preloaded
+            .iter()
+            .find(|(route, _)| route.contains(&format!("/{}?", editor.id)))
+            .and_then(|(_, response)| response["body"]["content"]["raw"].as_str());
+        if let Some(content) = content {
+            body.insert("content".to_string(), content.into());
+        }
+    }
+    save_post(user, &editor, body, post).await
 }
 
 /// The URLs of a site's content, by kind, as [`discover`] found them.
@@ -2991,6 +3185,7 @@ mod tests {
     fn post_builder_defaults() {
         let post = Post::builder().build();
         assert_eq!(post.url, "wp-json/wp/v2/posts", "Post default url");
+        assert_eq!(post.post_type, "post", "Post default post_type");
         assert!(post.fields.is_empty(), "Post default fields");
         let post = Post::builder().title("a").title("b").build();
         assert_eq!(

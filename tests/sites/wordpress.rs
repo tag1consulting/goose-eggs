@@ -21,7 +21,7 @@ const DISCOVER: &str = "discover finds posts, pages, categories and tags";
 const LOG_IN: &str = "log_in as the editor";
 const SEARCH: &str = "search for a word in the test data";
 const COMMENT: &str = "post_comment as the editor";
-const EDIT: &str = "create_post then update_post through REST";
+const EDIT: &str = "create_post then update_post in the block editor";
 const LOG_OUT: &str = "log_out from the dashboard";
 
 static CONTENT: OnceLock<SiteContent> = OnceLock::new();
@@ -83,14 +83,12 @@ async fn wordpress_site() {
             }),
             transaction(EDIT, |user| {
                 Box::pin(async move {
-                    let html = user.get("wp-admin/").await?.response?.text().await?;
-                    let nonce = wordpress::get_rest_nonce(&html).unwrap_or_default();
                     let draft = Post::builder().title("Goose draft").build();
-                    let created = wordpress::create_post(user, &nonce, &draft).await?;
+                    let created = wordpress::create_post(user, &draft).await?;
                     let id = created["id"].as_u64().unwrap_or_default();
                     let title = format!("Goose edit {}", goose_eggs::text::random_word(8));
                     let edit = Post::builder().title(&title).build();
-                    let updated = wordpress::update_post(user, &nonce, id, &edit).await?;
+                    let updated = wordpress::update_post(user, id, &edit).await?;
                     *EDITED.lock().unwrap() = updated["title"]["raw"].as_str().map(str::to_string);
                     if updated["title"]["raw"].as_str() != Some(title.as_str()) {
                         return Err(Box::new(TransactionError::Custom(format!(
@@ -112,12 +110,7 @@ async fn wordpress_site() {
     .await;
 
     let mut problems: Vec<String> = vec![
-        check_named(
-            &metrics,
-            DISCOVER,
-            &["wp-sitemap-posts-post-1.xml"],
-            Expect::Pass,
-        ),
+        check_named(&metrics, DISCOVER, &["discover"], Expect::Pass),
         check_named(&metrics, LOG_IN, &["wp-login.php"], Expect::Pass),
         check_named(&metrics, SEARCH, &["search"], Expect::Pass),
         check_named(
@@ -129,7 +122,12 @@ async fn wordpress_site() {
         check_named(
             &metrics,
             EDIT,
-            &["wp-json/wp/v2/posts", "wp-json/wp/v2/posts/{id}"],
+            &[
+                "wp-admin/post-new.php",
+                "wp-admin/post.php?action=edit",
+                "wp-json/wp/v2/posts/{id}",
+                "post view",
+            ],
             Expect::Pass,
         ),
         check_named(

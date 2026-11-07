@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..8204da8 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2633,7 +2633,7 @@ pub async fn discover(
+         }
+         let (_, html) = read_response(goose).await;
+         if let Some(kind) = page_kind(&html) {
+-            if content.urls(&kind).len() < cap {
++            if content.urls(&kind).len() < usize::MAX {
+                 content.add(&kind, path.clone());
+             }
+         }

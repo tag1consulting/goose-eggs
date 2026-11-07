@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..e74da12 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -83,7 +83,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
+                     Some((href, "css"))
+                 } else if rels
+                     .iter()
+-                    .any(|r| matches!(*r, "preload" | "modulepreload" | "prefetch"))
++                    .any(|r| matches!(*r, "preload" | "modulepreload"))
+                 {
+                     let kind = match attribute(tag, "as").as_deref() {
+                         Some("style") => "css",

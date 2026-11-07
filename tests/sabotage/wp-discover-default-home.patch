@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..6d7cf60 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2281,7 +2281,7 @@ impl<'a> DiscoverBuilder<'a> {
+     fn new() -> Self {
+         Self {
+             // Defaults to the site's home page.
+-            home: "",
++            home: "home/",
+             // Defaults to no sitemap: a visitor never reads one.
+             sitemap: None,
+             // Defaults to 100 URLs of each kind.

@@ -1,0 +1,12 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..340adcc 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -134,7 +134,6 @@ pub(crate) fn same_site(user: &GooseUser, url: &str) -> bool {
+         Ok(parsed) => {
+             matches!(parsed.scheme(), "http" | "https")
+                 && parsed.host_str() == user.base_url.host_str()
+-                && parsed.port_or_known_default() == user.base_url.port_or_known_default()
+         }
+         Err(_) => false,
+     }

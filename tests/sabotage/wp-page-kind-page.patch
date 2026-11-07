@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..371655a 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2400,7 +2400,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+             .find(|t| !t.starts_with("format-") && *t != "paged")
+             .map(str::to_string);
+     }
+-    if has("page") && classes.iter().any(|c| c.starts_with("page-id-")) {
++    if has("page") && classes.iter().any(|c| c.starts_with("page-template")) {
+         return Some("page".to_string());
+     }
+     if has("category") {

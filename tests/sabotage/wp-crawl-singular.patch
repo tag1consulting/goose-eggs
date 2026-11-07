@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..0cc68fe 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2468,7 +2468,7 @@ pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<S
+         for tag in anchor.find_iter(scope) {
+             let tag = tag.as_str();
+             let rel = attribute(tag, "rel").unwrap_or_default();
+-            if !singular || rel.split_whitespace().any(|r| r == "tag") {
++            if !singular || rel.split_whitespace().any(|r| r == "tag") || singular {
+                 push(tag);
+             }
+         }

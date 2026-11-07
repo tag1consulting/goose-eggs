@@ -1,0 +1,16 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..b328bc1 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1967,10 +1967,7 @@ pub async fn create_post(
+ ) -> Result<serde_json::Value, Box<TransactionError>> {
+     let path = match post.post_type {
+         "post" => "wp-admin/post-new.php".to_string(),
+-        post_type => format!(
+-            "wp-admin/post-new.php?post_type={}",
+-            query_encode(post_type)
+-        ),
++        _ => "wp-admin/post-new.php".to_string(),
+     };
+     let editor = open_editor(user, &path, "wp-admin/post-new.php", true).await?;
+     // The editor sends the whole new post: its ID, title, content and status.

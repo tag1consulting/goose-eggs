@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..1f44d8e 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -177,7 +177,7 @@ pub(crate) fn rest_root(html: &str) -> String {
+         .find(|tag| attribute(tag, "rel").as_deref() == Some("https://api.w.org/"))
+         .and_then(|tag| attribute(tag, "href"))
+         .map(|href| crate::wordpress::site_path(&href))
+-        .unwrap_or_else(|| "/wp-json/".to_string());
++        .unwrap_or_else(|| "/".to_string());
+     root
+ }
+ 

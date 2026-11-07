@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 988f803..5741569 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -223,7 +223,7 @@ pub(crate) fn api_fetch_root(html: &str) -> String {
+ // The preferences read WordPress's persistence layer makes on an admin page
+ // when the user has no preferences saved yet.
+ async fn preferences(user: &mut GooseUser, html: &str) -> Result<(), Box<TransactionError>> {
+-    let unsaved = Regex::new(r#"var serverData = (""|null);"#)
++    let unsaved = Regex::new(r#"var serverData = (null);"#)
+         .unwrap()
+         .is_match(html)
+         && html.contains("__unstableCreatePersistenceLayer( serverData");

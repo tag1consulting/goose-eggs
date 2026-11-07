@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ce5f8e8 100644
+index bd2687a..6d7cf60 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2270,7 +2270,7 @@ pub async fn discover(
-                 if content.urls(kind).len() >= cap {
-                     break;
-                 }
--                content.add(kind, link);
-+                content.add("x", link);
-             }
-             let pages = header_value(&headers, "X-WP-TotalPages")
-                 .and_then(|p| p.parse::<usize>().ok())
+@@ -2281,7 +2281,7 @@ impl<'a> DiscoverBuilder<'a> {
+     fn new() -> Self {
+         Self {
+             // Defaults to the site's home page.
+-            home: "",
++            home: "home/",
+             // Defaults to no sitemap: a visitor never reads one.
+             sitemap: None,
+             // Defaults to 100 URLs of each kind.

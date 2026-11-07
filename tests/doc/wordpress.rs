@@ -19,8 +19,9 @@ const COMMENT_ANONYMOUS: &str = include_str!("../fixtures/wordpress/comment-form
 const COMMENT_LOGGED_IN: &str = include_str!("../fixtures/wordpress/comment-form-logged-in.html");
 const SITEMAP: &str = include_str!("../fixtures/wordpress/sitemap.xml");
 const SITEMAP_POSTS: &str = include_str!("../fixtures/wordpress/sitemap-posts-post-1.xml");
-const REST_POSTS: &str = include_str!("../fixtures/wordpress/rest-posts.json");
-const REST_POST: &str = include_str!("../fixtures/wordpress/rest-post-update.json");
+const EDITOR_NEW: &str = include_str!("../fixtures/wordpress/editor-new.html");
+const EDITOR_EDIT: &str = include_str!("../fixtures/wordpress/editor-edit.html");
+const BROWSER_POST: &str = include_str!("../fixtures/wordpress/browser-post.html");
 
 /// A hidden field's value in a fixture, attributes in any order. Written apart
 /// from the library's parsers, so a broken parser cannot agree with it.
@@ -34,15 +35,6 @@ pub fn fixture_value(html: &str, name: &str) -> String {
         .find(|tag| named.is_match(tag))
         .unwrap_or_else(|| panic!("fixture has no {} field", name));
     value.captures(tag).map(|c| c[1].to_string()).unwrap_or_default()
-}
-
-/// The REST nonce on the dashboard fixture.
-pub fn rest_nonce() -> String {
-    regex::Regex::new(r#"createNonceMiddleware\( "([^"]+)""#)
-        .unwrap()
-        .captures(DASHBOARD)
-        .unwrap()[1]
-        .to_string()
 }
 
 /// The log out nonce on the dashboard fixture.
@@ -115,8 +107,17 @@ pub fn failure<T>(result: &Result<T, Box<TransactionError>>) -> String {
 /// A site with WordPress's log in form at `/{path}`, which redirects a post of
 /// `username`, `password` and the test cookie flag to `redirect_to` (the
 /// form's own, the dashboard, when `redirect_to` is None).
+// The preferences read the dashboard fixture's scripts make: its user has none saved.
+fn mock_preferences(server: &MockServer) {
+    server.mock(|when, then| {
+        when.method(GET).path("/wp-json/wp/v2/users/me");
+        then.status(200).header("content-type", "application/json").body(r#"{"id":1}"#);
+    });
+}
+
 fn log_in_site_to(username: &str, password: &str, path: &str, redirect_to: Option<&str>) -> MockServer {
     let server = MockServer::start();
+    mock_preferences(&server);
     server.mock(|when, then| {
         when.method(GET).path(format!("/{}", path));
         then.status(200)
@@ -176,6 +177,7 @@ pub fn log_in_fails(example: &str, server: &MockServer, login: &Login, text: &st
 /// A logged in site: the dashboard with its log out link, which logs out.
 pub fn log_out_site() -> Site {
     let server = MockServer::start();
+    mock_preferences(&server);
     server.mock(|when, then| {
         when.method(GET).path("/wp-admin/");
         then.status(200).body(DASHBOARD);
@@ -294,40 +296,148 @@ pub fn post_comment_fails(example: &str, site: &Site, comment: &Comment, text: &
     }
 }
 
-/// A logged in site with the dashboard (and its REST nonce) at `/wp-admin/`,
-/// saving a post at `/{route}` only with that nonce and exactly the JSON `body`.
-pub fn rest_site(route: &str, body: &str) -> Site {
+// The REST nonce an editor fixture carries.
+fn editor_nonce(html: &str) -> String {
+    regex::Regex::new(r#"createNonceMiddleware\( "([^"]+)""#)
+        .unwrap()
+        .captures(html)
+        .unwrap()[1]
+        .to_string()
+}
+
+/// A site with the block editor for `post_type` (`post` or `page`): its new
+/// and edit pages, the reads their scripts make, and a save of a post titled
+/// `title` with the editor's nonce, whose page then shows the title. Only the
+/// save is counted.
+pub fn editor_site(post_type: &str, title: &str) -> Site {
+    editor_site_saving(post_type, title, &serde_json::json!({ "title": title }).to_string())
+}
+
+/// As `editor_site`, saving only a body that holds `fields`, as JSON.
+pub fn editor_site_saving(post_type: &str, title: &str, fields: &str) -> Site {
     let server = MockServer::start();
     server.mock(|when, then| {
-        when.method(GET).path("/wp-admin/");
-        then.status(200).body(DASHBOARD);
+        let when = when.method(GET).path("/wp-admin/post-new.php");
+        if post_type != "post" {
+            when.query_param("post_type", post_type);
+        }
+        then.status(200).body(EDITOR_NEW);
     });
-    let body: serde_json::Value = serde_json::from_str(body).unwrap();
+    server.mock(|when, then| {
+        when.method(GET).path("/wp-admin/post.php").query_param("action", "edit");
+        then.status(200).body(EDITOR_EDIT);
+    });
+    server.mock(|when, then| {
+        when.method(GET).path("/wp-admin/admin-ajax.php");
+        then.status(200).body("-1");
+    });
+    server.mock(|when, then| {
+        when.method(GET).path_matches(regex::Regex::new(r"^/wp-json/wp/v2/").unwrap());
+        then.status(200).header("content-type", "application/json").body("[]");
+    });
+    let route = if post_type == "post" { "posts" } else { "pages" };
+    let answer = serde_json::json!({
+        "id": 1841,
+        "link": "/saved-post/",
+        "title": { "raw": title, "rendered": title },
+    })
+    .to_string();
     let counted = server
         .mock(|when, then| {
             when.method(POST)
-                .path(format!("/{}", route))
-                .header("X-WP-Nonce", rest_nonce())
-                .json_body(body);
-            then.status(200).header("content-type", "application/json").body(REST_POST);
+                .path_matches(regex::Regex::new(&format!(r"^/wp-json/wp/v2/{}/\d+$", route)).unwrap())
+                .query_param("_locale", "user")
+                .matches(|request| {
+                    let nonce = request
+                        .headers
+                        .as_ref()
+                        .and_then(|h| h.iter().find(|(k, _)| k.eq_ignore_ascii_case("X-WP-Nonce")))
+                        .map(|(_, v)| v.clone())
+                        .unwrap_or_default();
+                    nonce == editor_nonce(EDITOR_NEW) || nonce == editor_nonce(EDITOR_EDIT)
+                })
+                .json_body_partial(fields);
+            then.status(200).header("content-type", "application/json").body(answer);
         })
         .id;
+    let page = format!("<html><body><h1>{}</h1></body></html>", title);
+    server.mock(|when, then| {
+        when.method(GET).path("/saved-post/");
+        then.status(200).body(page);
+    });
     Site { server, counted }
 }
 
-/// Create `post` with the dashboard's nonce; panic naming `example` unless it
-/// was saved once with the expected fields.
+/// Create `post` in the editor; panic naming `example` unless it was saved once.
 pub fn create_post(example: &str, site: &Site, post: &Post) {
     let mut user = user(site);
-    let result = block_on(goose_eggs::wordpress::create_post(&mut user, &rest_nonce(), post));
+    let result = block_on(goose_eggs::wordpress::create_post(&mut user, post));
     if result.is_err() || site.saves() != 1 {
         panic!(
-            "doc example {}: create failed: {}, expected saves: {}",
+            "doc example {}: create failed: {}, saves: {}",
             example,
             failure(&result),
             site.saves()
         );
     }
+}
+
+/// A small site to browse from `/{home}`: an About page in the navigation, two
+/// posts and a category on the home page, and a tag on the first post.
+pub fn crawl_site(home: &str) -> MockServer {
+    let server = MockServer::start();
+    let body = |classes: &str, inner: &str| {
+        format!(r#"<html><body class="{}"><main>{}</main></body></html>"#, classes, inner)
+    };
+    let at = |path: &str| format!("/{}{}", home, path);
+    let pages = [
+        (
+            at(""),
+            format!(
+                r#"<html><body class="home blog"><nav><a href="{}">About</a></nav><main><a href="{}">One</a><a href="{}">Two</a><a href="{}" rel="category tag">News</a></main></body></html>"#,
+                at("about/"),
+                at("one/"),
+                at("two/"),
+                at("category/news/")
+            ),
+        ),
+        (at("about/"), body("page page-id-2", "")),
+        (
+            at("one/"),
+            body("single single-post postid-1", &format!(r#"<a href="{}" rel="tag">rust</a>"#, at("tag/rust/"))),
+        ),
+        (at("two/"), body("single single-post postid-2", "")),
+        (at("category/news/"), body("archive category", "")),
+        (at("tag/rust/"), body("archive tag", "")),
+    ];
+    for (path, html) in pages {
+        server.mock(|when, then| {
+            when.method(GET).path(path);
+            then.status(200).body(html);
+        });
+    }
+    server
+}
+
+/// A post at `/{path}`, as WordPress serves it, with its assets counted.
+pub fn page_site(path: &str) -> Site {
+    let server = MockServer::start();
+    server.mock(|when, then| {
+        when.method(GET).path(format!("/{}", path));
+        then.status(200).body(BROWSER_POST);
+    });
+    let counted = server
+        .mock(|when, then| {
+            when.method(GET).path_matches(regex::Regex::new(r"^/wp-(includes|content)/").unwrap());
+            then.status(200).body("");
+        })
+        .id;
+    Site { server, counted }
+}
+
+/// How many of the site's assets were loaded.
+pub fn assets_loaded(site: &Site) -> usize {
+    site.hits()
 }
 
 /// A site with the core sitemap index at `/{path}`, the captured posts sitemap,
@@ -355,31 +465,6 @@ pub fn sitemap_site(path: &str) -> MockServer {
                 r#"<?xml version="1.0" encoding="UTF-8"?><urlset><url><loc>{}</loc></url></urlset>"#,
                 url
             ));
-        });
-    }
-    server
-}
-
-/// A site without a sitemap, listing posts (the captured page), pages,
-/// categories and tags through the REST API at `/{rest}`.
-pub fn rest_list_site(rest: &str) -> MockServer {
-    let server = MockServer::start();
-    server.mock(|when, then| {
-        when.method(GET).path("/wp-sitemap.xml");
-        then.status(404);
-    });
-    for (route, body) in [
-        ("posts", REST_POSTS.to_string()),
-        ("pages", r#"[{"link":"/about/"}]"#.to_string()),
-        ("categories", r#"[{"link":"/category/news/"}]"#.to_string()),
-        ("tags", r#"[{"link":"/tag/rust/"}]"#.to_string()),
-    ] {
-        server.mock(|when, then| {
-            when.method(GET).path(format!("/{}{}", rest, route));
-            then.status(200)
-                .header("content-type", "application/json")
-                .header("X-WP-TotalPages", "1")
-                .body(body);
         });
     }
     server

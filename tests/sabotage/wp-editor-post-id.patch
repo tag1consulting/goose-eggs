@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..054683f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1798,7 +1798,7 @@ async fn open_editor(
+     let goose = get_named(user, path, name).await?;
+     let mut request = goose.request.clone();
+     let html = load_page(user, goose, Some(&validate)).await?;
+-    let id = get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok());
++    let id = get_form_value(&html, "post_id").and_then(|id| id.parse::<u64>().ok());
+     let nonce = get_rest_nonce(&html);
+     let (id, nonce) = match (id, nonce) {
+         (Some(id), Some(nonce)) => (id, nonce),

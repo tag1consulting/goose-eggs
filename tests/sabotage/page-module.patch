@@ -1,0 +1,14 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..5b6e487 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -63,8 +63,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
+                     .unwrap_or_default()
+                     .to_ascii_lowercase();
+                 let runs = kind.is_empty()
+-                    || kind == "module"
+-                    || kind.contains("javascript")
++                                        || kind.contains("javascript")
+                     || kind.contains("ecmascript");
+                 match attribute(tag, "src") {
+                     Some(src) if runs && !src.is_empty() => Some((src, "js")),

@@ -1,0 +1,13 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..ce79d90 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -28,7 +28,7 @@ fn live_markup(html: &str) -> String {
+     // One pass, left to right, as a browser's parser reads them: a "<!--" in a
+     // script is script, and a "<script" in a comment is comment.
+     let hidden = Regex::new(
+-        r"(?is)<!--.*?-->|(<script\b[^>]*>).*?</script\s*>|<noscript\b.*?</noscript\s*>|<template\b.*?</template\s*>",
++        r"(?is)(<script\b[^>]*>).*?</script\s*>|<noscript\b.*?</noscript\s*>|<template\b.*?</template\s*>",
+     )
+     .unwrap();
+     hidden

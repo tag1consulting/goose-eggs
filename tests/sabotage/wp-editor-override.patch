@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..13dec19 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1883,7 +1883,6 @@ async fn save_post(
+         &path,
+         &name,
+         &[
+-            ("X-HTTP-Method-Override", "PUT"),
+             ("X-WP-Nonce", editor.nonce.as_str()),
+             ("Accept", "application/json, */*;q=0.1"),
+         ],

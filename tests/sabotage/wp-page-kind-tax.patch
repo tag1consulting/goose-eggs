@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..e6362cf 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2409,7 +2409,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+     if has("tag") {
+         return Some("post_tag".to_string());
+     }
+-    if let Some(taxonomy) = classes.iter().find_map(|c| c.strip_prefix("tax-")) {
++    if let Some(taxonomy) = classes.iter().find_map(|c| c.strip_prefix("taxonomy-")) {
+         return Some(taxonomy.to_string());
+     }
+     if has("author") {

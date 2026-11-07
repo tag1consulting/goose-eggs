@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..da55c32 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1828,7 +1828,7 @@ async fn open_editor(
+             "wp-json/wp/v2/comments?type=note",
+         ));
+     }
+-    if new {
++    if !new {
+         reads.push((
+             format!("{}wp/v2/block-patterns/patterns?_locale=user", root),
+             "wp-json/wp/v2/block-patterns/patterns",

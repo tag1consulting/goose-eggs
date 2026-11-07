@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..b73b153 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2027,7 +2027,7 @@ pub async fn update_post(
+     let mut body = serde_json::Map::new();
+     body.insert("id".to_string(), editor.id.into());
+     body.extend(post.fields.clone());
+-    if !body.contains_key("content") {
++    if body.contains_key("never") {
+         let preloaded = crate::page::preloaded(&editor.html);
+         let content = preloaded
+             .iter()

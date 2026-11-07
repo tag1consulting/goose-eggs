@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bd2687a..25f590f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1085,7 +1085,8 @@ pub async fn view_page(
+     validate: Option<&crate::Validate<'_>>,
+ ) -> Result<String, Box<TransactionError>> {
+     let goose = get_named(user, path, name).await?;
+-    load_page(user, goose, validate).await
++    let _ = validate;
++    load_page(user, goose, None).await
+ }
+ 
+ /// Search a WordPress website, the way its search form does: a GET of

@@ -1,0 +1,15 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..55321c0 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -108,9 +108,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
+             }
+         };
+         if let Some((url, kind)) = asset {
+-            if !assets.iter().any(|(u, _)| *u == url) {
+-                assets.push((url, kind));
+-            }
++            assets.push((url, kind));
+         }
+     }
+     assets

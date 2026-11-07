@@ -1,0 +1,18 @@
+diff --git a/src/page.rs b/src/page.rs
+index 3e74fa9..cc92a5f 100644
+--- a/src/page.rs
++++ b/src/page.rs
+@@ -249,11 +249,8 @@ async fn compression_test(user: &mut GooseUser, html: &str) -> Result<(), Box<Tr
+                         let e = e.to_ascii_lowercase();
+                         e.contains("deflate") || e.contains("gzip")
+                     });
+-                if compressed {
+-                    "no"
+-                } else {
+-                    "2"
+-                }
++                let _ = compressed;
++                "no"
+             }
+             "2" if body.starts_with("\"wpCompressionTest") => "yes",
+             "2" => "no",
