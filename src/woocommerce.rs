@@ -1121,6 +1121,13 @@ fn has_success_notice(html: &str) -> bool {
         .is_match(html)
 }
 
+// Whether a classic cart form control is a cart item's quantity.
+fn is_quantity_field(name: &str) -> bool {
+    Regex::new(r"^cart\[[^\]]+\]\[qty\]$")
+        .unwrap()
+        .is_match(name)
+}
+
 // Load a classic page and fail unless it shows a success notice.
 async fn expect_success_notice(
     user: &mut GooseUser,
@@ -1211,11 +1218,10 @@ pub async fn classic_update_cart(
     let mut request = goose.request.clone();
     let page = load_page(user, goose, None).await?;
     let form = get_form_by_class(&page, "woocommerce-cart-form");
-    let quantity_field = Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap();
     let mut params: Vec<(String, String)> = form_controls(&form)
         .into_iter()
         .map(|(name, value)| {
-            if quantity_field.is_match(&name) {
+            if is_quantity_field(&name) {
                 (name, quantity.to_string())
             } else {
                 (name, value)
@@ -1668,5 +1674,56 @@ mod tests {
             cart.use_cart_token(true).use_cart_token,
             "StoreApiCart use_cart_token"
         );
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line};
+    use crate::wordpress::form_controls;
+
+    #[test]
+    fn error_notice_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, error_notice(&page)));
+        }
+        check("woocommerce_error_notice", &actual);
+    }
+
+    #[test]
+    fn has_success_notice_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, has_success_notice(&page)));
+        }
+        check("woocommerce_has_success_notice", &actual);
+    }
+
+    #[test]
+    fn is_quantity_field_snapshot() {
+        let mut names: Vec<String> = fixtures()
+            .iter()
+            .flat_map(|(_, page)| form_controls(page))
+            .map(|(name, _)| name)
+            .collect();
+        for name in [
+            "cart[abc][qty]",
+            "cart[][qty]",
+            "cart[a]b][qty]",
+            "cart[a][qty]x",
+            "xcart[a][qty]",
+            "cart[a][quantity]",
+            "cart[a\n][qty]",
+            "",
+        ] {
+            names.push(name.to_string());
+        }
+        let mut actual = String::new();
+        for name in names {
+            actual.push_str(&line(&name, is_quantity_field(&name)));
+        }
+        check("woocommerce_is_quantity_field", &actual);
     }
 }

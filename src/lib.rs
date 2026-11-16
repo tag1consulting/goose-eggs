@@ -18,6 +18,8 @@ use log::info;
 use regex::Regex;
 
 pub mod drupal;
+#[cfg(test)]
+mod snapshot;
 pub mod text;
 pub mod woocommerce;
 pub mod wordpress;
@@ -1976,5 +1978,61 @@ mod tests {
                 case
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line};
+    use goose::config::GooseConfiguration;
+    use goose::goose::get_base_url;
+
+    // A user on localhost:18082, a host the saved pages were captured from.
+    fn user() -> GooseUser {
+        let configuration = GooseConfiguration::parse_args_default(&Vec::<&str>::new()).unwrap();
+        let base_url =
+            get_base_url(Some("http://localhost:18082".to_string()), None, None).unwrap();
+        GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap()
+    }
+
+    #[test]
+    fn get_html_header_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_html_header(&page)));
+        }
+        check("get_html_header", &actual);
+    }
+
+    #[test]
+    fn get_title_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_title(&page)));
+            let header = get_html_header(&page).unwrap_or_default();
+            actual.push_str(&line(&format!("{} header", path), get_title(&header)));
+        }
+        check("get_title", &actual);
+    }
+
+    #[tokio::test]
+    async fn get_src_elements_snapshot() {
+        let mut user = user();
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_src_elements(&mut user, &page).await));
+        }
+        check("get_src_elements", &actual);
+    }
+
+    #[tokio::test]
+    async fn get_css_elements_snapshot() {
+        let mut user = user();
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_css_elements(&mut user, &page).await));
+        }
+        check("get_css_elements", &actual);
     }
 }
