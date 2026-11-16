@@ -1,12 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..01c0014 100644
+index bf6a37f..1382560 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -262,7 +262,6 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
- pub fn get_rest_nonce(html: &str) -> Option<String> {
-     let patterns = [
-         r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
--        r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
-     ];
-     for pattern in patterns {
-         if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+@@ -37,7 +37,7 @@ static BODY: LazyLock<Regex> =
+ static REST_NONCES: LazyLock<[Regex; 2]> = LazyLock::new(|| {
+     [
+         Regex::new(r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#).unwrap(),
+-        Regex::new(r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#).unwrap(),
++        Regex::new(r#"wpApiSettingsX\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#).unwrap(),
+     ]
+ });
+ static LOG_OUT_URL: LazyLock<Regex> = LazyLock::new(|| {

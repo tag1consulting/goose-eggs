@@ -1,8 +1,8 @@
 //! Functionality that's specific to Drupal.
 
+use crate::with_cached_regex;
 use goose::prelude::*;
 use log::warn;
-use regex::Regex;
 use std::collections::HashMap;
 use std::env;
 
@@ -37,16 +37,17 @@ use std::env;
 /// assert!(!form.is_empty());
 /// ```
 pub fn get_form(html: &str, name: &str) -> String {
-    let re = Regex::new(&format!(
+    // `name` is part of the pattern, not escaped, so it is matched as a regular
+    // expression; the pattern is compiled once per name and kept.
+    let pattern = format!(
         // Lazy match to avoid matching multiple forms.
         r#"<form.*?(data-drupal-selector|id)="{name}".*?>(.*?)</form>"#,
-    ))
-    .unwrap();
+    );
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
-    match re.captures(&line) {
-        Some(capture) => capture[2].to_string(),
+    match with_cached_regex(pattern, |re| re.captures(&line).map(|c| c[2].to_string())) {
+        Some(form) => form,
         None => {
             warn!("form {} not found", name);
             "".to_string()
@@ -85,19 +86,36 @@ pub fn get_form(html: &str, name: &str) -> String {
 /// assert_eq!(&form_build_id, "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
 /// ```
 pub fn get_form_value(form_html: &str, name: &str) -> String {
-    let re = Regex::new(&format!(
-        r#"name="{}" value=['"](.*?)['"]"#,
-        regex::escape(name)
-    ))
-    .unwrap();
     // Return a specific form value.
-    match re.captures(form_html) {
-        Some(v) => v[1].to_string(),
+    match form_value(form_html, name) {
+        Some(value) => value.to_string(),
         None => {
             warn!("form element {} not found", name);
             "none".to_string()
         }
     }
+}
+
+// What the regular expression `name="<name>" value=['"](.*?)['"]` captures,
+// with `name` taken literally: the first `name="<name>" value=` followed by a
+// quote, then everything up to the next quote on the same line.
+fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {
+    let element = format!(r#"name="{}" value="#, name);
+    let mut from = 0;
+    while let Some(found) = form_html[from..].find(&element) {
+        let start = from + found;
+        let rest = &form_html[start + element.len()..];
+        if let Some(value) = rest.strip_prefix(['"', '\'']) {
+            if let Some(end) = value.find(['"', '\'', '\n']) {
+                if !value[end..].starts_with('\n') {
+                    return Some(&value[..end]);
+                }
+            }
+        }
+        // `element` starts with an ASCII `n`, so the next byte starts a character.
+        from = start + 1;
+    }
+    None
 }
 
 /// Use a regular expression to get a specific form that has been encoded to replace a BigPipe placeholder,
@@ -141,21 +159,11 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
 /// assert_eq!(form.lines().count(), 1);
 /// ```
 pub fn get_bigpipe_form(html: &str, name: &str) -> String {
-    let re = Regex::new(
-        // Lazy match to avoid matching multiple forms.
-        &format!(
-            "{}.*?data-drupal-selector=.*?{}(.*?){}",
-            regex::escape(r#"[{"#),
-            regex::escape(name),
-            regex::escape(r#"}]"#)
-        ),
-    )
-    .unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
-    match re.captures(&line) {
-        Some(capture) => capture[1].to_string(),
+    match bigpipe_form(&line, name) {
+        Some(form) => form.to_string(),
         None => {
             warn!("bigpipe form {} not found", name);
             "".to_string()
@@ -184,6 +192,19 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
     get_form_value(&decoded_form, name)
 }
 
+// What the regular expression `\[\{.*?data-drupal-selector=.*?<name>(.*?)\}\]`
+// captures in a line without newlines, with `name` taken literally: after the
+// first `[{`, the first `data-drupal-selector=`, then the first `name`, then
+// everything up to the next `}]`. When the first of each fails, every later one
+// would too, as it leaves less of the line to match.
+fn bigpipe_form<'a>(line: &'a str, name: &str) -> Option<&'a str> {
+    let rest = &line[line.find("[{")? + 2..];
+    let selector = "data-drupal-selector=";
+    let rest = &rest[rest.find(selector)? + selector.len()..];
+    let rest = &rest[rest.find(name)? + name.len()..];
+    Some(&rest[..rest.find("}]")?])
+}
+
 /// Extract an updated build_id from a form.
 ///
 /// After certain form actions, such as uploading a file, Drupal can change the `build_id`. Requires the original
@@ -200,19 +221,49 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
 /// assert_eq!(updated_build_id, "form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc");
 /// ```
 pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-    let re = Regex::new(&format!(
-        "{}{}{}",
-        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
-    ))
-    .unwrap();
     // Return a specific form value.
-    match re.captures(form_html) {
-        Some(v) => v[1].to_string(),
+    match updated_build_id(form_html, old_build_id) {
+        Some(build_id) => build_id,
         None => {
             warn!("update_build_id not found");
             "none".to_string()
         }
     }
+}
+
+// What the regular expression `\{"command":"update_build_id","old":"<old>","new":"(.*?)"\}`
+// captures, where `old` is part of the pattern, not escaped. A Drupal build id
+// (`form-` and URL safe base64) has no regular expression characters, so it is
+// matched in code: the first `{"command":"update_build_id","old":"<old>","new":"`
+// followed on the same line by `"}`. Any other `old` is matched as the regular
+// expression it always was.
+fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+    if old_build_id.contains(|c: char| r"\.+*?()|[]{}^$".contains(c)) {
+        let pattern = format!(
+            "{}{}{}",
+            r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
+        );
+        return with_cached_regex(pattern, |re| {
+            re.captures(form_html).map(|c| c[1].to_string())
+        });
+    }
+    let command = format!(
+        r#"{{"command":"update_build_id","old":"{}","new":""#,
+        old_build_id
+    );
+    let mut from = 0;
+    while let Some(found) = form_html[from..].find(&command) {
+        let start = from + found;
+        let rest = &form_html[start + command.len()..];
+        if let Some(end) = rest.find(r#""}"#) {
+            if !rest[..end].contains('\n') {
+                return Some(rest[..end].to_string());
+            }
+        }
+        // `command` starts with an ASCII `{`, so the next byte starts a character.
+        from = start + 1;
+    }
+    None
 }
 
 /// Loop through an array of named form elements returning their values in a HashMap.
