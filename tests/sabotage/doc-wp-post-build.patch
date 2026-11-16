@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..bffcd0b 100644
+index f97ea67..266938f 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1671,7 +1671,11 @@ impl<'a> PostBuilder<'a> {
+@@ -1761,7 +1761,11 @@ impl<'a> PostBuilder<'a> {
      /// ```
      pub fn build(self) -> Post<'a> {
          let Self { url, fields } = self;

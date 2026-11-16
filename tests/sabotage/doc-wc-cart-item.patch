@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..bef32c1 100644
+index 69c128f..88cf6d2 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -714,7 +714,7 @@ impl StoreApiCart {
+@@ -715,7 +715,7 @@ impl StoreApiCart {
                  .iter()
                  .filter_map(|item| {
                      Some(CartItem {

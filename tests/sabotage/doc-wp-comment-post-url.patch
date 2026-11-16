@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..f4d8077 100644
+index f97ea67..268fc86 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1189,7 +1189,7 @@ impl<'a> CommentBuilder<'a> {
+@@ -1283,7 +1283,7 @@ impl<'a> CommentBuilder<'a> {
      /// # support::post_comment("CommentBuilder::post_url", &server, &_comment);
      /// ```
      pub fn post_url(mut self, post_url: impl Into<&'a str>) -> Self {

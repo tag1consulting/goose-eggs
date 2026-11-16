@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ad13c16 100644
+index f97ea67..2e64189 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2250,7 +2250,7 @@ pub async fn discover(
+@@ -2333,7 +2333,7 @@ pub async fn discover(
          while content.urls(kind).len() < cap {
              let path = format!(
                  "{}{}?per_page={}&page={}&_fields=link",

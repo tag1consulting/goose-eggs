@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..8507bd3 100644
+index 69c128f..d8c99cf 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -987,7 +987,7 @@ impl<'a> Checkout<'a> {
+@@ -988,7 +988,7 @@ impl<'a> Checkout<'a> {
      pub fn billing(&self, field: &str) -> Option<&'a str> {
          self.billing
              .iter()

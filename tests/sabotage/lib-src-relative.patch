@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..693151f 100644
+index b41c6b2..9d7964b 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1079,7 +1079,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+@@ -1117,7 +1117,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
              match url_leading.parse::<Uri>() {
                  Ok(_) => {
                      // The URI is a valid relative path (without a leading slash).

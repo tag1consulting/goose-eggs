@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..7df7fd8 100644
+index f97ea67..5fa0ab0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2275,7 +2275,7 @@ pub async fn discover(
+@@ -2358,7 +2358,7 @@ pub async fn discover(
              let pages = header_value(&headers, "X-WP-TotalPages")
                  .and_then(|p| p.parse::<usize>().ok())
                  .unwrap_or(1);

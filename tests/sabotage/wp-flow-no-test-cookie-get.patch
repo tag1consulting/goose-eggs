@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..195823a 100644
+index f97ea67..66a2084 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -728,20 +728,11 @@ pub async fn log_in(
+@@ -826,20 +826,11 @@ pub async fn log_in(
      // Load the log in form; this also sets WordPress's test cookie.
      let default_validation = crate::Validate::builder().text(r#"id="loginform""#).build();
      let validate = login.log_in_page_validation.unwrap_or(&default_validation);

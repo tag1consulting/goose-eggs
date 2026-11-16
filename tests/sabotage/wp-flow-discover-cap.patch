@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..d04a458 100644
+index f97ea67..7910e9a 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2233,9 +2233,6 @@ pub async fn discover(
+@@ -2316,9 +2316,6 @@ pub async fn discover(
              request_ok(&goose)?;
              let (_, xml) = read_response(goose).await;
              for url in sitemap_locations(&xml) {

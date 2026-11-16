@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..1eeb6d1 100644
+index f97ea67..884d3a7 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1165,7 +1165,7 @@ impl<'a> CommentBuilder<'a> {
+@@ -1259,7 +1259,7 @@ impl<'a> CommentBuilder<'a> {
              author: "Goose",
              email: "goose@example.com",
              // Defaults to WordPress's comment handler.

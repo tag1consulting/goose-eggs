@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..c7ee995 100644
+index f97ea67..812f310 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -943,7 +943,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1037,7 +1037,7 @@ impl<'a> SearchParamsBuilder<'a> {
      /// # support::search("SearchParamsBuilder::keys", &server, &_params);
      /// ```
      pub fn keys(mut self, keys: impl Into<&'a str>) -> Self {
