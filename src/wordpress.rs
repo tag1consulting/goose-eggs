@@ -48,6 +48,23 @@ pub(crate) fn plain_text(html: &str) -> String {
         .join(" ")
 }
 
+// The text of WordPress's log in error box, if the page shows one.
+fn login_error(html: &str) -> Option<String> {
+    Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
+        .unwrap()
+        .captures(html)
+        .map(|c| plain_text(&c[1]))
+}
+
+// The text of a page's body, or an empty string when it has none.
+fn body_text(html: &str) -> String {
+    Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
+        .unwrap()
+        .captures(html)
+        .map(|c| plain_text(&c[1]))
+        .unwrap_or_default()
+}
+
 /// Get the contents of the form whose `id` or `name` is `name`.
 ///
 /// Attributes may come in any order and the form may span many lines. Returns an
@@ -768,11 +785,7 @@ pub async fn log_in(
         read_response(goose).await.1
     };
     if !request.redirected || html.contains(r#"id="login_error""#) {
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
-            .captures(&html)
-            .map(|c| plain_text(&c[1]))
-            .unwrap_or_else(|| "not redirected".to_string());
+        let error = login_error(&html).unwrap_or_else(|| "not redirected".to_string());
         return fail(
             user,
             &format!("{}: log in failed: {}", login.url, error),
@@ -1484,11 +1497,7 @@ pub async fn post_comment(
     // 200 error page for an empty comment. WordPress's page says which.
     let mut request = goose.request.clone();
     let (headers, html) = read_response(goose).await;
-    let reason = Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
-        .unwrap()
-        .captures(&html)
-        .map(|c| plain_text(&c[1]))
-        .unwrap_or_default();
+    let reason = body_text(&html);
     if !request.success {
         // Goose recorded the status as the error; the log has WordPress's reason.
         user.log_debug(&reason, Some(&request), Some(&headers), Some(&html))?;
@@ -2656,11 +2665,7 @@ mod tests {
             "Error: The password & more.",
             "plain_text case tags and entities"
         );
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
-            .captures(LOGIN_FAILED)
-            .map(|c| plain_text(&c[1]))
-            .unwrap();
+        let error = login_error(LOGIN_FAILED).unwrap();
         assert!(
             error.starts_with("Error: The password you entered for the username"),
             "plain_text case wordpress login error: {}",
@@ -2860,5 +2865,245 @@ mod tests {
             "Discover default rest_kinds"
         );
         assert_eq!(discover.max_per_kind, 100, "Discover default max_per_kind");
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line, Generator};
+
+    // Every opening or closing tag on a page, found without a regular expression.
+    fn tags(page: &str) -> Vec<&str> {
+        let mut found = Vec::new();
+        let mut rest = page;
+        while let Some(start) = rest.find('<') {
+            match rest[start..].find('>') {
+                Some(end) => {
+                    found.push(&rest[start..start + end + 1]);
+                    rest = &rest[start + end + 1..];
+                }
+                None => break,
+            }
+        }
+        found
+    }
+
+    const ATTRIBUTES: &[&str] = &[
+        "id", "name", "class", "value", "type", "checked", "selected", "href", "action", "src",
+        "ïd", "a.b", "NAME", "data-x",
+    ];
+
+    const FORM_NAMES: &[&str] = &[
+        "loginform",
+        "commentform",
+        "checkout",
+        "adminbarsearch",
+        "quick-press",
+        "post",
+        "missing",
+    ];
+
+    const FORM_CLASSES: &[&str] = &[
+        "cart",
+        "checkout",
+        "comment-form",
+        "woocommerce-cart-form",
+        "woocommerce-form-login",
+        "register",
+        "wp-block-search",
+        "missing",
+    ];
+
+    // Every form on the saved pages, as (description, contents).
+    fn forms() -> Vec<(String, String)> {
+        let mut found = Vec::new();
+        for (path, page) in fixtures() {
+            found.push((format!("{} page", path), page.clone()));
+            for name in FORM_NAMES {
+                found.push((format!("{} {}", path, name), get_form(&page, name)));
+            }
+            for class in FORM_CLASSES {
+                found.push((
+                    format!("{} .{}", path, class),
+                    get_form_by_class(&page, class),
+                ));
+            }
+        }
+        found
+    }
+
+    #[test]
+    fn attribute_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            let values: Vec<Vec<_>> = tags(&page)
+                .into_iter()
+                .map(|tag| ATTRIBUTES.iter().map(|n| attribute(tag, n)).collect())
+                .collect();
+            actual.push_str(&line(&path, values));
+        }
+        let tokens = [
+            "<input",
+            " ",
+            "\n",
+            "\t",
+            "\u{a0}",
+            "\u{2003}",
+            "=",
+            "\"",
+            "'",
+            ">",
+            "/",
+            "name",
+            "NAME",
+            "value",
+            "checked",
+            "chec\u{212a}ed",
+            "selected",
+            "\u{17f}elected",
+            "class",
+            "cla\u{17f}\u{17f}",
+            "id",
+            "ïd",
+            "ÏD",
+            "a.b",
+            "x",
+            "é",
+            "&amp;",
+        ];
+        let names = [
+            "name", "value", "checked", "selected", "class", "id", "ïd", "a.b", "NAME", "",
+        ];
+        let mut generator = Generator::new(3304);
+        for chunk in 0..200 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let tag = generator.text(&tokens, 10);
+                    attribute(&tag, generator.pick(&names))
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("wordpress_attribute", &actual);
+    }
+
+    #[test]
+    fn find_form_snapshot() {
+        let mut actual = String::new();
+        for (name, form) in forms() {
+            actual.push_str(&line(&name, form));
+        }
+        check("wordpress_find_form", &actual);
+    }
+
+    #[test]
+    fn form_controls_snapshot() {
+        let mut actual = String::new();
+        for (name, form) in forms() {
+            actual.push_str(&line(&name, form_controls(&form)));
+        }
+        check("wordpress_form_controls", &actual);
+    }
+
+    #[test]
+    fn plain_text_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, plain_text(&page)));
+        }
+        check("wordpress_plain_text", &actual);
+    }
+
+    #[test]
+    fn get_rest_nonce_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_rest_nonce(&page)));
+        }
+        check("wordpress_get_rest_nonce", &actual);
+    }
+
+    #[test]
+    fn get_log_out_url_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_log_out_url(&page)));
+        }
+        check("wordpress_get_log_out_url", &actual);
+    }
+
+    #[test]
+    fn login_error_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, login_error(&page)));
+        }
+        check("wordpress_login_error", &actual);
+    }
+
+    #[test]
+    fn body_text_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, body_text(&page)));
+        }
+        check("wordpress_body_text", &actual);
+    }
+
+    // Every <loc> on the saved pages, and URLs that are not.
+    fn urls() -> Vec<String> {
+        let mut found: Vec<String> = fixtures()
+            .iter()
+            .flat_map(|(_, page)| sitemap_locations(page))
+            .collect();
+        for url in [
+            "http://localhost:18082",
+            "http://localhost:18082/",
+            "https://example.com/a/b?c=d",
+            "HTTPS://Example.com",
+            "git+ssh://host/path",
+            "1http://host/path",
+            "/relative/path",
+            "relative",
+            "",
+            "http:/one-slash",
+            "http://example.com/wp-sitemap-posts-page-1.xml",
+            "http://example.com/wp-sitemap-taxonomies-category-12.xml",
+            "http://example.com/wp-sitemap-users-1.xml",
+            "http://example.com/wp-sitemap-posts-a-b-c-1.xml",
+            "http://example.com/wp-sitemap-posts--1.xml",
+            "http://example.com/wp-sitemap.xml",
+        ] {
+            found.push(url.to_string());
+        }
+        found
+    }
+
+    #[test]
+    fn sitemap_locations_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, sitemap_locations(&page)));
+        }
+        check("wordpress_sitemap_locations", &actual);
+    }
+
+    #[test]
+    fn site_path_snapshot() {
+        let mut actual = String::new();
+        for url in urls() {
+            actual.push_str(&line(&url, site_path(&url)));
+        }
+        check("wordpress_site_path", &actual);
+    }
+
+    #[test]
+    fn sitemap_kind_snapshot() {
+        let mut actual = String::new();
+        for url in urls() {
+            actual.push_str(&line(&url, sitemap_kind(&url)));
+        }
+        check("wordpress_sitemap_kind", &actual);
     }
 }

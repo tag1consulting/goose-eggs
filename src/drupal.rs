@@ -1430,3 +1430,187 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line, Generator};
+
+    // Form names: every form on the saved pages, one that is missing, and ones
+    // that are regular expressions or have regular expression characters.
+    const FORMS: &[&str] = &[
+        "user-login-form",
+        "search-form",
+        "search-block-form",
+        "node-article-edit-form",
+        "edit-node-article-edit-form",
+        "missing-form",
+        "",
+        "user-login-.*",
+        "search-(?:block-)?form",
+        "node.article.edit.form",
+    ];
+
+    // Element names: the saved pages' and some with regular expression characters.
+    const ELEMENTS: &[&str] = &[
+        "form_build_id",
+        "form_id",
+        "form_token",
+        "changed",
+        "keys",
+        "name",
+        "op",
+        "pass",
+        "title",
+        "missing",
+        "",
+        "form.id",
+        "form_.*",
+        "title[0][value]",
+    ];
+
+    #[test]
+    fn get_form_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for name in FORMS {
+                actual.push_str(&line(&format!("{} {}", path, name), get_form(&page, name)));
+            }
+        }
+        check("drupal_get_form", &actual);
+    }
+
+    #[test]
+    fn get_form_value_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            let mut forms = vec![("page".to_string(), page.clone())];
+            for name in FORMS {
+                forms.push((name.to_string(), get_form(&page, name)));
+            }
+            for (form_name, form) in &forms {
+                let values: Vec<_> = ELEMENTS.iter().map(|n| get_form_value(form, n)).collect();
+                actual.push_str(&line(&format!("{} {}", path, form_name), values));
+            }
+        }
+        let tokens = [
+            "name=\"",
+            "name=\"a\" value=",
+            "name=\"form_id\" value=",
+            "name=\"a.b\" value=",
+            "\"",
+            "'",
+            " value=",
+            "value=",
+            " ",
+            "\n",
+            "x",
+            ">",
+            "a",
+            "a.b",
+            "form_id",
+        ];
+        let mut generator = Generator::new(304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let form = generator.text(&tokens, 16);
+                    let name = generator.pick(&["a", "form_id", "a.b", "", "x\""]);
+                    get_form_value(&form, name)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_form_value", &actual);
+    }
+
+    #[test]
+    fn get_bigpipe_form_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for name in FORMS {
+                actual.push_str(&line(
+                    &format!("{} {}", path, name),
+                    get_bigpipe_form(&page, name),
+                ));
+            }
+        }
+        let tokens = [
+            "[{",
+            "}]",
+            "[{\"data-drupal-selector=",
+            "data-drupal-selector=",
+            "data-drupal-selector=comment-form",
+            "comment-form",
+            "a",
+            "\n",
+            "x",
+            "{",
+            "}",
+            "[",
+            "]",
+            "\r",
+        ];
+        let mut generator = Generator::new(1304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let html = generator.text(&tokens, 14);
+                    let name = generator.pick(&["comment-form", "a", "", "a.b", "}]"]);
+                    get_bigpipe_form(&html, name)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_bigpipe_form", &actual);
+    }
+
+    #[test]
+    fn get_updated_build_id_snapshot() {
+        let olds = [
+            "form-xWYk6k-GUvdFV4oJBV2o20cv-eGobXr_6OCYazRY0vA",
+            "form-xWYk6k",
+            "form-.*",
+            "form-xWYk6k-GUvdFV4oJBV2o20cv-eGobXr_6OCYazRY0v.",
+            "",
+            "missing",
+        ];
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for old in olds {
+                actual.push_str(&line(
+                    &format!("{} {}", path, old),
+                    get_updated_build_id(&page, old),
+                ));
+            }
+        }
+        let tokens = [
+            r#"{"command":"update_build_id","old":""#,
+            r#"{"command":"update_build_id","old":"form-a","new":""#,
+            r#"{"command":"update_build_id","old":"form-b","new":""#,
+            r#"{"command":"update_build_id","old":"form-.","new":""#,
+            "form-a",
+            "form-b",
+            r#"","new":""#,
+            "\"}",
+            "\"",
+            "}",
+            "{",
+            "\n",
+            "x",
+            ".",
+        ];
+        let mut generator = Generator::new(2304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let html = generator.text(&tokens, 12);
+                    let old = generator.pick(&["form-a", "form-b", "", "form-.", "form-a\"}"]);
+                    get_updated_build_id(&html, old)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_updated_build_id", &actual);
+    }
+}
