@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..625a7b2 100644
+index 9bffb7c..f8eafac 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -86,7 +86,7 @@ pub fn get_form(html: &str, name: &str) -> String {
- /// ```
- pub fn get_form_value(form_html: &str, name: &str) -> String {
-     let re = Regex::new(&format!(
--        r#"name="{}" value=['"](.*?)['"]"#,
-+        r#"name="{}" value=['"](.+?)['"]"#,
-         regex::escape(name)
-     ))
-     .unwrap();
+@@ -107,7 +107,7 @@ fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {
+         let rest = &form_html[start + element.len()..];
+         if let Some(value) = rest.strip_prefix(['"', '\'']) {
+             if let Some(end) = value.find(['"', '\'', '\n']) {
+-                if !value[end..].starts_with('\n') {
++                if end > 0 && !value[end..].starts_with('\n') {
+                     return Some(&value[..end]);
+                 }
+             }

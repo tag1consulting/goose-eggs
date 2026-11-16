@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..a893f76 100644
+index 6cd56a9..1c059b2 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -587,7 +587,7 @@ impl<'a> LoginBuilder<'a> {
+@@ -720,7 +720,7 @@ impl<'a> LoginBuilder<'a> {
      /// # support::log_in("LoginBuilder::url", &server, &_login);
      /// ```
      pub fn url(mut self, url: impl Into<&'a str>) -> Self {

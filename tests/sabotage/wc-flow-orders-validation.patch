@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..ee0cb92 100644
+index d432833..d57c188 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1528,7 +1528,8 @@ pub async fn my_account_orders(
+@@ -1565,7 +1565,8 @@ pub async fn my_account_orders(
          .text("woocommerce-MyAccount-navigation")
          .build();
      let goose = user.get(shop.orders).await?;

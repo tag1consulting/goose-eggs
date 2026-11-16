@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..d38fba4 100644
+index 6cd56a9..19261f0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1874,7 +1874,7 @@ async fn save_post(
+@@ -1978,7 +1978,7 @@ async fn save_post(
      body: serde_json::Map<String, serde_json::Value>,
      post: &Post<'_>,
  ) -> Result<serde_json::Value, Box<TransactionError>> {

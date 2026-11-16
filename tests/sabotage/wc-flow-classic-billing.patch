@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..29b804d 100644
+index d432833..a4504ce 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1294,7 +1294,7 @@ pub async fn classic_checkout(
+@@ -1433,7 +1433,7 @@ pub async fn classic_checkout(
          None => params.push((name, value.to_string())),
      };
      for (field, value) in &checkout.billing {

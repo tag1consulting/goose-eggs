@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..4fc44e4 100644
+index 9bffb7c..aebb3e3 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -630,7 +630,7 @@ pub async fn log_in(
+@@ -681,7 +681,7 @@ pub async fn log_in(
          // Build request manually if validating a specific status code.
          let goose_request = GooseRequest::builder()
              .path(login.url)

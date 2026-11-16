@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 6cd56a9..e7127f6 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -398,7 +398,7 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
+ /// assert_eq!(get_rest_nonce(html).as_deref(), Some("d7e5418ef8"));
+ /// ```
+ pub fn get_rest_nonce(html: &str) -> Option<String> {
+-    for pattern in REST_NONCES.iter() {
++    for pattern in REST_NONCES.iter().skip(2) {
+         if let Some(capture) = pattern.captures(html) {
+             return Some(capture[1].to_string());
+         }

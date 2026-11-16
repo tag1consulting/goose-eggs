@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..43cd08d 100644
+index 7f9e7a7..1632016 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -835,7 +835,7 @@ pub fn get_title(html: &str) -> Option<String> {
+@@ -874,7 +874,7 @@ pub fn get_title(html: &str) -> Option<String> {
  /// ```
  pub fn valid_title(html: &str, title: &str) -> bool {
      // Extract the HTML header from the provided html.

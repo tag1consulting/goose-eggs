@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 32d02c0..ef97873 100644
+index d432833..0687f84 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1830,7 +1830,7 @@ struct StorePage {
+@@ -1870,7 +1870,7 @@ struct StorePage {
  // Read the Store API nonce and the preloaded cart from a block cart or checkout
  // page, failing on `request` when the page has neither.
  fn store_page(html: &str) -> Result<StorePage, String> {

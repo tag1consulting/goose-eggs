@@ -1,11 +1,11 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..740d710 100644
+index d432833..3a91138 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1216,7 +1216,7 @@ pub async fn classic_update_cart(
+@@ -1355,7 +1355,7 @@ pub async fn classic_update_cart(
          .into_iter()
          .map(|(name, value)| {
-             if quantity_field.is_match(&name) {
+             if is_quantity_field(&name) {
 -                (name, quantity.to_string())
 +                (name, value)
              } else {

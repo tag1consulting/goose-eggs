@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..b79b554 100644
+index d432833..67ca378 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1648,7 +1648,7 @@ pub async fn add_to_cart(
+@@ -1682,7 +1682,7 @@ pub async fn add_to_cart(
              }
          })
          .collect();

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..9fac0ec 100644
+index d432833..2292251 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2059,7 +2059,7 @@ pub async fn checkout_page(
+@@ -2092,7 +2092,7 @@ pub async fn checkout_page(
      let validate = crate::Validate::builder()
          .text("woocommerce-checkout")
          .build();

@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..6da13a3 100644
+index 6cd56a9..8d3910b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -392,7 +392,8 @@ pub(crate) async fn json_response(
+@@ -525,7 +525,8 @@ pub(crate) async fn json_response(
  ) -> Result<(http::HeaderMap, serde_json::Value), Box<TransactionError>> {
      let mut request = goose.request.clone();
      let (headers, body) = read_response(goose).await;

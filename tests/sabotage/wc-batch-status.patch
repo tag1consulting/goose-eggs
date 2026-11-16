@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..68f7f36 100644
+index d432833..40727fa 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1775,7 +1775,7 @@ async fn batch_response(
+@@ -1809,7 +1809,7 @@ async fn batch_response(
      let (headers, json) = json_response(user, goose).await?;
      let response = &json["responses"][0];
      let status = response["status"].as_u64().unwrap_or(0);

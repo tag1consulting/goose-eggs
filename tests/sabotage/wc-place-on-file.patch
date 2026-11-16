@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..32e4dff 100644
+index d432833..2f15342 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2193,7 +2193,7 @@ pub async fn place_order(
+@@ -2225,7 +2225,7 @@ pub async fn place_order(
          .as_object()
          .into_iter()
          .flatten()

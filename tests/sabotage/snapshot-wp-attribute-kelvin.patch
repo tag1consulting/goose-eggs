@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 6cd56a9..3ae9861 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -141,7 +141,6 @@ fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+     for n in name.chars() {
+         let c = chars.next()?;
+         let same = c.eq_ignore_ascii_case(&n)
+-            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
+             || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
+         if !same {
+             return None;

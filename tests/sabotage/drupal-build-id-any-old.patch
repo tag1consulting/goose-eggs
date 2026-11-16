@@ -1,13 +1,21 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..c5deb7f 100644
+index 9bffb7c..70d19c2 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -202,7 +202,7 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
- pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-     let re = Regex::new(&format!(
-         "{}{}{}",
--        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
-+        r#"\{"command":"update_build_id","old":""#, ".*?", r#"","new":"(.*?)"\}"#
-     ))
-     .unwrap();
-     // Return a specific form value.
+@@ -247,14 +247,12 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+             re.captures(form_html).map(|c| c[1].to_string())
+         });
+     }
+-    let command = format!(
+-        r#"{{"command":"update_build_id","old":"{}","new":""#,
+-        old_build_id
+-    );
++    let command = r#"{"command":"update_build_id","old":""#.to_string();
+     let mut from = 0;
+     while let Some(found) = form_html[from..].find(&command) {
+         let start = from + found;
+         let rest = &form_html[start + command.len()..];
++        let rest = &rest[rest.find(r#"","new":""#).unwrap() + 9..];
+         if let Some(end) = rest.find(r#""}"#) {
+             if !rest[..end].contains('\n') {
+                 return Some(rest[..end].to_string());

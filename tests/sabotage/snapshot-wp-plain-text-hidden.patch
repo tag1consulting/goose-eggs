@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 6cd56a9..e114317 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -172,7 +172,7 @@ fn attribute_value(text: &str) -> Option<(&str, &str)> {
+ // Text with its tags (and the head, scripts and styles) removed and its white
+ // space collapsed, for error messages.
+ pub(crate) fn plain_text(html: &str) -> String {
+-    let text = HIDDEN_ELEMENT.replace_all(html, " ");
++    let text = std::borrow::Cow::Borrowed(html);
+     let text = TAG.replace_all(&text, " ");
+     html_escape::decode_html_entities(&text)
+         .split_whitespace()

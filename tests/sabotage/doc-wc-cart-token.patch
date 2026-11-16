@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..49af1d8 100644
+index d432833..cb61acd 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -707,7 +707,7 @@ impl StoreApiCart {
+@@ -835,7 +835,7 @@ impl StoreApiCart {
              self.nonce = Some(nonce);
          }
          if let Some(token) = header_value(&headers, "Cart-Token") {

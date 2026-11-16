@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..6c8de13 100644
+index d432833..c5b8131 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2178,7 +2178,7 @@ pub async fn place_order(
+@@ -2210,7 +2210,7 @@ pub async fn place_order(
              "headers": { "Nonce": page.nonce },
          }]})
      };

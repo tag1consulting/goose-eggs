@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..891ebcb 100644
+index d432833..f8881cb 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1060,10 +1060,7 @@ impl<'a> CheckoutBuilder<'a> {
+@@ -1188,10 +1188,7 @@ impl<'a> CheckoutBuilder<'a> {
      /// assert_eq!(checkout.billing("state"), Some("TX"));
      /// ```
      pub fn billing(mut self, field: &'a str, value: &'a str) -> Self {

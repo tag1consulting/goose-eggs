@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..8b98989 100644
+index d432833..ebe6668 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1821,7 +1821,7 @@ pub async fn cart_page(
+@@ -1855,7 +1855,7 @@ pub async fn cart_page(
      shop: &Shop<'_>,
  ) -> Result<String, Box<TransactionError>> {
      let validate = crate::Validate::builder().text("woocommerce-cart").build();

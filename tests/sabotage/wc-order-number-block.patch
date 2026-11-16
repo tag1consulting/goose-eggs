@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..26c9182 100644
+index d432833..68ffe3f 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2067,7 +2067,7 @@ pub async fn checkout_page(
+@@ -2100,7 +2100,7 @@ pub async fn checkout_page(
  // summary ("Order #:") or the classic overview ("Order number:").
  pub(crate) fn order_number(html: &str) -> Option<String> {
      let patterns = [

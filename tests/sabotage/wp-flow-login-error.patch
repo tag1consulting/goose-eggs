@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 99cd8aa..76713c5 100644
+index 6cd56a9..b5192f4 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -796,7 +796,7 @@ pub async fn log_in(
+@@ -901,7 +901,7 @@ pub async fn log_in(
+         read_response(goose).await.1
      };
      if !request.redirected || html.contains(r#"id="login_error""#) {
-         let error = regex(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
--            .captures(&html)
-+            .captures("")
-             .map(|c| plain_text(&c[1]))
-             .unwrap_or_else(|| "not redirected".to_string());
+-        let error = login_error(&html).unwrap_or_else(|| "not redirected".to_string());
++        let error = login_error("").unwrap_or_else(|| "not redirected".to_string());
          return fail(
+             user,
+             &format!("{}: log in failed: {}", login.url, error),

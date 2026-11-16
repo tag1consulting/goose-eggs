@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..37cb780 100644
+index 7f9e7a7..2911099 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -708,7 +708,7 @@ impl<'a> ValidateBuilder<'a> {
- /// assert!(!html_header.is_none());
- /// ```
- pub fn get_html_header(html: &str) -> Option<String> {
--    let re = Regex::new(r#"<head(.*?)</head>"#).unwrap();
-+    let re = Regex::new(r#"<HEAD(.*?)</HEAD>"#).unwrap();
-     // Strip carriage returns to simplify regex.
-     let line = html.replace('\n', "");
-     // Return the entire html header, a subset of the received html.
+@@ -29,7 +29,7 @@ pub mod woocommerce;
+ pub mod wordpress;
+ 
+ // The page parsing regular expressions, each compiled once on first use.
+-static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
++static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<HEAD(.*?)</HEAD>"#).unwrap());
+ static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
+ static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
+ static CSS_ELEMENT: LazyLock<Regex> =

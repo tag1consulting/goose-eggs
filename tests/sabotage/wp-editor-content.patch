@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..b73b153 100644
+index 6cd56a9..0a62ea7 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2027,7 +2027,7 @@ pub async fn update_post(
+@@ -2131,7 +2131,7 @@ pub async fn update_post(
      let mut body = serde_json::Map::new();
      body.insert("id".to_string(), editor.id.into());
      body.extend(post.fields.clone());

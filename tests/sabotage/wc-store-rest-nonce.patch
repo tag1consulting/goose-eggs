@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..9139f70 100644
+index d432833..2db5569 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1857,9 +1857,6 @@ fn store_page(html: &str) -> Result<StorePage, String> {
+@@ -1890,9 +1890,6 @@ fn store_page(html: &str) -> Result<StorePage, String> {
  // The headers the block cart and checkout send with every Store API request.
  fn store_headers(page: &StorePage) -> Vec<(&str, &str)> {
      let mut headers = vec![("Nonce", page.nonce.as_str())];

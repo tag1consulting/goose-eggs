@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..948f3c8 100644
+index d432833..74c6a2c 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2130,7 +2130,7 @@ pub async fn place_order(
+@@ -2162,7 +2162,7 @@ pub async fn place_order(
          Ok(page) => page,
          Err(reason) => return page_fail(user, shop.checkout, &reason, checkout_page),
      };

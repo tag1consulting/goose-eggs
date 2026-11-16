@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..8c3531a 100644
+index d432833..ddf4519 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -552,7 +552,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+@@ -578,7 +578,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
              .unwrap_or_default();
          let kind = classes
              .iter()

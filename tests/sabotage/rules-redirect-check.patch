@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..80cc30c 100644
+index 7f9e7a7..09f7690 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1248,7 +1248,7 @@ pub async fn validate_page<'a>(
+@@ -1285,7 +1285,7 @@ pub async fn validate_page<'a>(
          Ok(response) => {
              // Validate whether or not the request redirected.
              if let Some(redirect) = validate.redirect {

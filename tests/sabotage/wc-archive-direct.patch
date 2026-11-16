@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..271ae67 100644
+index d432833..f5834eb 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1719,7 +1719,7 @@ pub async fn add_to_cart_from_archive(
+@@ -1753,7 +1753,7 @@ pub async fn add_to_cart_from_archive(
      let button = format!(r#"data-product_id="{}""#, product.id);
      let direct = product_cards(&page.html)
          .iter()

@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..83c8dcc 100644
+index 7f9e7a7..10a2cbc 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -292,7 +292,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -331,7 +331,7 @@ impl<'a> ValidateBuilder<'a> {
      /// # support::proves("text, twice", &_validate, &support::page("example another"), &support::page("example"));
      /// ```
      pub fn text(mut self, text: &'a str) -> Self {

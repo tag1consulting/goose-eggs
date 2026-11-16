@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..a861e85 100644
+index 6cd56a9..b0ebdda 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1030,7 +1030,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1159,7 +1159,7 @@ impl<'a> SearchParamsBuilder<'a> {
              results_page_validation,
          } = self;
          SearchParams {

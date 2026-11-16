@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index a3c30dd..017b373 100644
+index d432833..d65a319 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1597,7 +1597,7 @@ pub async fn add_to_cart(
+@@ -1637,7 +1637,7 @@ pub async fn add_to_cart(
      let goose = get_named(user, &product.url, "product page").await?;
      let mut request = goose.request.clone();
      let page = load_page(user, goose, Some(&validate)).await?;

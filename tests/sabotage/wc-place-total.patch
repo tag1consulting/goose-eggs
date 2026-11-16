@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index a3c30dd..71fb0e9 100644
+index d432833..7475355 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2206,7 +2206,7 @@ pub async fn place_order(
+@@ -2246,7 +2246,7 @@ pub async fn place_order(
          "customer_note": "",
          "customer_password": "",
          "shipping_address": shipping,

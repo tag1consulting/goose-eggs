@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..22b7da2 100644
+index 6cd56a9..72a86d0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2621,7 +2621,7 @@ pub async fn discover(
+@@ -2728,7 +2728,7 @@ pub async fn discover(
      seen.insert(home);
      let mut loaded = 0;
      while let Some(path) = queue.pop_front() {

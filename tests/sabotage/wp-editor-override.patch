@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..13dec19 100644
+index 6cd56a9..0e616e8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1883,7 +1883,6 @@ async fn save_post(
+@@ -1987,7 +1987,6 @@ async fn save_post(
          &path,
          &name,
          &[

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..5dd56fd 100644
+index d432833..89b4720 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -569,7 +569,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+@@ -595,7 +595,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
              kind,
              purchasable,
              in_stock,

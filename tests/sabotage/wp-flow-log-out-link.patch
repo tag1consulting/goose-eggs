@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..08a0d45 100644
+index 6cd56a9..cfd9e82 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -829,7 +829,8 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
+@@ -958,7 +958,8 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
              )
          }
      };

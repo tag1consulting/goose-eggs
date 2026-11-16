@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..5bb3519 100644
+index 6cd56a9..15ca79c 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2616,7 +2616,7 @@ pub async fn discover(
+@@ -2723,7 +2723,7 @@ pub async fn discover(
          }
      }
  

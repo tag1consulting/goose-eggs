@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..25f590f 100644
+index 6cd56a9..ffa337e 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1085,7 +1085,8 @@ pub async fn view_page(
+@@ -1202,7 +1202,8 @@ pub async fn view_page(
      validate: Option<&crate::Validate<'_>>,
  ) -> Result<String, Box<TransactionError>> {
      let goose = get_named(user, path, name).await?;

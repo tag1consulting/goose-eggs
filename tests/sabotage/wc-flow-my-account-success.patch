@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..6a37ada 100644
+index d432833..c7978d1 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1482,8 +1482,7 @@ pub async fn my_account_log_in(
+@@ -1519,8 +1519,7 @@ pub async fn my_account_log_in(
      // the logged in My Account: its navigation, without the log in form.
      let mut request = goose.request.clone();
      let (headers, html) = read_response(goose).await;

@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..765816b 100644
+index 6cd56a9..e17d1cb 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1474,7 +1474,7 @@ pub async fn post_comment(
+@@ -1641,7 +1641,7 @@ pub async fn post_comment(
      if let Some(nonce) = get_form_value(&form, "_wp_unfiltered_html_comment")
          .or_else(|| get_form_value(&form, "_wp_unfiltered_html_comment_disabled"))
      {

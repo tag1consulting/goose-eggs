@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..22697ed 100644
+index 6cd56a9..655cad4 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -238,7 +238,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
+@@ -376,7 +376,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
  /// assert_eq!(get_nonce(html, "other-nonce"), None);
  /// ```
  pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {

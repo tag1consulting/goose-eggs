@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..9f9d3d7 100644
+index 6cd56a9..8763aa7 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2230,7 +2230,6 @@ pub async fn discover(
+@@ -2711,7 +2711,6 @@ pub async fn discover(
                  continue;
              }
              let goose = user.get(&site_path(&sitemap)).await?;

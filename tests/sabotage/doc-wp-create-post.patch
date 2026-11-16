@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index b9ea9ff..f513db0 100644
+index 6cd56a9..617cb4b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1957,7 +1957,7 @@ pub async fn create_post(
+@@ -2070,7 +2070,7 @@ pub async fn create_post(
      post: &Post<'_>,
  ) -> Result<serde_json::Value, Box<TransactionError>> {
      let path = match post.post_type {

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..15e97e9 100644
+index d432833..d9d9b3c 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1841,7 +1841,7 @@ fn store_page(html: &str) -> Result<StorePage, String> {
+@@ -1874,7 +1874,7 @@ fn store_page(html: &str) -> Result<StorePage, String> {
          .captures(html)
          .map(|c| c[1].to_string());
      let cart = crate::page::preloaded(html)

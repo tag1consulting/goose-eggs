@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 32d02c0..7e32309 100644
+index d432833..63357a3 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -2061,7 +2061,7 @@ pub async fn checkout_page(
+@@ -2101,7 +2101,7 @@ pub async fn checkout_page(
  pub(crate) fn order_number(html: &str) -> Option<String> {
      let patterns = [
          r#"(?s)order-confirmation-summary-list-item__key">[^<]*</span>\s*<span[^>]*__value">\s*([^<\s]+)\s*<"#,

@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index d432833..9f10bb4 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1248,7 +1248,7 @@ static QUANTITY_FIELD: LazyLock<Regex> =
+ // The text of the first error notice on a page, classic (`woocommerce-error`)
+ // or block (`is-error`) themed.
+ fn error_notice(html: &str) -> Option<String> {
+-    ERROR_NOTICE.captures(html).map(|c| plain_text(&c[1]))
++    ERROR_NOTICE.captures(html).map(|c| plain_text(&c[0]))
+ }
+ 
+ // Whether a page shows a success notice, classic or block themed.

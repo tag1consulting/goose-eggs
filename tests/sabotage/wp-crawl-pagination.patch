@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..f1f51d7 100644
+index 6cd56a9..3cecb1b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2490,7 +2490,7 @@ pub(crate) fn pagination_links(user: &GooseUser, page_url: &str, html: &str) ->
+@@ -2584,7 +2584,7 @@ pub(crate) fn pagination_links(user: &GooseUser, page_url: &str, html: &str) ->
          let tag = tag.as_str();
          let rel = attribute(tag, "rel").unwrap_or_default();
          let class = attribute(tag, "class").unwrap_or_default();

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..56ce957 100644
+index d432833..6fe4163 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -507,7 +507,6 @@ pub async fn discover_products(
+@@ -533,7 +533,6 @@ pub async fn discover_products(
              );
          }
      }

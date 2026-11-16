@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 99cd8aa..c4f149a 100644
+index 6cd56a9..3c5ac26 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2423,7 +2423,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+@@ -2522,7 +2522,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
  // take are left out: `rel="nofollow"` (WooCommerce's add to cart links among
  // them), feeds, comment links, admin and log in pages, the REST API and files.
  pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<String> {

@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..5a55ca9 100644
+index 6cd56a9..dc2e3f8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -755,7 +755,6 @@ pub async fn log_in(
+@@ -888,7 +888,6 @@ pub async fn log_in(
              get_form_value(&form, "wp-submit").unwrap_or_else(|| "Log In".to_string()),
          ),
          ("redirect_to", redirect_to),

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..e93b136 100644
+index d432833..91fec65 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -556,7 +556,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+@@ -582,7 +582,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
              .unwrap_or_default()
              .to_string();
          let purchasable = has("purchasable");

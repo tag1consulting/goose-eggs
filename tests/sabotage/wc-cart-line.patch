@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..d5b9b82 100644
+index d432833..3eafd3e 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1868,7 +1868,7 @@ fn cart_line(cart: &serde_json::Value, product_id: u64) -> Option<String> {
+@@ -1901,7 +1901,7 @@ fn cart_line(cart: &serde_json::Value, product_id: u64) -> Option<String> {
      cart["items"]
          .as_array()?
          .iter()

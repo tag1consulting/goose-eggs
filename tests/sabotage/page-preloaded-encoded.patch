@@ -1,8 +1,8 @@
 diff --git a/src/page.rs b/src/page.rs
-index 3e74fa9..5e5a9b9 100644
+index cd2183a..acacc7a 100644
 --- a/src/page.rs
 +++ b/src/page.rs
-@@ -312,7 +312,7 @@ pub(crate) fn preloaded(html: &str) -> serde_json::Map<String, serde_json::Value
+@@ -346,7 +346,7 @@ pub(crate) fn preloaded(html: &str) -> serde_json::Map<String, serde_json::Value
          r"createPreloadingMiddleware\(\s*JSON\.parse\(\s*decodeURIComponent\(\s*'([^']*)'",
      )
      .unwrap();

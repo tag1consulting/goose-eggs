@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..6a9b764 100644
+index 6cd56a9..6d6b6a6 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -742,7 +742,7 @@ pub async fn log_in(
+@@ -875,7 +875,7 @@ pub async fn log_in(
              Some(&login_page),
          );
      }

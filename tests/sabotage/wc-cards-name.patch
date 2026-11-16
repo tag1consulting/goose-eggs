@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..11b66b9 100644
+index d432833..764e468 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -548,7 +548,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+@@ -574,7 +574,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
          };
          let name = heading
              .captures(card)

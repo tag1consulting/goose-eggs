@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..80e4cd3 100644
+index 6cd56a9..f32190d 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -921,7 +921,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1050,7 +1050,7 @@ impl<'a> SearchParamsBuilder<'a> {
              // Defaults to empty search keys.
              keys: "",
              // Defaults to searching from the home page, as WordPress's search form does.

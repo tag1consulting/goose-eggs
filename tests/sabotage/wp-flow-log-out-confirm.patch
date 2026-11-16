@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ac3411e 100644
+index 6cd56a9..cd68df5 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -831,7 +831,7 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
+@@ -960,7 +960,7 @@ pub async fn log_out(user: &mut GooseUser, page: &str) -> Result<String, Box<Tra
      };
      let goose = get_named(user, &url, "wp-login.php?action=logout").await?;
      request_ok(&goose)?;

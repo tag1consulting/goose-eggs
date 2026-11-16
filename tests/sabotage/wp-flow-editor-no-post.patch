@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..ce2cb4b 100644
+index 6cd56a9..0547f0c 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1898,7 +1898,11 @@ async fn save_post(
+@@ -2002,7 +2002,11 @@ async fn save_post(
          .and_then(|t| t.get("rendered"))
          .and_then(|t| t.as_str());
      let (link, title) = match (json.get("id").and_then(|id| id.as_u64()), link, title) {

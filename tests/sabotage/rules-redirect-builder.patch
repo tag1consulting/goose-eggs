@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..b9cd704 100644
+index 7f9e7a7..186ba0a 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -641,7 +641,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -680,7 +680,7 @@ impl<'a> ValidateBuilder<'a> {
      /// # support::proves("redirect(false)", &_validate, &support::page(""), &redirect);
      /// ```
      pub fn redirect(mut self, redirect: impl Into<bool>) -> Self {

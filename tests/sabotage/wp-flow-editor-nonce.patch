@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..d4a3bce 100644
+index 6cd56a9..d6fbacc 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1884,7 +1884,7 @@ async fn save_post(
+@@ -1988,7 +1988,7 @@ async fn save_post(
          &name,
          &[
              ("X-HTTP-Method-Override", "PUT"),

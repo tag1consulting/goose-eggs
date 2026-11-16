@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..e0a176f 100644
+index 6cd56a9..c8f7064 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1293,7 +1293,7 @@ impl<'a> CommentBuilder<'a> {
+@@ -1460,7 +1460,7 @@ impl<'a> CommentBuilder<'a> {
      /// # support::post_comment("CommentBuilder::parent", &server, &_comment);
      /// ```
      pub fn parent(mut self, parent: u64) -> Self {

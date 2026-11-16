@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..18f2fcd 100644
+index 7f9e7a7..db3011f 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1071,7 +1071,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+@@ -1110,7 +1110,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
                  }
              } else {
                  // The URI is a valid relative path.

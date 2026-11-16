@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index b9ea9ff..2d0daf1 100644
+index 6cd56a9..e8aa958 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2394,7 +2394,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+@@ -2500,7 +2500,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
      if has("page") && classes.iter().any(|c| c.starts_with("page-id-")) {
          return Some("page".to_string());
      }

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..75d2f0f 100644
+index d432833..ad8be9b 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1996,7 +1996,7 @@ pub async fn remove_cart_item(
+@@ -2029,7 +2029,7 @@ pub async fn remove_cart_item(
          }
      };
      let body = serde_json::json!({ "requests": [{

@@ -1,0 +1,98 @@
+browser/README.md	len=11832 fnv=1d667a7c5eac2e04 start="# What a browser requests Recorded from headless Chromium b
+browser/woocommerce/add-to-cart-product-page.har	len=285696 fnv=8759f124268b3fe9 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/add-to-cart-shop.har	len=84998 fnv=2028f106e90d1497 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/cart-page.har	len=240052 fnv=ea117db9328b6e13 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/checkout-page.har	len=234013 fnv=2d478013da9d67df start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/my-account-log-in.har	len=85279 fnv=7e9bc6037c008bbc start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/my-account-orders.har	len=37426 fnv=2e5e47594d1694c9 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/place-order.har	len=84206 fnv=0f33e460757a2e2e start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/product-category.har	len=72146 fnv=4739bce1cfcb6e5c start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/product.har	len=94678 fnv=f1c8ef5dddbfc8b2 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/remove-cart-item.har	len=8750 fnv=a9ab57cebd7aabc0 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/shop.har	len=74365 fnv=f34ae7ae84acc093 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/woocommerce/update-cart-item.har	len=8401 fnv=ac6bb177bc632ae1 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/category.har	len=41743 fnv=f42856d222425ea0 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/comment.har	len=63054 fnv=915afcc3456670f7 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/create-post.har	len=499473 fnv=f9851d8c874cc824 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/home.har	len=134736 fnv=e8454a456fc9a8ab start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/log-in.har	len=223638 fnv=7a0e953683d80e61 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/log-out.har	len=184105 fnv=94564aa2970c62c7 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/page.har	len=12772 fnv=52196cb827b8aec6 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/post.har	len=23466 fnv=f78cda76e0eae1ed start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/search.har	len=57147 fnv=3c0ae67ddb4e591f start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+browser/wordpress/update-post.har	len=283279 fnv=3a9410a74e9ebe16 start="{ \"log\": { \"version\": \"1.2\", \"creator\": { \"name\":
+drupal/node-edit-ajax.json	len=8335 fnv=963431612c392b94 start="[{\"command\":\"settings\",\"settings\":{\"pluralDelimiter\
+drupal/node-edit.html	len=4461 fnv=d6c94f23d23b3cf0 start="Skip to main content Toolbar items Back to site Manage Admi
+drupal/search-results.html	len=1546 fnv=6888227486d290a2 start="Skip to main content Toolbar items Back to site Manage Admi
+drupal/search.html	len=1102 fnv=f5a0224ec1617fba start="Skip to main content Toolbar items Back to site Manage Admi
+drupal/user-logged-in.html	len=836 fnv=00f4f5440c98595f start="Skip to main content Toolbar items Back to site Manage Admi
+drupal/user-login-failed.html	len=723 fnv=7e44e6a3be654ed0 start="Skip to main content English Español Search Search Search U
+drupal/user-login.html	len=652 fnv=78f1b0e7a3b8c6be start="Skip to main content English Español Search Search Search U
+woocommerce/cart-block.html	len=534 fnv=86a4a248724daf29 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/checkout-block-empty.html	len=534 fnv=86a4a248724daf29 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/checkout-block.html	"Skip to content WooCommerce Demo"
+woocommerce/classic-add-to-cart-invalid.html	len=3911 fnv=84d62e9ffaaebca5 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/classic-add-to-cart.html	len=3979 fnv=dd451eb7f564d516 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/classic-cart-updated.html	len=3925 fnv=cd8e0311fd6faea6 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/classic-cart.html	len=3911 fnv=84d62e9ffaaebca5 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/classic-checkout-failure.json	len=917 fnv=5c126415cb5a0060 start="{\"result\":\"failure\",\"messages\":\"\\n \\n\\t \\n\\t\\t
+woocommerce/classic-checkout-success.json	"{\"result\":\"success\",\"redirect\":\"\\/checkout\\/order-received\\/63\\/?key=wc_order_6RwLi9DPy7wCn\",\"order_id\":63}"
+woocommerce/classic-checkout.html	len=8013 fnv=28f27ed688951a91 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/my-account-login-failed.html	len=706 fnv=e7b1c3fe4b41e4b6 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/my-account-login.html	len=614 fnv=03b4590c444141b6 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/my-account-orders.html	len=819 fnv=5af1d5a617570a0e start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/my-account.html	len=483 fnv=0c5e2183d851b3cc start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/order-received-block.html	len=650 fnv=bdbbbb852f3472f0 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/order-received-wrong-key.html	len=413 fnv=f43f4134f3c1d736 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/order-received.html	len=662 fnv=4a64d86a6b328e7e start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product-add-out-of-stock.html	len=1650 fnv=a4dd7ac228f070de start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product-added.html	len=1657 fnv=3e6f761991a7e7ce start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product-block.html	len=1599 fnv=06152ef7e8315fd6 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product-out-of-stock.html	len=1578 fnv=90a091300e200b9e start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product-search.html	len=648 fnv=a607ede1ee96a8c4 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/product.html	len=1632 fnv=3b87cd01b0962dc0 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/shop-block-page-2.html	len=492 fnv=6aa707148c1ef2b2 start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/shop-block.html	len=1581 fnv=9739007fe304067b start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/shop.html	len=1581 fnv=9739007fe304067b start="Skip to content WooCommerce Demo Cart Checkout Classic Cart
+woocommerce/store-add-item-invalid.json	"{\"code\":\"woocommerce_rest_cart_invalid_product\",\"message\":\"Product with ID \"999999\" was not found and cannot be added to the cart.\",\"data\":{\"status\":400}}"
+woocommerce/store-add-item-missing-nonce.json	"{\"code\":\"woocommerce_rest_missing_nonce\",\"message\":\"Missing the Nonce header. This endpoint requires a valid nonce.\",\"data\":{\"status\":401}}"
+woocommerce/store-add-item-out-of-stock.json	"{\"code\":\"woocommerce_rest_product_out_of_stock\",\"message\":\"You cannot add \"T-Shirt with Logo\" to the cart because the product is out of stock.\",\"data\":{\"status\":400}}"
+woocommerce/store-add-item.json	len=3584 fnv=46654e300c0f8d82 start="{\"items\":[{\"key\":\"c16a5320fa475530d9583c34fd356ef5\",\
+woocommerce/store-add-item.json.headers	"Nonce: 956d100316"
+woocommerce/store-batch-add.json	len=4049 fnv=bf1f42dabb1be442 start="{\"responses\":[{\"body\":{\"items\":[{\"key\":\"c20ad4d76f
+woocommerce/store-batch-customer.json	len=4153 fnv=e7b2b5d21452c0d7 start="{\"responses\":[{\"body\":{\"items\":[{\"key\":\"aab3238922
+woocommerce/store-batch-remove.json	len=3985 fnv=8a8cfb4e9a5ff905 start="{\"responses\":[{\"body\":{\"items\":[{\"key\":\"c74d97b01e
+woocommerce/store-cart-read.json	len=1196 fnv=753e8e895215a7c0 start="{\"items\":[],\"coupons\":[],\"fees\":[],\"totals\":{\"tota
+woocommerce/store-cart-read.json.headers	len=244 fnv=edeaf8290c5b0db6 start="Nonce: 38d31dfa39 Cart-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6I
+woocommerce/store-cart.json	len=1196 fnv=753e8e895215a7c0 start="{\"items\":[],\"coupons\":[],\"fees\":[],\"totals\":{\"tota
+woocommerce/store-cart.json.headers	len=244 fnv=a43cd2a10a806566 start="Nonce: 956d100316 Cart-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6I
+woocommerce/store-checkout-block.json	len=1089 fnv=deefb2e617b74756 start="{\"order_id\":40,\"status\":\"processing\",\"order_key\":\"
+woocommerce/store-checkout-invalid.json	len=325 fnv=3b3fbb10f5f6d008 start="{\"code\":\"rest_invalid_param\",\"message\":\"Invalid para
+woocommerce/store-checkout.json	len=1091 fnv=eeb0996b11ee3e86 start="{\"order_id\":62,\"status\":\"processing\",\"order_key\":\"
+woocommerce/store-remove-item.json	len=1463 fnv=fbe2a76525044fa6 start="{\"code\":\"woocommerce_rest_cart_invalid_key\",\"message\"
+woocommerce/store-update-item-block.json	len=3539 fnv=5b5b58f84987acaf start="{\"items\":[{\"key\":\"aab3238922bcc25a6f606eb525ffdc56\",\
+woocommerce/store-update-item.json	len=3594 fnv=b81f672de6bf94df start="{\"items\":[{\"key\":\"c16a5320fa475530d9583c34fd356ef5\",\
+wordpress/browser-category.html	len=12507 fnv=1f2bbd2af3bfb583 start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/browser-home.html	len=17876 fnv=17540fe5a9ba6e54 start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/browser-page.html	len=1034 fnv=0f3d22f3c77ccafc start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/browser-post.html	len=1179 fnv=6efa79b54986deb6 start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/comment-duplicate.html	"Duplicate comment detected; it looks as though you’ve already said that! « Back"
+wordpress/comment-flood.html	"You are posting comments too quickly. Slow down. « Back"
+wordpress/comment-form-anonymous.html	len=1215 fnv=6dabc18fdd0bac02 start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/comment-form-logged-in.html	len=1402 fnv=55d053bd6260990d start="About WordPress About WordPress Get Involved WordPress.org 
+wordpress/dashboard-browser.html	len=5864 fnv=92b1133a525460d4 start="Skip to main content Skip to toolbar Dashboard Posts Posts 
+wordpress/dashboard.html	len=6874 fnv=6169fa2adb801eca start="Skip to main content Skip to toolbar Dashboard Dashboard Ho
+wordpress/editor-edit.html	len=1191 fnv=c4273659d55580c2 start="Skip to main content Skip to toolbar Dashboard Posts Posts 
+wordpress/editor-new.html	len=1179 fnv=4f2adb31c06876a5 start="Skip to main content Skip to toolbar Dashboard Posts Posts 
+wordpress/editor-save.json	len=2732 fnv=0ce5a04be226746c start="{\"id\":1841,\"date\":\"2026-11-07T08:14:46\",\"date_gmt\":
+wordpress/editor-update.json	len=2938 fnv=ab8a06b64b26205f start="{\"id\":1,\"date\":\"2026-11-07T08:02:27\",\"date_gmt\":\"2
+wordpress/logged-out.html	len=330 fnv=6fa87b63ec24d670 start="Log In Powered by WordPress You are now logged out. Usernam
+wordpress/login-failed.html	len=395 fnv=6b1698c0bf9810f2 start="Log In Powered by WordPress Error: The password you entered
+wordpress/login-no-test-cookie.html	len=409 fnv=c791e05647edb355 start="Log In Powered by WordPress Error: Cookies are blocked or n
+wordpress/login.html	len=306 fnv=55871d58757a4531 start="Log In Powered by WordPress Username or Email Address Passw
+wordpress/login.html.headers	"Set-Cookie: wordpress_test_cookie=WP%20Cookie%20check; path=/; HttpOnly"
+wordpress/logout-confirm.html	"You are attempting to log out of Theme Test Data Do you really want to log out ?"
+wordpress/rest-invalid-nonce.json	"{\"code\":\"rest_cookie_invalid_nonce\",\"message\":\"Cookie check failed\",\"data\":{\"status\":403}}"
+wordpress/search-results.html	len=2161 fnv=344a63fcc267b0da start="Skip to content Theme Test Data twitter.com facebook.com gi
+wordpress/sitemap-posts-post-1.xml	len=2848 fnv=e09b295712d5dfeb start="/hello-world/ 2026-10-27T11:55:41+00:00 /text-category-bloc
+wordpress/sitemap.xml	"/wp-sitemap-posts-post-1.xml /wp-sitemap-posts-page-1.xml /wp-sitemap-taxonomies-category-1.xml /wp-sitemap-taxonomies-post_tag-1.xml /wp-sitemap-taxonomies-post_format-1.xml /wp-sitemap-users-1.xml"

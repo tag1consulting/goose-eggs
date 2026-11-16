@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..c1c1636 100644
+index d432833..c2261f1 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -561,7 +561,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
+@@ -587,7 +587,7 @@ pub(crate) fn product_cards(html: &str) -> Vec<Product> {
              .find_iter(card)
              .chain(button_regex().find_iter(card))
              .filter_map(|tag| attribute(tag.as_str(), "class"))

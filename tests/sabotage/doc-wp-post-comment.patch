@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..fef4a3c 100644
+index 6cd56a9..b7e58cc 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1459,7 +1459,7 @@ pub async fn post_comment(
+@@ -1626,7 +1626,7 @@ pub async fn post_comment(
          None => crate::text::random_words(10),
      };
      let mut params = vec![

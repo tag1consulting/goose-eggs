@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 99cd8aa..3bc3b2b 100644
+index 6cd56a9..73222ff 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2398,7 +2398,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+@@ -2497,7 +2497,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
              .find(|t| !t.starts_with("format-") && *t != "paged")
              .map(str::to_string);
      }

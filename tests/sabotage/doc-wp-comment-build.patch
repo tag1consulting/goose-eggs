@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..6fb83b3 100644
+index 6cd56a9..3902dac 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1374,7 +1374,7 @@ impl<'a> CommentBuilder<'a> {
+@@ -1541,7 +1541,7 @@ impl<'a> CommentBuilder<'a> {
          Comment {
              post_url,
              text,

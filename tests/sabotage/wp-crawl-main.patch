@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..4b2e0ef 100644
+index 6cd56a9..f496cf8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2464,7 +2464,7 @@ pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<S
+@@ -2558,7 +2558,7 @@ pub(crate) fn crawl_links(user: &GooseUser, page_url: &str, html: &str) -> Vec<S
      }
      // On a single post or page, only its term links (WordPress marks them
      // `rel="tag"` or `rel="category tag"`); on a listing, every link.

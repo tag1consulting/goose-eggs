@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..4087d42 100644
+index 9bffb7c..758f251 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -686,7 +686,7 @@ pub async fn log_in(
+@@ -737,7 +737,7 @@ pub async fn log_in(
  
      // By default verify that the username that logged in is in the title of the
      // logged in page.

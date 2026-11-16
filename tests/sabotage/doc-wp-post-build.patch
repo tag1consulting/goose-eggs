@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index b9ea9ff..927158b 100644
+index 6cd56a9..ab14da0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1761,10 +1761,11 @@ impl<'a> PostBuilder<'a> {
+@@ -1874,10 +1874,11 @@ impl<'a> PostBuilder<'a> {
              post_type,
              fields,
          } = self;

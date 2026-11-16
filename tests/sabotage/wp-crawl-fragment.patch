@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 99cd8aa..6b228b3 100644
+index 6cd56a9..93b356c 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2513,7 +2513,7 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
+@@ -2612,7 +2612,7 @@ fn crawl_link(user: &GooseUser, page_url: &str, href: &str) -> Option<String> {
          return None;
      }
      let url = crate::page::resolve(user, page_url, href);

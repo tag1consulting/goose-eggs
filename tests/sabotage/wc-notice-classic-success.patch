@@ -1,13 +1,13 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 32d02c0..4e42717 100644
+index d432833..4ab7675 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1217,7 +1217,7 @@ fn error_notice(html: &str) -> Option<String> {
- 
- // Whether a page shows a success notice, classic or block themed.
- fn has_success_notice(html: &str) -> bool {
--    regex(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#).is_match(html)
-+    regex(r#"class="[^"]*(?:is-success)[^"]*""#).is_match(html)
- }
- 
- // Load a classic page and fail unless it shows a success notice.
+@@ -1240,7 +1240,7 @@ static ERROR_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+     .unwrap()
+ });
+ static SUCCESS_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+-    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#).unwrap()
++    Regex::new(r#"class="[^"]*(?:is-success)[^"]*""#).unwrap()
+ });
+ static QUANTITY_FIELD: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap());

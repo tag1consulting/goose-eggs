@@ -1,15 +1,13 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 32d02c0..e3615fa 100644
+index d432833..7513d8c 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1209,9 +1209,7 @@ impl<'a> CheckoutBuilder<'a> {
- // The text of the first error notice on a page, classic (`woocommerce-error`)
- // or block (`is-error`) themed.
- fn error_notice(html: &str) -> Option<String> {
--    let re = regex(
+@@ -1235,7 +1235,7 @@ impl<'a> CheckoutBuilder<'a> {
+ // The page parsing regular expressions, each compiled once on first use.
+ static ERROR_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+     Regex::new(
 -        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
--    );
-+    let re = regex(r#"(?s)class="[^"]*(?:is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#);
-     re.captures(html).map(|c| plain_text(&c[1]))
- }
- 
++        r#"(?s)class="[^"]*(?:is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
+     )
+     .unwrap()
+ });

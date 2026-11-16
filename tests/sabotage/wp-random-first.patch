@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..8a1ab8c 100644
+index 6cd56a9..57233a8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1897,7 +1897,7 @@ impl SiteContent {
+@@ -2254,7 +2254,7 @@ impl SiteContent {
      /// assert_eq!(content.random("page"), None);
      /// ```
      pub fn random(&self, kind: &str) -> Option<&str> {

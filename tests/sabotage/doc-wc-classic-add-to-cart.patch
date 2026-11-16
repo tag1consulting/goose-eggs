@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..ee86ffe 100644
+index d432833..a5bd9be 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1173,7 +1173,8 @@ pub async fn classic_add_to_cart(
+@@ -1313,7 +1313,8 @@ pub async fn classic_add_to_cart(
      id: u64,
      quantity: u64,
  ) -> Result<String, Box<TransactionError>> {

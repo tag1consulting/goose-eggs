@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index b9ea9ff..ca0e1fc 100644
+index 6cd56a9..9d25f98 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2338,7 +2338,7 @@ impl<'a> DiscoverBuilder<'a> {
+@@ -2444,7 +2444,7 @@ impl<'a> DiscoverBuilder<'a> {
      /// # assert_eq!(content.posts().len(), 1, "doc example DiscoverBuilder::max_per_kind: posts");
      /// ```
      pub fn max_per_kind(mut self, max_per_kind: usize) -> Self {

@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..ea274d8 100644
+index d432833..524ca46 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -926,7 +926,7 @@ impl StoreApiCart {
+@@ -1054,7 +1054,7 @@ impl StoreApiCart {
          let status = order["payment_result"]["payment_status"]
              .as_str()
              .unwrap_or("none");

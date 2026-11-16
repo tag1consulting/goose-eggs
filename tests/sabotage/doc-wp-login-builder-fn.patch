@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..8b3127c 100644
+index 6cd56a9..88aae70 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -524,7 +524,7 @@ impl<'a> LoginBuilder<'a> {
+@@ -657,7 +657,7 @@ impl<'a> LoginBuilder<'a> {
              // Defaults to a password of "password".
              password: "password",
              // Defaults to WordPress's log in form.

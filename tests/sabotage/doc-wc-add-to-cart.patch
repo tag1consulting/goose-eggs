@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..77bc6ce 100644
+index d432833..932195b 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1540,7 +1540,7 @@ fn add_to_cart_form(html: &str) -> Option<(String, String)> {
+@@ -1576,7 +1576,7 @@ fn add_to_cart_form(html: &str) -> Option<(String, String)> {
          .find_iter(html)
          .find(|form| {
              attribute(form.as_str(), "class")

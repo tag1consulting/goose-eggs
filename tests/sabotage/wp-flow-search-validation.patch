@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..c435c9e 100644
+index 6cd56a9..513294f 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1073,7 +1073,7 @@ pub async fn search(
+@@ -1240,7 +1240,7 @@ pub async fn search(
          path.push_str(&format!("&post_type={}", query_encode(post_type)));
      }
      let goose = get_named(user, &path, "search").await?;

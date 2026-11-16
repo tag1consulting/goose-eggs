@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 1ca2747..960ce24 100644
+index d432833..3877650 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1757,7 +1757,7 @@ pub async fn add_to_cart_from_archive(
+@@ -1791,7 +1791,7 @@ pub async fn add_to_cart_from_archive(
          GooseMethod::Post,
          &path,
          &path,

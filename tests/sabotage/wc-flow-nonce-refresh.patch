@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..8ef654c 100644
+index d432833..91f8374 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -703,7 +703,7 @@ impl StoreApiCart {
+@@ -831,7 +831,7 @@ impl StoreApiCart {
          let goose = send_json(user, method, &path, &path, &headers, body).await?;
          let request = goose.request.clone();
          let (headers, json) = json_response(user, goose).await?;

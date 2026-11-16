@@ -1,8 +1,8 @@
 diff --git a/src/page.rs b/src/page.rs
-index 3e74fa9..405246c 100644
+index cd2183a..6a5be8f 100644
 --- a/src/page.rs
 +++ b/src/page.rs
-@@ -97,8 +97,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
+@@ -96,8 +96,7 @@ pub(crate) fn page_assets(html: &str) -> Vec<(String, &'static str)> {
                  }
              }
              _ => {

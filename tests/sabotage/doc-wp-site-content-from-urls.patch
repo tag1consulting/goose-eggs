@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..b5a2691 100644
+index 6cd56a9..2bef6dc 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1912,7 +1912,7 @@ impl SiteContent {
+@@ -2269,7 +2269,7 @@ impl SiteContent {
      /// ```
      pub fn from_urls(urls: &[(&str, &str)]) -> SiteContent {
          let mut content = SiteContent::default();

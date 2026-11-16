@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..054683f 100644
+index 6cd56a9..a92c29b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1798,7 +1798,7 @@ async fn open_editor(
+@@ -1902,7 +1902,7 @@ async fn open_editor(
      let goose = get_named(user, path, name).await?;
      let mut request = goose.request.clone();
      let html = load_page(user, goose, Some(&validate)).await?;

@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..74d0b65 100644
+index 9bffb7c..0393a47 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -879,7 +879,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -930,7 +930,7 @@ impl<'a> SearchParamsBuilder<'a> {
              // Defaults to empty search keys.
              keys: "",
              // Defaults to "search".

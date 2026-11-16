@@ -1,16 +1,14 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 99cd8aa..080444c 100644
+index 6cd56a9..dfae7a2 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -70,10 +70,7 @@ pub(crate) fn plain_text(html: &str) -> String {
-     let tags = regex(r"(?s)<[^>]*>");
-     let text = hidden.replace_all(html, " ");
-     let text = tags.replace_all(&text, " ");
+@@ -174,8 +174,7 @@ fn attribute_value(text: &str) -> Option<(&str, &str)> {
+ pub(crate) fn plain_text(html: &str) -> String {
+     let text = HIDDEN_ELEMENT.replace_all(html, " ");
+     let text = TAG.replace_all(&text, " ");
 -    html_escape::decode_html_entities(&text)
 -        .split_whitespace()
--        .collect::<Vec<_>>()
--        .join(" ")
-+    text.split_whitespace().collect::<Vec<_>>().join(" ")
++    text.split_whitespace()
+         .collect::<Vec<_>>()
+         .join(" ")
  }
- 
- /// Get the contents of the form whose `id` or `name` is `name`.

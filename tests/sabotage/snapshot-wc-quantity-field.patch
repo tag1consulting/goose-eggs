@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index d432833..6571369 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1258,7 +1258,7 @@ fn has_success_notice(html: &str) -> bool {
+ 
+ // Whether a classic cart form control is a cart item's quantity.
+ fn is_quantity_field(name: &str) -> bool {
+-    QUANTITY_FIELD.is_match(name)
++    !QUANTITY_FIELD.is_match(name)
+ }
+ 
+ // Load a classic page and fail unless it shows a success notice.

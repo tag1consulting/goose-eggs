@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..3a5daae 100644
+index 6cd56a9..4a72ac8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1465,7 +1465,7 @@ pub async fn post_comment(
+@@ -1632,7 +1632,7 @@ pub async fn post_comment(
      ];
      let controls = form_controls(&form);
      let has = |name: &str| controls.iter().any(|(n, _)| n == name);

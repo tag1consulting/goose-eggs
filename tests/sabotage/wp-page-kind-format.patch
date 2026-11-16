@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bd2687a..078b450 100644
+index 6cd56a9..e73db48 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2397,7 +2397,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
+@@ -2494,7 +2494,7 @@ pub(crate) fn page_kind(html: &str) -> Option<String> {
          return classes
              .iter()
              .filter_map(|c| c.strip_prefix("single-"))

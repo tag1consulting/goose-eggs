@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..e8e0089 100644
+index 7f9e7a7..625140e 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -560,7 +560,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -599,7 +599,7 @@ impl<'a> ValidateBuilder<'a> {
      /// ```
      pub fn header_value(mut self, header: impl Into<&'a str>, value: impl Into<&'a str>) -> Self {
          self.headers.push(ValidateHeader {

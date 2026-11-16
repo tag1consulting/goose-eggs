@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..ed7b2ab 100644
+index 9bffb7c..f0f80cb 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -642,7 +642,7 @@ pub async fn log_in(
+@@ -693,7 +693,7 @@ pub async fn log_in(
      let login_page = crate::validate_and_load_static_assets(user, goose, validate).await?;
  
      // A web page can have multiple forms, so first get the correct form.

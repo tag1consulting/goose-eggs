@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..3279817 100644
+index d432833..d1b7a91 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1349,7 +1349,7 @@ pub async fn my_account_log_in(
+@@ -1488,7 +1488,7 @@ pub async fn my_account_log_in(
      username: &str,
      password: &str,
  ) -> Result<String, Box<TransactionError>> {

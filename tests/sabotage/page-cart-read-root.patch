@@ -1,8 +1,8 @@
 diff --git a/src/page.rs b/src/page.rs
-index 988f803..abd5ed2 100644
+index cd2183a..6887a1c 100644
 --- a/src/page.rs
 +++ b/src/page.rs
-@@ -200,7 +200,7 @@ pub(crate) async fn background_requests(
+@@ -196,7 +196,7 @@ pub(crate) async fn background_requests(
      preferences(user, html).await?;
      compression_test(user, html).await?;
      if html.contains(r#"data-wp-interactive="woocommerce/product-button""#) {

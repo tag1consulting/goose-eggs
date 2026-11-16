@@ -1,5 +1,5 @@
 diff --git a/src/page.rs b/src/page.rs
-index 307c5c3..8419860 100644
+index cd2183a..bc93693 100644
 --- a/src/page.rs
 +++ b/src/page.rs
 @@ -28,7 +28,7 @@ fn live_markup(html: &str) -> String {
