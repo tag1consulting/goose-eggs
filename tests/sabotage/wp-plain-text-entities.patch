@@ -1,11 +1,11 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..02913de 100644
+index bf6a37f..4bb3aed 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -42,8 +42,7 @@ pub(crate) fn plain_text(html: &str) -> String {
-     let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
-     let text = hidden.replace_all(html, " ");
-     let text = tags.replace_all(&text, " ");
+@@ -140,8 +140,7 @@ fn attribute_value(text: &str) -> Option<(&str, &str)> {
+ pub(crate) fn plain_text(html: &str) -> String {
+     let text = HIDDEN_ELEMENT.replace_all(html, " ");
+     let text = TAG.replace_all(&text, " ");
 -    html_escape::decode_html_entities(&text)
 -        .split_whitespace()
 +    text.split_whitespace()

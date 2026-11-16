@@ -1,11 +1,11 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..4b325d3 100644
+index bf6a37f..d61efd3 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -290,7 +290,7 @@ pub fn get_log_out_url(html: &str) -> Option<String> {
-     let re =
-         Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
-     match re.captures(html) {
+@@ -388,7 +388,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
+ /// ```
+ pub fn get_log_out_url(html: &str) -> Option<String> {
+     match LOG_OUT_URL.captures(html) {
 -        Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
 +        Some(capture) => Some(capture[1].to_string()),
          None => {

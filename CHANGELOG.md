@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.1-dev
+ - compile every regular expression once instead of on every call, with results unchanged: `get_html_header`, `get_title`, `get_src_elements` and `get_css_elements` (so `load_static_elements` and `validate_and_load_static_assets`), the `wordpress` form, nonce, log in, log out, comment and sitemap helpers and the `woocommerce` notice and cart helpers use `std::sync::LazyLock` statics; `drupal::get_form_value`, `get_encoded_form_value(s)`, `get_form_values`, `get_bigpipe_form` and `get_updated_build_id` match their argument in code (an old build id with regular expression characters, which Drupal never makes, still goes through the cache below); `drupal::get_form`, whose name is a regular expression, keeps each name's compiled pattern in a per thread cache of 64; snapshots of every helper's results on the saved pages, captured before the change, are in `tests/snapshots`; `LazyLock` needs Rust 1.80, which the crate does not declare (no `rust-version`) and which Goose 0.19's dependencies already exceed (1.88)
+
 ## 0.7.0 October 29, 2026
  - **API change**: update goose to [0.19](https://github.com/tag1consulting/goose/releases/tag/0.19.0)
  - **API change**: the `default` feature enables Goose's default features, which are now cookie support, and no longer selects a TLS backend; `default-features = false` turns off cookies, where it turned off TLS

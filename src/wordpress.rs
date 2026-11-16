@@ -5,6 +5,7 @@
 //! `?s=`, the core sitemap and the REST API. None of them assume a theme or any
 //! content; every path is configurable on its builder.
 
+use crate::with_cached_regex;
 use goose::goose::GooseResponse;
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -12,36 +13,133 @@ use log::warn;
 use rand::seq::IndexedRandom;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
+use std::sync::LazyLock;
 
-// Matches one opening tag of the named element, across lines.
-fn tag_regex(tag: &str) -> Regex {
-    Regex::new(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag))).unwrap()
-}
+// The page parsing regular expressions, each compiled once on first use.
+// FORM_TAG and OPTION_TAG match one opening tag of the element, across lines.
+static FORM_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<form\b[^>]*>").unwrap());
+static OPTION_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<option\b[^>]*>").unwrap());
+static FORM_END: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</form\s*>").unwrap());
+static FORM_CONTROL: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
+    )
+    .unwrap()
+});
+static HIDDEN_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap()
+});
+static TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<[^>]*>").unwrap());
+static LOGIN_ERROR: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#).unwrap());
+static BODY: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?s)<body[^>]*>(.*?)</body>").unwrap());
+static REST_NONCES: LazyLock<[Regex; 2]> = LazyLock::new(|| {
+    [
+        Regex::new(r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#).unwrap(),
+        Regex::new(r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#).unwrap(),
+    ]
+});
+static LOG_OUT_URL: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap()
+});
+static URL_ORIGIN: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*").unwrap());
+static SITEMAP_LOCATION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>").unwrap());
+static SITEMAP_KIND: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
+        .unwrap()
+});
 
 // The decoded value of `name` in an opening tag, with the value in double,
 // single or no quotes; `Some("")` for an attribute without a value.
+//
+// This is what the regular expression
+// `(?is)\s<name>(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)`
+// matches, with `name` escaped, in code: at the first white space followed by
+// `name` (in any case) where either a value then white space, `/` or `>`
+// follows, or white space, `/` or `>` follows at once.
 pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    let re = Regex::new(&format!(
-        r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
-        regex::escape(name)
-    ))
-    .unwrap();
-    let capture = re.captures(tag)?;
-    let value = capture
-        .get(1)
-        .or_else(|| capture.get(2))
-        .or_else(|| capture.get(3))
-        .map_or("", |m| m.as_str());
-    Some(html_escape::decode_html_entities(value).to_string())
+    if !name.is_ascii() {
+        // Case insensitive matching of other characters is left to the
+        // regular expression, compiled once per name.
+        let pattern = format!(
+            r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
+            regex::escape(name)
+        );
+        return with_cached_regex(pattern, |re| {
+            let capture = re.captures(tag)?;
+            let value = capture
+                .get(1)
+                .or_else(|| capture.get(2))
+                .or_else(|| capture.get(3))
+                .map_or("", |m| m.as_str());
+            Some(html_escape::decode_html_entities(value).to_string())
+        });
+    }
+    let ends_value =
+        |rest: &str| rest.starts_with(|c: char| c.is_whitespace() || c == '/' || c == '>');
+    for (i, c) in tag.char_indices() {
+        if !c.is_whitespace() {
+            continue;
+        }
+        let rest = match strip_name(&tag[i + c.len_utf8()..], name) {
+            Some(rest) => rest,
+            None => continue,
+        };
+        if let Some((value, after)) = attribute_value(rest) {
+            if ends_value(after) {
+                return Some(html_escape::decode_html_entities(value).to_string());
+            }
+        }
+        if ends_value(rest) {
+            return Some(String::new());
+        }
+    }
+    None
+}
+
+// `text` after a leading `name`, an ASCII name matched as `(?i)` does: ASCII
+// letters in either case, and also the Kelvin sign for `k` and the long s for `s`.
+fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+    let mut chars = text.chars();
+    for n in name.chars() {
+        let c = chars.next()?;
+        let same = c.eq_ignore_ascii_case(&n)
+            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
+            || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
+        if !same {
+            return None;
+        }
+    }
+    Some(chars.as_str())
+}
+
+// `\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+))` at the start of `text`: the
+// value, and the text after it.
+fn attribute_value(text: &str) -> Option<(&str, &str)> {
+    let text = text.trim_start().strip_prefix('=')?.trim_start();
+    for quote in ['"', '\''] {
+        if let Some(quoted) = text.strip_prefix(quote) {
+            let end = quoted.find(quote)?;
+            return Some((&quoted[..end], &quoted[end + 1..]));
+        }
+    }
+    let end = text
+        .find(|c: char| c.is_whitespace() || matches!(c, '"' | '\'' | '>' | '/'))
+        .unwrap_or(text.len());
+    if end == 0 {
+        return None;
+    }
+    Some((&text[..end], &text[end..]))
 }
 
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
 pub(crate) fn plain_text(html: &str) -> String {
-    let hidden = Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap();
-    let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
-    let text = hidden.replace_all(html, " ");
-    let text = tags.replace_all(&text, " ");
+    let text = HIDDEN_ELEMENT.replace_all(html, " ");
+    let text = TAG.replace_all(&text, " ");
     html_escape::decode_html_entities(&text)
         .split_whitespace()
         .collect::<Vec<_>>()
@@ -50,17 +148,12 @@ pub(crate) fn plain_text(html: &str) -> String {
 
 // The text of WordPress's log in error box, if the page shows one.
 fn login_error(html: &str) -> Option<String> {
-    Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-        .unwrap()
-        .captures(html)
-        .map(|c| plain_text(&c[1]))
+    LOGIN_ERROR.captures(html).map(|c| plain_text(&c[1]))
 }
 
 // The text of a page's body, or an empty string when it has none.
 fn body_text(html: &str) -> String {
-    Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
-        .unwrap()
-        .captures(html)
+    BODY.captures(html)
         .map(|c| plain_text(&c[1]))
         .unwrap_or_default()
 }
@@ -103,11 +196,10 @@ pub(crate) fn get_form_by_class(html: &str, class: &str) -> String {
 
 // The contents of the first form whose opening tag matches.
 fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
-    let end = Regex::new(r"(?i)</form\s*>").unwrap();
-    for form in tag_regex("form").find_iter(html) {
+    for form in FORM_TAG.find_iter(html) {
         if matches(form.as_str()) {
             let rest = &html[form.end()..];
-            let contents = match end.find(rest) {
+            let contents = match FORM_END.find(rest) {
                 Some(close) => &rest[..close.start()],
                 None => rest,
             };
@@ -123,12 +215,7 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
 /// buttons; every textarea; every select, with its selected option or its first.
 pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
     let mut controls = Vec::new();
-    let control = Regex::new(
-        r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
-    )
-    .unwrap();
-    let option = tag_regex("option");
-    for m in control.find_iter(form) {
+    for m in FORM_CONTROL.find_iter(form) {
         let html = m.as_str();
         let open = &html[..html.find('>').map_or(html.len(), |i| i + 1)];
         let name = match attribute(open, "name") {
@@ -140,7 +227,7 @@ pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
             let body = &body[..body.to_ascii_lowercase().rfind("</textarea").unwrap()];
             html_escape::decode_html_entities(body).to_string()
         } else if html[1..].to_ascii_lowercase().starts_with("select") {
-            let options: Vec<&str> = option.find_iter(html).map(|o| o.as_str()).collect();
+            let options: Vec<&str> = OPTION_TAG.find_iter(html).map(|o| o.as_str()).collect();
             let chosen = options
                 .iter()
                 .find(|o| attribute(o, "selected").is_some())
@@ -277,12 +364,8 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
 /// assert_eq!(get_rest_nonce(html).as_deref(), Some("d7e5418ef8"));
 /// ```
 pub fn get_rest_nonce(html: &str) -> Option<String> {
-    let patterns = [
-        r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
-        r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
-    ];
-    for pattern in patterns {
-        if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+    for pattern in REST_NONCES.iter() {
+        if let Some(capture) = pattern.captures(html) {
             return Some(capture[1].to_string());
         }
     }
@@ -304,9 +387,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
 /// );
 /// ```
 pub fn get_log_out_url(html: &str) -> Option<String> {
-    let re =
-        Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
-    match re.captures(html) {
+    match LOG_OUT_URL.captures(html) {
         Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
         None => {
             warn!("log out link not found");
@@ -1938,10 +2019,7 @@ impl SiteContent {
 
 // The path (and query) of a URL, so it is requested on the load test's host.
 pub(crate) fn site_path(url: &str) -> String {
-    match Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*")
-        .unwrap()
-        .find(url)
-    {
+    match URL_ORIGIN.find(url) {
         Some(origin) if origin.end() == url.len() => "/".to_string(),
         Some(origin) => url[origin.end()..].to_string(),
         None => url.to_string(),
@@ -1950,8 +2028,7 @@ pub(crate) fn site_path(url: &str) -> String {
 
 // Every <loc> in a sitemap, decoded.
 fn sitemap_locations(xml: &str) -> Vec<String> {
-    Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>")
-        .unwrap()
+    SITEMAP_LOCATION
         .captures_iter(xml)
         .map(|c| html_escape::decode_html_entities(&c[1]).to_string())
         .collect()
@@ -1961,10 +2038,7 @@ fn sitemap_locations(xml: &str) -> Vec<String> {
 // wp-sitemap-posts-<post type>-<n>.xml, wp-sitemap-taxonomies-<taxonomy>-<n>.xml
 // or wp-sitemap-users-<n>.xml.
 fn sitemap_kind(url: &str) -> Option<String> {
-    let re =
-        Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
-            .unwrap();
-    let capture = re.captures(url)?;
+    let capture = SITEMAP_KIND.captures(url)?;
     Some(
         match capture.get(1) {
             Some(kind) => kind.as_str(),

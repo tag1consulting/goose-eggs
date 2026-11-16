@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bf6a37f..be1e9fe 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -388,7 +388,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
+ /// ```
+ pub fn get_log_out_url(html: &str) -> Option<String> {
+     match LOG_OUT_URL.captures(html) {
+-        Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
++        Some(capture) => Some(html_escape::decode_html_entities(&capture[0]).to_string()),
+         None => {
+             warn!("log out link not found");
+             None

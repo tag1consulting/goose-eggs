@@ -14,6 +14,7 @@ use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
 use rand::seq::IndexedRandom;
 use regex::Regex;
+use std::sync::LazyLock;
 
 /// Where a shop's pages and Store API are. For complete documentation, refer to
 /// [`ShopBuilder`].
@@ -1104,28 +1105,33 @@ impl<'a> CheckoutBuilder<'a> {
     }
 }
 
+// The page parsing regular expressions, each compiled once on first use.
+static ERROR_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
+    )
+    .unwrap()
+});
+static SUCCESS_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#).unwrap()
+});
+static QUANTITY_FIELD: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap());
+
 // The text of the first error notice on a page, classic (`woocommerce-error`)
 // or block (`is-error`) themed.
 fn error_notice(html: &str) -> Option<String> {
-    let re = Regex::new(
-        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
-    )
-    .unwrap();
-    re.captures(html).map(|c| plain_text(&c[1]))
+    ERROR_NOTICE.captures(html).map(|c| plain_text(&c[1]))
 }
 
 // Whether a page shows a success notice, classic or block themed.
 fn has_success_notice(html: &str) -> bool {
-    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#)
-        .unwrap()
-        .is_match(html)
+    SUCCESS_NOTICE.is_match(html)
 }
 
 // Whether a classic cart form control is a cart item's quantity.
 fn is_quantity_field(name: &str) -> bool {
-    Regex::new(r"^cart\[[^\]]+\]\[qty\]$")
-        .unwrap()
-        .is_match(name)
+    QUANTITY_FIELD.is_match(name)
 }
 
 // Load a classic page and fail unless it shows a success notice.
