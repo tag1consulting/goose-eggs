@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..bb4ab72 100644
+index f97ea67..3eaed92 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2210,6 +2210,7 @@ pub async fn discover(
+@@ -2293,6 +2293,7 @@ pub async fn discover(
      let cap = discover.max_per_kind;
  
      // The sitemap index, read without a metric so its absence is no error.

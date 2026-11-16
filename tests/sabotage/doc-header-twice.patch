@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..a74474d 100644
+index b41c6b2..7a502bb 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1309,7 +1309,7 @@ pub async fn validate_page<'a>(
+@@ -1345,7 +1345,7 @@ pub async fn validate_page<'a>(
  
              // Validate headers if defined.
              let headers = &response.headers().clone();

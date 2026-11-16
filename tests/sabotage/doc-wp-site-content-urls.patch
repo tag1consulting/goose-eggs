@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..2ff59ee 100644
+index f97ea67..8d64771 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1817,7 +1817,8 @@ impl SiteContent {
+@@ -1907,7 +1907,8 @@ impl SiteContent {
      /// assert!(content.urls("product").is_empty());
      /// ```
      pub fn urls(&self, kind: &str) -> &[String] {

@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..f838ac3 100644
+index b41c6b2..64f4035 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1033,7 +1033,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
+@@ -1071,7 +1071,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
                  None => "",
              };
              // Check if the desired value is in the header.

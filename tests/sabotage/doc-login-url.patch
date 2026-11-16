@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..0526309 100644
+index 9bffb7c..1c2c85e 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -715,7 +715,7 @@ pub async fn log_in(
+@@ -766,7 +766,7 @@ pub async fn log_in(
              .build();
          user.request(goose_request).await.unwrap()
      } else {

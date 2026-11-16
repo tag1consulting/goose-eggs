@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..83bc57c 100644
+index 69c128f..ab040dc 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -278,7 +278,7 @@ pub async fn shop_page(
+@@ -279,7 +279,7 @@ pub async fn shop_page(
      validate: Option<&crate::Validate<'_>>,
  ) -> Result<String, Box<TransactionError>> {
      let default_validation = crate::Validate::builder()
