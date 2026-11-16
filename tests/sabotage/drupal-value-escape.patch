@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..d1e59e0 100644
+index 9bffb7c..36de081 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -87,7 +87,7 @@ pub fn get_form(html: &str, name: &str) -> String {
- pub fn get_form_value(form_html: &str, name: &str) -> String {
-     let re = Regex::new(&format!(
-         r#"name="{}" value=['"](.*?)['"]"#,
--        regex::escape(name)
-+        name
-     ))
-     .unwrap();
-     // Return a specific form value.
+@@ -100,7 +100,7 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
+ // with `name` taken literally: the first `name="<name>" value=` followed by a
+ // quote, then everything up to the next quote on the same line.
+ fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {
+-    let element = format!(r#"name="{}" value="#, name);
++    let element = format!(r#"name="{}" value="#, name.replace(['[', ']'], ""));
+     let mut from = 0;
+     while let Some(found) = form_html[from..].find(&element) {
+         let start = from + found;

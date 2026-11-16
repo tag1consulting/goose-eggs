@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..49cc29d 100644
+index 9bffb7c..a2a8428 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1132,7 +1132,7 @@ pub async fn search<'a>(
+@@ -1183,7 +1183,7 @@ pub async fn search<'a>(
  
      // Optionally validate the page with the search form.
      let no_validation = crate::Validate::none();

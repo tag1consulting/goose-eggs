@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..c118a03 100644
+index b41c6b2..80b241e 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -207,7 +207,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -245,7 +245,7 @@ impl<'a> ValidateBuilder<'a> {
      /// ```
      pub fn not_status(mut self, status_code: u16) -> Self {
          self.status = Some(ValidateStatus {

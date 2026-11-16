@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..abdd24a 100644
+index f97ea67..37c5cc1 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2267,9 +2267,6 @@ pub async fn discover(
+@@ -2350,9 +2350,6 @@ pub async fn discover(
                  .unwrap_or_default();
              let found = links.len();
              for link in links {

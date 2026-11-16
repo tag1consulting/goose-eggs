@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..dbab087 100644
+index 9bffb7c..5fce8bd 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -619,7 +619,7 @@ pub async fn log_in(
+@@ -670,7 +670,7 @@ pub async fn log_in(
      let default_validation = crate::Validate::builder()
          .text(r#"<form class="user-login-form"#)
          .build();

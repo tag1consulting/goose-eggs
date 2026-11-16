@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..5167f23 100644
+index f97ea67..59fefa0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -680,7 +680,7 @@ impl<'a> LoginBuilder<'a> {
+@@ -778,7 +778,7 @@ impl<'a> LoginBuilder<'a> {
          } = self;
          Login {
              username,

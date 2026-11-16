@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..f16e0f4 100644
+index 69c128f..71ab28a 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -314,7 +314,7 @@ pub async fn product_page(
+@@ -315,7 +315,7 @@ pub async fn product_page(
      path: &str,
      validate: Option<&crate::Validate<'_>>,
  ) -> Result<String, Box<TransactionError>> {

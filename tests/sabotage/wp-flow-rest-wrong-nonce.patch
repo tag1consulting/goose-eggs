@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..66aa7e5 100644
+index f97ea67..ef39e80 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1689,7 +1689,7 @@ async fn save_post(
+@@ -1779,7 +1779,7 @@ async fn save_post(
          GooseMethod::Post,
          path,
          name,

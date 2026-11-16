@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index 69c128f..eae5b4a 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -1126,7 +1126,7 @@ fn error_notice(html: &str) -> Option<String> {
+ 
+ // Whether a page shows a success notice, classic or block themed.
+ fn has_success_notice(html: &str) -> bool {
+-    SUCCESS_NOTICE.is_match(html)
++    !SUCCESS_NOTICE.is_match(html)
+ }
+ 
+ // Whether a classic cart form control is a cart item's quantity.

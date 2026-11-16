@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..fb018c1 100644
+index b41c6b2..9fa38b4 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1431,7 +1431,7 @@ pub async fn validate_page<'a>(
+@@ -1467,7 +1467,7 @@ pub async fn validate_page<'a>(
                      }
                      // Validate texts in body if defined.
                      for validate_text in &validate.texts {

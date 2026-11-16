@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..abe6780 100644
+index 69c128f..5a356d1 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -510,7 +510,7 @@ fn parse_product(item: &serde_json::Value) -> Option<Product> {
+@@ -511,7 +511,7 @@ fn parse_product(item: &serde_json::Value) -> Option<Product> {
  /// assert_eq!(random_product(&products[..1]), None);
  /// ```
  pub fn random_product(products: &[Product]) -> Option<&Product> {

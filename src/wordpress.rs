@@ -5,6 +5,7 @@
 //! `?s=`, the core sitemap and the REST API. None of them assume a theme or any
 //! content; every path is configurable on its builder.
 
+use crate::with_cached_regex;
 use goose::goose::GooseResponse;
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -12,40 +13,149 @@ use log::warn;
 use rand::seq::IndexedRandom;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
+use std::sync::LazyLock;
 
-// Matches one opening tag of the named element, across lines.
-fn tag_regex(tag: &str) -> Regex {
-    Regex::new(&format!(r"(?is)<{}\b[^>]*>", regex::escape(tag))).unwrap()
-}
+// The page parsing regular expressions, each compiled once on first use.
+// FORM_TAG and OPTION_TAG match one opening tag of the element, across lines.
+static FORM_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<form\b[^>]*>").unwrap());
+static OPTION_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<option\b[^>]*>").unwrap());
+static FORM_END: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</form\s*>").unwrap());
+static FORM_CONTROL: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
+    )
+    .unwrap()
+});
+static HIDDEN_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap()
+});
+static TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<[^>]*>").unwrap());
+static LOGIN_ERROR: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#).unwrap());
+static BODY: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?s)<body[^>]*>(.*?)</body>").unwrap());
+static REST_NONCES: LazyLock<[Regex; 2]> = LazyLock::new(|| {
+    [
+        Regex::new(r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#).unwrap(),
+        Regex::new(r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#).unwrap(),
+    ]
+});
+static LOG_OUT_URL: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap()
+});
+static URL_ORIGIN: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*").unwrap());
+static SITEMAP_LOCATION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>").unwrap());
+static SITEMAP_KIND: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
+        .unwrap()
+});
 
 // The decoded value of `name` in an opening tag, with the value in double,
 // single or no quotes; `Some("")` for an attribute without a value.
+//
+// This is what the regular expression
+// `(?is)\s<name>(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)`
+// matches, with `name` escaped, in code: at the first white space followed by
+// `name` (in any case) where either a value then white space, `/` or `>`
+// follows, or white space, `/` or `>` follows at once.
 pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    let re = Regex::new(&format!(
-        r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
-        regex::escape(name)
-    ))
-    .unwrap();
-    let capture = re.captures(tag)?;
-    let value = capture
-        .get(1)
-        .or_else(|| capture.get(2))
-        .or_else(|| capture.get(3))
-        .map_or("", |m| m.as_str());
-    Some(html_escape::decode_html_entities(value).to_string())
+    if !name.is_ascii() {
+        // Case insensitive matching of other characters is left to the
+        // regular expression, compiled once per name.
+        let pattern = format!(
+            r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
+            regex::escape(name)
+        );
+        return with_cached_regex(pattern, |re| {
+            let capture = re.captures(tag)?;
+            let value = capture
+                .get(1)
+                .or_else(|| capture.get(2))
+                .or_else(|| capture.get(3))
+                .map_or("", |m| m.as_str());
+            Some(html_escape::decode_html_entities(value).to_string())
+        });
+    }
+    let ends_value =
+        |rest: &str| rest.starts_with(|c: char| c.is_whitespace() || c == '/' || c == '>');
+    for (i, c) in tag.char_indices() {
+        if !c.is_whitespace() {
+            continue;
+        }
+        let rest = match strip_name(&tag[i + c.len_utf8()..], name) {
+            Some(rest) => rest,
+            None => continue,
+        };
+        if let Some((value, after)) = attribute_value(rest) {
+            if ends_value(after) {
+                return Some(html_escape::decode_html_entities(value).to_string());
+            }
+        }
+        if ends_value(rest) {
+            return Some(String::new());
+        }
+    }
+    None
+}
+
+// `text` after a leading `name`, an ASCII name matched as `(?i)` does: ASCII
+// letters in either case, and also the Kelvin sign for `k` and the long s for `s`.
+fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+    let mut chars = text.chars();
+    for n in name.chars() {
+        let c = chars.next()?;
+        let same = c.eq_ignore_ascii_case(&n)
+            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
+            || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
+        if !same {
+            return None;
+        }
+    }
+    Some(chars.as_str())
+}
+
+// `\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+))` at the start of `text`: the
+// value, and the text after it.
+fn attribute_value(text: &str) -> Option<(&str, &str)> {
+    let text = text.trim_start().strip_prefix('=')?.trim_start();
+    for quote in ['"', '\''] {
+        if let Some(quoted) = text.strip_prefix(quote) {
+            let end = quoted.find(quote)?;
+            return Some((&quoted[..end], &quoted[end + 1..]));
+        }
+    }
+    let end = text
+        .find(|c: char| c.is_whitespace() || matches!(c, '"' | '\'' | '>' | '/'))
+        .unwrap_or(text.len());
+    if end == 0 {
+        return None;
+    }
+    Some((&text[..end], &text[end..]))
 }
 
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
 pub(crate) fn plain_text(html: &str) -> String {
-    let hidden = Regex::new(r"(?is)<(head|script|style)\b.*?</(head|script|style)\s*>").unwrap();
-    let tags = Regex::new(r"(?s)<[^>]*>").unwrap();
-    let text = hidden.replace_all(html, " ");
-    let text = tags.replace_all(&text, " ");
+    let text = HIDDEN_ELEMENT.replace_all(html, " ");
+    let text = TAG.replace_all(&text, " ");
     html_escape::decode_html_entities(&text)
         .split_whitespace()
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+// The text of WordPress's log in error box, if the page shows one.
+fn login_error(html: &str) -> Option<String> {
+    LOGIN_ERROR.captures(html).map(|c| plain_text(&c[1]))
+}
+
+// The text of a page's body, or an empty string when it has none.
+fn body_text(html: &str) -> String {
+    BODY.captures(html)
+        .map(|c| plain_text(&c[1]))
+        .unwrap_or_default()
 }
 
 /// Get the contents of the form whose `id` or `name` is `name`.
@@ -86,11 +196,10 @@ pub(crate) fn get_form_by_class(html: &str, class: &str) -> String {
 
 // The contents of the first form whose opening tag matches.
 fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
-    let end = Regex::new(r"(?i)</form\s*>").unwrap();
-    for form in tag_regex("form").find_iter(html) {
+    for form in FORM_TAG.find_iter(html) {
         if matches(form.as_str()) {
             let rest = &html[form.end()..];
-            let contents = match end.find(rest) {
+            let contents = match FORM_END.find(rest) {
                 Some(close) => &rest[..close.start()],
                 None => rest,
             };
@@ -106,12 +215,7 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
 /// buttons; every textarea; every select, with its selected option or its first.
 pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
     let mut controls = Vec::new();
-    let control = Regex::new(
-        r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
-    )
-    .unwrap();
-    let option = tag_regex("option");
-    for m in control.find_iter(form) {
+    for m in FORM_CONTROL.find_iter(form) {
         let html = m.as_str();
         let open = &html[..html.find('>').map_or(html.len(), |i| i + 1)];
         let name = match attribute(open, "name") {
@@ -123,7 +227,7 @@ pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
             let body = &body[..body.to_ascii_lowercase().rfind("</textarea").unwrap()];
             html_escape::decode_html_entities(body).to_string()
         } else if html[1..].to_ascii_lowercase().starts_with("select") {
-            let options: Vec<&str> = option.find_iter(html).map(|o| o.as_str()).collect();
+            let options: Vec<&str> = OPTION_TAG.find_iter(html).map(|o| o.as_str()).collect();
             let chosen = options
                 .iter()
                 .find(|o| attribute(o, "selected").is_some())
@@ -260,12 +364,8 @@ pub fn get_nonce(html: &str, field_name: &str) -> Option<String> {
 /// assert_eq!(get_rest_nonce(html).as_deref(), Some("d7e5418ef8"));
 /// ```
 pub fn get_rest_nonce(html: &str) -> Option<String> {
-    let patterns = [
-        r#"createNonceMiddleware\(\s*["']([^"']+)["']\s*\)"#,
-        r#"wpApiSettings\s*=\s*\{[^;]*?"nonce"\s*:\s*"([^"]+)""#,
-    ];
-    for pattern in patterns {
-        if let Some(capture) = Regex::new(pattern).unwrap().captures(html) {
+    for pattern in REST_NONCES.iter() {
+        if let Some(capture) = pattern.captures(html) {
             return Some(capture[1].to_string());
         }
     }
@@ -287,9 +387,7 @@ pub fn get_rest_nonce(html: &str) -> Option<String> {
 /// );
 /// ```
 pub fn get_log_out_url(html: &str) -> Option<String> {
-    let re =
-        Regex::new(r#"(?i)href\s*=\s*["']([^"']*wp-login\.php\?action=logout[^"']*)["']"#).unwrap();
-    match re.captures(html) {
+    match LOG_OUT_URL.captures(html) {
         Some(capture) => Some(html_escape::decode_html_entities(&capture[1]).to_string()),
         None => {
             warn!("log out link not found");
@@ -768,11 +866,7 @@ pub async fn log_in(
         read_response(goose).await.1
     };
     if !request.redirected || html.contains(r#"id="login_error""#) {
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
-            .captures(&html)
-            .map(|c| plain_text(&c[1]))
-            .unwrap_or_else(|| "not redirected".to_string());
+        let error = login_error(&html).unwrap_or_else(|| "not redirected".to_string());
         return fail(
             user,
             &format!("{}: log in failed: {}", login.url, error),
@@ -1484,11 +1578,7 @@ pub async fn post_comment(
     // 200 error page for an empty comment. WordPress's page says which.
     let mut request = goose.request.clone();
     let (headers, html) = read_response(goose).await;
-    let reason = Regex::new(r"(?s)<body[^>]*>(.*?)</body>")
-        .unwrap()
-        .captures(&html)
-        .map(|c| plain_text(&c[1]))
-        .unwrap_or_default();
+    let reason = body_text(&html);
     if !request.success {
         // Goose recorded the status as the error; the log has WordPress's reason.
         user.log_debug(&reason, Some(&request), Some(&headers), Some(&html))?;
@@ -1929,10 +2019,7 @@ impl SiteContent {
 
 // The path (and query) of a URL, so it is requested on the load test's host.
 pub(crate) fn site_path(url: &str) -> String {
-    match Regex::new(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]*")
-        .unwrap()
-        .find(url)
-    {
+    match URL_ORIGIN.find(url) {
         Some(origin) if origin.end() == url.len() => "/".to_string(),
         Some(origin) => url[origin.end()..].to_string(),
         None => url.to_string(),
@@ -1941,8 +2028,7 @@ pub(crate) fn site_path(url: &str) -> String {
 
 // Every <loc> in a sitemap, decoded.
 fn sitemap_locations(xml: &str) -> Vec<String> {
-    Regex::new(r"(?s)<loc>\s*(.*?)\s*</loc>")
-        .unwrap()
+    SITEMAP_LOCATION
         .captures_iter(xml)
         .map(|c| html_escape::decode_html_entities(&c[1]).to_string())
         .collect()
@@ -1952,10 +2038,7 @@ fn sitemap_locations(xml: &str) -> Vec<String> {
 // wp-sitemap-posts-<post type>-<n>.xml, wp-sitemap-taxonomies-<taxonomy>-<n>.xml
 // or wp-sitemap-users-<n>.xml.
 fn sitemap_kind(url: &str) -> Option<String> {
-    let re =
-        Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
-            .unwrap();
-    let capture = re.captures(url)?;
+    let capture = SITEMAP_KIND.captures(url)?;
     Some(
         match capture.get(1) {
             Some(kind) => kind.as_str(),
@@ -2656,11 +2739,7 @@ mod tests {
             "Error: The password & more.",
             "plain_text case tags and entities"
         );
-        let error = Regex::new(r#"(?s)id="login_error"[^>]*>(.*?)</div>"#)
-            .unwrap()
-            .captures(LOGIN_FAILED)
-            .map(|c| plain_text(&c[1]))
-            .unwrap();
+        let error = login_error(LOGIN_FAILED).unwrap();
         assert!(
             error.starts_with("Error: The password you entered for the username"),
             "plain_text case wordpress login error: {}",
@@ -2860,5 +2939,245 @@ mod tests {
             "Discover default rest_kinds"
         );
         assert_eq!(discover.max_per_kind, 100, "Discover default max_per_kind");
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line, Generator};
+
+    // Every opening or closing tag on a page, found without a regular expression.
+    fn tags(page: &str) -> Vec<&str> {
+        let mut found = Vec::new();
+        let mut rest = page;
+        while let Some(start) = rest.find('<') {
+            match rest[start..].find('>') {
+                Some(end) => {
+                    found.push(&rest[start..start + end + 1]);
+                    rest = &rest[start + end + 1..];
+                }
+                None => break,
+            }
+        }
+        found
+    }
+
+    const ATTRIBUTES: &[&str] = &[
+        "id", "name", "class", "value", "type", "checked", "selected", "href", "action", "src",
+        "ïd", "a.b", "NAME", "data-x",
+    ];
+
+    const FORM_NAMES: &[&str] = &[
+        "loginform",
+        "commentform",
+        "checkout",
+        "adminbarsearch",
+        "quick-press",
+        "post",
+        "missing",
+    ];
+
+    const FORM_CLASSES: &[&str] = &[
+        "cart",
+        "checkout",
+        "comment-form",
+        "woocommerce-cart-form",
+        "woocommerce-form-login",
+        "register",
+        "wp-block-search",
+        "missing",
+    ];
+
+    // Every form on the saved pages, as (description, contents).
+    fn forms() -> Vec<(String, String)> {
+        let mut found = Vec::new();
+        for (path, page) in fixtures() {
+            found.push((format!("{} page", path), page.clone()));
+            for name in FORM_NAMES {
+                found.push((format!("{} {}", path, name), get_form(&page, name)));
+            }
+            for class in FORM_CLASSES {
+                found.push((
+                    format!("{} .{}", path, class),
+                    get_form_by_class(&page, class),
+                ));
+            }
+        }
+        found
+    }
+
+    #[test]
+    fn attribute_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            let values: Vec<Vec<_>> = tags(&page)
+                .into_iter()
+                .map(|tag| ATTRIBUTES.iter().map(|n| attribute(tag, n)).collect())
+                .collect();
+            actual.push_str(&line(&path, values));
+        }
+        let tokens = [
+            "<input",
+            " ",
+            "\n",
+            "\t",
+            "\u{a0}",
+            "\u{2003}",
+            "=",
+            "\"",
+            "'",
+            ">",
+            "/",
+            "name",
+            "NAME",
+            "value",
+            "checked",
+            "chec\u{212a}ed",
+            "selected",
+            "\u{17f}elected",
+            "class",
+            "cla\u{17f}\u{17f}",
+            "id",
+            "ïd",
+            "ÏD",
+            "a.b",
+            "x",
+            "é",
+            "&amp;",
+        ];
+        let names = [
+            "name", "value", "checked", "selected", "class", "id", "ïd", "a.b", "NAME", "",
+        ];
+        let mut generator = Generator::new(3304);
+        for chunk in 0..200 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let tag = generator.text(&tokens, 10);
+                    attribute(&tag, generator.pick(&names))
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("wordpress_attribute", &actual);
+    }
+
+    #[test]
+    fn find_form_snapshot() {
+        let mut actual = String::new();
+        for (name, form) in forms() {
+            actual.push_str(&line(&name, form));
+        }
+        check("wordpress_find_form", &actual);
+    }
+
+    #[test]
+    fn form_controls_snapshot() {
+        let mut actual = String::new();
+        for (name, form) in forms() {
+            actual.push_str(&line(&name, form_controls(&form)));
+        }
+        check("wordpress_form_controls", &actual);
+    }
+
+    #[test]
+    fn plain_text_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, plain_text(&page)));
+        }
+        check("wordpress_plain_text", &actual);
+    }
+
+    #[test]
+    fn get_rest_nonce_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_rest_nonce(&page)));
+        }
+        check("wordpress_get_rest_nonce", &actual);
+    }
+
+    #[test]
+    fn get_log_out_url_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_log_out_url(&page)));
+        }
+        check("wordpress_get_log_out_url", &actual);
+    }
+
+    #[test]
+    fn login_error_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, login_error(&page)));
+        }
+        check("wordpress_login_error", &actual);
+    }
+
+    #[test]
+    fn body_text_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, body_text(&page)));
+        }
+        check("wordpress_body_text", &actual);
+    }
+
+    // Every <loc> on the saved pages, and URLs that are not.
+    fn urls() -> Vec<String> {
+        let mut found: Vec<String> = fixtures()
+            .iter()
+            .flat_map(|(_, page)| sitemap_locations(page))
+            .collect();
+        for url in [
+            "http://localhost:18082",
+            "http://localhost:18082/",
+            "https://example.com/a/b?c=d",
+            "HTTPS://Example.com",
+            "git+ssh://host/path",
+            "1http://host/path",
+            "/relative/path",
+            "relative",
+            "",
+            "http:/one-slash",
+            "http://example.com/wp-sitemap-posts-page-1.xml",
+            "http://example.com/wp-sitemap-taxonomies-category-12.xml",
+            "http://example.com/wp-sitemap-users-1.xml",
+            "http://example.com/wp-sitemap-posts-a-b-c-1.xml",
+            "http://example.com/wp-sitemap-posts--1.xml",
+            "http://example.com/wp-sitemap.xml",
+        ] {
+            found.push(url.to_string());
+        }
+        found
+    }
+
+    #[test]
+    fn sitemap_locations_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, sitemap_locations(&page)));
+        }
+        check("wordpress_sitemap_locations", &actual);
+    }
+
+    #[test]
+    fn site_path_snapshot() {
+        let mut actual = String::new();
+        for url in urls() {
+            actual.push_str(&line(&url, site_path(&url)));
+        }
+        check("wordpress_site_path", &actual);
+    }
+
+    #[test]
+    fn sitemap_kind_snapshot() {
+        let mut actual = String::new();
+        for url in urls() {
+            actual.push_str(&line(&url, sitemap_kind(&url)));
+        }
+        check("wordpress_sitemap_kind", &actual);
     }
 }

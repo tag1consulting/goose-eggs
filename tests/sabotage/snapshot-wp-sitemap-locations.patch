@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bf6a37f..bf38a0e 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -2030,7 +2030,7 @@ pub(crate) fn site_path(url: &str) -> String {
+ fn sitemap_locations(xml: &str) -> Vec<String> {
+     SITEMAP_LOCATION
+         .captures_iter(xml)
+-        .map(|c| html_escape::decode_html_entities(&c[1]).to_string())
++        .map(|c| html_escape::decode_html_entities(&c[0]).to_string())
+         .collect()
+ }
+ 

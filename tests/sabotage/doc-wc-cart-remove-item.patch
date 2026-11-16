@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..3d0ad81 100644
+index 69c128f..a4cac0b 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -866,7 +866,7 @@ impl StoreApiCart {
+@@ -867,7 +867,7 @@ impl StoreApiCart {
          key: &str,
      ) -> Result<serde_json::Value, Box<TransactionError>> {
          let body = serde_json::json!({ "key": key });

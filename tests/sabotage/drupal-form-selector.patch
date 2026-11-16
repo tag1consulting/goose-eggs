@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..f4434cf 100644
+index 9bffb7c..f38cc3c 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -39,7 +39,7 @@ use std::env;
- pub fn get_form(html: &str, name: &str) -> String {
-     let re = Regex::new(&format!(
+@@ -41,7 +41,7 @@ pub fn get_form(html: &str, name: &str) -> String {
+     // expression; the pattern is compiled once per name and kept.
+     let pattern = format!(
          // Lazy match to avoid matching multiple forms.
 -        r#"<form.*?(data-drupal-selector|id)="{name}".*?>(.*?)</form>"#,
 +        r#"<form.*?(id)="{name}".*?>(.*?)</form>"#,
-     ))
-     .unwrap();
+     );
      // Strip carriage returns to simplify regex.
+     let line = html.replace('\n', "");

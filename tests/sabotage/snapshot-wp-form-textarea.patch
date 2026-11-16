@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bf6a37f..38ee96b 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -22,7 +22,7 @@ static OPTION_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<option\
+ static FORM_END: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</form\s*>").unwrap());
+ static FORM_CONTROL: LazyLock<Regex> = LazyLock::new(|| {
+     Regex::new(
+-        r"(?is)<input\b[^>]*>|<textarea\b[^>]*>.*?</textarea\s*>|<select\b[^>]*>.*?</select\s*>",
++        r"(?is)<input\b[^>]*>|<select\b[^>]*>.*?</select\s*>",
+     )
+     .unwrap()
+ });
