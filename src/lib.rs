@@ -30,9 +30,12 @@ pub mod wordpress;
 // The page parsing regular expressions, each compiled once on first use.
 static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
 static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
-static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
-static CSS_ELEMENT: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());
+static SRC_ELEMENT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?i)src=(?:"(.*?)"|'(.*?)')"#).unwrap());
+static CSS_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?i)href=(?:"([^"]*\.css[^"]*)"|'([^']*\.css[^']*)')"#).unwrap()
+});
+static LINK_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<link\b[^>]*>").unwrap());
 
 // The most patterns `with_cached_regex` keeps on each thread.
 const REGEX_CACHE_SIZE: usize = 64;
@@ -1128,6 +1131,47 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
     }
 }
 
+// The attribute value a pattern captured in double (group 1) or single (group 2) quotes.
+fn quoted<'h>(captures: &regex::Captures<'h>) -> &'h str {
+    captures
+        .get(1)
+        .or_else(|| captures.get(2))
+        .map_or("", |m| m.as_str())
+}
+
+// The local URLs of `<link rel="preload">` and `<link rel="modulepreload">`
+// tags, which a browser fetches with the page, each with the kind of asset it
+// is: a module or script (`js`), or what its `as` names. Stylesheets are left
+// to `get_css_elements`.
+fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'static str)> {
+    let mut elements = Vec::new();
+    for tag in LINK_TAG.find_iter(html) {
+        let tag = tag.as_str();
+        let rel = wordpress::attribute(tag, "rel")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        let kind = if rel.split_whitespace().any(|r| r == "modulepreload") {
+            "js"
+        } else if rel.split_whitespace().any(|r| r == "preload") {
+            match wordpress::attribute(tag, "as").as_deref() {
+                Some("style") => continue,
+                Some("image") => "img",
+                Some("font") => "font",
+                _ => "js",
+            }
+        } else {
+            continue;
+        };
+        match wordpress::attribute(tag, "href") {
+            Some(href) if !href.is_empty() && valid_local_uri(user, &href) => {
+                elements.push((href, kind))
+            }
+            _ => {}
+        }
+    }
+    elements
+}
+
 /// Extract all local static elements defined with a `src=` tag from the the provided html.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
@@ -1138,8 +1182,9 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // @TODO: parse HTML5 srcset= also
     let mut elements: Vec<String> = Vec::new();
     for url in SRC_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
-        if valid_local_uri(user, &url[1]) {
-            elements.push(url[1].to_string());
+        let url = quoted(&url);
+        if valid_local_uri(user, url) {
+            elements.push(url.to_string());
         }
     }
     elements
@@ -1154,8 +1199,9 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // <foo> is the URL to local css assets.
     let mut elements: Vec<String> = Vec::new();
     for url in CSS_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
-        if valid_local_uri(user, &url[1]) {
-            elements.push(url[1].to_string());
+        let url = quoted(&url);
+        if valid_local_uri(user, url) {
+            elements.push(url.to_string());
         }
     }
     elements
@@ -1231,6 +1277,13 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // <foo> is the URL to local css assets.
     for url in get_css_elements(user, html).await {
         let _ = user.get_named(&url, "static asset: css").await;
+    }
+
+    // Preloaded scripts, modules, fonts and images.
+    for (url, kind) in get_preload_elements(user, html) {
+        let _ = user
+            .get_named(&url, &("static asset: ".to_owned() + kind))
+            .await;
     }
 }
 
@@ -2010,6 +2063,45 @@ mod tests {
                 case
             );
         }
+    }
+
+    #[tokio::test]
+    async fn single_quoted_assets() {
+        let mut user = test_user();
+        // As WordPress prints its stylesheets and avatars.
+        let html = r#"<link rel='stylesheet' id='a-css' href='/a.css?ver=1' media='all' /><script src='/b.js'></script><img alt='' src='/c.png?s=96&#038;d=mm'>"#;
+        assert_eq!(
+            get_css_elements(&mut user, html).await,
+            ["/a.css?ver=1"],
+            "single quoted stylesheet"
+        );
+        assert_eq!(
+            get_src_elements(&mut user, html).await,
+            ["/b.js", "/c.png?s=96&d=mm"],
+            "single quoted sources"
+        );
+    }
+
+    #[test]
+    fn preload_assets() {
+        let mut user = test_user();
+        let html = r#"<link rel="modulepreload" href="/m.js?ver=1" id="m">
+<link rel='preload' href='/f.woff2' as='font' crossorigin>
+<link rel="preload" href="/s.css" as="style">
+<link rel="preload" href="/i.png" as="image">
+<link rel="preload" href="/p.js" as="script">
+<link rel="preload" href="http://other.com/o.js" as="script">
+<link rel="alternate" href="/feed/">"#;
+        assert_eq!(
+            get_preload_elements(&mut user, html),
+            [
+                ("/m.js?ver=1".to_string(), "js"),
+                ("/f.woff2".to_string(), "font"),
+                ("/i.png".to_string(), "img"),
+                ("/p.js".to_string(), "js"),
+            ],
+            "preloaded assets"
+        );
     }
 }
 
