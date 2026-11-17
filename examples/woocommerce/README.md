@@ -4,8 +4,10 @@ A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wo
 
 It has three kinds of users:
 
+Every page a shopper views (shop, category, product, search, cart, checkout, order received, My Account) is loaded with its static assets through `goose_eggs::validate_and_load_static_assets`, as the `umami` example loads its pages; cart and checkout writes go through the Store API, as the demo theme's Add to cart buttons and its cart and checkout blocks send them.
+
 - **Browsing shopper** (weight 6): the shop page, product category archives, product pages, and product searches for words from product names.
-- **Buyer** (weight 3): browses products, puts one to three products in the cart through the Store API, views the cart, and checks out with Cash on delivery. The checkout transaction has the lowest weight, so most carts are abandoned, as in a real shop.
+- **Buyer** (weight 3): browses products, puts one to three products in the cart through the Store API, views the cart page, and checks out with Cash on delivery: the checkout page, the order, then the order received page. The checkout transaction has the lowest weight, so most carts are abandoned, as in a real shop.
 - **Returning customer** (weight 1): logs into My Account with its own customer account when it starts, then views past orders, browses, and buys.
 
 ## Running it locally
@@ -81,11 +83,10 @@ async fn search(user: &mut GooseUser) -> TransactionResult {
 }
 
 async fn edit(user: &mut GooseUser) -> TransactionResult {
-    let html = user.get("wp-admin/").await?.response?.text().await?;
-    let nonce = wordpress::get_rest_nonce(&html).unwrap_or_default();
-    let draft = wordpress::create_post(user, &nonce, &Post::builder().title("Draft").build()).await?;
+    // Each opens the block editor for its nonce, then saves as the editor does.
+    let draft = wordpress::create_post(user, "", &Post::builder().title("Draft").build()).await?;
     let id = draft["id"].as_u64().unwrap_or_default();
-    wordpress::update_post(user, &nonce, id, &Post::builder().title("Edited").build()).await?;
+    wordpress::update_post(user, "", id, &Post::builder().title("Edited").build()).await?;
     Ok(())
 }
 ```
