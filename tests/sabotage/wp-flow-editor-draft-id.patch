@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index c9547c3..c758bca 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1890,7 +1890,7 @@ pub async fn create_post(
+     };
+     let (nonce, html) = open_editor(user, &editor, &editor).await?;
+     // The editor saves to the draft it opened, when the page names it.
+-    match get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok()) {
++    match get_form_value(&html, "post_id").and_then(|id| id.parse::<u64>().ok()) {
+         Some(id) => {
+             let mut draft = post.clone();
+             draft

@@ -1,5 +1,5 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..9dc7452 100644
+index 674cfca..dee8dce 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
 @@ -28,7 +28,7 @@ pub mod woocommerce;
@@ -9,5 +9,5 @@ index b41c6b2..9dc7452 100644
 -static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
 +static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<HEAD(.*?)</HEAD>"#).unwrap());
  static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
- static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
- static CSS_ELEMENT: LazyLock<Regex> =
+ static SRC_ELEMENT: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r#"(?i)src=(?:"(.*?)"|'(.*?)')"#).unwrap());

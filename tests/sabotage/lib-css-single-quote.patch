@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 674cfca..f36d364 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -33,7 +33,7 @@ static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</tit
+ static SRC_ELEMENT: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r#"(?i)src=(?:"(.*?)"|'(.*?)')"#).unwrap());
+ static CSS_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+-    Regex::new(r#"(?i)href=(?:"([^"]*\.css[^"]*)"|'([^']*\.css[^']*)')"#).unwrap()
++    Regex::new(r#"(?i)href=(?:"([^"]*\.css[^"]*)")"#).unwrap()
+ });
+ static LINK_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<link\b[^>]*>").unwrap());
+ 

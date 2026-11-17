@@ -1,0 +1,14 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index c9547c3..7880d7d 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1920,7 +1920,8 @@ async fn open_editor(
+ ) -> Result<(String, String), Box<TransactionError>> {
+     let goose = get_named(user, path, name).await?;
+     let mut request = goose.request.clone();
+-    let html = load_page(user, goose, None).await?;
++    let _ = load_page;
++    let html = read_response(goose).await.1;
+     match get_rest_nonce(&html) {
+         Some(nonce) => Ok((nonce, html)),
+         None => fail(

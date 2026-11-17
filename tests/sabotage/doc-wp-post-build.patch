@@ -1,17 +1,16 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index f97ea67..266938f 100644
+index c9547c3..816b11e 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1761,7 +1761,11 @@ impl<'a> PostBuilder<'a> {
-     /// ```
-     pub fn build(self) -> Post<'a> {
-         let Self { url, fields } = self;
--        Post { url, fields }
+@@ -1793,9 +1793,10 @@ impl<'a> PostBuilder<'a> {
+             fields,
+             rest_only,
+         } = self;
 +        let _ = fields;
-+        Post {
-+            url,
+         Post {
+             url,
+-            fields,
 +            fields: serde_json::Map::new(),
-+        }
+             rest_only,
+         }
      }
- }
- 

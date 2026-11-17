@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 674cfca..9333d63 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1155,7 +1155,7 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
+         } else if rel.split_whitespace().any(|r| r == "preload") {
+             match wordpress::attribute(tag, "as").as_deref() {
+                 Some("style") => continue,
+-                Some("image") => "img",
++                Some("image") => "js",
+                 Some("font") => "font",
+                 _ => "js",
+             }

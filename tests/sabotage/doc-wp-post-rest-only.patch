@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index c9547c3..f04b8b3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1772,7 +1772,7 @@ impl<'a> PostBuilder<'a> {
+     /// # assert_eq!(server.editor_loads(), 0, "doc example PostBuilder::rest_only: editor loads");
+     /// ```
+     pub fn rest_only(mut self, rest_only: bool) -> Self {
+-        self.rest_only = rest_only;
++        let _ = rest_only;
+         self
+     }
+ 
