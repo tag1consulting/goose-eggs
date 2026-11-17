@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..9a56bd1 100644
+index 674cfca..7bd7359 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1406,7 +1406,7 @@ pub async fn validate_page<'a>(
+@@ -1459,7 +1459,7 @@ pub async fn validate_page<'a>(
                          return Ok(html);
                      }
                      if !validate_header.value.is_empty()
