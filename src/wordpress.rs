@@ -5,7 +5,7 @@
 //! `?s=`, the core sitemap and the REST API. None of them assume a theme or any
 //! content; every path is configurable on its builder.
 
-use crate::with_cached_regex;
+use crate::attribute;
 use goose::goose::GooseResponse;
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -51,89 +51,6 @@ static SITEMAP_KIND: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
         .unwrap()
 });
-
-// The decoded value of `name` in an opening tag, with the value in double,
-// single or no quotes; `Some("")` for an attribute without a value.
-//
-// This is what the regular expression
-// `(?is)\s<name>(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)`
-// matches, with `name` escaped, in code: at the first white space followed by
-// `name` (in any case) where either a value then white space, `/` or `>`
-// follows, or white space, `/` or `>` follows at once.
-pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    if !name.is_ascii() {
-        // Case insensitive matching of other characters is left to the
-        // regular expression, compiled once per name.
-        let pattern = format!(
-            r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
-            regex::escape(name)
-        );
-        return with_cached_regex(pattern, |re| {
-            let capture = re.captures(tag)?;
-            let value = capture
-                .get(1)
-                .or_else(|| capture.get(2))
-                .or_else(|| capture.get(3))
-                .map_or("", |m| m.as_str());
-            Some(html_escape::decode_html_entities(value).to_string())
-        });
-    }
-    let ends_value =
-        |rest: &str| rest.starts_with(|c: char| c.is_whitespace() || c == '/' || c == '>');
-    for (i, c) in tag.char_indices() {
-        if !c.is_whitespace() {
-            continue;
-        }
-        let rest = match strip_name(&tag[i + c.len_utf8()..], name) {
-            Some(rest) => rest,
-            None => continue,
-        };
-        if let Some((value, after)) = attribute_value(rest) {
-            if ends_value(after) {
-                return Some(html_escape::decode_html_entities(value).to_string());
-            }
-        }
-        if ends_value(rest) {
-            return Some(String::new());
-        }
-    }
-    None
-}
-
-// `text` after a leading `name`, an ASCII name matched as `(?i)` does: ASCII
-// letters in either case, and also the Kelvin sign for `k` and the long s for `s`.
-fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
-    let mut chars = text.chars();
-    for n in name.chars() {
-        let c = chars.next()?;
-        let same = c.eq_ignore_ascii_case(&n)
-            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
-            || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
-        if !same {
-            return None;
-        }
-    }
-    Some(chars.as_str())
-}
-
-// `\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+))` at the start of `text`: the
-// value, and the text after it.
-fn attribute_value(text: &str) -> Option<(&str, &str)> {
-    let text = text.trim_start().strip_prefix('=')?.trim_start();
-    for quote in ['"', '\''] {
-        if let Some(quoted) = text.strip_prefix(quote) {
-            let end = quoted.find(quote)?;
-            return Some((&quoted[..end], &quoted[end + 1..]));
-        }
-    }
-    let end = text
-        .find(|c: char| c.is_whitespace() || matches!(c, '"' | '\'' | '>' | '/'))
-        .unwrap_or(text.len());
-    if end == 0 {
-        return None;
-    }
-    Some((&text[..end], &text[end..]))
-}
 
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
@@ -2501,67 +2418,6 @@ mod tests {
         include_str!("../tests/fixtures/woocommerce/classic-checkout.html");
 
     #[test]
-    fn attribute_cases() {
-        // (case, tag, attribute, expected)
-        let cases = [
-            (
-                "double quoted",
-                r#"<input name="a" value="b">"#,
-                "value",
-                Some("b"),
-            ),
-            (
-                "single quoted",
-                "<input name='a' value='b'>",
-                "value",
-                Some("b"),
-            ),
-            ("unquoted", "<input name=a value=b>", "value", Some("b")),
-            ("no value", "<input checked name=a>", "checked", Some("")),
-            (
-                "last, self closing",
-                r#"<input name="a" checked/>"#,
-                "checked",
-                Some(""),
-            ),
-            (
-                "entities decoded",
-                r#"<a href="/x?a=1&#038;b=2">"#,
-                "href",
-                Some("/x?a=1&b=2"),
-            ),
-            (
-                "newlines",
-                "<input\n\tname=\"a\"\n\tvalue=\"b\"\n/>",
-                "value",
-                Some("b"),
-            ),
-            (
-                "upper case",
-                r#"<INPUT NAME="a" VALUE="b">"#,
-                "value",
-                Some("b"),
-            ),
-            (
-                "name is not a suffix",
-                r#"<input data-value="x" value="b">"#,
-                "value",
-                Some("b"),
-            ),
-            ("only a suffix", r#"<input data-value="x">"#, "value", None),
-            ("missing", r#"<input name="a">"#, "value", None),
-        ];
-        for (case, tag, name, expected) in cases {
-            assert_eq!(
-                attribute(tag, name).as_deref(),
-                expected,
-                "attribute case {}",
-                case
-            );
-        }
-    }
-
-    #[test]
     fn get_form_cases() {
         // (case, html, form name, expected form)
         let cases = [
@@ -3059,28 +2915,7 @@ mod tests {
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
-    use crate::snapshot::{check, fixtures, line, Generator};
-
-    // Every opening or closing tag on a page, found without a regular expression.
-    fn tags(page: &str) -> Vec<&str> {
-        let mut found = Vec::new();
-        let mut rest = page;
-        while let Some(start) = rest.find('<') {
-            match rest[start..].find('>') {
-                Some(end) => {
-                    found.push(&rest[start..start + end + 1]);
-                    rest = &rest[start + end + 1..];
-                }
-                None => break,
-            }
-        }
-        found
-    }
-
-    const ATTRIBUTES: &[&str] = &[
-        "id", "name", "class", "value", "type", "checked", "selected", "href", "action", "src",
-        "ïd", "a.b", "NAME", "data-x",
-    ];
+    use crate::snapshot::{check, fixtures, line};
 
     const FORM_NAMES: &[&str] = &[
         "loginform",
@@ -3119,61 +2954,6 @@ mod snapshot_tests {
             }
         }
         found
-    }
-
-    #[test]
-    fn attribute_snapshot() {
-        let mut actual = String::new();
-        for (path, page) in fixtures() {
-            let values: Vec<Vec<_>> = tags(&page)
-                .into_iter()
-                .map(|tag| ATTRIBUTES.iter().map(|n| attribute(tag, n)).collect())
-                .collect();
-            actual.push_str(&line(&path, values));
-        }
-        let tokens = [
-            "<input",
-            " ",
-            "\n",
-            "\t",
-            "\u{a0}",
-            "\u{2003}",
-            "=",
-            "\"",
-            "'",
-            ">",
-            "/",
-            "name",
-            "NAME",
-            "value",
-            "checked",
-            "chec\u{212a}ed",
-            "selected",
-            "\u{17f}elected",
-            "class",
-            "cla\u{17f}\u{17f}",
-            "id",
-            "ïd",
-            "ÏD",
-            "a.b",
-            "x",
-            "é",
-            "&amp;",
-        ];
-        let names = [
-            "name", "value", "checked", "selected", "class", "id", "ïd", "a.b", "NAME", "",
-        ];
-        let mut generator = Generator::new(3304);
-        for chunk in 0..200 {
-            let values: Vec<_> = (0..100)
-                .map(|_| {
-                    let tag = generator.text(&tokens, 10);
-                    attribute(&tag, generator.pick(&names))
-                })
-                .collect();
-            actual.push_str(&line(&format!("generated {}", chunk), values));
-        }
-        check("wordpress_attribute", &actual);
     }
 
     #[test]
