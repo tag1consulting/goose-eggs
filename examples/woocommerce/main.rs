@@ -92,7 +92,8 @@ async fn main() -> Result<(), GooseError> {
 
 /// Load the shop page.
 async fn shop_page(user: &mut GooseUser) -> TransactionResult {
-    view(user, "shop/", "shop", "post-type-archive-product").await
+    woocommerce::shop_page(user, &shop(), None).await?;
+    Ok(())
 }
 
 /// Load a random product category archive.
@@ -106,19 +107,23 @@ async fn category_page(user: &mut GooseUser) -> TransactionResult {
 /// Load a random product's page.
 async fn product_page(user: &mut GooseUser) -> TransactionResult {
     let product = random_product();
-    view(user, &product.url, "product page", "single-product").await
+    woocommerce::product_page(user, &product.url, None).await?;
+    Ok(())
 }
 
 /// Search for a word from a product's name. WooCommerce shows the results, or
 /// the product itself when only one matches.
 async fn product_search(user: &mut GooseUser) -> TransactionResult {
-    let path = format!("?s={}&post_type=product", random_search_word());
-    view(user, &path, "product search", "woocommerce-page").await
+    let shop_page = goose_eggs::Validate::builder()
+        .text("woocommerce-page")
+        .build();
+    woocommerce::product_search(user, &random_search_word(), Some(&shop_page)).await?;
+    Ok(())
 }
 
 /// Load the cart page.
 async fn view_cart(user: &mut GooseUser) -> TransactionResult {
-    view(user, "cart/", "cart", "wp-block-woocommerce-cart").await
+    view(user, shop().cart(), "cart", "wp-block-woocommerce-cart").await
 }
 
 /// Log in as this user's customer. The cart's nonce was the visitor's, so the
@@ -132,11 +137,6 @@ async fn log_in(user: &mut GooseUser) -> TransactionResult {
 
 /// Load the customer's orders.
 async fn orders(user: &mut GooseUser) -> TransactionResult {
-    view(
-        user,
-        "my-account/orders/",
-        "my account orders",
-        "woocommerce-MyAccount-navigation",
-    )
-    .await
+    woocommerce::my_account_orders(user, &shop()).await?;
+    Ok(())
 }

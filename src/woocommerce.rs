@@ -52,6 +52,32 @@ impl<'a> Shop<'a> {
     pub fn builder() -> ShopBuilder<'a> {
         ShopBuilder::new()
     }
+
+    /// The cart page's path.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::woocommerce::Shop;
+    ///
+    /// let shop = Shop::builder().cart("basket/").build();
+    /// assert_eq!(shop.cart(), "basket/", "doc example Shop::cart");
+    /// ```
+    pub fn cart(&self) -> &str {
+        self.cart
+    }
+
+    /// The checkout page's path.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::woocommerce::Shop;
+    ///
+    /// let shop = Shop::builder().checkout("pay/").build();
+    /// assert_eq!(shop.checkout(), "pay/", "doc example Shop::checkout");
+    /// ```
+    pub fn checkout(&self) -> &str {
+        self.checkout
+    }
 }
 impl Default for Shop<'_> {
     /// A shop on WooCommerce's default paths.

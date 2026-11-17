@@ -67,7 +67,6 @@ pub fn random_search_word() -> String {
         .choose(&mut rand::rng())
         .unwrap_or("shirt")
         .to_lowercase()
-        .replace(|c: char| !c.is_alphanumeric(), "")
 }
 
 /// This user's username and password: its own demo shop customer, unless
@@ -112,7 +111,7 @@ pub async fn check_out(user: &mut GooseUser) -> TransactionResult {
     }
     view(
         user,
-        "checkout/",
+        shop().checkout(),
         "checkout",
         "wp-block-woocommerce-checkout",
     )
@@ -121,10 +120,10 @@ pub async fn check_out(user: &mut GooseUser) -> TransactionResult {
     let result = cart.checkout(user, &Checkout::builder().build()).await;
     user.set_session_data(cart);
     let order = result?;
-    let received = order["payment_result"]["redirect_url"]
-        .as_str()
-        .unwrap_or("checkout/order-received/")
-        .to_string();
+    let received = match order["payment_result"]["redirect_url"].as_str() {
+        Some(url) => url.to_string(),
+        None => format!("{}order-received/", shop().checkout()),
+    };
     view(
         user,
         &received,

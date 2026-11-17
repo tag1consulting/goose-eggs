@@ -2,9 +2,9 @@
 
 A load test of a WooCommerce shop written with Goose Eggs' `woocommerce` and `wordpress` helpers. It runs against any WooCommerce shop on WooCommerce's default pages and the default block cart and checkout: it learns the shop's products from the Store API and its category archives from WordPress's core sitemap when it starts, so nothing about the catalog is hard coded.
 
-It has three kinds of users:
+Every page a shopper views is loaded with its static assets, as the `umami` example loads its pages: the shop, product, search and My Account orders pages through Goose Eggs' `woocommerce::shop_page`, `product_page`, `product_search` and `my_account_orders`, and the category, cart, checkout and order received pages, which have no helper, through `goose_eggs::validate_and_load_static_assets`. Cart and checkout writes go through the Store API, as the demo theme's Add to cart buttons and its cart and checkout blocks send them.
 
-Every page a shopper views (shop, category, product, search, cart, checkout, order received, My Account) is loaded with its static assets through `goose_eggs::validate_and_load_static_assets`, as the `umami` example loads its pages; cart and checkout writes go through the Store API, as the demo theme's Add to cart buttons and its cart and checkout blocks send them.
+It has three kinds of users:
 
 - **Browsing shopper** (weight 6): the shop page, product category archives, product pages, and product searches for words from product names.
 - **Buyer** (weight 3): browses products, puts one to three products in the cart through the Store API, views the cart page, and checks out with Cash on delivery: the checkout page, the order, then the order received page. The checkout transaction has the lowest weight, so most carts are abandoned, as in a real shop.
