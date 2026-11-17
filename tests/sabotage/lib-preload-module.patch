@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 674cfca..95e95e0 100644
+index 8f368f9..0dfb144 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1150,7 +1150,7 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
-         let rel = wordpress::attribute(tag, "rel")
+@@ -1233,7 +1233,7 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
+         let rel = attribute(tag, "rel")
              .unwrap_or_default()
              .to_ascii_lowercase();
 -        let kind = if rel.split_whitespace().any(|r| r == "modulepreload") {
 +        let kind = if rel.split_whitespace().any(|r| r == "module") {
              "js"
          } else if rel.split_whitespace().any(|r| r == "preload") {
-             match wordpress::attribute(tag, "as").as_deref() {
+             match attribute(tag, "as").as_deref() {
