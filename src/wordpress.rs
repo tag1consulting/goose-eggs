@@ -1613,6 +1613,8 @@ pub struct Post<'a> {
     url: &'a str,
     // The fields to send, as the REST API names them.
     fields: serde_json::Map<String, serde_json::Value>,
+    // Save through the REST API alone, without opening the block editor.
+    rest_only: bool,
 }
 impl<'a> Post<'a> {
     /// Convenience function to bring [`PostBuilder`] into scope.
@@ -1651,6 +1653,7 @@ impl<'a> Post<'a> {
 pub struct PostBuilder<'a> {
     url: &'a str,
     fields: serde_json::Map<String, serde_json::Value>,
+    rest_only: bool,
 }
 impl<'a> PostBuilder<'a> {
     // Internally used when building to set defaults.
@@ -1660,6 +1663,8 @@ impl<'a> PostBuilder<'a> {
             url: "wp-json/wp/v2/posts",
             // Defaults to sending no fields.
             fields: serde_json::Map::new(),
+            // Defaults to opening the block editor first.
+            rest_only: false,
         }
     }
 
@@ -1748,6 +1753,29 @@ impl<'a> PostBuilder<'a> {
         self
     }
 
+    /// Save through the REST API alone, with the nonce passed to [`create_post`]
+    /// or [`update_post`], without first opening the post in the block editor.
+    ///
+    /// Defaults to `false`: the editor page (`wp-admin/post-new.php`, or
+    /// `wp-admin/post.php?post={id}&action=edit`) is loaded with its static
+    /// assets as an editor opens it, and its REST nonce is used for the save.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::wordpress::Post;
+    ///
+    /// // Only the REST request, as goose-eggs 0.7 sent it.
+    /// let _post = Post::builder().title("Fast").rest_only(true).build();
+    /// # mod support { include!("../tests/doc/wordpress.rs"); }
+    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Fast"}"#);
+    /// # support::create_post("PostBuilder::rest_only", &server, &_post);
+    /// # assert_eq!(server.editor_loads(), 0, "doc example PostBuilder::rest_only: editor loads");
+    /// ```
+    pub fn rest_only(mut self, rest_only: bool) -> Self {
+        self.rest_only = rest_only;
+        self
+    }
+
     /// Build the [`Post`] object which is then passed to [`create_post`] or [`update_post`].
     ///
     /// # Example
@@ -1760,8 +1788,16 @@ impl<'a> PostBuilder<'a> {
     /// # support::create_post("PostBuilder::build", &server, &_post);
     /// ```
     pub fn build(self) -> Post<'a> {
-        let Self { url, fields } = self;
-        Post { url, fields }
+        let Self {
+            url,
+            fields,
+            rest_only,
+        } = self;
+        Post {
+            url,
+            fields,
+            rest_only,
+        }
     }
 }
 
@@ -1797,27 +1833,34 @@ async fn save_post(
     Ok(json)
 }
 
-/// Create a post through the REST API, as the block editor does: a POST of the
-/// post's fields as JSON, with the logged in user's REST nonce (see
-/// [`get_rest_nonce`]) in an `X-WP-Nonce` header.
+/// Create a post as an editor does in the block editor: open the editor
+/// (`wp-admin/post-new.php`, loaded with its static assets as
+/// [`validate_and_load_static_assets`](crate::validate_and_load_static_assets)
+/// loads any page), then save through the REST API as the editor's Save button
+/// does: a POST of the post's fields as JSON to the post the editor opened, with
+/// the editor page's REST nonce (see [`get_rest_nonce`]) in an `X-WP-Nonce`
+/// header. A post saved without a status is saved as a `draft`, as the editor
+/// saves one. The editor is opened for the post type of the post's route:
+/// `wp-json/wp/v2/pages` opens `post-new.php?post_type=page`.
 ///
-/// Fails when WordPress refuses, for example a 403 `rest_cookie_invalid_nonce`
-/// for a missing or stale nonce, or answers without a post. Returns the post
-/// WordPress created, as JSON.
+/// With [`PostBuilder::rest_only`], only the REST request is sent: a POST of
+/// the fields to the route, with `nonce`. Otherwise `nonce` is not used.
+///
+/// Fails when the editor page has no REST nonce, or when WordPress refuses, for
+/// example a 403 `rest_cookie_invalid_nonce` for a missing or stale nonce, or
+/// answers without a post. Returns the post WordPress saved, as JSON.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{create_post, get_rest_nonce, Post};
+/// use goose_eggs::wordpress::{create_post, Post};
 ///
 /// transaction!(write);
 ///
 /// async fn write(user: &mut GooseUser) -> TransactionResult {
-///     // Any admin page has the nonce; the editor would load post-new.php.
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
+///     // Opens post-new.php for its nonce, so no nonce is passed.
 ///     let post = Post::builder().title("Written by Goose").build();
-///     let created = create_post(user, &nonce, &post).await?;
+///     let created = create_post(user, "", &post).await?;
 ///     assert!(created["id"].as_u64().is_some());
 ///
 ///     Ok(())
@@ -1828,21 +1871,79 @@ async fn save_post(
 /// # let result = support::block_on(write(&mut user));
 /// # assert!(result.is_ok(), "doc example create_post: {}", support::failure(&result));
 /// # assert_eq!(server.saves(), 1, "doc example create_post: posts saved");
+/// # assert_eq!(server.editor_loads(), 1, "doc example create_post: editor loads");
 /// ```
 pub async fn create_post(
     user: &mut GooseUser,
     nonce: &str,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    save_post(user, nonce, post.url, post.url, post).await
+    if post.rest_only {
+        return save_post(user, nonce, post.url, post.url, post).await;
+    }
+    let route = post.url.trim_end_matches('/');
+    let (site, rest_base) = editor_site(route);
+    let editor = match rest_base {
+        "posts" => format!("{}wp-admin/post-new.php", site),
+        "pages" => format!("{}wp-admin/post-new.php?post_type=page", site),
+        post_type => format!("{}wp-admin/post-new.php?post_type={}", site, post_type),
+    };
+    let (nonce, html) = open_editor(user, &editor, &editor).await?;
+    // The editor saves to the draft it opened, when the page names it.
+    match get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok()) {
+        Some(id) => {
+            let mut draft = post.clone();
+            draft
+                .fields
+                .entry("status")
+                .or_insert_with(|| serde_json::Value::from("draft"));
+            let path = format!("{}/{}", route, id);
+            save_post(user, &nonce, &path, post.url, &draft).await
+        }
+        None => save_post(user, &nonce, post.url, post.url, post).await,
+    }
 }
 
-/// Update a post through the REST API, as the block editor saves one: a POST of
-/// the changed fields as JSON to the post's route, with the REST nonce in an
-/// `X-WP-Nonce` header.
+// The site part of a REST route (what comes before `wp-json/`) and its last
+// segment, the post type's REST base.
+fn editor_site(route: &str) -> (&str, &str) {
+    let site = route.find("wp-json/").map_or("", |i| &route[..i]);
+    (site, route.rsplit('/').next().unwrap_or_default())
+}
+
+// Open the block editor at `path` as an editor does, page and static assets,
+// and return its REST nonce and its HTML; fail when it has no nonce.
+async fn open_editor(
+    user: &mut GooseUser,
+    path: &str,
+    name: &str,
+) -> Result<(String, String), Box<TransactionError>> {
+    let goose = get_named(user, path, name).await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, None).await?;
+    match get_rest_nonce(&html) {
+        Some(nonce) => Ok((nonce, html)),
+        None => fail(
+            user,
+            &format!("{}: no REST nonce on the editor page", path),
+            &mut request,
+            None,
+            Some(&html),
+        ),
+    }
+}
+
+/// Update a post as an editor does in the block editor: open the post in the
+/// editor (`wp-admin/post.php?post={id}&action=edit`, loaded with its static
+/// assets), then save the changed fields as JSON to the post's REST route, with
+/// the editor page's REST nonce in an `X-WP-Nonce` header.
 ///
-/// The request is named `<route>/{id}`, so updates of every post share one line
-/// in the metrics. Fails as [`create_post`] does; returns the updated post.
+/// With [`PostBuilder::rest_only`], only the REST request is sent, with `nonce`.
+/// Otherwise `nonce` is not used.
+///
+/// The editor page is named `wp-admin/post.php?post={id}&action=edit` and the
+/// save `<route>/{id}`, so the requests for every post share one line each in
+/// the metrics. Fails as [`create_post`] does; returns the updated post.
 ///
 /// # Example
 /// ```rust
@@ -1852,10 +1953,15 @@ pub async fn create_post(
 /// transaction!(edit);
 ///
 /// async fn edit(user: &mut GooseUser) -> TransactionResult {
+///     // Only the REST request, with a nonce from any admin page.
 ///     let html = user.get("wp-admin/").await?.response?.text().await?;
 ///     let nonce = get_rest_nonce(&html).unwrap_or_default();
-///     let post = Post::builder().title("Hello world!").build();
+///     let post = Post::builder().title("Hello world!").rest_only(true).build();
 ///     let _updated = update_post(user, &nonce, 1, &post).await?;
+///
+///     // Open post 1 in the editor, then save it with the editor's nonce.
+///     let post = Post::builder().title("Hello world!").build();
+///     let _updated = update_post(user, "", 1, &post).await?;
 ///
 ///     Ok(())
 /// }
@@ -1864,7 +1970,8 @@ pub async fn create_post(
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(edit(&mut user));
 /// # assert!(result.is_ok(), "doc example update_post: {}", support::failure(&result));
-/// # assert_eq!(server.saves(), 1, "doc example update_post: posts saved");
+/// # assert_eq!(server.saves(), 2, "doc example update_post: posts saved");
+/// # assert_eq!(server.editor_loads(), 1, "doc example update_post: editor loads");
 /// ```
 pub async fn update_post(
     user: &mut GooseUser,
@@ -1874,7 +1981,14 @@ pub async fn update_post(
 ) -> Result<serde_json::Value, Box<TransactionError>> {
     let path = format!("{}/{}", post.url.trim_end_matches('/'), id);
     let name = format!("{}/{{id}}", post.url.trim_end_matches('/'));
-    save_post(user, nonce, &path, &name, post).await
+    if post.rest_only {
+        return save_post(user, nonce, &path, &name, post).await;
+    }
+    let (site, _) = editor_site(post.url);
+    let editor = format!("{}wp-admin/post.php?post={}&action=edit", site, id);
+    let editor_name = format!("{}wp-admin/post.php?post={{id}}&action=edit", site);
+    let (nonce, _) = open_editor(user, &editor, &editor_name).await?;
+    save_post(user, &nonce, &path, &name, post).await
 }
 
 /// The URLs of a site's content, by kind, as [`discover`] found them.

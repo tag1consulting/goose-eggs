@@ -58,6 +58,8 @@ pub fn log_out_nonce() -> String {
 pub struct Site {
     server: MockServer,
     counted: usize,
+    // The block editor page's mock, on sites that serve one.
+    editor: Option<usize>,
 }
 
 impl Site {
@@ -75,6 +77,10 @@ impl Site {
     /// Posts saved with the expected nonce and fields.
     pub fn saves(&self) -> usize {
         self.hits()
+    }
+    /// Block editor pages loaded.
+    pub fn editor_loads(&self) -> usize {
+        self.editor.map_or(0, |id| httpmock::Mock::new(id, &self.server).hits())
     }
 }
 
@@ -193,7 +199,7 @@ pub fn log_out_site() -> Site {
         when.method(GET).path("/wp-login.php").query_param("loggedout", "true");
         then.status(200).body(LOGGED_OUT);
     });
-    Site { server, counted }
+    Site { server, counted, editor: None }
 }
 
 /// How many times the log out link was followed with its nonce.
@@ -213,7 +219,7 @@ pub fn search_site(path: &str, keys: &str, post_type: Option<&str>) -> Site {
             then.status(200).body(SEARCH_RESULTS);
         })
         .id;
-    Site { server, counted }
+    Site { server, counted, editor: None }
 }
 
 /// Search with `params`; panic naming `example` unless one expected search ran.
@@ -263,7 +269,7 @@ pub fn comment_site_at(post: &str, url: &str, logged_in: bool, fields: &[(&str, 
             then.status(302).header("location", format!("/{}#comment-2", post));
         })
         .id;
-    Site { server, counted }
+    Site { server, counted, editor: None }
 }
 
 /// A post at `/{post}` taking comments at `/wp-comments-post.php`.
@@ -295,13 +301,23 @@ pub fn post_comment_fails(example: &str, site: &Site, comment: &Comment, text: &
 }
 
 /// A logged in site with the dashboard (and its REST nonce) at `/wp-admin/`,
-/// saving a post at `/{route}` only with that nonce and exactly the JSON `body`.
+/// the block editor (`post-new.php` and `post.php`, with that nonce), saving a post at
+/// `/{route}` only with that nonce and exactly the JSON `body`.
 pub fn rest_site(route: &str, body: &str) -> Site {
     let server = MockServer::start();
     server.mock(|when, then| {
         when.method(GET).path("/wp-admin/");
         then.status(200).body(DASHBOARD);
     });
+    let editor = server
+        .mock(|when, then| {
+            when.method(GET).path_matches(regex::Regex::new(r"^/wp-admin/post(-new)?\.php$").unwrap());
+            then.status(200).body(format!(
+                r#"<html><head><script>wp.apiFetch.use( wp.apiFetch.createNonceMiddleware( "{}" ) );</script></head><body><div id="editor"></div></body></html>"#,
+                rest_nonce()
+            ));
+        })
+        .id;
     let body: serde_json::Value = serde_json::from_str(body).unwrap();
     let counted = server
         .mock(|when, then| {
@@ -312,7 +328,7 @@ pub fn rest_site(route: &str, body: &str) -> Site {
             then.status(200).header("content-type", "application/json").body(REST_POST);
         })
         .id;
-    Site { server, counted }
+    Site { server, counted, editor: Some(editor) }
 }
 
 /// Create `post` with the dashboard's nonce; panic naming `example` unless it

@@ -22,6 +22,7 @@ const LOG_IN: &str = "log_in as the editor";
 const SEARCH: &str = "search for a word in the test data";
 const COMMENT: &str = "post_comment as the editor";
 const EDIT: &str = "create_post then update_post through REST";
+const EDITOR: &str = "create_post then update_post in the block editor";
 const LOG_OUT: &str = "log_out from the dashboard";
 
 static CONTENT: OnceLock<SiteContent> = OnceLock::new();
@@ -85,17 +86,35 @@ async fn wordpress_site() {
                 Box::pin(async move {
                     let html = user.get("wp-admin/").await?.response?.text().await?;
                     let nonce = wordpress::get_rest_nonce(&html).unwrap_or_default();
-                    let draft = Post::builder().title("Goose draft").build();
+                    let draft = Post::builder().title("Goose draft").rest_only(true).build();
                     let created = wordpress::create_post(user, &nonce, &draft).await?;
                     let id = created["id"].as_u64().unwrap_or_default();
                     let title = format!("Goose edit {}", goose_eggs::text::random_word(8));
-                    let edit = Post::builder().title(&title).build();
+                    let edit = Post::builder().title(&title).rest_only(true).build();
                     let updated = wordpress::update_post(user, &nonce, id, &edit).await?;
                     *EDITED.lock().unwrap() = updated["title"]["raw"].as_str().map(str::to_string);
                     if updated["title"]["raw"].as_str() != Some(title.as_str()) {
                         return Err(Box::new(TransactionError::Custom(format!(
                             "title not updated: {}",
                             updated["title"]
+                        ))));
+                    }
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR, |user| {
+                Box::pin(async move {
+                    let draft = Post::builder().title("Goose editor draft").build();
+                    let created = wordpress::create_post(user, "", &draft).await?;
+                    let id = created["id"].as_u64().unwrap_or_default();
+                    let edit = Post::builder().title("Goose editor edit").build();
+                    let updated = wordpress::update_post(user, "", id, &edit).await?;
+                    if created["status"] != "draft"
+                        || updated["title"]["raw"] != "Goose editor edit"
+                    {
+                        return Err(Box::new(TransactionError::Custom(format!(
+                            "not a draft, or title not updated: {} {}",
+                            created["status"], updated["title"]
                         ))));
                     }
                     Ok(())
@@ -130,6 +149,17 @@ async fn wordpress_site() {
             &metrics,
             EDIT,
             &["wp-json/wp/v2/posts", "wp-json/wp/v2/posts/{id}"],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
+            EDITOR,
+            &[
+                "wp-admin/post-new.php",
+                "wp-json/wp/v2/posts",
+                "wp-admin/post.php?post={id}&action=edit",
+                "wp-json/wp/v2/posts/{id}",
+            ],
             Expect::Pass,
         ),
         check_named(
