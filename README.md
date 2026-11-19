@@ -34,7 +34,7 @@ Besides page validation and static asset loading, goose-eggs has modules for the
 - `Login` and `log_in`, `log_out`: the log in form with WordPress's test cookie, and the nonce in the log out link
 - `SearchParams` and `search`: `?s=`, optionally limited to a post type
 - `Comment` and `post_comment`: the comment form, as an anonymous or logged in user, with random text by default so WordPress's duplicate check passes
-- `Post`, `create_post` and `update_post`: the block editor page with its assets, then the REST save it sends with the page's nonce; `PostBuilder::rest_only` sends only the REST request, with a nonce from `get_rest_nonce`
+- `Post`, `create_post` and `update_post`: the block editor page with its assets, then the REST save it sends with the page's nonce; `PostBuilder::post_type` names a custom post type's slug for its editor; `PostBuilder::rest_nonce` sends only the REST request, with a nonce from `get_rest_nonce`
 - `Discover`, `discover` and `SiteContent`: the site's real URLs by kind, from the core sitemap or the REST API, to request at random
 - `get_form`, `get_form_value`, `get_form_values` and `get_nonce`: form parsing that reads attributes in any order, as WordPress writes them
 

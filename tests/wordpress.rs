@@ -68,6 +68,7 @@ const EDITOR_CREATE: &str =
 const EDITOR_UPDATE: &str =
     "update_post opens the post in the editor and saves with the editor's nonce";
 const EDITOR_NO_NONCE: &str = "create_post fails without a nonce on the editor page";
+const EDITOR_POST_TYPE: &str = "create_post opens the editor for the post type it is given";
 const DISCOVER_SITEMAP: &str = "discover reads the sitemap index and its sitemaps";
 const DISCOVER_CAP: &str = "discover stops at max_per_kind";
 const DISCOVER_REST: &str = "discover falls back to REST, following its pages";
@@ -525,6 +526,13 @@ async fn wordpress_flows() {
             .query_param("action", "edit");
         then.status(200).body(editor_page("7"));
     });
+    // A post type whose slug, `book`, is not its REST base, `books`.
+    let book_page = server.mock(|when, then| {
+        when.method(GET)
+            .path("/editor/wp-admin/post-new.php")
+            .query_param("post_type", "book");
+        then.status(200).body(editor_page("43"));
+    });
     let editor_css = server.mock(|when, then| {
         when.method(GET).path("/editor/edit.css");
         then.status(200).body("body{}");
@@ -540,6 +548,15 @@ async fn wordpress_flows() {
             .path("/editor/wp-json/wp/v2/pages/42")
             .header("X-WP-Nonce", "edit0nonce")
             .json_body(serde_json::json!({"title": "Goose", "status": "draft"}));
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(REST_POST);
+    });
+    let book_create = server.mock(|when, then| {
+        when.method(POST)
+            .path("/editor/wp-json/wp/v2/books/43")
+            .header("X-WP-Nonce", "edit0nonce")
+            .json_body(serde_json::json!({"title": "Dune", "status": "draft"}));
         then.status(200)
             .header("content-type", "application/json")
             .body(REST_POST);
@@ -831,9 +848,9 @@ async fn wordpress_flows() {
                         .url("create/wp-json/wp/v2/posts")
                         .title("Goose")
                         .status("draft")
-                        .rest_only(true)
+                        .rest_nonce("rest0nonce")
                         .build();
-                    let created = wordpress::create_post(user, "rest0nonce", &post).await?;
+                    let created = wordpress::create_post(user, &post).await?;
                     if created["id"] != 1 {
                         return Err(wrong(format!("created {}", created["id"])));
                     }
@@ -845,9 +862,9 @@ async fn wordpress_flows() {
                     let post = Post::builder()
                         .url("update/wp-json/wp/v2/posts/")
                         .title("Hello world!")
-                        .rest_only(true)
+                        .rest_nonce("rest0nonce")
                         .build();
-                    wordpress::update_post(user, "rest0nonce", 1, &post).await?;
+                    wordpress::update_post(user, 1, &post).await?;
                     Ok(())
                 })
             }),
@@ -856,9 +873,9 @@ async fn wordpress_flows() {
                     let post = Post::builder()
                         .url("stale/wp-json/wp/v2/posts")
                         .title("x")
-                        .rest_only(true)
+                        .rest_nonce("0000000000")
                         .build();
-                    wordpress::update_post(user, "0000000000", 1, &post).await?;
+                    wordpress::update_post(user, 1, &post).await?;
                     Ok(())
                 })
             }),
@@ -866,9 +883,9 @@ async fn wordpress_flows() {
                 Box::pin(async move {
                     let post = Post::builder()
                         .url("noid/wp-json/wp/v2/posts")
-                        .rest_only(true)
+                        .rest_nonce("rest0nonce")
                         .build();
-                    wordpress::create_post(user, "rest0nonce", &post).await?;
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
@@ -876,9 +893,9 @@ async fn wordpress_flows() {
                 Box::pin(async move {
                     let post = Post::builder()
                         .url("notjson/wp-json/wp/v2/posts")
-                        .rest_only(true)
+                        .rest_nonce("rest0nonce")
                         .build();
-                    wordpress::create_post(user, "rest0nonce", &post).await?;
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
@@ -888,7 +905,7 @@ async fn wordpress_flows() {
                         .url("editor/wp-json/wp/v2/pages")
                         .title("Goose")
                         .build();
-                    wordpress::create_post(user, "unused", &post).await?;
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
@@ -898,14 +915,25 @@ async fn wordpress_flows() {
                         .url("editor/wp-json/wp/v2/posts")
                         .title("Hello world!")
                         .build();
-                    wordpress::update_post(user, "unused", 7, &post).await?;
+                    wordpress::update_post(user, 7, &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_POST_TYPE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder()
+                        .url("editor/wp-json/wp/v2/books")
+                        .post_type("book")
+                        .title("Dune")
+                        .build();
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
             transaction(EDITOR_NO_NONCE, |user| {
                 Box::pin(async move {
                     let post = Post::builder().url("nononce/wp-json/wp/v2/posts").build();
-                    wordpress::create_post(user, "unused", &post).await?;
+                    wordpress::create_post(user, &post).await?;
                     Ok(())
                 })
             }),
@@ -1157,6 +1185,15 @@ async fn wordpress_flows() {
         ),
         check_named(
             &metrics,
+            EDITOR_POST_TYPE,
+            &[
+                "editor/wp-admin/post-new.php?post_type=book",
+                "editor/wp-json/wp/v2/books",
+            ],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
             EDITOR_NO_NONCE,
             &["nononce/wp-admin/post-new.php"],
             Expect::Fail("no REST nonce on the editor page"),
@@ -1213,11 +1250,14 @@ async fn wordpress_flows() {
         (EDITOR_CREATE, "draft saved", editor_create.hits(), 1),
         (EDITOR_UPDATE, "editor opened", edit_page.hits(), 1),
         (EDITOR_UPDATE, "post saved", editor_update.hits(), 1),
+        (EDITOR_POST_TYPE, "editor opened", book_page.hits(), 1),
+        (EDITOR_POST_TYPE, "draft saved", book_create.hits(), 1),
+        // Once for each editor opened: new, edit and the book editor.
         (
             EDITOR_CREATE,
             "editor stylesheets loaded",
             editor_css.hits(),
-            2,
+            3,
         ),
         (
             DISCOVER_SITEMAP,

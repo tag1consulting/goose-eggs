@@ -86,12 +86,15 @@ async fn wordpress_site() {
                 Box::pin(async move {
                     let html = user.get("wp-admin/").await?.response?.text().await?;
                     let nonce = wordpress::get_rest_nonce(&html).unwrap_or_default();
-                    let draft = Post::builder().title("Goose draft").rest_only(true).build();
-                    let created = wordpress::create_post(user, &nonce, &draft).await?;
+                    let draft = Post::builder()
+                        .title("Goose draft")
+                        .rest_nonce(&nonce)
+                        .build();
+                    let created = wordpress::create_post(user, &draft).await?;
                     let id = created["id"].as_u64().unwrap_or_default();
                     let title = format!("Goose edit {}", goose_eggs::text::random_word(8));
-                    let edit = Post::builder().title(&title).rest_only(true).build();
-                    let updated = wordpress::update_post(user, &nonce, id, &edit).await?;
+                    let edit = Post::builder().title(&title).rest_nonce(&nonce).build();
+                    let updated = wordpress::update_post(user, id, &edit).await?;
                     *EDITED.lock().unwrap() = updated["title"]["raw"].as_str().map(str::to_string);
                     if updated["title"]["raw"].as_str() != Some(title.as_str()) {
                         return Err(Box::new(TransactionError::Custom(format!(
@@ -105,10 +108,10 @@ async fn wordpress_site() {
             transaction(EDITOR, |user| {
                 Box::pin(async move {
                     let draft = Post::builder().title("Goose editor draft").build();
-                    let created = wordpress::create_post(user, "", &draft).await?;
+                    let created = wordpress::create_post(user, &draft).await?;
                     let id = created["id"].as_u64().unwrap_or_default();
                     let edit = Post::builder().title("Goose editor edit").build();
-                    let updated = wordpress::update_post(user, "", id, &edit).await?;
+                    let updated = wordpress::update_post(user, id, &edit).await?;
                     if created["status"] != "draft"
                         || updated["title"]["raw"] != "Goose editor edit"
                     {
