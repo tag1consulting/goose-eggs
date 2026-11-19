@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index c9547c3..d33a899 100644
+index 72fd948..8ded075 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1878,7 +1878,7 @@ pub async fn create_post(
-     nonce: &str,
+@@ -1832,7 +1832,7 @@ pub async fn create_post(
+     user: &mut GooseUser,
      post: &Post<'_>,
  ) -> Result<serde_json::Value, Box<TransactionError>> {
--    if post.rest_only {
-+    if true {
+-    if let Some(nonce) = post.rest_nonce {
++    if let Some(nonce) = post.rest_nonce.or(Some("")) {
          return save_post(user, nonce, post.url, post.url, post).await;
      }
      let route = post.url.trim_end_matches('/');

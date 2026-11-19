@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 6750ee2..7ceeecb 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1241,7 +1241,7 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
+                 Some("script") => "js",
+                 Some("image") => "img",
+                 Some("font") => "font",
+-                _ => continue,
++                _ => "js",
+             }
+         } else {
+             continue;

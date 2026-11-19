@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index c9547c3..258a560 100644
+index 72fd948..cdce54b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1660,7 +1660,7 @@ impl<'a> PostBuilder<'a> {
+@@ -1580,7 +1580,7 @@ impl<'a> PostBuilder<'a> {
      fn new() -> Self {
          Self {
              // Defaults to the core posts route.
@@ -10,4 +10,4 @@ index c9547c3..258a560 100644
 +            url: "wp-json/wp/v2/post",
              // Defaults to sending no fields.
              fields: serde_json::Map::new(),
-             // Defaults to opening the block editor first.
+             // Defaults to the post type the route names.

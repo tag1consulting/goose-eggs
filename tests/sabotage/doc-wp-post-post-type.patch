@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 72fd948..a4db480 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1699,7 +1699,7 @@ impl<'a> PostBuilder<'a> {
+     /// # assert_eq!(server.editor_loads(), 1, "doc example PostBuilder::post_type: editor loads");
+     /// ```
+     pub fn post_type(mut self, post_type: &'a str) -> Self {
+-        self.post_type = Some(post_type);
++        let _ = post_type;
+         self
+     }
+ 

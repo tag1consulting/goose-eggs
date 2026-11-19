@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 72fd948..41a7780 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1837,7 +1837,7 @@ pub async fn create_post(
+     }
+     let route = post.url.trim_end_matches('/');
+     let (site, rest_base) = editor_site(route);
+-    let post_type = post.post_type.unwrap_or(match rest_base {
++    let post_type = None.unwrap_or(match rest_base {
+         "posts" => "post",
+         "pages" => "page",
+         rest_base => rest_base,

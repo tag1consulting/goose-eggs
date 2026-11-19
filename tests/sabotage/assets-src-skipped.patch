@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..3acb5c1 100644
+index 6750ee2..a5e7489 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1219,7 +1219,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
-     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
+@@ -1350,7 +1350,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // <foo> is the URL to local image and js assets.
      // @TODO: parse HTML5 srcset= also
+     let mut assets: Vec<(String, &str)> = Vec::new();
 -    for url in get_src_elements(user, html).await {
 +    for url in get_src_elements(user, html).await.into_iter().skip(1) {
-         let is_js = url.contains(".js");
-         let resource_type = if is_js { "js" } else { "img" };
-         let _ = user
+         let kind = if url.contains(".js") { "js" } else { "img" };
+         assets.push((url, kind));
+     }
