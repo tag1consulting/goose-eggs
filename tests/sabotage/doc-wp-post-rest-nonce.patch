@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index 72fd948..6acadab 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1724,7 +1724,7 @@ impl<'a> PostBuilder<'a> {
+     /// # assert_eq!(server.editor_loads(), 0, "doc example PostBuilder::rest_nonce: editor loads");
+     /// ```
+     pub fn rest_nonce(mut self, nonce: &'a str) -> Self {
+-        self.rest_nonce = Some(nonce);
++        let _ = nonce;
+         self
+     }
+ 

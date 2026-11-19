@@ -304,6 +304,16 @@ pub fn post_comment_fails(example: &str, site: &Site, comment: &Comment, text: &
 /// the block editor (`post-new.php` and `post.php`, with that nonce), saving a post at
 /// `/{route}` only with that nonce and exactly the JSON `body`.
 pub fn rest_site(route: &str, body: &str) -> Site {
+    editor_site(route, None, body)
+}
+
+/// As [`rest_site`], with the block editor for a new post only at
+/// `post-new.php?post_type={post_type}`.
+pub fn post_type_site(route: &str, post_type: &str, body: &str) -> Site {
+    editor_site(route, Some(post_type), body)
+}
+
+fn editor_site(route: &str, post_type: Option<&str>, body: &str) -> Site {
     let server = MockServer::start();
     server.mock(|when, then| {
         when.method(GET).path("/wp-admin/");
@@ -311,7 +321,15 @@ pub fn rest_site(route: &str, body: &str) -> Site {
     });
     let editor = server
         .mock(|when, then| {
-            when.method(GET).path_matches(regex::Regex::new(r"^/wp-admin/post(-new)?\.php$").unwrap());
+            match post_type {
+                Some(post_type) => when
+                    .method(GET)
+                    .path("/wp-admin/post-new.php")
+                    .query_param("post_type", post_type),
+                None => when
+                    .method(GET)
+                    .path_matches(regex::Regex::new(r"^/wp-admin/post(-new)?\.php$").unwrap()),
+            };
             then.status(200).body(format!(
                 r#"<html><head><script>wp.apiFetch.use( wp.apiFetch.createNonceMiddleware( "{}" ) );</script></head><body><div id="editor"></div></body></html>"#,
                 rest_nonce()
@@ -331,11 +349,11 @@ pub fn rest_site(route: &str, body: &str) -> Site {
     Site { server, counted, editor: Some(editor) }
 }
 
-/// Create `post` with the dashboard's nonce; panic naming `example` unless it
-/// was saved once with the expected fields.
+/// Create `post`; panic naming `example` unless it was saved once with the
+/// expected nonce and fields.
 pub fn create_post(example: &str, site: &Site, post: &Post) {
     let mut user = user(site);
-    let result = block_on(goose_eggs::wordpress::create_post(&mut user, &rest_nonce(), post));
+    let result = block_on(goose_eggs::wordpress::create_post(&mut user, post));
     if result.is_err() || site.saves() != 1 {
         panic!(
             "doc example {}: create failed: {}, expected saves: {}",

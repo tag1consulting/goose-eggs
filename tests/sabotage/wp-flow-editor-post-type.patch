@@ -1,12 +1,12 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index c9547c3..dc9afbf 100644
+index 72fd948..10cc6d0 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1885,7 +1885,6 @@ pub async fn create_post(
+@@ -1839,7 +1839,6 @@ pub async fn create_post(
      let (site, rest_base) = editor_site(route);
-     let editor = match rest_base {
-         "posts" => format!("{}wp-admin/post-new.php", site),
--        "pages" => format!("{}wp-admin/post-new.php?post_type=page", site),
-         post_type => format!("{}wp-admin/post-new.php?post_type={}", site, post_type),
-     };
-     let (nonce, html) = open_editor(user, &editor, &editor).await?;
+     let post_type = post.post_type.unwrap_or(match rest_base {
+         "posts" => "post",
+-        "pages" => "page",
+         rest_base => rest_base,
+     });
+     let editor = match post_type {

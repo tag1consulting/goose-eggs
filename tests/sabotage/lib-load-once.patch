@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 6750ee2..db8d032 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1367,7 +1367,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+     // A browser requests each asset once, however often the page names it.
+     let mut requested = HashSet::new();
+     for (url, kind) in assets {
+-        if requested.insert(url.clone()) {
++        if requested.insert(url.clone()) || true {
+             let _ = user
+                 .get_named(&url, &("static asset: ".to_owned() + kind))
+                 .await;

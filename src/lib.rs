@@ -17,7 +17,7 @@ use http::Uri;
 use log::info;
 use regex::Regex;
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
 pub mod drupal;
@@ -1224,8 +1224,9 @@ fn quoted<'h>(captures: &regex::Captures<'h>) -> &'h str {
 
 // The local URLs of `<link rel="preload">` and `<link rel="modulepreload">`
 // tags, which a browser fetches with the page, each with the kind of asset it
-// is: a module or script (`js`), or what its `as` names. Stylesheets are left
-// to `get_css_elements`.
+// is: a module or script (`js`), an image (`img`) or a font (`font`). Stylesheets
+// are left to `get_css_elements`; any other `as` (`fetch`, `document`, `audio`,
+// `video`, `track`, `worker`), or none, is skipped.
 fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'static str)> {
     let mut elements = Vec::new();
     for tag in LINK_TAG.find_iter(html) {
@@ -1237,10 +1238,10 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
             "js"
         } else if rel.split_whitespace().any(|r| r == "preload") {
             match attribute(tag, "as").as_deref() {
-                Some("style") => continue,
+                Some("script") => "js",
                 Some("image") => "img",
                 Some("font") => "font",
-                _ => "js",
+                _ => continue,
             }
         } else {
             continue;
@@ -1348,25 +1349,29 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
+    let mut assets: Vec<(String, &str)> = Vec::new();
     for url in get_src_elements(user, html).await {
-        let is_js = url.contains(".js");
-        let resource_type = if is_js { "js" } else { "img" };
-        let _ = user
-            .get_named(&url, &("static asset: ".to_owned() + resource_type))
-            .await;
+        let kind = if url.contains(".js") { "js" } else { "img" };
+        assets.push((url, kind));
     }
 
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
     for url in get_css_elements(user, html).await {
-        let _ = user.get_named(&url, "static asset: css").await;
+        assets.push((url, "css"));
     }
 
     // Preloaded scripts, modules, fonts and images.
-    for (url, kind) in get_preload_elements(user, html) {
-        let _ = user
-            .get_named(&url, &("static asset: ".to_owned() + kind))
-            .await;
+    assets.extend(get_preload_elements(user, html));
+
+    // A browser requests each asset once, however often the page names it.
+    let mut requested = HashSet::new();
+    for (url, kind) in assets {
+        if requested.insert(url.clone()) {
+            let _ = user
+                .get_named(&url, &("static asset: ".to_owned() + kind))
+                .await;
+        }
     }
 }
 
@@ -2174,6 +2179,9 @@ mod tests {
 <link rel="preload" href="/i.png" as="image">
 <link rel="preload" href="/p.js" as="script">
 <link rel="preload" href="http://other.com/o.js" as="script">
+<link rel="preload" href="/data.json" as="fetch" crossorigin>
+<link rel="preload" href="/next.html" as="document">
+<link rel="preload" href="/unknown.bin">
 <link rel="alternate" href="/feed/">"#;
         assert_eq!(
             get_preload_elements(&mut user, html),
@@ -2185,6 +2193,39 @@ mod tests {
             ],
             "preloaded assets"
         );
+    }
+
+    #[tokio::test]
+    async fn load_each_asset_once() {
+        let server = httpmock::MockServer::start();
+        let configuration = GooseConfiguration::parse_args_default(&EMPTY_ARGS).unwrap();
+        let base_url = get_base_url(Some(server.base_url()), None, None).unwrap();
+        let mut user = GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap();
+        let assets: Vec<_> = ["/logo.png", "/app.js", "/site.css"]
+            .iter()
+            .map(|&path| {
+                let mock = server.mock(|when, then| {
+                    when.method(httpmock::Method::GET).path(path);
+                    then.status(200);
+                });
+                (path, mock)
+            })
+            .collect();
+        // The image twice, the script as a source and a module preload, and
+        // the stylesheet twice.
+        let html = r#"<link rel="stylesheet" href="/site.css">
+<link rel="modulepreload" href="/app.js">
+<img src="/logo.png"><script src="/app.js"></script><img src="/logo.png">
+<link rel="stylesheet" href="/site.css">"#;
+        load_static_elements(&mut user, html).await;
+        for (path, mock) in assets {
+            assert_eq!(
+                mock.hits(),
+                1,
+                "load_static_elements requests each asset once: {}",
+                path
+            );
+        }
     }
 
     #[test]

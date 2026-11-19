@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..b717847 100644
+index 6750ee2..d6f51f4 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1221,7 +1221,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1351,7 +1351,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // @TODO: parse HTML5 srcset= also
+     let mut assets: Vec<(String, &str)> = Vec::new();
      for url in get_src_elements(user, html).await {
-         let is_js = url.contains(".js");
--        let resource_type = if is_js { "js" } else { "img" };
-+        let resource_type = if is_js { "js" } else { "image" };
-         let _ = user
-             .get_named(&url, &("static asset: ".to_owned() + resource_type))
-             .await;
+-        let kind = if url.contains(".js") { "js" } else { "img" };
++        let kind = if url.contains(".js") { "js" } else { "image" };
+         assets.push((url, kind));
+     }
+ 

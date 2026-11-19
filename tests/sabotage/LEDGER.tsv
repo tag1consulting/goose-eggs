@@ -31,6 +31,9 @@ lib-css-single-quote.patch	lib	tests::single_quoted_assets	single quoted stylesh
 lib-src-single-quote.patch	lib	tests::single_quoted_assets	single quoted sources	get_src_elements,load_static_elements
 lib-preload-module.patch	lib	tests::preload_assets	preloaded assets	load_static_elements
 lib-preload-as.patch	lib	tests::preload_assets	preloaded assets	load_static_elements
+lib-preload-script.patch	lib	tests::preload_assets	preloaded assets	load_static_elements
+lib-preload-unknown.patch	lib	tests::preload_assets	preloaded assets	load_static_elements
+lib-load-once.patch	lib	tests::load_each_asset_once	load_static_elements requests each asset once	load_static_elements
 text-word-length.patch	lib	text::tests::random_word_cases	random_word case empty	random_word
 text-word-seeded.patch	lib	text::tests::random_word_cases	random_word case repeat	random_word
 text-words-count.patch	lib	text::tests::random_words_cases	random_words case one	random_words
@@ -185,12 +188,12 @@ doc-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::title (line 263)	doc examp
 doc-get-html-header.patch	doc	src/lib.rs - get_html_header (line 724)	assertion failed: !html_header.is_none()	get_html_header
 doc-get-title.patch	doc	src/lib.rs - get_title (line 763)	right: "Example Website"	get_title
 doc-header-is-set.patch	doc	src/lib.rs - header_is_set (line 965)	doc example header_is_set	header_is_set
-doc-load-static-elements.patch	doc	src/lib.rs - load_static_elements (line 1299)	doc example load_static_elements: static asset requests	load_static_elements
+doc-load-static-elements.patch	doc	src/lib.rs - load_static_elements (line 1300)	doc example load_static_elements: static asset requests	load_static_elements
 doc-valid-header-value.patch	doc	src/lib.rs - valid_header_value (line 1020)	doc example valid_header_value	valid_header_value
 doc-valid-text.patch	doc	src/lib.rs - valid_text (line 900)	doc example valid_text	valid_text
 doc-valid-title.patch	doc	src/lib.rs - valid_title (line 823)	doc example valid_title	valid_title
-doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (line 1672)	doc example validate_and_load_static_assets: static asset requests	validate_and_load_static_assets
-doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1385)	doc example validate_page: static asset requests	validate_page
+doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (line 1677)	doc example validate_and_load_static_assets: static asset requests	validate_and_load_static_assets
+doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1390)	doc example validate_page: static asset requests	validate_page
 doc-get-bigpipe-form.patch	doc	src/drupal.rs - drupal::get_bigpipe_form (line 131)	assertion failed: !form.is_empty()	get_bigpipe_form
 doc-get-encoded-form-value.patch	doc	src/drupal.rs - drupal::get_encoded_form_value (line 179)	form-R8d9JOp8eKObiNR_vFlOzSD6erWoR5-dHQx8s2toZLY	get_encoded_form_value
 doc-get-encoded-form-values.patch	doc	src/drupal.rs - drupal::get_encoded_form_values (line 325)	4OCYabXYY116z0_ixUaxzbYlVxEgchgThmF9O3uJqbI	get_encoded_form_values
@@ -280,6 +283,7 @@ wp-flow-editor-draft-id.patch	wordpress	wordpress_flows	behaviour create_post op
 wp-flow-editor-draft-status.patch	wordpress	wordpress_flows	behaviour create_post opens the editor and saves its draft with the editor's nonce	wordpress::create_post
 wp-flow-editor-no-assets.patch	wordpress	wordpress_flows	behaviour create_post opens the editor and saves its draft with the editor's nonce: editor stylesheets loaded 0 times	wordpress::create_post,wordpress::update_post
 wp-flow-editor-nonce-unchecked.patch	wordpress	wordpress_flows	behaviour create_post fails without a nonce on the editor page	wordpress::create_post,wordpress::update_post
+wp-flow-editor-custom-type.patch	wordpress	wordpress_flows	behaviour create_post opens the editor for the post type it is given	wordpress::create_post,wordpress::PostBuilder
 wp-flow-discover-cap.patch	wordpress	wordpress_flows	behaviour discover stops at max_per_kind	wordpress::discover,wordpress::DiscoverBuilder
 wp-flow-discover-pages.patch	wordpress	wordpress_flows	behaviour discover falls back to REST, following its pages	wordpress::discover
 wp-flow-discover-per-page.patch	wordpress	wordpress_flows	behaviour discover falls back to REST, following its pages	wordpress::discover
@@ -356,35 +360,36 @@ doc-wp-comment-commented-page-validation.patch	doc	src/wordpress.rs - wordpress:
 doc-wp-comment-build.patch	doc	src/wordpress.rs - wordpress::CommentBuilder<'a>::build (line 1366)	doc example CommentBuilder::build	wordpress::CommentBuilder
 doc-wp-post-comment.patch	doc	src/wordpress.rs - wordpress::post_comment (line 1421)	doc example post_comment	wordpress::post_comment
 doc-wp-post.patch	doc	src/wordpress.rs - wordpress::Post (line 1519)	doc example Post	wordpress::Post
-doc-wp-post-builder-fn.patch	doc	src/wordpress.rs - wordpress::Post<'a>::builder (line 1540)	doc example Post::builder	wordpress::Post,wordpress::PostBuilder
-doc-wp-post-builder.patch	doc	src/wordpress.rs - wordpress::PostBuilder (line 1557)	doc example PostBuilder	wordpress::PostBuilder
-doc-wp-post-title.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::title (line 1591)	doc example PostBuilder::title	wordpress::PostBuilder
-doc-wp-post-content.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::content (line 1606)	doc example PostBuilder::content	wordpress::PostBuilder
-doc-wp-post-status.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::status (line 1625)	doc example PostBuilder::status	wordpress::PostBuilder
-doc-wp-post-field.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::field (line 1640)	doc example PostBuilder::field	wordpress::PostBuilder
-doc-wp-post-url.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::url (line 1660)	doc example PostBuilder::url	wordpress::PostBuilder
-doc-wp-post-build.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::build (line 1699)	doc example PostBuilder::build	wordpress::PostBuilder
-doc-wp-post-rest-only.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::rest_only (line 1681)	doc example PostBuilder::rest_only: editor loads	wordpress::PostBuilder
-doc-wp-create-post.patch	doc	src/wordpress.rs - wordpress::create_post (line 1771)	doc example create_post	wordpress::create_post
-doc-wp-update-post.patch	doc	src/wordpress.rs - wordpress::update_post (line 1866)	doc example update_post	wordpress::update_post
-doc-wp-site-content.patch	doc	src/wordpress.rs - wordpress::SiteContent (line 1918)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::urls (line 1933)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-kinds.patch	doc	src/wordpress.rs - wordpress::SiteContent::kinds (line 1947)	right: ["page", "post"]	wordpress::SiteContent
-doc-wp-site-content-posts.patch	doc	src/wordpress.rs - wordpress::SiteContent::posts (line 1960)	right: ["/hello-world/"]	wordpress::SiteContent
-doc-wp-site-content-pages.patch	doc	src/wordpress.rs - wordpress::SiteContent::pages (line 1973)	right: ["/about/"]	wordpress::SiteContent
-doc-wp-site-content-categories.patch	doc	src/wordpress.rs - wordpress::SiteContent::categories (line 1986)	right: ["/category/news/"]	wordpress::SiteContent
-doc-wp-site-content-tags.patch	doc	src/wordpress.rs - wordpress::SiteContent::tags (line 1999)	right: ["/tag/rust/"]	wordpress::SiteContent
-doc-wp-site-content-random.patch	doc	src/wordpress.rs - wordpress::SiteContent::random (line 2012)	called `Option::unwrap()` on a `None` value	wordpress::SiteContent
-doc-wp-site-content-from-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::from_urls (line 2028)	right: ["/a/", "/b/"]	wordpress::SiteContent
-doc-wp-discover-struct.patch	doc	src/wordpress.rs - wordpress::Discover (line 2086)	doc example Discover: pages	wordpress::Discover
-doc-wp-discover-builder-fn.patch	doc	src/wordpress.rs - wordpress::Discover<'a>::builder (line 2110)	doc example Discover::builder	wordpress::Discover,wordpress::DiscoverBuilder
-doc-wp-discover-builder.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder (line 2127)	doc example DiscoverBuilder: posts	wordpress::DiscoverBuilder
-doc-wp-discover-sitemap.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::sitemap (line 2171)	doc example DiscoverBuilder::sitemap	wordpress::DiscoverBuilder
-doc-wp-discover-rest.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::rest (line 2191)	doc example DiscoverBuilder::rest	wordpress::DiscoverBuilder
-doc-wp-discover-rest-kinds.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::rest_kinds (line 2212)	doc example DiscoverBuilder::rest_kinds: kinds	wordpress::DiscoverBuilder
-doc-wp-discover-max-per-kind.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::max_per_kind (line 2233)	doc example DiscoverBuilder::max_per_kind: posts	wordpress::DiscoverBuilder
-doc-wp-discover-build.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::build (line 2250)	doc example DiscoverBuilder::build: pages	wordpress::DiscoverBuilder
-doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2288)	doc example discover: posts	wordpress::discover
+doc-wp-post-builder-fn.patch	doc	src/wordpress.rs - wordpress::Post<'a>::builder (line 1542)	doc example Post::builder	wordpress::Post,wordpress::PostBuilder
+doc-wp-post-builder.patch	doc	src/wordpress.rs - wordpress::PostBuilder (line 1559)	doc example PostBuilder	wordpress::PostBuilder
+doc-wp-post-title.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::title (line 1596)	doc example PostBuilder::title	wordpress::PostBuilder
+doc-wp-post-content.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::content (line 1611)	doc example PostBuilder::content	wordpress::PostBuilder
+doc-wp-post-status.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::status (line 1630)	doc example PostBuilder::status	wordpress::PostBuilder
+doc-wp-post-field.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::field (line 1645)	doc example PostBuilder::field	wordpress::PostBuilder
+doc-wp-post-url.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::url (line 1665)	doc example PostBuilder::url	wordpress::PostBuilder
+doc-wp-post-build.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::build (line 1734)	doc example PostBuilder::build	wordpress::PostBuilder
+doc-wp-post-post-type.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::post_type (line 1687)	doc example PostBuilder::post_type	wordpress::PostBuilder
+doc-wp-post-rest-nonce.patch	doc	src/wordpress.rs - wordpress::PostBuilder<'a>::rest_nonce (line 1715)	doc example PostBuilder::rest_nonce: editor loads	wordpress::PostBuilder
+doc-wp-create-post.patch	doc	src/wordpress.rs - wordpress::create_post (line 1809)	doc example create_post	wordpress::create_post
+doc-wp-update-post.patch	doc	src/wordpress.rs - wordpress::update_post (line 1906)	doc example update_post	wordpress::update_post
+doc-wp-site-content.patch	doc	src/wordpress.rs - wordpress::SiteContent (line 1957)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::urls (line 1972)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-kinds.patch	doc	src/wordpress.rs - wordpress::SiteContent::kinds (line 1986)	right: ["page", "post"]	wordpress::SiteContent
+doc-wp-site-content-posts.patch	doc	src/wordpress.rs - wordpress::SiteContent::posts (line 1999)	right: ["/hello-world/"]	wordpress::SiteContent
+doc-wp-site-content-pages.patch	doc	src/wordpress.rs - wordpress::SiteContent::pages (line 2012)	right: ["/about/"]	wordpress::SiteContent
+doc-wp-site-content-categories.patch	doc	src/wordpress.rs - wordpress::SiteContent::categories (line 2025)	right: ["/category/news/"]	wordpress::SiteContent
+doc-wp-site-content-tags.patch	doc	src/wordpress.rs - wordpress::SiteContent::tags (line 2038)	right: ["/tag/rust/"]	wordpress::SiteContent
+doc-wp-site-content-random.patch	doc	src/wordpress.rs - wordpress::SiteContent::random (line 2051)	called `Option::unwrap()` on a `None` value	wordpress::SiteContent
+doc-wp-site-content-from-urls.patch	doc	src/wordpress.rs - wordpress::SiteContent::from_urls (line 2067)	right: ["/a/", "/b/"]	wordpress::SiteContent
+doc-wp-discover-struct.patch	doc	src/wordpress.rs - wordpress::Discover (line 2125)	doc example Discover: pages	wordpress::Discover
+doc-wp-discover-builder-fn.patch	doc	src/wordpress.rs - wordpress::Discover<'a>::builder (line 2149)	doc example Discover::builder	wordpress::Discover,wordpress::DiscoverBuilder
+doc-wp-discover-builder.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder (line 2166)	doc example DiscoverBuilder: posts	wordpress::DiscoverBuilder
+doc-wp-discover-sitemap.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::sitemap (line 2210)	doc example DiscoverBuilder::sitemap	wordpress::DiscoverBuilder
+doc-wp-discover-rest.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::rest (line 2230)	doc example DiscoverBuilder::rest	wordpress::DiscoverBuilder
+doc-wp-discover-rest-kinds.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::rest_kinds (line 2251)	doc example DiscoverBuilder::rest_kinds: kinds	wordpress::DiscoverBuilder
+doc-wp-discover-max-per-kind.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::max_per_kind (line 2272)	doc example DiscoverBuilder::max_per_kind: posts	wordpress::DiscoverBuilder
+doc-wp-discover-build.patch	doc	src/wordpress.rs - wordpress::DiscoverBuilder<'a>::build (line 2289)	doc example DiscoverBuilder::build: pages	wordpress::DiscoverBuilder
+doc-wp-discover.patch	doc	src/wordpress.rs - wordpress::discover (line 2327)	doc example discover: posts	wordpress::discover
 doc-wc-shop.patch	doc	src/woocommerce.rs - woocommerce::Shop (line 23)	doc example Shop	woocommerce::Shop
 doc-wc-shop-builder-fn.patch	doc	src/woocommerce.rs - woocommerce::Shop<'a>::builder (line 44)	doc example Shop::builder	woocommerce::Shop,woocommerce::ShopBuilder
 doc-wc-shop-cart-fn.patch	doc	src/woocommerce.rs - woocommerce::Shop<'a>::cart (line 59)	doc example Shop::cart	woocommerce::Shop

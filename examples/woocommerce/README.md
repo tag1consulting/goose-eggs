@@ -84,9 +84,9 @@ async fn search(user: &mut GooseUser) -> TransactionResult {
 
 async fn edit(user: &mut GooseUser) -> TransactionResult {
     // Each opens the block editor for its nonce, then saves as the editor does.
-    let draft = wordpress::create_post(user, "", &Post::builder().title("Draft").build()).await?;
+    let draft = wordpress::create_post(user, &Post::builder().title("Draft").build()).await?;
     let id = draft["id"].as_u64().unwrap_or_default();
-    wordpress::update_post(user, "", id, &Post::builder().title("Edited").build()).await?;
+    wordpress::update_post(user, id, &Post::builder().title("Edited").build()).await?;
     Ok(())
 }
 ```
