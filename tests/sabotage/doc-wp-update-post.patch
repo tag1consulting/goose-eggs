@@ -1,13 +1,13 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index f97ea67..60e3326 100644
+index c9547c3..fff31ee 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1872,7 +1872,7 @@ pub async fn update_post(
+@@ -1979,7 +1979,7 @@ pub async fn update_post(
      id: u64,
      post: &Post<'_>,
  ) -> Result<serde_json::Value, Box<TransactionError>> {
 -    let path = format!("{}/{}", post.url.trim_end_matches('/'), id);
 +    let path = post.url.to_string();
      let name = format!("{}/{{id}}", post.url.trim_end_matches('/'));
-     save_post(user, nonce, &path, &name, post).await
- }
+     if post.rest_only {
+         return save_post(user, nonce, &path, &name, post).await;

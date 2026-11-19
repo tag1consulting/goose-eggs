@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index c9547c3..5fba89f 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1896,7 +1896,7 @@ pub async fn create_post(
+             draft
+                 .fields
+                 .entry("status")
+-                .or_insert_with(|| serde_json::Value::from("draft"));
++                .or_insert_with(|| serde_json::Value::from("auto-draft"));
+             let path = format!("{}/{}", route, id);
+             save_post(user, &nonce, &path, post.url, &draft).await
+         }

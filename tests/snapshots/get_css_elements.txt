@@ -5,21 +5,21 @@ drupal/search.html	len=742 fnv=21e40cdfb8b99666 start=["/sites/default/files/css
 drupal/user-logged-in.html	len=718 fnv=18a3d5542a483c0d start=["/sites/default/files/css/css_0iesRH-hwHF0tF8rK08KJcjxSs7OM
 drupal/user-login-failed.html	len=634 fnv=11b7b00c96567eb0 start=["/sites/default/files/css/css_bFn8WdlFRT7HT4E1wqMMyPSe-wk7o
 drupal/user-login.html	len=634 fnv=11b7b00c96567eb0 start=["/sites/default/files/css/css_bFn8WdlFRT7HT4E1wqMMyPSe-wk7o
-woocommerce/classic-add-to-cart-invalid.html	[]
-woocommerce/classic-add-to-cart.html	[]
-woocommerce/classic-cart-updated.html	[]
-woocommerce/classic-cart.html	[]
+woocommerce/classic-add-to-cart-invalid.html	len=475 fnv=75f1c9878cb428b6 start=["/wp-content/plugins/woocommerce/assets/css/woocommerce-blo
+woocommerce/classic-add-to-cart.html	len=475 fnv=76481b79f533b8c4 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/classic-cart-updated.html	len=475 fnv=76481b79f533b8c4 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/classic-cart.html	len=475 fnv=75f1c9878cb428b6 start=["/wp-content/plugins/woocommerce/assets/css/woocommerce-blo
 woocommerce/classic-checkout-failure.json	[]
 woocommerce/classic-checkout-success.json	[]
-woocommerce/classic-checkout.html	[]
-woocommerce/my-account-login-failed.html	[]
-woocommerce/my-account-login.html	[]
-woocommerce/my-account-orders.html	[]
-woocommerce/my-account.html	[]
-woocommerce/order-received.html	[]
-woocommerce/product-search.html	[]
-woocommerce/product.html	[]
-woocommerce/shop.html	[]
+woocommerce/classic-checkout.html	len=475 fnv=76481b79f533b8c4 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/my-account-login-failed.html	len=475 fnv=76481b79f533b8c4 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/my-account-login.html	len=475 fnv=75f1c9878cb428b6 start=["/wp-content/plugins/woocommerce/assets/css/woocommerce-blo
+woocommerce/my-account-orders.html	len=475 fnv=76481b79f533b8c4 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/my-account.html	len=475 fnv=75f1c9878cb428b6 start=["/wp-content/plugins/woocommerce/assets/css/woocommerce-blo
+woocommerce/order-received.html	len=1111 fnv=2c6612cea0b2cdd8 start=["/wp-content/plugins/woocommerce/assets/client/blocks/wc-bl
+woocommerce/product-search.html	len=915 fnv=0fc61c7eb35c0b2e start=["/wp-includes/blocks/navigation/style.min.css?ver=7.1.3", "
+woocommerce/product.html	len=1280 fnv=a47199c225f5f108 start=["/wp-includes/blocks/navigation/style.min.css?ver=7.1.3", "
+woocommerce/shop.html	len=915 fnv=0fc61c7eb35c0b2e start=["/wp-includes/blocks/navigation/style.min.css?ver=7.1.3", "
 woocommerce/store-add-item-invalid.json	[]
 woocommerce/store-add-item-missing-nonce.json	[]
 woocommerce/store-add-item-out-of-stock.json	[]
@@ -35,9 +35,9 @@ woocommerce/store-remove-item.json	[]
 woocommerce/store-update-item.json	[]
 wordpress/comment-duplicate.html	[]
 wordpress/comment-flood.html	[]
-wordpress/comment-form-anonymous.html	[]
-wordpress/comment-form-logged-in.html	[]
-wordpress/dashboard.html	[]
+wordpress/comment-form-anonymous.html	["/wp-includes/blocks/navigation/style.min.css?ver=7.1.3"]
+wordpress/comment-form-logged-in.html	["/wp-includes/css/dashicons.min.css?ver=7.1.3", "/wp-includes/css/admin-bar.min.css?ver=7.1.3", "/wp-includes/blocks/navigation/style.min.css?ver=7.1.3"]
+wordpress/dashboard.html	["/wp-includes/js/thickbox/thickbox.css?ver=7.1.3", "/wp-admin/css/colors/modern/colors.min.css?ver=7.1.3", "/wp-includes/css/editor.min.css?ver=7.1.3"]
 wordpress/logged-out.html	[]
 wordpress/login-failed.html	[]
 wordpress/login-no-test-cookie.html	[]

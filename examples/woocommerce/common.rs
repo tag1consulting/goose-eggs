@@ -20,6 +20,19 @@ pub fn shop() -> Shop<'static> {
     Shop::default()
 }
 
+/// Load a page a shopper views and its static assets, as `examples/umami`
+/// loads each page, named `name` in the metrics; fails unless it has `text`.
+pub async fn view(user: &mut GooseUser, path: &str, name: &str, text: &str) -> TransactionResult {
+    let goose = user.get_named(path, name).await?;
+    goose_eggs::validate_and_load_static_assets(
+        user,
+        goose,
+        &goose_eggs::Validate::builder().text(text).build(),
+    )
+    .await?;
+    Ok(())
+}
+
 /// Find the shop's products through the Store API, and its category archives
 /// through the core sitemap, unless another user already has.
 pub async fn discover_catalog(user: &mut GooseUser) -> TransactionResult {
@@ -75,7 +88,8 @@ pub fn take_cart(user: &mut GooseUser) -> StoreApiCart {
         .unwrap_or_else(|| StoreApiCart::new(&shop()))
 }
 
-/// Add one to three random products to this user's cart.
+/// Add one to three random products to this user's cart through the Store API,
+/// as the shop's Add to cart buttons do.
 pub async fn fill_cart(user: &mut GooseUser) -> TransactionResult {
     let mut cart = take_cart(user);
     let lines: usize = rand::rng().random_range(1..=3);
@@ -88,13 +102,33 @@ pub async fn fill_cart(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
-/// Check out this user's cart with Cash on delivery, filling it first if empty.
+/// Check out this user's cart with Cash on delivery, filling it first if empty:
+/// the checkout page, the order placed through the Store API as the checkout
+/// block places it, then the order received page it leads to.
 pub async fn check_out(user: &mut GooseUser) -> TransactionResult {
     if take_cart(user).items().is_empty() {
         fill_cart(user).await?;
     }
+    view(
+        user,
+        shop().checkout(),
+        "checkout",
+        "wp-block-woocommerce-checkout",
+    )
+    .await?;
     let mut cart = take_cart(user);
     let result = cart.checkout(user, &Checkout::builder().build()).await;
     user.set_session_data(cart);
-    result.map(|_| ())
+    let order = result?;
+    let received = match order["payment_result"]["redirect_url"].as_str() {
+        Some(url) => url.to_string(),
+        None => format!("{}order-received/", shop().checkout()),
+    };
+    view(
+        user,
+        &received,
+        "order received",
+        "woocommerce-order-received",
+    )
+    .await
 }

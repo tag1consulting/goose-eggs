@@ -106,6 +106,8 @@ run_test() {
 }
 
 # The failure output libtest prints for the test named $1.
+# Callers read it to the end: `grep -q` stops at its first match, and under
+# pipefail the cut off awk fails the pipeline once the output outgrows the pipe.
 failure_of() {
     awk -v head="---- $1 stdout ----" '
         $0 == head { inside = 1; next }
@@ -145,7 +147,7 @@ while IFS=$'\t' read -r patch target test expected covers; do
         verdict="NOT CAUGHT (test did not run)"
     elif ! grep -q -x -F "test $test ... FAILED" "$output" || ! grep -q 'test result: FAILED' "$output"; then
         verdict="NOT CAUGHT (test passed)"
-    elif ! failure_of "$test" | grep -q -F -- "$expected"; then
+    elif ! failure_of "$test" | grep -F -- "$expected" >/dev/null; then
         verdict="NOT CAUGHT (failed without: $expected)"
     else
         verdict="CAUGHT"

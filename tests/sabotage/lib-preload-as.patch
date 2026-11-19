@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 8f368f9..529fc6a 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1238,7 +1238,7 @@ fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'stat
+         } else if rel.split_whitespace().any(|r| r == "preload") {
+             match attribute(tag, "as").as_deref() {
+                 Some("style") => continue,
+-                Some("image") => "img",
++                Some("image") => "js",
+                 Some("font") => "font",
+                 _ => "js",
+             }

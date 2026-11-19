@@ -1,0 +1,12 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index c9547c3..54b30c3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -1923,6 +1923,7 @@ async fn open_editor(
+     let html = load_page(user, goose, None).await?;
+     match get_rest_nonce(&html) {
+         Some(nonce) => Ok((nonce, html)),
++        None if true => Ok((String::new(), html)),
+         None => fail(
+             user,
+             &format!("{}: no REST nonce on the editor page", path),

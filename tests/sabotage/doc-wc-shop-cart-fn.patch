@@ -1,0 +1,13 @@
+diff --git a/src/woocommerce.rs b/src/woocommerce.rs
+index b59b052..fa50e3e 100644
+--- a/src/woocommerce.rs
++++ b/src/woocommerce.rs
+@@ -63,7 +63,7 @@ impl<'a> Shop<'a> {
+     /// assert_eq!(shop.cart(), "basket/", "doc example Shop::cart");
+     /// ```
+     pub fn cart(&self) -> &str {
+-        self.cart
++        self.checkout
+     }
+ 
+     /// The checkout page's path.

@@ -63,6 +63,11 @@ const UPDATE_POST: &str = "update_post sends the nonce and fields to the post";
 const REST_STALE_NONCE: &str = "update_post fails on a stale nonce";
 const REST_NO_ID: &str = "create_post fails without a post in the response";
 const REST_NOT_JSON: &str = "create_post fails on a response that is not JSON";
+const EDITOR_CREATE: &str =
+    "create_post opens the editor and saves its draft with the editor's nonce";
+const EDITOR_UPDATE: &str =
+    "update_post opens the post in the editor and saves with the editor's nonce";
+const EDITOR_NO_NONCE: &str = "create_post fails without a nonce on the editor page";
 const DISCOVER_SITEMAP: &str = "discover reads the sitemap index and its sitemaps";
 const DISCOVER_CAP: &str = "discover stops at max_per_kind";
 const DISCOVER_REST: &str = "discover falls back to REST, following its pages";
@@ -500,6 +505,55 @@ async fn wordpress_flows() {
         then.status(200).body("<html><body>Not JSON</body></html>");
     });
 
+    // The block editor: its page and stylesheet, then the save with its nonce.
+    let editor_page = |id: &str| {
+        format!(
+            r#"<html><head><link rel='stylesheet' href='/editor/edit.css' media='all' /><script>wp.apiFetch.use( wp.apiFetch.createNonceMiddleware( "edit0nonce" ) );</script></head><body><input type='hidden' id='post_ID' name='post_ID' value='{}' /></body></html>"#,
+            id
+        )
+    };
+    let new_page = server.mock(|when, then| {
+        when.method(GET)
+            .path("/editor/wp-admin/post-new.php")
+            .query_param("post_type", "page");
+        then.status(200).body(editor_page("42"));
+    });
+    let edit_page = server.mock(|when, then| {
+        when.method(GET)
+            .path("/editor/wp-admin/post.php")
+            .query_param("post", "7")
+            .query_param("action", "edit");
+        then.status(200).body(editor_page("7"));
+    });
+    let editor_css = server.mock(|when, then| {
+        when.method(GET).path("/editor/edit.css");
+        then.status(200).body("body{}");
+    });
+    page(
+        &server,
+        "nononce/wp-admin/post-new.php",
+        200,
+        "<html><body>Not the editor</body></html>",
+    );
+    let editor_create = server.mock(|when, then| {
+        when.method(POST)
+            .path("/editor/wp-json/wp/v2/pages/42")
+            .header("X-WP-Nonce", "edit0nonce")
+            .json_body(serde_json::json!({"title": "Goose", "status": "draft"}));
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(REST_POST);
+    });
+    let editor_update = server.mock(|when, then| {
+        when.method(POST)
+            .path("/editor/wp-json/wp/v2/posts/7")
+            .header("X-WP-Nonce", "edit0nonce")
+            .json_body(serde_json::json!({"title": "Hello world!"}));
+        then.status(200)
+            .header("content-type", "application/json")
+            .body(REST_POST);
+    });
+
     // Discovery: the sitemap's sub sitemaps sit at the root, as the index lists them.
     mock_sitemap(&server, "sitemap/wp-sitemap.xml");
     mock_sitemap(&server, "cap/wp-sitemap.xml");
@@ -777,6 +831,7 @@ async fn wordpress_flows() {
                         .url("create/wp-json/wp/v2/posts")
                         .title("Goose")
                         .status("draft")
+                        .rest_only(true)
                         .build();
                     let created = wordpress::create_post(user, "rest0nonce", &post).await?;
                     if created["id"] != 1 {
@@ -790,6 +845,7 @@ async fn wordpress_flows() {
                     let post = Post::builder()
                         .url("update/wp-json/wp/v2/posts/")
                         .title("Hello world!")
+                        .rest_only(true)
                         .build();
                     wordpress::update_post(user, "rest0nonce", 1, &post).await?;
                     Ok(())
@@ -800,6 +856,7 @@ async fn wordpress_flows() {
                     let post = Post::builder()
                         .url("stale/wp-json/wp/v2/posts")
                         .title("x")
+                        .rest_only(true)
                         .build();
                     wordpress::update_post(user, "0000000000", 1, &post).await?;
                     Ok(())
@@ -807,15 +864,48 @@ async fn wordpress_flows() {
             }),
             transaction(REST_NO_ID, |user| {
                 Box::pin(async move {
-                    let post = Post::builder().url("noid/wp-json/wp/v2/posts").build();
+                    let post = Post::builder()
+                        .url("noid/wp-json/wp/v2/posts")
+                        .rest_only(true)
+                        .build();
                     wordpress::create_post(user, "rest0nonce", &post).await?;
                     Ok(())
                 })
             }),
             transaction(REST_NOT_JSON, |user| {
                 Box::pin(async move {
-                    let post = Post::builder().url("notjson/wp-json/wp/v2/posts").build();
+                    let post = Post::builder()
+                        .url("notjson/wp-json/wp/v2/posts")
+                        .rest_only(true)
+                        .build();
                     wordpress::create_post(user, "rest0nonce", &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_CREATE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder()
+                        .url("editor/wp-json/wp/v2/pages")
+                        .title("Goose")
+                        .build();
+                    wordpress::create_post(user, "unused", &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_UPDATE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder()
+                        .url("editor/wp-json/wp/v2/posts")
+                        .title("Hello world!")
+                        .build();
+                    wordpress::update_post(user, "unused", 7, &post).await?;
+                    Ok(())
+                })
+            }),
+            transaction(EDITOR_NO_NONCE, |user| {
+                Box::pin(async move {
+                    let post = Post::builder().url("nononce/wp-json/wp/v2/posts").build();
+                    wordpress::create_post(user, "unused", &post).await?;
                     Ok(())
                 })
             }),
@@ -1047,6 +1137,30 @@ async fn wordpress_flows() {
             &["notjson/wp-json/wp/v2/posts"],
             Expect::Fail("response is not JSON"),
         ),
+        check_named(
+            &metrics,
+            EDITOR_CREATE,
+            &[
+                "editor/wp-admin/post-new.php?post_type=page",
+                "editor/wp-json/wp/v2/pages",
+            ],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
+            EDITOR_UPDATE,
+            &[
+                "editor/wp-admin/post.php?post={id}&action=edit",
+                "editor/wp-json/wp/v2/posts/{id}",
+            ],
+            Expect::Pass,
+        ),
+        check_named(
+            &metrics,
+            EDITOR_NO_NONCE,
+            &["nononce/wp-admin/post-new.php"],
+            Expect::Fail("no REST nonce on the editor page"),
+        ),
         check_named(&metrics, DISCOVER_SITEMAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
         check_named(&metrics, DISCOVER_CAP, &["wp-sitemap-posts-post-1.xml"], Expect::Pass),
         check_named(
@@ -1095,6 +1209,16 @@ async fn wordpress_flows() {
         (COMMENT_CUSTOM, "commented", comment_custom.hits(), 1),
         (CREATE_POST, "created", create.hits(), 1),
         (UPDATE_POST, "updated", update.hits(), 1),
+        (EDITOR_CREATE, "editor opened", new_page.hits(), 1),
+        (EDITOR_CREATE, "draft saved", editor_create.hits(), 1),
+        (EDITOR_UPDATE, "editor opened", edit_page.hits(), 1),
+        (EDITOR_UPDATE, "post saved", editor_update.hits(), 1),
+        (
+            EDITOR_CREATE,
+            "editor stylesheets loaded",
+            editor_css.hits(),
+            2,
+        ),
         (
             DISCOVER_SITEMAP,
             "posts sitemap read (twice with the cap)",

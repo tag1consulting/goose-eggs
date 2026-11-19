@@ -1,8 +1,8 @@
-diff --git a/src/wordpress.rs b/src/wordpress.rs
-index bf6a37f..9dd190a 100644
---- a/src/wordpress.rs
-+++ b/src/wordpress.rs
-@@ -120,7 +120,7 @@ fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+diff --git a/src/lib.rs b/src/lib.rs
+index 8f368f9..f28a3b4 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1199,7 +1199,7 @@ fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
  // value, and the text after it.
  fn attribute_value(text: &str) -> Option<(&str, &str)> {
      let text = text.trim_start().strip_prefix('=')?.trim_start();

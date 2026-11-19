@@ -30,9 +30,12 @@ pub mod wordpress;
 // The page parsing regular expressions, each compiled once on first use.
 static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
 static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
-static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
-static CSS_ELEMENT: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());
+static SRC_ELEMENT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?i)src=(?:"(.*?)"|'(.*?)')"#).unwrap());
+static CSS_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?i)href=(?:"([^"]*\.css[^"]*)"|'([^']*\.css[^']*)')"#).unwrap()
+});
+static LINK_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<link\b[^>]*>").unwrap());
 
 // The most patterns `with_cached_regex` keeps on each thread.
 const REGEX_CACHE_SIZE: usize = 64;
@@ -1128,6 +1131,130 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
     }
 }
 
+// The decoded value of `name` in an opening tag, with the value in double,
+// single or no quotes; `Some("")` for an attribute without a value.
+//
+// This is what the regular expression
+// `(?is)\s<name>(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)`
+// matches, with `name` escaped, in code: at the first white space followed by
+// `name` (in any case) where either a value then white space, `/` or `>`
+// follows, or white space, `/` or `>` follows at once.
+pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
+    if !name.is_ascii() {
+        // Case insensitive matching of other characters is left to the
+        // regular expression, compiled once per name.
+        let pattern = format!(
+            r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
+            regex::escape(name)
+        );
+        return with_cached_regex(pattern, |re| {
+            let capture = re.captures(tag)?;
+            let value = capture
+                .get(1)
+                .or_else(|| capture.get(2))
+                .or_else(|| capture.get(3))
+                .map_or("", |m| m.as_str());
+            Some(html_escape::decode_html_entities(value).to_string())
+        });
+    }
+    let ends_value =
+        |rest: &str| rest.starts_with(|c: char| c.is_whitespace() || c == '/' || c == '>');
+    for (i, c) in tag.char_indices() {
+        if !c.is_whitespace() {
+            continue;
+        }
+        let rest = match strip_name(&tag[i + c.len_utf8()..], name) {
+            Some(rest) => rest,
+            None => continue,
+        };
+        if let Some((value, after)) = attribute_value(rest) {
+            if ends_value(after) {
+                return Some(html_escape::decode_html_entities(value).to_string());
+            }
+        }
+        if ends_value(rest) {
+            return Some(String::new());
+        }
+    }
+    None
+}
+
+// `text` after a leading `name`, an ASCII name matched as `(?i)` does: ASCII
+// letters in either case, and also the Kelvin sign for `k` and the long s for `s`.
+fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+    let mut chars = text.chars();
+    for n in name.chars() {
+        let c = chars.next()?;
+        let same = c.eq_ignore_ascii_case(&n)
+            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
+            || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
+        if !same {
+            return None;
+        }
+    }
+    Some(chars.as_str())
+}
+
+// `\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+))` at the start of `text`: the
+// value, and the text after it.
+fn attribute_value(text: &str) -> Option<(&str, &str)> {
+    let text = text.trim_start().strip_prefix('=')?.trim_start();
+    for quote in ['"', '\''] {
+        if let Some(quoted) = text.strip_prefix(quote) {
+            let end = quoted.find(quote)?;
+            return Some((&quoted[..end], &quoted[end + 1..]));
+        }
+    }
+    let end = text
+        .find(|c: char| c.is_whitespace() || matches!(c, '"' | '\'' | '>' | '/'))
+        .unwrap_or(text.len());
+    if end == 0 {
+        return None;
+    }
+    Some((&text[..end], &text[end..]))
+}
+
+// The attribute value a pattern captured in double (group 1) or single (group 2) quotes.
+fn quoted<'h>(captures: &regex::Captures<'h>) -> &'h str {
+    captures
+        .get(1)
+        .or_else(|| captures.get(2))
+        .map_or("", |m| m.as_str())
+}
+
+// The local URLs of `<link rel="preload">` and `<link rel="modulepreload">`
+// tags, which a browser fetches with the page, each with the kind of asset it
+// is: a module or script (`js`), or what its `as` names. Stylesheets are left
+// to `get_css_elements`.
+fn get_preload_elements(user: &mut GooseUser, html: &str) -> Vec<(String, &'static str)> {
+    let mut elements = Vec::new();
+    for tag in LINK_TAG.find_iter(html) {
+        let tag = tag.as_str();
+        let rel = attribute(tag, "rel")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        let kind = if rel.split_whitespace().any(|r| r == "modulepreload") {
+            "js"
+        } else if rel.split_whitespace().any(|r| r == "preload") {
+            match attribute(tag, "as").as_deref() {
+                Some("style") => continue,
+                Some("image") => "img",
+                Some("font") => "font",
+                _ => "js",
+            }
+        } else {
+            continue;
+        };
+        match attribute(tag, "href") {
+            Some(href) if !href.is_empty() && valid_local_uri(user, &href) => {
+                elements.push((href, kind))
+            }
+            _ => {}
+        }
+    }
+    elements
+}
+
 /// Extract all local static elements defined with a `src=` tag from the the provided html.
 ///
 /// While you can invoke this function directly, it's generally preferred to invoke
@@ -1138,8 +1265,9 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // @TODO: parse HTML5 srcset= also
     let mut elements: Vec<String> = Vec::new();
     for url in SRC_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
-        if valid_local_uri(user, &url[1]) {
-            elements.push(url[1].to_string());
+        let url = quoted(&url);
+        if valid_local_uri(user, url) {
+            elements.push(url.to_string());
         }
     }
     elements
@@ -1154,8 +1282,9 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // <foo> is the URL to local css assets.
     let mut elements: Vec<String> = Vec::new();
     for url in CSS_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
-        if valid_local_uri(user, &url[1]) {
-            elements.push(url[1].to_string());
+        let url = quoted(&url);
+        if valid_local_uri(user, url) {
+            elements.push(url.to_string());
         }
     }
     elements
@@ -1231,6 +1360,13 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
     // <foo> is the URL to local css assets.
     for url in get_css_elements(user, html).await {
         let _ = user.get_named(&url, "static asset: css").await;
+    }
+
+    // Preloaded scripts, modules, fonts and images.
+    for (url, kind) in get_preload_elements(user, html) {
+        let _ = user
+            .get_named(&url, &("static asset: ".to_owned() + kind))
+            .await;
     }
 }
 
@@ -2011,12 +2147,112 @@ mod tests {
             );
         }
     }
+
+    #[tokio::test]
+    async fn single_quoted_assets() {
+        let mut user = test_user();
+        // As WordPress prints its stylesheets and avatars.
+        let html = r#"<link rel='stylesheet' id='a-css' href='/a.css?ver=1' media='all' /><script src='/b.js'></script><img alt='' src='/c.png?s=96&#038;d=mm'>"#;
+        assert_eq!(
+            get_css_elements(&mut user, html).await,
+            ["/a.css?ver=1"],
+            "single quoted stylesheet"
+        );
+        assert_eq!(
+            get_src_elements(&mut user, html).await,
+            ["/b.js", "/c.png?s=96&d=mm"],
+            "single quoted sources"
+        );
+    }
+
+    #[test]
+    fn preload_assets() {
+        let mut user = test_user();
+        let html = r#"<link rel="modulepreload" href="/m.js?ver=1" id="m">
+<link rel='preload' href='/f.woff2' as='font' crossorigin>
+<link rel="preload" href="/s.css" as="style">
+<link rel="preload" href="/i.png" as="image">
+<link rel="preload" href="/p.js" as="script">
+<link rel="preload" href="http://other.com/o.js" as="script">
+<link rel="alternate" href="/feed/">"#;
+        assert_eq!(
+            get_preload_elements(&mut user, html),
+            [
+                ("/m.js?ver=1".to_string(), "js"),
+                ("/f.woff2".to_string(), "font"),
+                ("/i.png".to_string(), "img"),
+                ("/p.js".to_string(), "js"),
+            ],
+            "preloaded assets"
+        );
+    }
+
+    #[test]
+    fn attribute_cases() {
+        // (case, tag, attribute, expected)
+        let cases = [
+            (
+                "double quoted",
+                r#"<input name="a" value="b">"#,
+                "value",
+                Some("b"),
+            ),
+            (
+                "single quoted",
+                "<input name='a' value='b'>",
+                "value",
+                Some("b"),
+            ),
+            ("unquoted", "<input name=a value=b>", "value", Some("b")),
+            ("no value", "<input checked name=a>", "checked", Some("")),
+            (
+                "last, self closing",
+                r#"<input name="a" checked/>"#,
+                "checked",
+                Some(""),
+            ),
+            (
+                "entities decoded",
+                r#"<a href="/x?a=1&#038;b=2">"#,
+                "href",
+                Some("/x?a=1&b=2"),
+            ),
+            (
+                "newlines",
+                "<input\n\tname=\"a\"\n\tvalue=\"b\"\n/>",
+                "value",
+                Some("b"),
+            ),
+            (
+                "upper case",
+                r#"<INPUT NAME="a" VALUE="b">"#,
+                "value",
+                Some("b"),
+            ),
+            (
+                "name is not a suffix",
+                r#"<input data-value="x" value="b">"#,
+                "value",
+                Some("b"),
+            ),
+            ("only a suffix", r#"<input data-value="x">"#, "value", None),
+            ("missing", r#"<input name="a">"#, "value", None),
+        ];
+        for (case, tag, name, expected) in cases {
+            assert_eq!(
+                attribute(tag, name).as_deref(),
+                expected,
+                "attribute case {}",
+                case
+            );
+        }
+    }
 }
 
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
-    use crate::snapshot::{check, fixtures, line};
+    use crate::snapshot::{check, fixtures, line, Generator};
     use goose::config::GooseConfiguration;
     use goose::goose::get_base_url;
 
@@ -2027,6 +2263,27 @@ mod snapshot_tests {
             get_base_url(Some("http://localhost:18082".to_string()), None, None).unwrap();
         GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap()
     }
+
+    // Every opening or closing tag on a page, found without a regular expression.
+    fn tags(page: &str) -> Vec<&str> {
+        let mut found = Vec::new();
+        let mut rest = page;
+        while let Some(start) = rest.find('<') {
+            match rest[start..].find('>') {
+                Some(end) => {
+                    found.push(&rest[start..start + end + 1]);
+                    rest = &rest[start + end + 1..];
+                }
+                None => break,
+            }
+        }
+        found
+    }
+
+    const ATTRIBUTES: &[&str] = &[
+        "id", "name", "class", "value", "type", "checked", "selected", "href", "action", "src",
+        "ïd", "a.b", "NAME", "data-x",
+    ];
 
     #[test]
     fn get_html_header_snapshot() {
@@ -2066,5 +2323,60 @@ mod snapshot_tests {
             actual.push_str(&line(&path, get_css_elements(&mut user, &page).await));
         }
         check("get_css_elements", &actual);
+    }
+
+    #[test]
+    fn attribute_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            let values: Vec<Vec<_>> = tags(&page)
+                .into_iter()
+                .map(|tag| ATTRIBUTES.iter().map(|n| attribute(tag, n)).collect())
+                .collect();
+            actual.push_str(&line(&path, values));
+        }
+        let tokens = [
+            "<input",
+            " ",
+            "\n",
+            "\t",
+            "\u{a0}",
+            "\u{2003}",
+            "=",
+            "\"",
+            "'",
+            ">",
+            "/",
+            "name",
+            "NAME",
+            "value",
+            "checked",
+            "chec\u{212a}ed",
+            "selected",
+            "\u{17f}elected",
+            "class",
+            "cla\u{17f}\u{17f}",
+            "id",
+            "ïd",
+            "ÏD",
+            "a.b",
+            "x",
+            "é",
+            "&amp;",
+        ];
+        let names = [
+            "name", "value", "checked", "selected", "class", "id", "ïd", "a.b", "NAME", "",
+        ];
+        let mut generator = Generator::new(3304);
+        for chunk in 0..200 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let tag = generator.text(&tokens, 10);
+                    attribute(&tag, generator.pick(&names))
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("attribute", &actual);
     }
 }

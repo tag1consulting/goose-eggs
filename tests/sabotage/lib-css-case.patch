@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..ad997cd 100644
+index 674cfca..66d7770 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -32,7 +32,7 @@ static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)<
- static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
- static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
- static CSS_ELEMENT: LazyLock<Regex> =
--    LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());
-+    LazyLock::new(|| Regex::new(r#"href="([^"]*\.css[^"]*)""#).unwrap());
+@@ -33,7 +33,7 @@ static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</tit
+ static SRC_ELEMENT: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r#"(?i)src=(?:"(.*?)"|'(.*?)')"#).unwrap());
+ static CSS_ELEMENT: LazyLock<Regex> = LazyLock::new(|| {
+-    Regex::new(r#"(?i)href=(?:"([^"]*\.css[^"]*)"|'([^']*\.css[^']*)')"#).unwrap()
++    Regex::new(r#"href=(?:"([^"]*\.css[^"]*)"|'([^']*\.css[^']*)')"#).unwrap()
+ });
+ static LINK_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<link\b[^>]*>").unwrap());
  
- // The most patterns `with_cached_regex` keeps on each thread.
- const REGEX_CACHE_SIZE: usize = 64;

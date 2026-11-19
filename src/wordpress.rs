@@ -5,7 +5,7 @@
 //! `?s=`, the core sitemap and the REST API. None of them assume a theme or any
 //! content; every path is configurable on its builder.
 
-use crate::with_cached_regex;
+use crate::attribute;
 use goose::goose::GooseResponse;
 use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
@@ -51,89 +51,6 @@ static SITEMAP_KIND: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"wp-sitemap-(?:posts|taxonomies)-(.+)-\d+\.xml|wp-sitemap-(users)-\d+\.xml")
         .unwrap()
 });
-
-// The decoded value of `name` in an opening tag, with the value in double,
-// single or no quotes; `Some("")` for an attribute without a value.
-//
-// This is what the regular expression
-// `(?is)\s<name>(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)`
-// matches, with `name` escaped, in code: at the first white space followed by
-// `name` (in any case) where either a value then white space, `/` or `>`
-// follows, or white space, `/` or `>` follows at once.
-pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    if !name.is_ascii() {
-        // Case insensitive matching of other characters is left to the
-        // regular expression, compiled once per name.
-        let pattern = format!(
-            r#"(?is)\s{}(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+)))?(?:\s|/|>)"#,
-            regex::escape(name)
-        );
-        return with_cached_regex(pattern, |re| {
-            let capture = re.captures(tag)?;
-            let value = capture
-                .get(1)
-                .or_else(|| capture.get(2))
-                .or_else(|| capture.get(3))
-                .map_or("", |m| m.as_str());
-            Some(html_escape::decode_html_entities(value).to_string())
-        });
-    }
-    let ends_value =
-        |rest: &str| rest.starts_with(|c: char| c.is_whitespace() || c == '/' || c == '>');
-    for (i, c) in tag.char_indices() {
-        if !c.is_whitespace() {
-            continue;
-        }
-        let rest = match strip_name(&tag[i + c.len_utf8()..], name) {
-            Some(rest) => rest,
-            None => continue,
-        };
-        if let Some((value, after)) = attribute_value(rest) {
-            if ends_value(after) {
-                return Some(html_escape::decode_html_entities(value).to_string());
-            }
-        }
-        if ends_value(rest) {
-            return Some(String::new());
-        }
-    }
-    None
-}
-
-// `text` after a leading `name`, an ASCII name matched as `(?i)` does: ASCII
-// letters in either case, and also the Kelvin sign for `k` and the long s for `s`.
-fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
-    let mut chars = text.chars();
-    for n in name.chars() {
-        let c = chars.next()?;
-        let same = c.eq_ignore_ascii_case(&n)
-            || (n.eq_ignore_ascii_case(&'k') && c == '\u{212a}')
-            || (n.eq_ignore_ascii_case(&'s') && c == '\u{17f}');
-        if !same {
-            return None;
-        }
-    }
-    Some(chars.as_str())
-}
-
-// `\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>/]+))` at the start of `text`: the
-// value, and the text after it.
-fn attribute_value(text: &str) -> Option<(&str, &str)> {
-    let text = text.trim_start().strip_prefix('=')?.trim_start();
-    for quote in ['"', '\''] {
-        if let Some(quoted) = text.strip_prefix(quote) {
-            let end = quoted.find(quote)?;
-            return Some((&quoted[..end], &quoted[end + 1..]));
-        }
-    }
-    let end = text
-        .find(|c: char| c.is_whitespace() || matches!(c, '"' | '\'' | '>' | '/'))
-        .unwrap_or(text.len());
-    if end == 0 {
-        return None;
-    }
-    Some((&text[..end], &text[end..]))
-}
 
 // Text with its tags (and the head, scripts and styles) removed and its white
 // space collapsed, for error messages.
@@ -1613,6 +1530,8 @@ pub struct Post<'a> {
     url: &'a str,
     // The fields to send, as the REST API names them.
     fields: serde_json::Map<String, serde_json::Value>,
+    // Save through the REST API alone, without opening the block editor.
+    rest_only: bool,
 }
 impl<'a> Post<'a> {
     /// Convenience function to bring [`PostBuilder`] into scope.
@@ -1651,6 +1570,7 @@ impl<'a> Post<'a> {
 pub struct PostBuilder<'a> {
     url: &'a str,
     fields: serde_json::Map<String, serde_json::Value>,
+    rest_only: bool,
 }
 impl<'a> PostBuilder<'a> {
     // Internally used when building to set defaults.
@@ -1660,6 +1580,8 @@ impl<'a> PostBuilder<'a> {
             url: "wp-json/wp/v2/posts",
             // Defaults to sending no fields.
             fields: serde_json::Map::new(),
+            // Defaults to opening the block editor first.
+            rest_only: false,
         }
     }
 
@@ -1748,6 +1670,29 @@ impl<'a> PostBuilder<'a> {
         self
     }
 
+    /// Save through the REST API alone, with the nonce passed to [`create_post`]
+    /// or [`update_post`], without first opening the post in the block editor.
+    ///
+    /// Defaults to `false`: the editor page (`wp-admin/post-new.php`, or
+    /// `wp-admin/post.php?post={id}&action=edit`) is loaded with its static
+    /// assets as an editor opens it, and its REST nonce is used for the save.
+    ///
+    /// # Example
+    /// ```rust
+    /// use goose_eggs::wordpress::Post;
+    ///
+    /// // Only the REST request, as goose-eggs 0.7 sent it.
+    /// let _post = Post::builder().title("Fast").rest_only(true).build();
+    /// # mod support { include!("../tests/doc/wordpress.rs"); }
+    /// # let server = support::rest_site("wp-json/wp/v2/posts", r#"{"title":"Fast"}"#);
+    /// # support::create_post("PostBuilder::rest_only", &server, &_post);
+    /// # assert_eq!(server.editor_loads(), 0, "doc example PostBuilder::rest_only: editor loads");
+    /// ```
+    pub fn rest_only(mut self, rest_only: bool) -> Self {
+        self.rest_only = rest_only;
+        self
+    }
+
     /// Build the [`Post`] object which is then passed to [`create_post`] or [`update_post`].
     ///
     /// # Example
@@ -1760,8 +1705,16 @@ impl<'a> PostBuilder<'a> {
     /// # support::create_post("PostBuilder::build", &server, &_post);
     /// ```
     pub fn build(self) -> Post<'a> {
-        let Self { url, fields } = self;
-        Post { url, fields }
+        let Self {
+            url,
+            fields,
+            rest_only,
+        } = self;
+        Post {
+            url,
+            fields,
+            rest_only,
+        }
     }
 }
 
@@ -1797,27 +1750,34 @@ async fn save_post(
     Ok(json)
 }
 
-/// Create a post through the REST API, as the block editor does: a POST of the
-/// post's fields as JSON, with the logged in user's REST nonce (see
-/// [`get_rest_nonce`]) in an `X-WP-Nonce` header.
+/// Create a post as an editor does in the block editor: open the editor
+/// (`wp-admin/post-new.php`, loaded with its static assets as
+/// [`validate_and_load_static_assets`](crate::validate_and_load_static_assets)
+/// loads any page), then save through the REST API as the editor's Save button
+/// does: a POST of the post's fields as JSON to the post the editor opened, with
+/// the editor page's REST nonce (see [`get_rest_nonce`]) in an `X-WP-Nonce`
+/// header. A post saved without a status is saved as a `draft`, as the editor
+/// saves one. The editor is opened for the post type of the post's route:
+/// `wp-json/wp/v2/pages` opens `post-new.php?post_type=page`.
 ///
-/// Fails when WordPress refuses, for example a 403 `rest_cookie_invalid_nonce`
-/// for a missing or stale nonce, or answers without a post. Returns the post
-/// WordPress created, as JSON.
+/// With [`PostBuilder::rest_only`], only the REST request is sent: a POST of
+/// the fields to the route, with `nonce`. Otherwise `nonce` is not used.
+///
+/// Fails when the editor page has no REST nonce, or when WordPress refuses, for
+/// example a 403 `rest_cookie_invalid_nonce` for a missing or stale nonce, or
+/// answers without a post. Returns the post WordPress saved, as JSON.
 ///
 /// # Example
 /// ```rust
 /// use goose::prelude::*;
-/// use goose_eggs::wordpress::{create_post, get_rest_nonce, Post};
+/// use goose_eggs::wordpress::{create_post, Post};
 ///
 /// transaction!(write);
 ///
 /// async fn write(user: &mut GooseUser) -> TransactionResult {
-///     // Any admin page has the nonce; the editor would load post-new.php.
-///     let html = user.get("wp-admin/").await?.response?.text().await?;
-///     let nonce = get_rest_nonce(&html).unwrap_or_default();
+///     // Opens post-new.php for its nonce, so no nonce is passed.
 ///     let post = Post::builder().title("Written by Goose").build();
-///     let created = create_post(user, &nonce, &post).await?;
+///     let created = create_post(user, "", &post).await?;
 ///     assert!(created["id"].as_u64().is_some());
 ///
 ///     Ok(())
@@ -1828,21 +1788,79 @@ async fn save_post(
 /// # let result = support::block_on(write(&mut user));
 /// # assert!(result.is_ok(), "doc example create_post: {}", support::failure(&result));
 /// # assert_eq!(server.saves(), 1, "doc example create_post: posts saved");
+/// # assert_eq!(server.editor_loads(), 1, "doc example create_post: editor loads");
 /// ```
 pub async fn create_post(
     user: &mut GooseUser,
     nonce: &str,
     post: &Post<'_>,
 ) -> Result<serde_json::Value, Box<TransactionError>> {
-    save_post(user, nonce, post.url, post.url, post).await
+    if post.rest_only {
+        return save_post(user, nonce, post.url, post.url, post).await;
+    }
+    let route = post.url.trim_end_matches('/');
+    let (site, rest_base) = editor_site(route);
+    let editor = match rest_base {
+        "posts" => format!("{}wp-admin/post-new.php", site),
+        "pages" => format!("{}wp-admin/post-new.php?post_type=page", site),
+        post_type => format!("{}wp-admin/post-new.php?post_type={}", site, post_type),
+    };
+    let (nonce, html) = open_editor(user, &editor, &editor).await?;
+    // The editor saves to the draft it opened, when the page names it.
+    match get_form_value(&html, "post_ID").and_then(|id| id.parse::<u64>().ok()) {
+        Some(id) => {
+            let mut draft = post.clone();
+            draft
+                .fields
+                .entry("status")
+                .or_insert_with(|| serde_json::Value::from("draft"));
+            let path = format!("{}/{}", route, id);
+            save_post(user, &nonce, &path, post.url, &draft).await
+        }
+        None => save_post(user, &nonce, post.url, post.url, post).await,
+    }
 }
 
-/// Update a post through the REST API, as the block editor saves one: a POST of
-/// the changed fields as JSON to the post's route, with the REST nonce in an
-/// `X-WP-Nonce` header.
+// The site part of a REST route (what comes before `wp-json/`) and its last
+// segment, the post type's REST base.
+fn editor_site(route: &str) -> (&str, &str) {
+    let site = route.find("wp-json/").map_or("", |i| &route[..i]);
+    (site, route.rsplit('/').next().unwrap_or_default())
+}
+
+// Open the block editor at `path` as an editor does, page and static assets,
+// and return its REST nonce and its HTML; fail when it has no nonce.
+async fn open_editor(
+    user: &mut GooseUser,
+    path: &str,
+    name: &str,
+) -> Result<(String, String), Box<TransactionError>> {
+    let goose = get_named(user, path, name).await?;
+    let mut request = goose.request.clone();
+    let html = load_page(user, goose, None).await?;
+    match get_rest_nonce(&html) {
+        Some(nonce) => Ok((nonce, html)),
+        None => fail(
+            user,
+            &format!("{}: no REST nonce on the editor page", path),
+            &mut request,
+            None,
+            Some(&html),
+        ),
+    }
+}
+
+/// Update a post as an editor does in the block editor: open the post in the
+/// editor (`wp-admin/post.php?post={id}&action=edit`, loaded with its static
+/// assets), then save the changed fields as JSON to the post's REST route, with
+/// the editor page's REST nonce in an `X-WP-Nonce` header.
 ///
-/// The request is named `<route>/{id}`, so updates of every post share one line
-/// in the metrics. Fails as [`create_post`] does; returns the updated post.
+/// With [`PostBuilder::rest_only`], only the REST request is sent, with `nonce`.
+/// Otherwise `nonce` is not used.
+///
+/// The editor page is named `wp-admin/post.php?post={id}&action=edit` and the
+/// save `<route>/{id}`, so the requests for every post share one line each in
+/// the metrics. Fails as [`create_post`] does; returns the updated post.
 ///
 /// # Example
 /// ```rust
@@ -1852,10 +1870,15 @@ pub async fn create_post(
 /// transaction!(edit);
 ///
 /// async fn edit(user: &mut GooseUser) -> TransactionResult {
+///     // Only the REST request, with a nonce from any admin page.
 ///     let html = user.get("wp-admin/").await?.response?.text().await?;
 ///     let nonce = get_rest_nonce(&html).unwrap_or_default();
-///     let post = Post::builder().title("Hello world!").build();
+///     let post = Post::builder().title("Hello world!").rest_only(true).build();
 ///     let _updated = update_post(user, &nonce, 1, &post).await?;
+///
+///     // Open post 1 in the editor, then save it with the editor's nonce.
+///     let post = Post::builder().title("Hello world!").build();
+///     let _updated = update_post(user, "", 1, &post).await?;
 ///
 ///     Ok(())
 /// }
@@ -1864,7 +1887,8 @@ pub async fn create_post(
 /// # let mut user = support::user(&server);
 /// # let result = support::block_on(edit(&mut user));
 /// # assert!(result.is_ok(), "doc example update_post: {}", support::failure(&result));
-/// # assert_eq!(server.saves(), 1, "doc example update_post: posts saved");
+/// # assert_eq!(server.saves(), 2, "doc example update_post: posts saved");
+/// # assert_eq!(server.editor_loads(), 1, "doc example update_post: editor loads");
 /// ```
 pub async fn update_post(
     user: &mut GooseUser,
@@ -1874,7 +1898,14 @@ pub async fn update_post(
 ) -> Result<serde_json::Value, Box<TransactionError>> {
     let path = format!("{}/{}", post.url.trim_end_matches('/'), id);
     let name = format!("{}/{{id}}", post.url.trim_end_matches('/'));
-    save_post(user, nonce, &path, &name, post).await
+    if post.rest_only {
+        return save_post(user, nonce, &path, &name, post).await;
+    }
+    let (site, _) = editor_site(post.url);
+    let editor = format!("{}wp-admin/post.php?post={}&action=edit", site, id);
+    let editor_name = format!("{}wp-admin/post.php?post={{id}}&action=edit", site);
+    let (nonce, _) = open_editor(user, &editor, &editor_name).await?;
+    save_post(user, &nonce, &path, &name, post).await
 }
 
 /// The URLs of a site's content, by kind, as [`discover`] found them.
@@ -2387,67 +2418,6 @@ mod tests {
         include_str!("../tests/fixtures/woocommerce/classic-checkout.html");
 
     #[test]
-    fn attribute_cases() {
-        // (case, tag, attribute, expected)
-        let cases = [
-            (
-                "double quoted",
-                r#"<input name="a" value="b">"#,
-                "value",
-                Some("b"),
-            ),
-            (
-                "single quoted",
-                "<input name='a' value='b'>",
-                "value",
-                Some("b"),
-            ),
-            ("unquoted", "<input name=a value=b>", "value", Some("b")),
-            ("no value", "<input checked name=a>", "checked", Some("")),
-            (
-                "last, self closing",
-                r#"<input name="a" checked/>"#,
-                "checked",
-                Some(""),
-            ),
-            (
-                "entities decoded",
-                r#"<a href="/x?a=1&#038;b=2">"#,
-                "href",
-                Some("/x?a=1&b=2"),
-            ),
-            (
-                "newlines",
-                "<input\n\tname=\"a\"\n\tvalue=\"b\"\n/>",
-                "value",
-                Some("b"),
-            ),
-            (
-                "upper case",
-                r#"<INPUT NAME="a" VALUE="b">"#,
-                "value",
-                Some("b"),
-            ),
-            (
-                "name is not a suffix",
-                r#"<input data-value="x" value="b">"#,
-                "value",
-                Some("b"),
-            ),
-            ("only a suffix", r#"<input data-value="x">"#, "value", None),
-            ("missing", r#"<input name="a">"#, "value", None),
-        ];
-        for (case, tag, name, expected) in cases {
-            assert_eq!(
-                attribute(tag, name).as_deref(),
-                expected,
-                "attribute case {}",
-                case
-            );
-        }
-    }
-
-    #[test]
     fn get_form_cases() {
         // (case, html, form name, expected form)
         let cases = [
@@ -2945,28 +2915,7 @@ mod tests {
 #[cfg(test)]
 mod snapshot_tests {
     use super::*;
-    use crate::snapshot::{check, fixtures, line, Generator};
-
-    // Every opening or closing tag on a page, found without a regular expression.
-    fn tags(page: &str) -> Vec<&str> {
-        let mut found = Vec::new();
-        let mut rest = page;
-        while let Some(start) = rest.find('<') {
-            match rest[start..].find('>') {
-                Some(end) => {
-                    found.push(&rest[start..start + end + 1]);
-                    rest = &rest[start + end + 1..];
-                }
-                None => break,
-            }
-        }
-        found
-    }
-
-    const ATTRIBUTES: &[&str] = &[
-        "id", "name", "class", "value", "type", "checked", "selected", "href", "action", "src",
-        "ïd", "a.b", "NAME", "data-x",
-    ];
+    use crate::snapshot::{check, fixtures, line};
 
     const FORM_NAMES: &[&str] = &[
         "loginform",
@@ -3005,61 +2954,6 @@ mod snapshot_tests {
             }
         }
         found
-    }
-
-    #[test]
-    fn attribute_snapshot() {
-        let mut actual = String::new();
-        for (path, page) in fixtures() {
-            let values: Vec<Vec<_>> = tags(&page)
-                .into_iter()
-                .map(|tag| ATTRIBUTES.iter().map(|n| attribute(tag, n)).collect())
-                .collect();
-            actual.push_str(&line(&path, values));
-        }
-        let tokens = [
-            "<input",
-            " ",
-            "\n",
-            "\t",
-            "\u{a0}",
-            "\u{2003}",
-            "=",
-            "\"",
-            "'",
-            ">",
-            "/",
-            "name",
-            "NAME",
-            "value",
-            "checked",
-            "chec\u{212a}ed",
-            "selected",
-            "\u{17f}elected",
-            "class",
-            "cla\u{17f}\u{17f}",
-            "id",
-            "ïd",
-            "ÏD",
-            "a.b",
-            "x",
-            "é",
-            "&amp;",
-        ];
-        let names = [
-            "name", "value", "checked", "selected", "class", "id", "ïd", "a.b", "NAME", "",
-        ];
-        let mut generator = Generator::new(3304);
-        for chunk in 0..200 {
-            let values: Vec<_> = (0..100)
-                .map(|_| {
-                    let tag = generator.text(&tokens, 10);
-                    attribute(&tag, generator.pick(&names))
-                })
-                .collect();
-            actual.push_str(&line(&format!("generated {}", chunk), values));
-        }
-        check("wordpress_attribute", &actual);
     }
 
     #[test]
