@@ -1,0 +1,42 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index 64a85f4..c08e201 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -251,32 +251,15 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+         r#"{{"command":"update_build_id","old":"{}","new":""#,
+         old_build_id
+     );
+-    // The first `"}` and the first newline at or after the value's start, kept
+-    // until a later command starts past them, so each is searched for once and
+-    // many unclosed commands cost linear, not quadratic, time.
+-    let mut close: Option<usize> = None;
+-    let mut newline: Option<usize> = None;
+     let mut from = 0;
+     while let Some(found) = form_html[from..].find(&command) {
+         let start = from + found;
+-        let value = start + command.len();
+-        let end = match close {
+-            Some(end) if end >= value => end,
+-            // No `"}` after this command, so none after any later one.
+-            _ => value + form_html[value..].find(r#""}"#)?,
+-        };
+-        close = Some(end);
+-        let line_end = match newline {
+-            Some(line_end) if line_end >= value => line_end,
+-            _ => form_html[value..]
+-                .find('\n')
+-                .map_or(form_html.len(), |i| value + i),
+-        };
+-        newline = Some(line_end);
+-        if line_end >= end {
+-            return Some(form_html[value..end].to_string());
++        let rest = &form_html[start + command.len()..];
++        if let Some(end) = rest.find(r#""}"#) {
++            if !rest[..end].contains('\n') {
++                return Some(rest[..end].to_string());
++            }
+         }
+-        // `command` starts with an ASCII `{`, so the next byte starts a character.
+         from = start + 1;
+     }
+     None

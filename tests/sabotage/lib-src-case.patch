@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..8b25833 100644
+index 2546d44..2197645 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1098,7 +1098,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
-     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
-     // <foo> is the URL to local image and js assets.
-     // @TODO: parse HTML5 srcset= also
--    let src_elements = Regex::new(r#"(?i)src="(.*?)""#).unwrap();
-+    let src_elements = Regex::new(r#"src="(.*?)""#).unwrap();
-     let mut elements: Vec<String> = Vec::new();
-     for url in src_elements.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
-         if valid_local_uri(user, &url[1]) {
+@@ -53,7 +53,7 @@ pub mod wordpress;
+ // The page parsing regular expressions, each compiled once on first use.
+ static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
+ static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
+-static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
++static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"src="(.*?)""#).unwrap());
+ static CSS_ELEMENT: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());
+ 

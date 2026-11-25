@@ -1,9 +1,9 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..a8b227a 100644
+index 64a85f4..f84f49a 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -210,7 +210,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-         Some(v) => v[1].to_string(),
+@@ -226,7 +226,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
+         Some(build_id) => build_id,
          None => {
              warn!("update_build_id not found");
 -            "none".to_string()

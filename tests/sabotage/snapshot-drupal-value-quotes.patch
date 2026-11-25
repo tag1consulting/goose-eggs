@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index 64a85f4..1329d33 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -105,7 +105,7 @@ fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {
+     while let Some(found) = form_html[from..].find(&element) {
+         let start = from + found;
+         let rest = &form_html[start + element.len()..];
+-        if let Some(value) = rest.strip_prefix(['"', '\'']) {
++        if let Some(value) = rest.strip_prefix('"') {
+             if let Some(end) = value.find(['"', '\'', '\n']) {
+                 if !value[end..].starts_with('\n') {
+                     return Some(&value[..end]);

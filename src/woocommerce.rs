@@ -14,6 +14,7 @@ use goose::metrics::GooseRequestMetric;
 use goose::prelude::*;
 use rand::seq::IndexedRandom;
 use regex::Regex;
+use std::sync::LazyLock;
 
 /// Where a shop's pages and Store API are. For complete documentation, refer to
 /// [`ShopBuilder`].
@@ -1104,21 +1105,33 @@ impl<'a> CheckoutBuilder<'a> {
     }
 }
 
+// The page parsing regular expressions, each compiled once on first use.
+static ERROR_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
+    )
+    .unwrap()
+});
+static SUCCESS_NOTICE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#).unwrap()
+});
+static QUANTITY_FIELD: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap());
+
 // The text of the first error notice on a page, classic (`woocommerce-error`)
 // or block (`is-error`) themed.
 fn error_notice(html: &str) -> Option<String> {
-    let re = Regex::new(
-        r#"(?s)class="[^"]*(?:woocommerce-error|is-error)[^"]*"[^>]*>(.*?)</(?:ul|div)>\s*(?:</div>)?"#,
-    )
-    .unwrap();
-    re.captures(html).map(|c| plain_text(&c[1]))
+    ERROR_NOTICE.captures(html).map(|c| plain_text(&c[1]))
 }
 
 // Whether a page shows a success notice, classic or block themed.
 fn has_success_notice(html: &str) -> bool {
-    Regex::new(r#"class="[^"]*(?:woocommerce-message|is-success)[^"]*""#)
-        .unwrap()
-        .is_match(html)
+    SUCCESS_NOTICE.is_match(html)
+}
+
+// Whether a classic cart form control is a cart item's quantity.
+fn is_quantity_field(name: &str) -> bool {
+    QUANTITY_FIELD.is_match(name)
 }
 
 // Load a classic page and fail unless it shows a success notice.
@@ -1211,11 +1224,10 @@ pub async fn classic_update_cart(
     let mut request = goose.request.clone();
     let page = load_page(user, goose, None).await?;
     let form = get_form_by_class(&page, "woocommerce-cart-form");
-    let quantity_field = Regex::new(r"^cart\[[^\]]+\]\[qty\]$").unwrap();
     let mut params: Vec<(String, String)> = form_controls(&form)
         .into_iter()
         .map(|(name, value)| {
-            if quantity_field.is_match(&name) {
+            if is_quantity_field(&name) {
                 (name, quantity.to_string())
             } else {
                 (name, value)
@@ -1668,5 +1680,56 @@ mod tests {
             cart.use_cart_token(true).use_cart_token,
             "StoreApiCart use_cart_token"
         );
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line};
+    use crate::wordpress::form_controls;
+
+    #[test]
+    fn error_notice_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, error_notice(&page)));
+        }
+        check("woocommerce_error_notice", &actual);
+    }
+
+    #[test]
+    fn has_success_notice_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, has_success_notice(&page)));
+        }
+        check("woocommerce_has_success_notice", &actual);
+    }
+
+    #[test]
+    fn is_quantity_field_snapshot() {
+        let mut names: Vec<String> = fixtures()
+            .iter()
+            .flat_map(|(_, page)| form_controls(page))
+            .map(|(name, _)| name)
+            .collect();
+        for name in [
+            "cart[abc][qty]",
+            "cart[][qty]",
+            "cart[a]b][qty]",
+            "cart[a][qty]x",
+            "xcart[a][qty]",
+            "cart[a][quantity]",
+            "cart[a\n][qty]",
+            "",
+        ] {
+            names.push(name.to_string());
+        }
+        let mut actual = String::new();
+        for name in names {
+            actual.push_str(&line(&name, is_quantity_field(&name)));
+        }
+        check("woocommerce_is_quantity_field", &actual);
     }
 }

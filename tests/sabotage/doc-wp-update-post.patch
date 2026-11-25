@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..754696d 100644
+index f97ea67..60e3326 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1782,7 +1782,7 @@ pub async fn update_post(
+@@ -1872,7 +1872,7 @@ pub async fn update_post(
      id: u64,
      post: &Post<'_>,
  ) -> Result<serde_json::Value, Box<TransactionError>> {

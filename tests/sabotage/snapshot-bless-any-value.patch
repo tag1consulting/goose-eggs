@@ -1,0 +1,13 @@
+diff --git a/src/snapshot.rs b/src/snapshot.rs
+index ef264b5..4ffb952 100644
+--- a/src/snapshot.rs
++++ b/src/snapshot.rs
+@@ -66,7 +66,7 @@ fn fnv(text: &str) -> u64 {
+ 
+ // Whether `GOOSE_EGGS_BLESS` asks to rewrite the snapshots: only when it is `1`.
+ fn blessing(value: Option<&OsStr>) -> bool {
+-    value == Some(OsStr::new("1"))
++    value.is_some()
+ }
+ 
+ // Compare `actual` with the snapshot `name`, or record it when blessing.

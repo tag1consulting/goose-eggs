@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..91eacb6 100644
+index 69c128f..fab4d1c 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -1234,7 +1234,6 @@ pub async fn classic_update_cart(
+@@ -1246,7 +1246,6 @@ pub async fn classic_update_cart(
              Some(&page),
          );
      }

@@ -1,9 +1,9 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..ad641aa 100644
+index 64a85f4..ac28aba 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -95,7 +95,7 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
-         Some(v) => v[1].to_string(),
+@@ -91,7 +91,7 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
+         Some(value) => value.to_string(),
          None => {
              warn!("form element {} not found", name);
 -            "none".to_string()

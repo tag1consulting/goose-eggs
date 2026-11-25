@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ec6b054 100644
+index f97ea67..7c173b8 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1007,7 +1007,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1101,7 +1101,7 @@ impl<'a> SearchParamsBuilder<'a> {
      /// # support::search_fails("SearchParamsBuilder::results_page_validation", &server, &params, "title not found");
      /// ```
      pub fn results_page_validation(mut self, validation: &'a crate::Validate) -> Self {

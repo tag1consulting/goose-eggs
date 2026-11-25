@@ -52,6 +52,26 @@ Besides page validation and static asset loading, goose-eggs has modules for the
 
 The [WooCommerce example](examples/woocommerce) is a complete load test of a shop, and `examples/wordpress-sites/woocommerce` brings up the demo shop it runs against in Docker.
 
+## Compile regular expressions once
+
+A load test runs each transaction thousands of times, so a `Regex::new` in a transaction or a helper it calls compiles its pattern and rebuilds its match cache on every request; in Goose's Umami example that cost about half of Goose's CPU per request. Compile each pattern once, in a `static` with [`std::sync::LazyLock`](https://doc.rust-lang.org/std/sync/struct.LazyLock.html), and share it across every user and request:
+
+```rust
+use regex::Regex;
+use std::sync::LazyLock;
+
+// Compiled the first time any user needs it, then reused.
+static ORDER_NUMBER: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"Order number: <strong>(\d+)</strong>").unwrap());
+
+fn order_number(html: &str) -> Option<String> {
+    ORDER_NUMBER.captures(html).map(|c| c[1].to_string())
+}
+
+let page = "<li>Order number: <strong>42</strong></li>";
+assert_eq!(order_number(page), Some("42".to_string()));
+```
+
 ## Documentation
 
 - [Goose Eggs](https://docs.rs/goose-eggs)

@@ -1,0 +1,9 @@
+diff --git a/.gitattributes b/.gitattributes
+index 379ed4f..8f73193 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -1,4 +1,3 @@
+ # Saved pages and the snapshots made from them are compared byte for byte, so
+ # keep them LF on every checkout, Windows included.
+ tests/fixtures/** text eol=lf
+-tests/snapshots/** text eol=lf

@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..68fc043 100644
+index 64a85f4..2086fc9 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1148,7 +1148,7 @@ pub async fn search<'a>(
+@@ -1215,7 +1215,7 @@ pub async fn search<'a>(
      // Build search form.
      let keys = params.keys.to_string();
      let submit = params.submit.to_string();

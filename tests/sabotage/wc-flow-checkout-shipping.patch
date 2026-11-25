@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..b045aa2 100644
+index 69c128f..24aeef1 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -913,7 +913,7 @@ impl StoreApiCart {
+@@ -914,7 +914,7 @@ impl StoreApiCart {
          );
          let mut shipping = address.clone();
          if let Some(shipping) = shipping.as_object_mut() {

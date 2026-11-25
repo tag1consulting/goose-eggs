@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..51c6b21 100644
+index 69c128f..f95d47c 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -65,7 +65,7 @@ impl Default for Shop<'_> {
+@@ -66,7 +66,7 @@ impl Default for Shop<'_> {
      /// # support::shop_page("Shop::default", &server, &_shop);
      /// ```
      fn default() -> Self {

@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..cfeaa5a 100644
+index 64a85f4..c70d8aa 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -144,7 +144,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
-     let re = Regex::new(
-         // Lazy match to avoid matching multiple forms.
-         &format!(
--            "{}.*?data-drupal-selector=.*?{}(.*?){}",
-+            "{}.*?data-drupal-selectors=.*?{}(.*?){}",
-             regex::escape(r#"[{"#),
-             regex::escape(name),
-             regex::escape(r#"}]"#)
+@@ -199,7 +199,7 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
+ // would too, as it leaves less of the line to match.
+ fn bigpipe_form<'a>(line: &'a str, name: &str) -> Option<&'a str> {
+     let rest = &line[line.find("[{")? + 2..];
+-    let selector = "data-drupal-selector=";
++    let selector = "data-drupal-selectors=";
+     let rest = &rest[rest.find(selector)? + selector.len()..];
+     let rest = &rest[rest.find(name)? + name.len()..];
+     Some(&rest[..rest.find("}]")?])

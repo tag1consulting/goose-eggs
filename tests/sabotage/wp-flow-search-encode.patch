@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..9b2595a 100644
+index f97ea67..bcd3274 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1068,7 +1068,7 @@ pub async fn search(
+@@ -1162,7 +1162,7 @@ pub async fn search(
      user: &mut GooseUser,
      params: &SearchParams<'_>,
  ) -> Result<String, Box<TransactionError>> {

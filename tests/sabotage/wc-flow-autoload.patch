@@ -1,8 +1,8 @@
 diff --git a/src/woocommerce.rs b/src/woocommerce.rs
-index 8b1c271..c1c87ee 100644
+index 69c128f..3d60a42 100644
 --- a/src/woocommerce.rs
 +++ b/src/woocommerce.rs
-@@ -687,7 +687,7 @@ impl StoreApiCart {
+@@ -688,7 +688,7 @@ impl StoreApiCart {
          body: Option<&serde_json::Value>,
      ) -> Result<(GooseRequestMetric, serde_json::Value), Box<TransactionError>> {
          // Writes need a nonce; loading the cart gets one.

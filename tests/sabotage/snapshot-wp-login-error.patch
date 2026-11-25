@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index bf6a37f..6e1ccd5 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -148,7 +148,7 @@ pub(crate) fn plain_text(html: &str) -> String {
+ 
+ // The text of WordPress's log in error box, if the page shows one.
+ fn login_error(html: &str) -> Option<String> {
+-    LOGIN_ERROR.captures(html).map(|c| plain_text(&c[1]))
++    LOGIN_ERROR.captures(html).map(|c| plain_text(&c[0]))
+ }
+ 
+ // The text of a page's body, or an empty string when it has none.

@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..7a901b2 100644
+index 64a85f4..9f4b5e5 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1154,7 +1154,7 @@ pub async fn search<'a>(
+@@ -1221,7 +1221,7 @@ pub async fn search<'a>(
      }
  
      // Perform the search.

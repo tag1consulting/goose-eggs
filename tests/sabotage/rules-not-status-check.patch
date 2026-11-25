@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..c4b3131 100644
+index 2546d44..04a470b 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1268,7 +1268,7 @@ pub async fn validate_page<'a>(
+@@ -1327,7 +1327,7 @@ pub async fn validate_page<'a>(
              // Validate status code if defined.
              if let Some(validate_status) = validate.status.as_ref() {
                  // If equals is false, error if response.status == status

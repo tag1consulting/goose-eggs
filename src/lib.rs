@@ -9,6 +9,29 @@
 //! * `default`: enable `goose`'s default features, which turn on cookie support
 //! * `rustls-tls`: forward to `goose`'s `rustls-tls` feature (load test requests
 //!   use `rustls` in every build of Goose 0.19)
+//!
+//! ## Compile regular expressions once
+//! A load test runs each transaction thousands of times, so a `Regex::new` in a
+//! transaction or a helper it calls compiles its pattern and rebuilds its match
+//! cache on every request; in Goose's Umami example that cost about half of
+//! Goose's CPU per request. Compile each pattern once, in a `static` with
+//! [`std::sync::LazyLock`], and share it across every user and request:
+//!
+//! ```rust
+//! use regex::Regex;
+//! use std::sync::LazyLock;
+//!
+//! // Compiled the first time any user needs it, then reused.
+//! static ORDER_NUMBER: LazyLock<Regex> =
+//!     LazyLock::new(|| Regex::new(r"Order number: <strong>(\d+)</strong>").unwrap());
+//!
+//! fn order_number(html: &str) -> Option<String> {
+//!     ORDER_NUMBER.captures(html).map(|c| c[1].to_string())
+//! }
+//!
+//! let page = "<li>Order number: <strong>42</strong></li>";
+//! assert_eq!(order_number(page), Some("42".to_string()));
+//! ```
 
 use goose::goose::GooseResponse;
 use goose::prelude::*;
@@ -16,11 +39,47 @@ use http::HeaderMap;
 use http::Uri;
 use log::info;
 use regex::Regex;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::sync::LazyLock;
 
 pub mod drupal;
+#[cfg(test)]
+mod snapshot;
 pub mod text;
 pub mod woocommerce;
 pub mod wordpress;
+
+// The page parsing regular expressions, each compiled once on first use.
+static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
+static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
+static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
+static CSS_ELEMENT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());
+
+// The most patterns `with_cached_regex` keeps on each thread.
+const REGEX_CACHE_SIZE: usize = 64;
+
+// Run `f` with `pattern` compiled, for a pattern built from a caller's argument
+// that code cannot match the same way. Each thread compiles a pattern once and
+// keeps up to REGEX_CACHE_SIZE of them, forgetting them all when full; an
+// invalid pattern panics, as `Regex::new(..).unwrap()` did.
+pub(crate) fn with_cached_regex<T>(pattern: String, f: impl FnOnce(&Regex) -> T) -> T {
+    thread_local! {
+        static CACHE: RefCell<HashMap<String, Regex>> = RefCell::new(HashMap::new());
+    }
+    CACHE.with(|cache| {
+        let mut cache = cache.borrow_mut();
+        if !cache.contains_key(&pattern) {
+            if cache.len() >= REGEX_CACHE_SIZE {
+                cache.clear();
+            }
+            let regex = Regex::new(&pattern).unwrap();
+            cache.insert(pattern.clone(), regex);
+        }
+        f(&cache[&pattern])
+    })
+}
 
 /// Validate that the status code is equal or not equal to a specified value.
 #[derive(Clone, Debug)]
@@ -710,11 +769,12 @@ impl<'a> ValidateBuilder<'a> {
 /// assert!(!html_header.is_none());
 /// ```
 pub fn get_html_header(html: &str) -> Option<String> {
-    let re = Regex::new(r#"<head(.*?)</head>"#).unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire html header, a subset of the received html.
-    re.captures(&line).map(|value| value[0].to_string())
+    HTML_HEADER
+        .captures(&line)
+        .map(|value| value[0].to_string())
 }
 
 /// Use a regular expression to get the web page title.
@@ -751,11 +811,10 @@ pub fn get_html_header(html: &str) -> Option<String> {
 /// assert_eq!(title, "Example Website");
 /// ```
 pub fn get_title(html: &str) -> Option<String> {
-    let re = Regex::new(r#"<title>(.*?)</title>"#).unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire title, a subset of the received html.
-    re.captures(&line).map(|value| value[1].to_string())
+    TITLE.captures(&line).map(|value| value[1].to_string())
 }
 
 /// Returns a [`bool`] indicating whether or not the title (case insensitive) on the
@@ -1100,9 +1159,8 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // Use a case-insensitive regular expression to find all src=<foo> in the html, where
     // <foo> is the URL to local image and js assets.
     // @TODO: parse HTML5 srcset= also
-    let src_elements = Regex::new(r#"(?i)src="(.*?)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
-    for url in src_elements.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
+    for url in SRC_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
         if valid_local_uri(user, &url[1]) {
             elements.push(url[1].to_string());
         }
@@ -1117,9 +1175,8 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
 pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
     // Use a case-insensitive regular expression to find all href=<foo> in the html, where
     // <foo> is the URL to local css assets.
-    let css = Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap();
     let mut elements: Vec<String> = Vec::new();
-    for url in css.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
+    for url in CSS_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
         if valid_local_uri(user, &url[1]) {
             elements.push(url[1].to_string());
         }
@@ -1978,3 +2035,64 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line};
+    use goose::config::GooseConfiguration;
+    use goose::goose::get_base_url;
+
+    // A user on localhost:18082, a host the saved pages were captured from.
+    fn user() -> GooseUser {
+        let configuration = GooseConfiguration::parse_args_default(&Vec::<&str>::new()).unwrap();
+        let base_url =
+            get_base_url(Some("http://localhost:18082".to_string()), None, None).unwrap();
+        GooseUser::new(0, "".into(), base_url, &configuration, 0, None).unwrap()
+    }
+
+    #[test]
+    fn get_html_header_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_html_header(&page)));
+        }
+        check("get_html_header", &actual);
+    }
+
+    #[test]
+    fn get_title_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_title(&page)));
+            let header = get_html_header(&page).unwrap_or_default();
+            actual.push_str(&line(&format!("{} header", path), get_title(&header)));
+        }
+        check("get_title", &actual);
+    }
+
+    #[tokio::test]
+    async fn get_src_elements_snapshot() {
+        let mut user = user();
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_src_elements(&mut user, &page).await));
+        }
+        check("get_src_elements", &actual);
+    }
+
+    #[tokio::test]
+    async fn get_css_elements_snapshot() {
+        let mut user = user();
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            actual.push_str(&line(&path, get_css_elements(&mut user, &page).await));
+        }
+        check("get_css_elements", &actual);
+    }
+}
+
+// Doc test the README's examples.
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+struct ReadmeDoctests;

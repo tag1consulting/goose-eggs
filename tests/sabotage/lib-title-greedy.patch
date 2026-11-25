@@ -1,13 +1,13 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..19dc322 100644
+index 2546d44..2457ed2 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -749,7 +749,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
- /// assert_eq!(title, "Example Website");
- /// ```
- pub fn get_title(html: &str) -> Option<String> {
--    let re = Regex::new(r#"<title>(.*?)</title>"#).unwrap();
-+    let re = Regex::new(r#"<title>(.*)</title>"#).unwrap();
-     // Strip carriage returns to simplify regex.
-     let line = html.replace('\n', "");
-     // Return the entire title, a subset of the received html.
+@@ -52,7 +52,7 @@ pub mod wordpress;
+ 
+ // The page parsing regular expressions, each compiled once on first use.
+ static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
+-static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*?)</title>"#).unwrap());
++static TITLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<title>(.*)</title>"#).unwrap());
+ static SRC_ELEMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(?i)src="(.*?)""#).unwrap());
+ static CSS_ELEMENT: LazyLock<Regex> =
+     LazyLock::new(|| Regex::new(r#"(?i)href="([^"]*\.css[^"]*)""#).unwrap());

@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..4a042b5 100644
+index f97ea67..a601198 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -137,8 +137,7 @@ pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
+@@ -241,8 +241,7 @@ pub(crate) fn form_controls(form: &str) -> Vec<(String, String)> {
                  .unwrap_or_default()
                  .to_ascii_lowercase();
              let checkable = kind == "checkbox" || kind == "radio";

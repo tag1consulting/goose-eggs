@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..8285f47 100644
+index 64a85f4..76db266 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -207,7 +207,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-     .unwrap();
+@@ -223,7 +223,7 @@ fn bigpipe_form<'a>(line: &'a str, name: &str) -> Option<&'a str> {
+ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
      // Return a specific form value.
-     match re.captures(form_html) {
--        Some(v) => v[1].to_string(),
-+        Some(v) => v[0].to_string(),
+     match updated_build_id(form_html, old_build_id) {
+-        Some(build_id) => build_id,
++        Some(_) => "".to_string(),
          None => {
              warn!("update_build_id not found");
              "none".to_string()

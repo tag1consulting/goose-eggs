@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..6c467e3 100644
+index 64a85f4..ea17b2e 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -881,7 +881,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -948,7 +948,7 @@ impl<'a> SearchParamsBuilder<'a> {
              // Defaults to "search".
              url: "search",
              // Defaults to form values required by Drupal 8 and 9.

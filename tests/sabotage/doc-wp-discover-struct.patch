@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ce5f8e8 100644
+index f97ea67..22b031b 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -2270,7 +2270,7 @@ pub async fn discover(
+@@ -2353,7 +2353,7 @@ pub async fn discover(
                  if content.urls(kind).len() >= cap {
                      break;
                  }

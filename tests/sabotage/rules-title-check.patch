@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..652059e 100644
+index 2546d44..fa6b86c 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1413,7 +1413,7 @@ pub async fn validate_page<'a>(
+@@ -1472,7 +1472,7 @@ pub async fn validate_page<'a>(
                              // errors when a page fails to load.
                              return Ok(html);
                          // Be sure the title contains the specified text.

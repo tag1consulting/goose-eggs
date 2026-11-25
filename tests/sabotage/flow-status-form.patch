@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..da3cfe3 100644
+index 64a85f4..eb1112b 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -711,7 +711,7 @@ pub async fn log_in(
+@@ -778,7 +778,7 @@ pub async fn log_in(
              .path(login.url)
              .method(GooseMethod::Post)
              .expect_status_code(validate_status.status_code)

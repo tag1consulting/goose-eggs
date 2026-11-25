@@ -1,0 +1,13 @@
+diff --git a/src/drupal.rs b/src/drupal.rs
+index 64a85f4..ba4f71d 100644
+--- a/src/drupal.rs
++++ b/src/drupal.rs
+@@ -202,7 +202,7 @@ fn bigpipe_form<'a>(line: &'a str, name: &str) -> Option<&'a str> {
+     let selector = "data-drupal-selector=";
+     let rest = &rest[rest.find(selector)? + selector.len()..];
+     let rest = &rest[rest.find(name)? + name.len()..];
+-    Some(&rest[..rest.find("}]")?])
++    Some(&rest[..rest.rfind("}]")?])
+ }
+ 
+ /// Extract an updated build_id from a form.

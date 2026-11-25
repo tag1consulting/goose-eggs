@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..e444dbf 100644
+index f97ea67..848205c 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1567,7 +1567,7 @@ impl<'a> PostBuilder<'a> {
+@@ -1657,7 +1657,7 @@ impl<'a> PostBuilder<'a> {
      fn new() -> Self {
          Self {
              // Defaults to the core posts route.

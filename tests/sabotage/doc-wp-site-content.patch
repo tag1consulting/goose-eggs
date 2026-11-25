@@ -1,10 +1,10 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..ba1dc0d 100644
+index bf6a37f..6e3378a 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -1934,7 +1934,7 @@ pub(crate) fn site_path(url: &str) -> String {
-         .find(url)
-     {
+@@ -2021,7 +2021,7 @@ impl SiteContent {
+ pub(crate) fn site_path(url: &str) -> String {
+     match URL_ORIGIN.find(url) {
          Some(origin) if origin.end() == url.len() => "/".to_string(),
 -        Some(origin) => url[origin.end()..].to_string(),
 +        Some(_) => url.to_string(),

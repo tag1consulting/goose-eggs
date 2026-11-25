@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..6053086 100644
+index 64a85f4..85440d6 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1149,7 +1149,7 @@ pub async fn search<'a>(
+@@ -1216,7 +1216,7 @@ pub async fn search<'a>(
      let keys = params.keys.to_string();
      let submit = params.submit.to_string();
      let mut search_params = vec![("keys", keys), ("op", submit)];

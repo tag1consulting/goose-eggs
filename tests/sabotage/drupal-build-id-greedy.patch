@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..28dd43d 100644
+index 64a85f4..fa17f2e 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -202,7 +202,7 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
- pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-     let re = Regex::new(&format!(
-         "{}{}{}",
--        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
-+        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*)"\}"#
-     ))
-     .unwrap();
-     // Return a specific form value.
+@@ -263,7 +263,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+         let end = match close {
+             Some(end) if end >= value => end,
+             // No `"}` after this command, so none after any later one.
+-            _ => value + form_html[value..].find(r#""}"#)?,
++            _ => value + form_html[value..].rfind(r#""}"#)?,
+         };
+         close = Some(end);
+         let line_end = match newline {

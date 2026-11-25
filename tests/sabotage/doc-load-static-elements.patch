@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..f6f96fb 100644
+index 2546d44..8865a8a 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1183,7 +1183,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1242,7 +1242,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // Use a case-insensitive regular expression to find all src=<foo> in the html, where
      // <foo> is the URL to local image and js assets.
      // @TODO: parse HTML5 srcset= also

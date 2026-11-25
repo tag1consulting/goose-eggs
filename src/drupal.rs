@@ -1,8 +1,8 @@
 //! Functionality that's specific to Drupal.
 
+use crate::with_cached_regex;
 use goose::prelude::*;
 use log::warn;
-use regex::Regex;
 use std::collections::HashMap;
 use std::env;
 
@@ -37,16 +37,17 @@ use std::env;
 /// assert!(!form.is_empty());
 /// ```
 pub fn get_form(html: &str, name: &str) -> String {
-    let re = Regex::new(&format!(
+    // `name` is part of the pattern, not escaped, so it is matched as a regular
+    // expression; the pattern is compiled once per name and kept.
+    let pattern = format!(
         // Lazy match to avoid matching multiple forms.
         r#"<form.*?(data-drupal-selector|id)="{name}".*?>(.*?)</form>"#,
-    ))
-    .unwrap();
+    );
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
-    match re.captures(&line) {
-        Some(capture) => capture[2].to_string(),
+    match with_cached_regex(pattern, |re| re.captures(&line).map(|c| c[2].to_string())) {
+        Some(form) => form,
         None => {
             warn!("form {} not found", name);
             "".to_string()
@@ -85,19 +86,36 @@ pub fn get_form(html: &str, name: &str) -> String {
 /// assert_eq!(&form_build_id, "form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM");
 /// ```
 pub fn get_form_value(form_html: &str, name: &str) -> String {
-    let re = Regex::new(&format!(
-        r#"name="{}" value=['"](.*?)['"]"#,
-        regex::escape(name)
-    ))
-    .unwrap();
     // Return a specific form value.
-    match re.captures(form_html) {
-        Some(v) => v[1].to_string(),
+    match form_value(form_html, name) {
+        Some(value) => value.to_string(),
         None => {
             warn!("form element {} not found", name);
             "none".to_string()
         }
     }
+}
+
+// What the regular expression `name="<name>" value=['"](.*?)['"]` captures,
+// with `name` taken literally: the first `name="<name>" value=` followed by a
+// quote, then everything up to the next quote on the same line.
+fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {
+    let element = format!(r#"name="{}" value="#, name);
+    let mut from = 0;
+    while let Some(found) = form_html[from..].find(&element) {
+        let start = from + found;
+        let rest = &form_html[start + element.len()..];
+        if let Some(value) = rest.strip_prefix(['"', '\'']) {
+            if let Some(end) = value.find(['"', '\'', '\n']) {
+                if !value[end..].starts_with('\n') {
+                    return Some(&value[..end]);
+                }
+            }
+        }
+        // `element` starts with an ASCII `n`, so the next byte starts a character.
+        from = start + 1;
+    }
+    None
 }
 
 /// Use a regular expression to get a specific form that has been encoded to replace a BigPipe placeholder,
@@ -141,21 +159,11 @@ pub fn get_form_value(form_html: &str, name: &str) -> String {
 /// assert_eq!(form.lines().count(), 1);
 /// ```
 pub fn get_bigpipe_form(html: &str, name: &str) -> String {
-    let re = Regex::new(
-        // Lazy match to avoid matching multiple forms.
-        &format!(
-            "{}.*?data-drupal-selector=.*?{}(.*?){}",
-            regex::escape(r#"[{"#),
-            regex::escape(name),
-            regex::escape(r#"}]"#)
-        ),
-    )
-    .unwrap();
     // Strip carriage returns to simplify regex.
     let line = html.replace('\n', "");
     // Return the entire form, a subset of the received html.
-    match re.captures(&line) {
-        Some(capture) => capture[1].to_string(),
+    match bigpipe_form(&line, name) {
+        Some(form) => form.to_string(),
         None => {
             warn!("bigpipe form {} not found", name);
             "".to_string()
@@ -184,6 +192,19 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
     get_form_value(&decoded_form, name)
 }
 
+// What the regular expression `\[\{.*?data-drupal-selector=.*?<name>(.*?)\}\]`
+// captures in a line without newlines, with `name` taken literally: after the
+// first `[{`, the first `data-drupal-selector=`, then the first `name`, then
+// everything up to the next `}]`. When the first of each fails, every later one
+// would too, as it leaves less of the line to match.
+fn bigpipe_form<'a>(line: &'a str, name: &str) -> Option<&'a str> {
+    let rest = &line[line.find("[{")? + 2..];
+    let selector = "data-drupal-selector=";
+    let rest = &rest[rest.find(selector)? + selector.len()..];
+    let rest = &rest[rest.find(name)? + name.len()..];
+    Some(&rest[..rest.find("}]")?])
+}
+
 /// Extract an updated build_id from a form.
 ///
 /// After certain form actions, such as uploading a file, Drupal can change the `build_id`. Requires the original
@@ -200,19 +221,65 @@ pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
 /// assert_eq!(updated_build_id, "form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc");
 /// ```
 pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {
-    let re = Regex::new(&format!(
-        "{}{}{}",
-        r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
-    ))
-    .unwrap();
     // Return a specific form value.
-    match re.captures(form_html) {
-        Some(v) => v[1].to_string(),
+    match updated_build_id(form_html, old_build_id) {
+        Some(build_id) => build_id,
         None => {
             warn!("update_build_id not found");
             "none".to_string()
         }
     }
+}
+
+// What the regular expression `\{"command":"update_build_id","old":"<old>","new":"(.*?)"\}`
+// captures, where `old` is part of the pattern, not escaped. A Drupal build id
+// (`form-` and URL safe base64) has no regular expression characters, so it is
+// matched in code: the first `{"command":"update_build_id","old":"<old>","new":"`
+// followed on the same line by `"}`. Any other `old` is matched as the regular
+// expression it always was.
+fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+    if old_build_id.contains(|c: char| r"\.+*?()|[]{}^$".contains(c)) {
+        let pattern = format!(
+            "{}{}{}",
+            r#"\{"command":"update_build_id","old":""#, old_build_id, r#"","new":"(.*?)"\}"#
+        );
+        return with_cached_regex(pattern, |re| {
+            re.captures(form_html).map(|c| c[1].to_string())
+        });
+    }
+    let command = format!(
+        r#"{{"command":"update_build_id","old":"{}","new":""#,
+        old_build_id
+    );
+    // The first `"}` and the first newline at or after the value's start, kept
+    // until a later command starts past them, so each is searched for once and
+    // many unclosed commands cost linear, not quadratic, time.
+    let mut close: Option<usize> = None;
+    let mut newline: Option<usize> = None;
+    let mut from = 0;
+    while let Some(found) = form_html[from..].find(&command) {
+        let start = from + found;
+        let value = start + command.len();
+        let end = match close {
+            Some(end) if end >= value => end,
+            // No `"}` after this command, so none after any later one.
+            _ => value + form_html[value..].find(r#""}"#)?,
+        };
+        close = Some(end);
+        let line_end = match newline {
+            Some(line_end) if line_end >= value => line_end,
+            _ => form_html[value..]
+                .find('\n')
+                .map_or(form_html.len(), |i| value + i),
+        };
+        newline = Some(line_end);
+        if line_end >= end {
+            return Some(form_html[value..end].to_string());
+        }
+        // `command` starts with an ASCII `{`, so the next byte starts a character.
+        from = start + 1;
+    }
+    None
 }
 
 /// Loop through an array of named form elements returning their values in a HashMap.
@@ -1382,6 +1449,35 @@ mod tests {
     }
 
     #[test]
+    fn get_updated_build_id_linear() {
+        // Many commands for the old build id that never close, then one that
+        // does: each `"}` and newline must be searched for once, not once per
+        // command, or this takes minutes.
+        let unclosed = r#"{"command":"update_build_id","old":"form-old","new":"x"#;
+        let closed = r#"{"command":"update_build_id","old":"form-old","new":"form-new"}"#;
+        let mut response = unclosed.repeat(20_000);
+        let start = std::time::Instant::now();
+        assert_eq!(
+            get_updated_build_id(&response, "form-old"),
+            "none",
+            "get_updated_build_id linear case unclosed"
+        );
+        response.push('\n');
+        response.push_str(closed);
+        assert_eq!(
+            get_updated_build_id(&response, "form-old"),
+            "form-new",
+            "get_updated_build_id linear case closed after a newline"
+        );
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed < std::time::Duration::from_secs(2),
+            "get_updated_build_id linear case took {:?}",
+            elapsed
+        );
+    }
+
+    #[test]
     fn get_form_values_cases() {
         let form = get_form(LOGIN_PAGE, "user-login-form");
         let values = get_form_values(&form, &["form_id", "name", "form_token", "form_build_id"]);
@@ -1428,5 +1524,189 @@ mod tests {
                 case
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+    use crate::snapshot::{check, fixtures, line, Generator};
+
+    // Form names: every form on the saved pages, one that is missing, and ones
+    // that are regular expressions or have regular expression characters.
+    const FORMS: &[&str] = &[
+        "user-login-form",
+        "search-form",
+        "search-block-form",
+        "node-article-edit-form",
+        "edit-node-article-edit-form",
+        "missing-form",
+        "",
+        "user-login-.*",
+        "search-(?:block-)?form",
+        "node.article.edit.form",
+    ];
+
+    // Element names: the saved pages' and some with regular expression characters.
+    const ELEMENTS: &[&str] = &[
+        "form_build_id",
+        "form_id",
+        "form_token",
+        "changed",
+        "keys",
+        "name",
+        "op",
+        "pass",
+        "title",
+        "missing",
+        "",
+        "form.id",
+        "form_.*",
+        "title[0][value]",
+    ];
+
+    #[test]
+    fn get_form_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for name in FORMS {
+                actual.push_str(&line(&format!("{} {}", path, name), get_form(&page, name)));
+            }
+        }
+        check("drupal_get_form", &actual);
+    }
+
+    #[test]
+    fn get_form_value_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            let mut forms = vec![("page".to_string(), page.clone())];
+            for name in FORMS {
+                forms.push((name.to_string(), get_form(&page, name)));
+            }
+            for (form_name, form) in &forms {
+                let values: Vec<_> = ELEMENTS.iter().map(|n| get_form_value(form, n)).collect();
+                actual.push_str(&line(&format!("{} {}", path, form_name), values));
+            }
+        }
+        let tokens = [
+            "name=\"",
+            "name=\"a\" value=",
+            "name=\"form_id\" value=",
+            "name=\"a.b\" value=",
+            "\"",
+            "'",
+            " value=",
+            "value=",
+            " ",
+            "\n",
+            "x",
+            ">",
+            "a",
+            "a.b",
+            "form_id",
+        ];
+        let mut generator = Generator::new(304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let form = generator.text(&tokens, 16);
+                    let name = generator.pick(&["a", "form_id", "a.b", "", "x\""]);
+                    get_form_value(&form, name)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_form_value", &actual);
+    }
+
+    #[test]
+    fn get_bigpipe_form_snapshot() {
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for name in FORMS {
+                actual.push_str(&line(
+                    &format!("{} {}", path, name),
+                    get_bigpipe_form(&page, name),
+                ));
+            }
+        }
+        let tokens = [
+            "[{",
+            "}]",
+            "[{\"data-drupal-selector=",
+            "data-drupal-selector=",
+            "data-drupal-selector=comment-form",
+            "comment-form",
+            "a",
+            "\n",
+            "x",
+            "{",
+            "}",
+            "[",
+            "]",
+            "\r",
+        ];
+        let mut generator = Generator::new(1304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let html = generator.text(&tokens, 14);
+                    let name = generator.pick(&["comment-form", "a", "", "a.b", "}]"]);
+                    get_bigpipe_form(&html, name)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_bigpipe_form", &actual);
+    }
+
+    #[test]
+    fn get_updated_build_id_snapshot() {
+        let olds = [
+            "form-xWYk6k-GUvdFV4oJBV2o20cv-eGobXr_6OCYazRY0vA",
+            "form-xWYk6k",
+            "form-.*",
+            "form-xWYk6k-GUvdFV4oJBV2o20cv-eGobXr_6OCYazRY0v.",
+            "",
+            "missing",
+        ];
+        let mut actual = String::new();
+        for (path, page) in fixtures() {
+            for old in olds {
+                actual.push_str(&line(
+                    &format!("{} {}", path, old),
+                    get_updated_build_id(&page, old),
+                ));
+            }
+        }
+        let tokens = [
+            r#"{"command":"update_build_id","old":""#,
+            r#"{"command":"update_build_id","old":"form-a","new":""#,
+            r#"{"command":"update_build_id","old":"form-b","new":""#,
+            r#"{"command":"update_build_id","old":"form-.","new":""#,
+            "form-a",
+            "form-b",
+            r#"","new":""#,
+            "\"}",
+            "\"",
+            "}",
+            "{",
+            "\n",
+            "x",
+            ".",
+        ];
+        let mut generator = Generator::new(2304);
+        for chunk in 0..30 {
+            let values: Vec<_> = (0..100)
+                .map(|_| {
+                    let html = generator.text(&tokens, 12);
+                    let old = generator.pick(&["form-a", "form-b", "", "form-.", "form-a\"}"]);
+                    get_updated_build_id(&html, old)
+                })
+                .collect();
+            actual.push_str(&line(&format!("generated {}", chunk), values));
+        }
+        check("drupal_get_updated_build_id", &actual);
     }
 }

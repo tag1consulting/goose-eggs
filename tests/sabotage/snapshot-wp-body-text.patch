@@ -1,0 +1,13 @@
+diff --git a/src/wordpress.rs b/src/wordpress.rs
+index f97ea67..0e784a3 100644
+--- a/src/wordpress.rs
++++ b/src/wordpress.rs
+@@ -155,7 +155,7 @@ fn login_error(html: &str) -> Option<String> {
+ fn body_text(html: &str) -> String {
+     BODY.captures(html)
+         .map(|c| plain_text(&c[1]))
+-        .unwrap_or_default()
++        .unwrap_or_else(|| "no body".to_string())
+ }
+ 
+ /// Get the contents of the form whose `id` or `name` is `name`.

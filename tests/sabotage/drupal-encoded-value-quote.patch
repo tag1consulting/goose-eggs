@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index f57e0ac..ad646d5 100644
+index 64a85f4..a85c0fe 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -180,7 +180,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
+@@ -188,7 +188,7 @@ pub fn get_bigpipe_form(html: &str, name: &str) -> String {
  /// ```
  pub fn get_encoded_form_value(form_html: &str, name: &str) -> String {
      // Decode quotes, which is enough for the normal get_form_value() regex to work.

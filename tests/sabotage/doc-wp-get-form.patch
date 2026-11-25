@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..39a5b47 100644
+index f97ea67..b085e15 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -94,7 +94,8 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
+@@ -203,7 +203,8 @@ fn find_form(html: &str, name: &str, matches: impl Fn(&str) -> bool) -> String {
                  Some(close) => &rest[..close.start()],
                  None => rest,
              };

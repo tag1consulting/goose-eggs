@@ -1,8 +1,8 @@
 diff --git a/src/wordpress.rs b/src/wordpress.rs
-index 635f7df..a71b224 100644
+index f97ea67..f78817e 100644
 --- a/src/wordpress.rs
 +++ b/src/wordpress.rs
-@@ -183,7 +183,8 @@ pub fn get_form_value(form_html: &str, name: &str) -> Option<String> {
+@@ -287,7 +287,8 @@ pub fn get_form_value(form_html: &str, name: &str) -> Option<String> {
      let value = form_controls(form_html)
          .into_iter()
          .find(|(n, _)| n == name)

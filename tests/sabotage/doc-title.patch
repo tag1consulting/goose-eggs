@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index a6ec0ca..0593b93 100644
+index 2546d44..b1cb904 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -231,7 +231,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -292,7 +292,7 @@ impl<'a> ValidateBuilder<'a> {
      /// ```
      pub fn title(mut self, title: impl Into<&'a str>) -> Self {
          self.title = Some(ValidateTitle {
