@@ -1,13 +1,13 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..c519b9f 100644
+index 64a85f4..fa17f2e 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -255,7 +255,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
-     while let Some(found) = form_html[from..].find(&command) {
-         let start = from + found;
-         let rest = &form_html[start + command.len()..];
--        if let Some(end) = rest.find(r#""}"#) {
-+        if let Some(end) = rest.rfind(r#""}"#) {
-             if !rest[..end].contains('\n') {
-                 return Some(rest[..end].to_string());
-             }
+@@ -263,7 +263,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+         let end = match close {
+             Some(end) if end >= value => end,
+             // No `"}` after this command, so none after any later one.
+-            _ => value + form_html[value..].find(r#""}"#)?,
++            _ => value + form_html[value..].rfind(r#""}"#)?,
+         };
+         close = Some(end);
+         let line_end = match newline {

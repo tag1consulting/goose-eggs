@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..cb12bf9 100644
+index 64a85f4..3c23995 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1043,7 +1043,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1059,7 +1059,7 @@ impl<'a> SearchParamsBuilder<'a> {
      /// # support::search("search_page_validation", &server, &search_params);
      /// ```
      pub fn search_page_validation(mut self, validation: &'a crate::Validate) -> Self {

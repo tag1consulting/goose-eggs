@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..b59e60a 100644
+index 64a85f4..579703d 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -709,7 +709,7 @@ pub async fn log_in(
+@@ -725,7 +725,7 @@ pub async fn log_in(
      // Now extract the form_build_id in order to POST to the log in form
      // (`get_form_value` returns "none" when it is missing).
      let form_build_id = get_form_value(&login_form, "form_build_id");

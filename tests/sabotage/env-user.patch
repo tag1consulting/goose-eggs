@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..79b62ab 100644
+index 64a85f4..a425f30 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -660,7 +660,7 @@ pub async fn log_in(
+@@ -676,7 +676,7 @@ pub async fn log_in(
  ) -> Result<String, Box<TransactionError>> {
      // Use the `GOOSE_USER` environment variable if it's set, otherwise use the specified
      // (or default) login username.

@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..d1ff9aa 100644
+index 64a85f4..8b31127 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -307,7 +307,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
+@@ -323,7 +323,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
  
      // Extract the form elements needed to submit a form.
      for &element in elements {

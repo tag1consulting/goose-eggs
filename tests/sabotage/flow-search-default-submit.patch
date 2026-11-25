@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..62aefe7 100644
+index 64a85f4..ad54eb0 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -936,7 +936,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -952,7 +952,7 @@ impl<'a> SearchParamsBuilder<'a> {
              // Defaults to no extra search page validation.
              search_page_validation: None,
              // Defaults to a search button named "Search".
