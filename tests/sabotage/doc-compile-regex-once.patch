@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index e4e4dc1..87ce4a0 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -23,7 +23,7 @@
+ //!
+ //! // Compiled the first time any user needs it, then reused.
+ //! static ORDER_NUMBER: LazyLock<Regex> =
+-//!     LazyLock::new(|| Regex::new(r"Order number: <strong>(\d+)</strong>").unwrap());
++//!     LazyLock::new(|| Regex::new(r"Order number: <strong>(\d)</strong>").unwrap());
+ //!
+ //! fn order_number(html: &str) -> Option<String> {
+ //!     ORDER_NUMBER.captures(html).map(|c| c[1].to_string())

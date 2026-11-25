@@ -1,0 +1,13 @@
+diff --git a/README.md b/README.md
+index a68e1a7..cba6a70 100644
+--- a/README.md
++++ b/README.md
+@@ -62,7 +62,7 @@ use std::sync::LazyLock;
+ 
+ // Compiled the first time any user needs it, then reused.
+ static ORDER_NUMBER: LazyLock<Regex> =
+-    LazyLock::new(|| Regex::new(r"Order number: <strong>(\d+)</strong>").unwrap());
++    LazyLock::new(|| Regex::new(r"Order number: <strong>(\d)</strong>").unwrap());
+ 
+ fn order_number(html: &str) -> Option<String> {
+     ORDER_NUMBER.captures(html).map(|c| c[1].to_string())

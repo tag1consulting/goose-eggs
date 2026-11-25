@@ -161,39 +161,41 @@ flow-ajax-build-id.patch	drupal	get_updated_build_id_on_drupal_ajax_response	get
 env-user.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
 env-pass.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
 env-title.patch	drupal_env	log_in_environment	behaviour log_in uses GOOSE_USER and GOOSE_PASS	log_in
-doc-none.patch	doc	src/lib.rs - Validate<'a>::none (line 132)	doc example none	none,Validate
-doc-validate-builder.patch	doc	src/lib.rs - ValidateBuilder (line 149)	doc example ValidateBuilder	ValidateBuilder,text,validate_and_load_static_assets
-doc-build.patch	doc	src/lib.rs - ValidateBuilder<'a>::build (line 693)	doc example build	build
-doc-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 477)	doc example header:	header
-doc-header-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 493)	doc example header, twice	header
-doc-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 569)	doc example header_value:	header_value
-doc-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 586)	doc example header_value, with header	header_value
-doc-not-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 523)	doc example not_header:	not_header
-doc-not-header-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 539)	doc example not_header, with header	not_header
-doc-not-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 620)	doc example not_header_value:	not_header_value
-doc-not-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 637)	doc example not_header_value, with header	not_header_value
-doc-not-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_status (line 239)	doc example not_status	not_status
-doc-not-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 346)	doc example not_text:	not_text
-doc-not-text-with-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 361)	doc example not_text, with text	not_text
-doc-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 431)	doc example not_texts:	not_texts
-doc-not-texts-with-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 446)	doc example not_texts, with texts	not_texts
-doc-not-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_title (line 287)	doc example not_title	not_title
-doc-redirect.patch	doc	src/lib.rs - ValidateBuilder<'a>::redirect (line 671)	doc example redirect(true)	redirect
-doc-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::status (line 216)	doc example status	status
-doc-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 311)	doc example text:	text
-doc-text-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 325)	doc example text, twice	text
-doc-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 388)	doc example texts:	texts
-doc-texts-with-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 403)	doc example texts, with not_texts	texts,not_texts
-doc-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::title (line 263)	doc example title	title
-doc-get-html-header.patch	doc	src/lib.rs - get_html_header (line 724)	assertion failed: !html_header.is_none()	get_html_header
-doc-get-title.patch	doc	src/lib.rs - get_title (line 763)	right: "Example Website"	get_title
-doc-header-is-set.patch	doc	src/lib.rs - header_is_set (line 965)	doc example header_is_set	header_is_set
-doc-load-static-elements.patch	doc	src/lib.rs - load_static_elements (line 1300)	doc example load_static_elements: static asset requests	load_static_elements
-doc-valid-header-value.patch	doc	src/lib.rs - valid_header_value (line 1020)	doc example valid_header_value	valid_header_value
-doc-valid-text.patch	doc	src/lib.rs - valid_text (line 900)	doc example valid_text	valid_text
-doc-valid-title.patch	doc	src/lib.rs - valid_title (line 823)	doc example valid_title	valid_title
-doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (line 1677)	doc example validate_and_load_static_assets: static asset requests	validate_and_load_static_assets
-doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1390)	doc example validate_page: static asset requests	validate_page
+doc-compile-regex-once.patch	doc	src/lib.rs - (line 20)	right: Some("42")	compile regex once docs
+doc-readme-compile-regex-once.patch	doc	src/lib.rs - ReadmeDoctests (line 2508)	right: Some("42")	compile regex once docs
+doc-none.patch	doc	src/lib.rs - Validate<'a>::none (line 155)	doc example none	none,Validate
+doc-validate-builder.patch	doc	src/lib.rs - ValidateBuilder (line 172)	doc example ValidateBuilder	ValidateBuilder,text,validate_and_load_static_assets
+doc-build.patch	doc	src/lib.rs - ValidateBuilder<'a>::build (line 716)	doc example build	build
+doc-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 500)	doc example header:	header
+doc-header-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::header (line 516)	doc example header, twice	header
+doc-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 592)	doc example header_value:	header_value
+doc-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::header_value (line 609)	doc example header_value, with header	header_value
+doc-not-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 546)	doc example not_header:	not_header
+doc-not-header-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header (line 562)	doc example not_header, with header	not_header
+doc-not-header-value.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 643)	doc example not_header_value:	not_header_value
+doc-not-header-value-with-header.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_header_value (line 660)	doc example not_header_value, with header	not_header_value
+doc-not-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_status (line 262)	doc example not_status	not_status
+doc-not-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 369)	doc example not_text:	not_text
+doc-not-text-with-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_text (line 384)	doc example not_text, with text	not_text
+doc-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 454)	doc example not_texts:	not_texts
+doc-not-texts-with-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_texts (line 469)	doc example not_texts, with texts	not_texts
+doc-not-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::not_title (line 310)	doc example not_title	not_title
+doc-redirect.patch	doc	src/lib.rs - ValidateBuilder<'a>::redirect (line 694)	doc example redirect(true)	redirect
+doc-status.patch	doc	src/lib.rs - ValidateBuilder<'a>::status (line 239)	doc example status	status
+doc-text.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 334)	doc example text:	text
+doc-text-twice.patch	doc	src/lib.rs - ValidateBuilder<'a>::text (line 348)	doc example text, twice	text
+doc-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 411)	doc example texts:	texts
+doc-texts-with-not-texts.patch	doc	src/lib.rs - ValidateBuilder<'a>::texts (line 426)	doc example texts, with not_texts	texts,not_texts
+doc-title.patch	doc	src/lib.rs - ValidateBuilder<'a>::title (line 286)	doc example title	title
+doc-get-html-header.patch	doc	src/lib.rs - get_html_header (line 747)	assertion failed: !html_header.is_none()	get_html_header
+doc-get-title.patch	doc	src/lib.rs - get_title (line 786)	right: "Example Website"	get_title
+doc-header-is-set.patch	doc	src/lib.rs - header_is_set (line 988)	doc example header_is_set	header_is_set
+doc-load-static-elements.patch	doc	src/lib.rs - load_static_elements (line 1323)	doc example load_static_elements: static asset requests	load_static_elements
+doc-valid-header-value.patch	doc	src/lib.rs - valid_header_value (line 1043)	doc example valid_header_value	valid_header_value
+doc-valid-text.patch	doc	src/lib.rs - valid_text (line 923)	doc example valid_text	valid_text
+doc-valid-title.patch	doc	src/lib.rs - valid_title (line 846)	doc example valid_title	valid_title
+doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (line 1700)	doc example validate_and_load_static_assets: static asset requests	validate_and_load_static_assets
+doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1413)	doc example validate_page: static asset requests	validate_page
 doc-get-bigpipe-form.patch	doc	src/drupal.rs - drupal::get_bigpipe_form (line 131)	assertion failed: !form.is_empty()	get_bigpipe_form
 doc-get-encoded-form-value.patch	doc	src/drupal.rs - drupal::get_encoded_form_value (line 179)	form-R8d9JOp8eKObiNR_vFlOzSD6erWoR5-dHQx8s2toZLY	get_encoded_form_value
 doc-get-encoded-form-values.patch	doc	src/drupal.rs - drupal::get_encoded_form_values (line 325)	4OCYabXYY116z0_ixUaxzbYlVxEgchgThmF9O3uJqbI	get_encoded_form_values

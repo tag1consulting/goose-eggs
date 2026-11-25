@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 8f368f9..e39d217 100644
+index e4e4dc1..94f0242 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1186,7 +1186,6 @@ fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+@@ -1209,7 +1209,6 @@ fn strip_name<'a>(text: &'a str, name: &str) -> Option<&'a str> {
      for n in name.chars() {
          let c = chars.next()?;
          let same = c.eq_ignore_ascii_case(&n)

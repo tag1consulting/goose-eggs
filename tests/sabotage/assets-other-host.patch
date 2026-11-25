@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..16e8c72 100644
+index e4e4dc1..b366d17 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1100,7 +1100,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
+@@ -1126,7 +1126,7 @@ fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
      match uri.parse::<Uri>() {
          Ok(parsed_uri) => {
              if let Some(parsed_host) = parsed_uri.host() {

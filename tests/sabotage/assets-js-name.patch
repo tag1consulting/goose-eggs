@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 6750ee2..faa7df8 100644
+index e4e4dc1..310f9f2 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1351,7 +1351,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1374,7 +1374,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // @TODO: parse HTML5 srcset= also
      let mut assets: Vec<(String, &str)> = Vec::new();
      for url in get_src_elements(user, html).await {

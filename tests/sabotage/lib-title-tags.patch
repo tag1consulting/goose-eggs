@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..660d785 100644
+index e4e4dc1..bf084db 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -791,7 +791,7 @@ pub fn get_title(html: &str) -> Option<String> {
+@@ -817,7 +817,7 @@ pub fn get_title(html: &str) -> Option<String> {
      // Strip carriage returns to simplify regex.
      let line = html.replace('\n', "");
      // Return the entire title, a subset of the received html.

@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..d3a71f0 100644
+index e4e4dc1..6d1ec52 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -710,7 +710,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -736,7 +736,7 @@ impl<'a> ValidateBuilder<'a> {
              title,
              texts,
              headers,

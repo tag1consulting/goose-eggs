@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..27d1f43 100644
+index e4e4dc1..f2c98c3 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1000,7 +1000,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
+@@ -1026,7 +1026,7 @@ pub fn valid_text(html: &str, text: &str) -> bool {
  /// # assert!(result.is_ok(), "doc example header_is_set: {}", support::failure(&result));
  /// ```
  pub fn header_is_set(headers: &HeaderMap, header: &str) -> bool {
