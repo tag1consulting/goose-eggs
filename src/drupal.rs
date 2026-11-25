@@ -251,14 +251,30 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
         r#"{{"command":"update_build_id","old":"{}","new":""#,
         old_build_id
     );
+    // The first `"}` and the first newline at or after the value's start, kept
+    // until a later command starts past them, so each is searched for once and
+    // many unclosed commands cost linear, not quadratic, time.
+    let mut close: Option<usize> = None;
+    let mut newline: Option<usize> = None;
     let mut from = 0;
     while let Some(found) = form_html[from..].find(&command) {
         let start = from + found;
-        let rest = &form_html[start + command.len()..];
-        if let Some(end) = rest.find(r#""}"#) {
-            if !rest[..end].contains('\n') {
-                return Some(rest[..end].to_string());
-            }
+        let value = start + command.len();
+        let end = match close {
+            Some(end) if end >= value => end,
+            // No `"}` after this command, so none after any later one.
+            _ => value + form_html[value..].find(r#""}"#)?,
+        };
+        close = Some(end);
+        let line_end = match newline {
+            Some(line_end) if line_end >= value => line_end,
+            _ => form_html[value..]
+                .find('\n')
+                .map_or(form_html.len(), |i| value + i),
+        };
+        newline = Some(line_end);
+        if line_end >= end {
+            return Some(form_html[value..end].to_string());
         }
         // `command` starts with an ASCII `{`, so the next byte starts a character.
         from = start + 1;
@@ -1430,6 +1446,35 @@ mod tests {
                 case
             );
         }
+    }
+
+    #[test]
+    fn get_updated_build_id_linear() {
+        // Many commands for the old build id that never close, then one that
+        // does: each `"}` and newline must be searched for once, not once per
+        // command, or this takes minutes.
+        let unclosed = r#"{"command":"update_build_id","old":"form-old","new":"x"#;
+        let closed = r#"{"command":"update_build_id","old":"form-old","new":"form-new"}"#;
+        let mut response = unclosed.repeat(20_000);
+        let start = std::time::Instant::now();
+        assert_eq!(
+            get_updated_build_id(&response, "form-old"),
+            "none",
+            "get_updated_build_id linear case unclosed"
+        );
+        response.push('\n');
+        response.push_str(closed);
+        assert_eq!(
+            get_updated_build_id(&response, "form-old"),
+            "form-new",
+            "get_updated_build_id linear case closed after a newline"
+        );
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed < std::time::Duration::from_secs(2),
+            "get_updated_build_id linear case took {:?}",
+            elapsed
+        );
     }
 
     #[test]
