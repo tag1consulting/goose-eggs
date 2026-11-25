@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..2cc993e 100644
+index 2546d44..c228088 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1220,7 +1220,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1243,7 +1243,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // <foo> is the URL to local image and js assets.
      // @TODO: parse HTML5 srcset= also
      for url in get_src_elements(user, html).await {

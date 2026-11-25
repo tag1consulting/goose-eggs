@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..2598d48 100644
+index 2546d44..a701140 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -948,7 +948,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
+@@ -971,7 +971,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
  /// # assert!(result.is_ok(), "doc example valid_text: {}", support::failure(&result));
  /// ```
  pub fn valid_text(html: &str, text: &str) -> bool {

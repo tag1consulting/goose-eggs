@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..b717847 100644
+index 2546d44..8eefe41 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1221,7 +1221,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1244,7 +1244,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
      // @TODO: parse HTML5 srcset= also
      for url in get_src_elements(user, html).await {
          let is_js = url.contains(".js");

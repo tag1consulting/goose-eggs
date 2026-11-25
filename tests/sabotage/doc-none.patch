@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..221c258 100644
+index 2546d44..880ff3a 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -135,7 +135,7 @@ impl<'a> Validate<'a> {
+@@ -158,7 +158,7 @@ impl<'a> Validate<'a> {
      /// # assert_eq!(support::check(&_validate, &page).as_deref(), Ok("any page"), "doc example none");
      /// ```
      pub fn none() -> Validate<'a> {

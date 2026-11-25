@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..6c62061 100644
+index 2546d44..01ec011 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -600,7 +600,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -623,7 +623,7 @@ impl<'a> ValidateBuilder<'a> {
          self.headers.push(ValidateHeader {
              exists: true,
              header: header.into(),

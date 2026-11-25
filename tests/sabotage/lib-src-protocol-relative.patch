@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..f39c76b 100644
+index 2546d44..5e02a6e 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1092,7 +1092,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
+@@ -1115,7 +1115,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
  fn valid_local_uri(user: &mut GooseUser, uri: &str) -> bool {
      // A protocol relative URI (`//host/path`) names a host: give it a scheme so
      // the host is parsed and compared, instead of reading it as a local path.

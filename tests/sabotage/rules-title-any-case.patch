@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..04c8c65 100644
+index 2546d44..3c9c4e3 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -878,7 +878,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
+@@ -901,7 +901,7 @@ pub fn valid_title(html: &str, title: &str) -> bool {
      let html_title = get_title(&html_header).unwrap_or_default();
      // Finally, confirm that the title contains the expected text.
      html_title

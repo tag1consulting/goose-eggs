@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..6a2848d 100644
+index 2546d44..9c0d1f3 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1154,7 +1154,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+@@ -1177,7 +1177,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
      // <foo> is the URL to local css assets.
      let mut elements: Vec<String> = Vec::new();
      for url in CSS_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {

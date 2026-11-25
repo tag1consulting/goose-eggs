@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..8146328 100644
+index 2546d44..bbc6b62 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1229,7 +1229,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
+@@ -1252,7 +1252,7 @@ pub async fn load_static_elements(user: &mut GooseUser, html: &str) {
  
      // Use a case-insensitive regular expression to find all href=<foo> in the html, where
      // <foo> is the URL to local css assets.

@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..e37f1ac 100644
+index 2546d44..97cf732 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -751,7 +751,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
+@@ -774,7 +774,7 @@ pub fn get_html_header(html: &str) -> Option<String> {
      // Return the entire html header, a subset of the received html.
      HTML_HEADER
          .captures(&line)

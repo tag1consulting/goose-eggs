@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..40eecda 100644
+index 2546d44..aefaed4 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1138,7 +1138,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+@@ -1161,7 +1161,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
      // @TODO: parse HTML5 srcset= also
      let mut elements: Vec<String> = Vec::new();
      for url in SRC_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {

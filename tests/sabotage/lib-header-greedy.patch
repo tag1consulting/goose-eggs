@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..4ea063b 100644
+index 2546d44..bfc228f 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -28,7 +28,7 @@ pub mod woocommerce;
+@@ -51,7 +51,7 @@ pub mod woocommerce;
  pub mod wordpress;
  
  // The page parsing regular expressions, each compiled once on first use.

@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..ce32f25 100644
+index 2546d44..2457ed2 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -29,7 +29,7 @@ pub mod wordpress;
+@@ -52,7 +52,7 @@ pub mod wordpress;
  
  // The page parsing regular expressions, each compiled once on first use.
  static HTML_HEADER: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<head(.*?)</head>"#).unwrap());
