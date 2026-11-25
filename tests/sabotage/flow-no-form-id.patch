@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..4ef6aa5 100644
+index 64a85f4..a6b388b 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -723,7 +723,7 @@ pub async fn log_in(
+@@ -739,7 +739,7 @@ pub async fn log_in(
  
      // Also extract the form_id (defaults to `user_login_form`).
      let form_id = get_form_value(&login_form, "form_id");

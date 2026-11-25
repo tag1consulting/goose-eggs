@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..ef7bfaa 100644
+index 64a85f4..f84f49a 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -226,7 +226,7 @@ pub fn get_updated_build_id(form_html: &str, old_build_id: &str) -> String {

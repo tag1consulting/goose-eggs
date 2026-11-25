@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..1314291 100644
+index 64a85f4..d50f895 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -984,7 +984,7 @@ impl<'a> SearchParamsBuilder<'a> {
+@@ -1000,7 +1000,7 @@ impl<'a> SearchParamsBuilder<'a> {
      /// # support::search("url", &server, &search_params);
      /// ```
      pub fn url(mut self, url: impl Into<&'a str>) -> Self {

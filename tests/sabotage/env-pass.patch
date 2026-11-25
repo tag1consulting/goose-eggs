@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..2d5d244 100644
+index 64a85f4..0a914ca 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -664,7 +664,7 @@ pub async fn log_in(
+@@ -680,7 +680,7 @@ pub async fn log_in(
  
      // Use the `GOOSE_PASS` environment variable if it's set, otherwise use the specified
      // (or default) login password.

@@ -55,6 +55,7 @@ drupal-encoded-values-quote.patch	lib	drupal::tests::get_encoded_form_values_cas
 drupal-build-id-greedy.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case first	get_updated_build_id
 drupal-build-id-missing.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case unknown old id	get_updated_build_id
 drupal-build-id-any-old.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case second	get_updated_build_id
+drupal-build-id-quadratic.patch	lib	drupal::tests::get_updated_build_id_linear	get_updated_build_id linear case took	get_updated_build_id
 drupal-values-one-name.patch	lib	drupal::tests::get_form_values_cases	get_form_values case empty value	get_form_values
 drupal-values-skip.patch	lib	drupal::tests::get_form_values_cases	get_form_values case count	get_form_values
 drupal-encoded-values-one-name.patch	lib	drupal::tests::get_encoded_form_values_cases	get_encoded_form_values case form_build_id	get_encoded_form_values
@@ -198,30 +199,30 @@ doc-validate-and-load.patch	doc	src/lib.rs - validate_and_load_static_assets (li
 doc-validate-page.patch	doc	src/lib.rs - validate_page (line 1413)	doc example validate_page: static asset requests	validate_page
 doc-get-bigpipe-form.patch	doc	src/drupal.rs - drupal::get_bigpipe_form (line 131)	assertion failed: !form.is_empty()	get_bigpipe_form
 doc-get-encoded-form-value.patch	doc	src/drupal.rs - drupal::get_encoded_form_value (line 179)	form-R8d9JOp8eKObiNR_vFlOzSD6erWoR5-dHQx8s2toZLY	get_encoded_form_value
-doc-get-encoded-form-values.patch	doc	src/drupal.rs - drupal::get_encoded_form_values (line 325)	4OCYabXYY116z0_ixUaxzbYlVxEgchgThmF9O3uJqbI	get_encoded_form_values
+doc-get-encoded-form-values.patch	doc	src/drupal.rs - drupal::get_encoded_form_values (line 341)	4OCYabXYY116z0_ixUaxzbYlVxEgchgThmF9O3uJqbI	get_encoded_form_values
 doc-get-form.patch	doc	src/drupal.rs - drupal::get_form (line 14)	assertion failed: !form.is_empty()	get_form
 doc-get-form-value.patch	doc	src/drupal.rs - drupal::get_form_value (line 61)	form-bHZME2HeTuevNWQR5Y4pyP8jcAu2dfbHERwoscwnajM	get_form_value
-doc-get-form-values.patch	doc	src/drupal.rs - drupal::get_form_values (line 274)	5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8	get_form_values
+doc-get-form-values.patch	doc	src/drupal.rs - drupal::get_form_values (line 290)	5sM6gWNMbHoGq5RGKWQqSis3l5ulFkm4H8OG9pSIBw8	get_form_values
 doc-get-updated-build-id.patch	doc	src/drupal.rs - drupal::get_updated_build_id (line 213)	form-0VJ1MsfQR17RKlwarp_Rh_wMzbmjMlJc1SX_oPc0Bkc	get_updated_build_id
-doc-log-in.patch	doc	src/drupal.rs - drupal::log_in (line 634)	doc example log_in	log_in
-doc-login-builder.patch	doc	src/drupal.rs - drupal::LoginBuilder (line 392)	doc example LoginBuilder	LoginBuilder,Login
-doc-login-build.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::build (line 590)	doc example LoginBuilder::build	LoginBuilder,Login
-doc-log-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::log_in_page_validation (line 521)	doc example log_in_page_validation	LoginBuilder,log_in
-doc-logged-in-search.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 553)	doc example logged_in_page_validation, search	SearchParamsBuilder,search
-doc-logged-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 565)	doc example logged_in_page_validation:	LoginBuilder,log_in
-doc-password.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::password (line 469)	doc example password	LoginBuilder
-doc-login-url.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::url (line 492)	doc example url	LoginBuilder,log_in
-doc-username.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::username (line 444)	doc example username	LoginBuilder
-doc-search-params-builder.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 848)	doc example SearchParamsBuilder:	SearchParamsBuilder,search
-doc-search-params-builder-customized.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 877)	doc example SearchParamsBuilder, customized	SearchParamsBuilder
-doc-search-params-build.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::build (line 1111)	doc example SearchParamsBuilder::build	SearchParamsBuilder,SearchParams
-doc-form-values.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::form_values (line 1000)	doc example form_values	SearchParamsBuilder
-doc-keys.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::keys (line 952)	doc example keys	SearchParamsBuilder
-doc-results-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::results_page_validation (line 1087)	doc example results_page_validation	SearchParamsBuilder,search
-doc-search-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::search_page_validation (line 1030)	doc example search_page_validation	SearchParamsBuilder,search
-doc-submit.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::submit (line 1057)	doc example submit	SearchParamsBuilder,search
-doc-search-url.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::url (line 975)	doc example url	SearchParamsBuilder
-doc-search.patch	doc	src/drupal.rs - drupal::search (line 1149)	doc example search	search
+doc-log-in.patch	doc	src/drupal.rs - drupal::log_in (line 650)	doc example log_in	log_in
+doc-login-builder.patch	doc	src/drupal.rs - drupal::LoginBuilder (line 408)	doc example LoginBuilder	LoginBuilder,Login
+doc-login-build.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::build (line 606)	doc example LoginBuilder::build	LoginBuilder,Login
+doc-log-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::log_in_page_validation (line 537)	doc example log_in_page_validation	LoginBuilder,log_in
+doc-logged-in-search.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 569)	doc example logged_in_page_validation, search	SearchParamsBuilder,search
+doc-logged-in-page-validation.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::logged_in_page_validation (line 581)	doc example logged_in_page_validation:	LoginBuilder,log_in
+doc-password.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::password (line 485)	doc example password	LoginBuilder
+doc-login-url.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::url (line 508)	doc example url	LoginBuilder,log_in
+doc-username.patch	doc	src/drupal.rs - drupal::LoginBuilder<'a>::username (line 460)	doc example username	LoginBuilder
+doc-search-params-builder.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 864)	doc example SearchParamsBuilder:	SearchParamsBuilder,search
+doc-search-params-builder-customized.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder (line 893)	doc example SearchParamsBuilder, customized	SearchParamsBuilder
+doc-search-params-build.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::build (line 1127)	doc example SearchParamsBuilder::build	SearchParamsBuilder,SearchParams
+doc-form-values.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::form_values (line 1016)	doc example form_values	SearchParamsBuilder
+doc-keys.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::keys (line 968)	doc example keys	SearchParamsBuilder
+doc-results-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::results_page_validation (line 1103)	doc example results_page_validation	SearchParamsBuilder,search
+doc-search-page-validation.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::search_page_validation (line 1046)	doc example search_page_validation	SearchParamsBuilder,search
+doc-submit.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::submit (line 1073)	doc example submit	SearchParamsBuilder,search
+doc-search-url.patch	doc	src/drupal.rs - drupal::SearchParamsBuilder<'a>::url (line 991)	doc example url	SearchParamsBuilder
+doc-search.patch	doc	src/drupal.rs - drupal::search (line 1165)	doc example search	search
 doc-random-word.patch	doc	src/text.rs - text::random_word (line 10)	right: 10	random_word
 doc-random-words.patch	doc	src/text.rs - text::random_words (line 29)	right: 5	random_words
 # wordpress and woocommerce
@@ -441,6 +442,8 @@ wc-example-shared-account.patch	woocommerce_example	credentials_cases	credential
 wc-example-account-wraps.patch	woocommerce_example	credentials_cases	credentials case per user	woocommerce example credentials
 snapshot-header-inner.patch	lib	snapshot_tests::get_html_header_snapshot	get_html_header snapshot differs	get_html_header
 snapshot-title-tags.patch	lib	snapshot_tests::get_title_snapshot	get_title snapshot differs	get_title
+snapshot-bless-any-value.patch	lib	snapshot::blessing_cases	blessing case zero	get_title
+snapshot-line-endings.patch	lib	snapshot::line_endings_cases	line endings case tests/snapshots/get_title.txt not LF	get_title
 snapshot-src-order.patch	lib	snapshot_tests::get_src_elements_snapshot	get_src_elements snapshot differs	get_src_elements
 snapshot-css-order.patch	lib	snapshot_tests::get_css_elements_snapshot	get_css_elements snapshot differs	get_css_elements
 snapshot-drupal-form-capture.patch	lib	drupal::snapshot_tests::get_form_snapshot	drupal_get_form snapshot differs	get_form

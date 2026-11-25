@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..3a2dc7e 100644
+index 64a85f4..068e41b 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1208,7 +1208,7 @@ pub async fn search<'a>(
+@@ -1224,7 +1224,7 @@ pub async fn search<'a>(
      let goose = user.post_form(params.url, &search_params).await?;
  
      // Optionally validate the search results page.

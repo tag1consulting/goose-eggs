@@ -1,0 +1,4 @@
+# Saved pages and the snapshots made from them are compared byte for byte, so
+# keep them LF on every checkout, Windows included.
+tests/fixtures/** text eol=lf
+tests/snapshots/** text eol=lf

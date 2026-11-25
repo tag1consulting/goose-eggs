@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..77a634a 100644
+index 64a85f4..98e2c75 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1179,7 +1179,7 @@ pub async fn search<'a>(
+@@ -1195,7 +1195,7 @@ pub async fn search<'a>(
      params: &'a SearchParams<'a>,
  ) -> Result<String, Box<TransactionError>> {
      // Load the search page.

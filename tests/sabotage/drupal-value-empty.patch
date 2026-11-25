@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..f8eafac 100644
+index 64a85f4..fbf489c 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -107,7 +107,7 @@ fn form_value<'a>(form_html: &'a str, name: &str) -> Option<&'a str> {

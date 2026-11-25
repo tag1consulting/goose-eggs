@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..70d19c2 100644
+index 64a85f4..2fe4ec2 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -247,14 +247,12 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
+@@ -247,10 +247,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
              re.captures(form_html).map(|c| c[1].to_string())
          });
      }
@@ -11,11 +11,14 @@ index 9bffb7c..70d19c2 100644
 -        old_build_id
 -    );
 +    let command = r#"{"command":"update_build_id","old":""#.to_string();
-     let mut from = 0;
+     // The first `"}` and the first newline at or after the value's start, kept
+     // until a later command starts past them, so each is searched for once and
+     // many unclosed commands cost linear, not quadratic, time.
+@@ -260,6 +257,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
      while let Some(found) = form_html[from..].find(&command) {
          let start = from + found;
-         let rest = &form_html[start + command.len()..];
-+        let rest = &rest[rest.find(r#"","new":""#).unwrap() + 9..];
-         if let Some(end) = rest.find(r#""}"#) {
-             if !rest[..end].contains('\n') {
-                 return Some(rest[..end].to_string());
+         let value = start + command.len();
++        let value = value + form_html[value..].find(r#"","new":""#).unwrap() + 9;
+         let end = match close {
+             Some(end) if end >= value => end,
+             // No `"}` after this command, so none after any later one.
