@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..5ee894b 100644
+index e4e4dc1..48182e0 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -414,7 +414,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -440,7 +440,7 @@ impl<'a> ValidateBuilder<'a> {
      /// Alternatively you can call [`ValidateBuilder::text`].
      pub fn texts(mut self, texts: Vec<&'a str>) -> Self {
          for text in texts {

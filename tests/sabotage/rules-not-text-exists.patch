@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..afc08ad 100644
+index e4e4dc1..a0a8cb9 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -370,7 +370,7 @@ impl<'a> ValidateBuilder<'a> {
+@@ -396,7 +396,7 @@ impl<'a> ValidateBuilder<'a> {
      /// ```
      pub fn not_text(mut self, text: &'a str) -> Self {
          self.texts.push(ValidateText {

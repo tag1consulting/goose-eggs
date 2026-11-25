@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 674cfca..d004451 100644
+index e4e4dc1..d8ca711 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1201,7 +1201,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+@@ -1308,7 +1308,7 @@ pub async fn get_css_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
      for url in CSS_ELEMENT.captures_iter(html_escape::decode_html_entities(html).as_ref()) {
          let url = quoted(&url);
          if valid_local_uri(user, url) {

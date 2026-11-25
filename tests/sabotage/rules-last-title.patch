@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index b41c6b2..f4f6014 100644
+index e4e4dc1..bfff017 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -268,10 +268,10 @@ impl<'a> ValidateBuilder<'a> {
+@@ -294,10 +294,10 @@ impl<'a> ValidateBuilder<'a> {
      /// # support::proves("title", &_validate, &home, &support::page("<head><title>Other</title></head>"));
      /// ```
      pub fn title(mut self, title: impl Into<&'a str>) -> Self {

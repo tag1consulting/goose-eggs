@@ -1,8 +1,8 @@
 diff --git a/src/lib.rs b/src/lib.rs
-index 674cfca..8309b1c 100644
+index e4e4dc1..e55732d 100644
 --- a/src/lib.rs
 +++ b/src/lib.rs
-@@ -1181,7 +1181,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
+@@ -1288,7 +1288,7 @@ pub async fn get_src_elements(user: &mut GooseUser, html: &str) -> Vec<String> {
      // <foo> is the URL to local image and js assets.
      // @TODO: parse HTML5 srcset= also
      let mut elements: Vec<String> = Vec::new();
