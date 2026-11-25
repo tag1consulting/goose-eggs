@@ -9,6 +9,29 @@
 //! * `default`: enable `goose`'s default features, which turn on cookie support
 //! * `rustls-tls`: forward to `goose`'s `rustls-tls` feature (load test requests
 //!   use `rustls` in every build of Goose 0.19)
+//!
+//! ## Compile regular expressions once
+//! A load test runs each transaction thousands of times, so a `Regex::new` in a
+//! transaction or a helper it calls compiles its pattern and rebuilds its match
+//! cache on every request; in Goose's Umami example that cost about half of
+//! Goose's CPU per request. Compile each pattern once, in a `static` with
+//! [`std::sync::LazyLock`], and share it across every user and request:
+//!
+//! ```rust
+//! use regex::Regex;
+//! use std::sync::LazyLock;
+//!
+//! // Compiled the first time any user needs it, then reused.
+//! static ORDER_NUMBER: LazyLock<Regex> =
+//!     LazyLock::new(|| Regex::new(r"Order number: <strong>(\d+)</strong>").unwrap());
+//!
+//! fn order_number(html: &str) -> Option<String> {
+//!     ORDER_NUMBER.captures(html).map(|c| c[1].to_string())
+//! }
+//!
+//! let page = "<li>Order number: <strong>42</strong></li>";
+//! assert_eq!(order_number(page), Some("42".to_string()));
+//! ```
 
 use goose::goose::GooseResponse;
 use goose::prelude::*;
@@ -2421,3 +2444,8 @@ mod snapshot_tests {
         check("attribute", &actual);
     }
 }
+
+// Doc test the README's examples.
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+struct ReadmeDoctests;
