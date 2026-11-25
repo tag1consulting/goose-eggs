@@ -55,6 +55,7 @@ drupal-encoded-values-quote.patch	lib	drupal::tests::get_encoded_form_values_cas
 drupal-build-id-greedy.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case first	get_updated_build_id
 drupal-build-id-missing.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case unknown old id	get_updated_build_id
 drupal-build-id-any-old.patch	lib	drupal::tests::get_updated_build_id_cases	get_updated_build_id case second	get_updated_build_id
+drupal-build-id-quadratic.patch	lib	drupal::tests::get_updated_build_id_linear	get_updated_build_id linear case took	get_updated_build_id
 drupal-values-one-name.patch	lib	drupal::tests::get_form_values_cases	get_form_values case empty value	get_form_values
 drupal-values-skip.patch	lib	drupal::tests::get_form_values_cases	get_form_values case count	get_form_values
 drupal-encoded-values-one-name.patch	lib	drupal::tests::get_encoded_form_values_cases	get_encoded_form_values case form_build_id	get_encoded_form_values
@@ -441,6 +442,8 @@ wc-example-shared-account.patch	woocommerce_example	credentials_cases	credential
 wc-example-account-wraps.patch	woocommerce_example	credentials_cases	credentials case per user	woocommerce example credentials
 snapshot-header-inner.patch	lib	snapshot_tests::get_html_header_snapshot	get_html_header snapshot differs	get_html_header
 snapshot-title-tags.patch	lib	snapshot_tests::get_title_snapshot	get_title snapshot differs	get_title
+snapshot-bless-any-value.patch	lib	snapshot::blessing_cases	blessing case zero	get_title
+snapshot-line-endings.patch	lib	snapshot::line_endings_cases	line endings case tests/snapshots/get_title.txt not LF	get_title
 snapshot-src-order.patch	lib	snapshot_tests::get_src_elements_snapshot	get_src_elements snapshot differs	get_src_elements
 snapshot-css-order.patch	lib	snapshot_tests::get_css_elements_snapshot	get_css_elements snapshot differs	get_css_elements
 snapshot-drupal-form-capture.patch	lib	drupal::snapshot_tests::get_form_snapshot	drupal_get_form snapshot differs	get_form
