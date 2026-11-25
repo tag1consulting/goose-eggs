@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..311b65a 100644
+index 64a85f4..006b626 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -501,7 +501,7 @@ impl<'a> LoginBuilder<'a> {
+@@ -517,7 +517,7 @@ impl<'a> LoginBuilder<'a> {
      /// # support::log_in("url", &server, &_login);
      /// ```
      pub fn url(mut self, url: impl Into<&'a str>) -> Self {

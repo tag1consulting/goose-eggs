@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..c209bb2 100644
+index 64a85f4..6248d29 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -345,7 +345,7 @@ pub fn get_encoded_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<
+@@ -361,7 +361,7 @@ pub fn get_encoded_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<
      let mut form_elements = HashMap::new();
  
      // Extract the form elements needed to submit a form.

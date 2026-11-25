@@ -1,5 +1,5 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..7321845 100644
+index 64a85f4..09d3042 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
 @@ -248,7 +248,7 @@ fn updated_build_id(form_html: &str, old_build_id: &str) -> Option<String> {
@@ -10,4 +10,4 @@ index 9bffb7c..7321845 100644
 +        r#"{{"command":"update_build_id","old": "{}","new":""#,
          old_build_id
      );
-     let mut from = 0;
+     // The first `"}` and the first newline at or after the value's start, kept

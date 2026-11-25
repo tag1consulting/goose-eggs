@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..142ddf5 100644
+index 64a85f4..4dcf761 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -1191,7 +1191,7 @@ pub async fn search<'a>(
+@@ -1207,7 +1207,7 @@ pub async fn search<'a>(
      let search_page = crate::validate_and_load_static_assets(user, goose, validate).await?;
  
      // Extract the search form from the page.

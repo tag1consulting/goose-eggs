@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..1bcb6c1 100644
+index 64a85f4..b79d587 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -694,7 +694,7 @@ pub async fn log_in(
+@@ -710,7 +710,7 @@ pub async fn log_in(
  
      // A web page can have multiple forms, so first get the correct form.
      let login_form = get_form(&login_page, "user-login-form");

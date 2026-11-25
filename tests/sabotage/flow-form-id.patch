@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..0dd5530 100644
+index 64a85f4..05e0a40 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -749,7 +749,7 @@ pub async fn log_in(
+@@ -765,7 +765,7 @@ pub async fn log_in(
          ("name", &username),
          ("pass", &password),
          ("form_build_id", &form_build_id),

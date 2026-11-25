@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..800ea2b 100644
+index 64a85f4..ec7bd11 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -339,7 +339,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
+@@ -355,7 +355,7 @@ pub fn get_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str,
  pub fn get_encoded_form_values<'a>(form: &str, elements: &'a [&str]) -> HashMap<&'a str, String> {
      // Decode quotes one time, which is enough for the normal get_form_value() regex
      // to work.

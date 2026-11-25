@@ -1,8 +1,8 @@
 diff --git a/src/drupal.rs b/src/drupal.rs
-index 9bffb7c..6196060 100644
+index 64a85f4..dfe8757 100644
 --- a/src/drupal.rs
 +++ b/src/drupal.rs
-@@ -420,7 +420,7 @@ impl<'a> LoginBuilder<'a> {
+@@ -436,7 +436,7 @@ impl<'a> LoginBuilder<'a> {
      fn new() -> Self {
          Self {
              // Defaults to a username of "username".
