@@ -1085,7 +1085,7 @@ pub fn valid_header_value<'a>(headers: &HeaderMap, header: (&'a str, &'a str)) -
     }
 
     if header_is_set(headers, header.0) {
-        if header.1.is_empty() {
+        if header.1.is_empty() && false {
             false
         } else {
             let header_value = match headers.get(header.0) {
